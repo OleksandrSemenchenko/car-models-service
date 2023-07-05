@@ -287,7 +287,7 @@
 											"top": 160,
 											"width": 167.9970703125,
 											"height": 13,
-											"text": "+id: String",
+											"text": "-id: String",
 											"horizontalAlignment": 0
 										},
 										{
@@ -306,7 +306,7 @@
 											"top": 175,
 											"width": 167.9970703125,
 											"height": 13,
-											"text": "+year: Integer",
+											"text": "-year: Integer",
 											"horizontalAlignment": 0
 										},
 										{
@@ -325,7 +325,7 @@
 											"top": 190,
 											"width": 167.9970703125,
 											"height": 13,
-											"text": "+manufacturer: Manufacturer",
+											"text": "-manufacturer: Manufacturer",
 											"horizontalAlignment": 0
 										},
 										{
@@ -344,7 +344,7 @@
 											"top": 205,
 											"width": 167.9970703125,
 											"height": 13,
-											"text": "+model: Model",
+											"text": "-model: Model",
 											"horizontalAlignment": 0
 										},
 										{
@@ -363,7 +363,7 @@
 											"top": 220,
 											"width": 167.9970703125,
 											"height": 13,
-											"text": "+category: Category",
+											"text": "-category: Category",
 											"horizontalAlignment": 0
 										}
 									],
@@ -620,7 +620,7 @@
 											"top": 408,
 											"width": 167,
 											"height": 13,
-											"text": "+name: String",
+											"text": "-name: String",
 											"horizontalAlignment": 0
 										},
 										{
@@ -679,7 +679,7 @@
 											"top": 423,
 											"width": 167,
 											"height": 13,
-											"text": "+car: Car",
+											"text": "-car: Car",
 											"horizontalAlignment": 0
 										}
 									],
@@ -936,7 +936,7 @@
 											"top": 168,
 											"width": 151,
 											"height": 13,
-											"text": "+name: String",
+											"text": "-name: String",
 											"horizontalAlignment": 0
 										},
 										{
@@ -955,7 +955,7 @@
 											"top": 183,
 											"width": 151,
 											"height": 13,
-											"text": "+car: Car",
+											"text": "-car: Car",
 											"horizontalAlignment": 0
 										}
 									],
@@ -1484,7 +1484,7 @@
 											"top": 168,
 											"width": 166,
 											"height": 13,
-											"text": "+name: String",
+											"text": "-name: String",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1523,7 +1523,7 @@
 											"top": 183,
 											"width": 166,
 											"height": 13,
-											"text": "+car: Car",
+											"text": "-car: Car",
 											"horizontalAlignment": 0
 										}
 									],
@@ -2367,6 +2367,7 @@
 								"$ref": "AAAAAAGI7U/A0GtuQKc="
 							},
 							"name": "id",
+							"visibility": "private",
 							"type": "String"
 						},
 						{
@@ -2376,6 +2377,7 @@
 								"$ref": "AAAAAAGI7U/A0GtuQKc="
 							},
 							"name": "year",
+							"visibility": "private",
 							"type": "Integer"
 						},
 						{
@@ -2385,6 +2387,7 @@
 								"$ref": "AAAAAAGI7U/A0GtuQKc="
 							},
 							"name": "manufacturer",
+							"visibility": "private",
 							"type": {
 								"$ref": "AAAAAAGI7VXo9GvKiKk="
 							}
@@ -2396,6 +2399,7 @@
 								"$ref": "AAAAAAGI7U/A0GtuQKc="
 							},
 							"name": "model",
+							"visibility": "private",
 							"type": {
 								"$ref": "AAAAAAGI8O9drZhi2Tw="
 							}
@@ -2407,6 +2411,7 @@
 								"$ref": "AAAAAAGI7U/A0GtuQKc="
 							},
 							"name": "category",
+							"visibility": "private",
 							"type": {
 								"$ref": "AAAAAAGI7VDhFmugoz8="
 							}
@@ -2478,6 +2483,7 @@
 								"$ref": "AAAAAAGI7VDhFmugoz8="
 							},
 							"name": "name",
+							"visibility": "private",
 							"type": "String"
 						},
 						{
@@ -2505,6 +2511,7 @@
 								"$ref": "AAAAAAGI7VDhFmugoz8="
 							},
 							"name": "car",
+							"visibility": "private",
 							"type": {
 								"$ref": "AAAAAAGI7U/A0GtuQKc="
 							}
@@ -2604,6 +2611,7 @@
 								"$ref": "AAAAAAGI7VXo9GvKiKk="
 							},
 							"name": "name",
+							"visibility": "private",
 							"type": "String"
 						},
 						{
@@ -2613,6 +2621,7 @@
 								"$ref": "AAAAAAGI7VXo9GvKiKk="
 							},
 							"name": "car",
+							"visibility": "private",
 							"type": {
 								"$ref": "AAAAAAGI7U/A0GtuQKc="
 							}
@@ -2783,6 +2792,7 @@
 								"$ref": "AAAAAAGI8O9drZhi2Tw="
 							},
 							"name": "name",
+							"visibility": "private",
 							"type": "String"
 						},
 						{
@@ -2801,6 +2811,7 @@
 								"$ref": "AAAAAAGI8O9drZhi2Tw="
 							},
 							"name": "car",
+							"visibility": "private",
 							"type": {
 								"$ref": "AAAAAAGI7U/A0GtuQKc="
 							}
