@@ -363,7 +363,7 @@
 											"top": 220,
 											"width": 167.9970703125,
 											"height": 13,
-											"text": "-category: Category",
+											"text": "-categories: Set<Category>",
 											"horizontalAlignment": 0
 										}
 									],
@@ -679,7 +679,7 @@
 											"top": 423,
 											"width": 167,
 											"height": 13,
-											"text": "-vehicle: Vehicle",
+											"text": "-vehicles: Set<Vehicle>",
 											"horizontalAlignment": 0
 										}
 									],
@@ -955,7 +955,7 @@
 											"top": 191,
 											"width": 151,
 											"height": 13,
-											"text": "-vehicle: Vehicle",
+											"text": "-vehicles: Set<Vehicle>",
 											"horizontalAlignment": 0
 										}
 									],
@@ -1231,7 +1231,7 @@
 											"top": 191,
 											"width": 166,
 											"height": 13,
-											"text": "-vehicle: Vehicle",
+											"text": "-vehicles: Set<Vehicle>",
 											"horizontalAlignment": 0
 										}
 									],
@@ -2119,16 +2119,16 @@
 									"fillColor": "#737373",
 									"font": "Arial;13;0",
 									"showShadow": false,
-									"left": 424,
+									"left": 418,
 									"top": 272,
-									"width": 7.22998046875,
+									"width": 19.5126953125,
 									"height": 13,
 									"alpha": -0.919719463514409,
 									"distance": 26.40075756488817,
 									"hostEdge": {
 										"$ref": "AAAAAAGJPo1ClVKp6/s="
 									},
-									"text": "1"
+									"text": "1..*"
 								},
 								{
 									"_type": "UMLQualifierCompartmentView",
@@ -2536,11 +2536,9 @@
 							"_parent": {
 								"$ref": "AAAAAAGI7U/A0GtuQKc="
 							},
-							"name": "category",
+							"name": "categories",
 							"visibility": "private",
-							"type": {
-								"$ref": "AAAAAAGI7VDhFmugoz8="
-							}
+							"type": "Set<Category>"
 						}
 					]
 				},
@@ -2639,7 +2637,7 @@
 								"reference": {
 									"$ref": "AAAAAAGI7U/A0GtuQKc="
 								},
-								"multiplicity": "1"
+								"multiplicity": "1..*"
 							}
 						}
 					],
@@ -2696,11 +2694,9 @@
 							"_parent": {
 								"$ref": "AAAAAAGI7VDhFmugoz8="
 							},
-							"name": "vehicle",
+							"name": "vehicles",
 							"visibility": "private",
-							"type": {
-								"$ref": "AAAAAAGI7U/A0GtuQKc="
-							}
+							"type": "Set<Vehicle>"
 						}
 					]
 				},
@@ -2866,11 +2862,9 @@
 							"_parent": {
 								"$ref": "AAAAAAGI7VXo9GvKiKk="
 							},
-							"name": "vehicle",
+							"name": "vehicles",
 							"visibility": "private",
-							"type": {
-								"$ref": "AAAAAAGI7U/A0GtuQKc="
-							}
+							"type": "Set<Vehicle>"
 						}
 					]
 				},
@@ -3056,11 +3050,9 @@
 							"_parent": {
 								"$ref": "AAAAAAGI8O9drZhi2Tw="
 							},
-							"name": "vehicle",
+							"name": "vehicles",
 							"visibility": "private",
-							"type": {
-								"$ref": "AAAAAAGI7U/A0GtuQKc="
-							}
+							"type": "Set<Vehicle>"
 						}
 					]
 				}
