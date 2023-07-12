@@ -1,0 +1,18 @@
+---
+spring:
+  jpa:
+    show_sql: false
+    generate-ddl: false
+---
+spring:
+  config:
+    activate:
+      on-profile:
+      - dev
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/vehicles
+    username: vehicles
+    password: 1234
+  flyway:
+    enabled: true
