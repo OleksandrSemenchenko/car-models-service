@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import ua.com.foxminded.vehicles.entity.Vehicle;
+import ua.com.foxminded.vehicles.entity.VehicleEntity;
 import ua.com.foxminded.vehicles.exception.ServiceException;
-import ua.com.foxminded.vehicles.model.VehicleModel;
+import ua.com.foxminded.vehicles.model.Vehicle;
 import ua.com.foxminded.vehicles.repository.VehicleRepository;
 import ua.com.foxminded.vehicles.service.VehicleService;
 
@@ -25,26 +25,26 @@ import ua.com.foxminded.vehicles.service.VehicleService;
 @RequiredArgsConstructor
 public class VehicleServiceImpl implements VehicleService {
     
-    public static final Type VEHICLES_LIST_TYPE = new TypeToken<List<VehicleModel>>() {}.getType();
+    public static final Type VEHICLES_LIST_TYPE = new TypeToken<List<Vehicle>>() {}.getType();
     
     private final VehicleRepository vehicleRepository;
     private final ModelMapper modelMapper;
     
     @Override
-    public VehicleModel create(VehicleModel model) throws ServiceException {
+    public Vehicle save(Vehicle model) {
         try {
-            Vehicle entity = modelMapper.map(model, Vehicle.class);
-            Vehicle persistedEntity = vehicleRepository.saveAndFlush(entity);
-            return modelMapper.map(persistedEntity, VehicleModel.class);
+            VehicleEntity entity = modelMapper.map(model, VehicleEntity.class);
+            VehicleEntity persistedEntity = vehicleRepository.saveAndFlush(entity);
+            return modelMapper.map(persistedEntity, Vehicle.class);
         } catch (DataAccessException | IllegalArgumentException | 
                  MappingException | ConfigurationException e) {
             throw new ServiceException(VEHICLE_CREATE_ERROR, e);
         }
     }
     @Override
-    public List<VehicleModel> getAll() throws ServiceException {
+    public List<Vehicle> getAll() {
         try {
-            List<Vehicle> entities = vehicleRepository.findAll();
+            List<VehicleEntity> entities = vehicleRepository.findAll();
             return modelMapper.map(entities, VEHICLES_LIST_TYPE);
         } catch (DataAccessException | IllegalArgumentException | 
                  MappingException | ConfigurationException e) {
@@ -53,14 +53,14 @@ public class VehicleServiceImpl implements VehicleService {
     }
     
     @Override
-    public VehicleModel update(VehicleModel model) throws ServiceException {
+    public Vehicle update(Vehicle model) {
         try {
-            Vehicle entity = vehicleRepository.findById(model.getId())
+            VehicleEntity entity = vehicleRepository.findById(model.getId())
                     .orElseThrow(() -> new ServiceException(VEHICLE_ABSENCE));
             entity.setId(model.getId());
             entity.setProductionYear(model.getProductionYear());
-            Vehicle updatedEntity = vehicleRepository.saveAndFlush(entity);
-            return modelMapper.map(updatedEntity, VehicleModel.class);
+            VehicleEntity updatedEntity = vehicleRepository.saveAndFlush(entity);
+            return modelMapper.map(updatedEntity, Vehicle.class);
         } catch (DataAccessException | IllegalArgumentException | 
                  MappingException | ConfigurationException e) {
             throw new ServiceException(VEHICLE_UPDATE_ERROR, e);
@@ -68,12 +68,23 @@ public class VehicleServiceImpl implements VehicleService {
     }
     
     @Override 
-    public void deleteById(String id) throws ServiceException {
+    public void deleteById(String id) {
         try {
             vehicleRepository.findById(id).orElseThrow(() -> new ServiceException(VEHICLE_ABSENCE));
             vehicleRepository.deleteById(id);
         } catch (DataAccessException | IllegalArgumentException e) {
             throw new ServiceException(VEHICLE_DELETE_ERROR, e);
+        }
+    }
+    
+    @Override
+    public Vehicle getById(String id) {
+        try {
+            VehicleEntity entity = vehicleRepository.findById(id)
+                    .orElseThrow(() -> new ServiceException(VEHICLE_ABSENCE));
+            return modelMapper.map(entity, Vehicle.class);
+        } catch (DataAccessException e) {
+            throw new ServiceException(VEHICLE_FETCH_ERROR, e);
         }
     }
 }

@@ -18,7 +18,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "vehicles")
 @Data
-public class Vehicle implements Serializable {
+public class VehicleEntity implements Serializable {
     
     private static final long serialVersionUID = 1L;
 
@@ -30,11 +30,11 @@ public class Vehicle implements Serializable {
     
     @ManyToOne
     @JoinColumn(name = "manufacturer_name")
-    private Manufacturer manufacturer;
+    private ManufacturerEntity manufacturer;
     
     @ManyToOne
     @JoinColumn(name = "model_name")
-    private Model model;
+    private ModelEntity model;
     
     @ManyToMany
     @JoinTable(name = "vehicle_category", 
@@ -42,14 +42,14 @@ public class Vehicle implements Serializable {
                inverseJoinColumns = @JoinColumn(name = "category_name", referencedColumnName = "name"))
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<Category> categories;
+    private Set<CategoryEntity> categories;
     
-    public void addCategory(Category category) {
+    public void addCategory(CategoryEntity category) {
         this.categories.add(category);
         category.getVehicles().add(this);
     }
     
-    public void removeCategory(Category category) {
+    public void removeCategory(CategoryEntity category) {
         this.categories.remove(category);
         category.getVehicles().remove(this);
     }

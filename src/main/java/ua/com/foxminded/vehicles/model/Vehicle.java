@@ -6,13 +6,13 @@ import java.util.Set;
 import lombok.Data;
 
 @Data
-public class VehicleModel implements Serializable {
+public class Vehicle implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
     private String id;
     private Integer productionYear;
-    private ManufacturerModel manufacturer;
-    private ModelModel model;
-    private Set<CategoryModel> categories;
+    private Manufacturer manufacturer;
+    private Model model;
+    private Set<Category> categories;
 }

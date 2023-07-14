@@ -16,3 +16,30 @@ spring:
     password: 1234
   flyway:
     enabled: true
+---
+spring:
+  config:
+    activate:
+      on-profile:
+      - test
+  flyway:
+    enabled: false
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test;DB_CLOSE_ON_EXIT=FALSE;
+    username: sa
+    password: 
+  sql:
+    init:
+      mode: embedded
+      platform: h2
+  jpa:
+    show-sql: false
+    database-platform: H2
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+logging:
+  level:
+    root: warn
+    org: warn

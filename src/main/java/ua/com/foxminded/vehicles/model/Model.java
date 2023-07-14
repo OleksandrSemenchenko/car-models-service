@@ -8,13 +8,13 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
-public class CategoryModel implements Serializable {
-    
+public class Model implements Serializable {
+
     private static final long serialVersionUID = 1L;
     
     private String name;
     
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<VehicleModel> vehicles;
+    private Set<Vehicle> vehicles;
 }

@@ -1,7 +1,5 @@
 package ua.com.foxminded.vehicles.exception;
 
-import org.apache.catalina.Server;
-
 import lombok.Getter;
 
 @Getter
