@@ -25,6 +25,8 @@ import ua.com.foxminded.vehicles.entitymother.ManufacturerEntityMother;
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class ManufacturerRepositoryTest {
     
+    public static final String MANUFACTURER_NAME = "Audi";
+    
     @PersistenceContext
     private EntityManager entityManager;
     
@@ -47,7 +49,7 @@ class ManufacturerRepositoryTest {
     }
     
     @Test
-    void updateName() {
+    void updateName_ShouldUpdateName() {
         String newName = "Volkswagen";
         manufacturerRepository.updateName(newName, manufacturer.getName());
         Optional<ManufacturerEntity> updatedManufacturerOpt = manufacturerRepository.findById(newName);
