@@ -11,7 +11,7 @@ public class ErrorResponse {
     
     private String message;
     private String path;
-    private List<ViolationError> validationErrors;
+    private List<ValidationError> validationErrors;
     
     public ErrorResponse() {
     }
@@ -21,7 +21,7 @@ public class ErrorResponse {
         this.path = path;
     }
 
-    public ErrorResponse(List<ViolationError> validationErrors, String path) {
+    public ErrorResponse(List<ValidationError> validationErrors, String path) {
         this.validationErrors = validationErrors;
         this.path = path;
     }

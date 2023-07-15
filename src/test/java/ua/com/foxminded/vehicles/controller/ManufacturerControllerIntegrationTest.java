@@ -20,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.web.servlet.MockMvc;
@@ -37,8 +38,8 @@ import ua.com.foxminded.vehicles.repository.ManufacturerRepository;
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @Transactional
-@DirtiesContext
-class ManufacturerIntegrationTest {
+@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
+class ManufacturerControllerIntegrationTest {
     
     @Autowired
     private ManufacturerRepository manufacturerRepository;
@@ -82,7 +83,7 @@ class ManufacturerIntegrationTest {
     }
     
     @Test
-    void save() throws Exception {
+    void save_ShouldPersistManufacturerData() throws Exception {
         Manufacturer newManufacturer = Manufacturer.builder().name("Bradley").build();
         String newJsonManufacturer = mapper.writeValueAsString(newManufacturer);
         mockMvc.perform(post("/v1/manufacturers/manufacturer")
@@ -93,7 +94,7 @@ class ManufacturerIntegrationTest {
     }
     
     @Test
-    void updateName() throws Exception {
+    void updateName_ShouldUpdateManufacturerName() throws Exception {
         String newName = "Bradley";
         mockMvc.perform(put("/v1/manufacturers/{name}", manufacturerEntity.getName())
                     .param(NEW_NAME_PARAMETER, newName))

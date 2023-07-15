@@ -14,7 +14,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import ua.com.foxminded.vehicles.exception.ErrorResponse;
 import ua.com.foxminded.vehicles.exception.ServiceException;
-import ua.com.foxminded.vehicles.exception.ViolationError;
+import ua.com.foxminded.vehicles.exception.ValidationError;
 
 @Slf4j
 public class DefaultController {
@@ -30,8 +30,8 @@ public class DefaultController {
     public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException e, 
                                                                             HttpServletRequest request) {
         log.error("Violation error", e);
-        List<ViolationError> violations = e.getConstraintViolations().stream()
-                .map(violation -> new ViolationError(violation.getPropertyPath().toString(), 
+        List<ValidationError> violations = e.getConstraintViolations().stream()
+                .map(violation -> new ValidationError(violation.getPropertyPath().toString(), 
                                              violation.getMessage()))
                 .toList();
         ErrorResponse errorResponse = new ErrorResponse(violations, request.getRequestURI());
@@ -58,15 +58,15 @@ public class DefaultController {
     public ResponseEntity<ErrorResponse> handleMethodArgumentViolation(MethodArgumentNotValidException e, 
                                                                        HttpServletRequest request) {
         log.error("Argument violation exception");
-        List<ViolationError> validationErrors = buildValidationError(e);
+        List<ValidationError> validationErrors = buildValidationError(e);
         ErrorResponse errorResponse = new ErrorResponse(validationErrors, request.getRequestURI());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(errorResponse);
     }
     
-    private List<ViolationError> buildValidationError(BindException exception) {
+    private List<ValidationError> buildValidationError(BindException exception) {
         return exception.getBindingResult()
                         .getFieldErrors()
-                        .stream().map(fieldError -> new ViolationError(fieldError.getField(), 
+                        .stream().map(fieldError -> new ValidationError(fieldError.getField(), 
                                                                        fieldError.getDefaultMessage()))
                         .toList();
     }

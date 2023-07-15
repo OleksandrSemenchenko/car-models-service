@@ -1,0 +1,119 @@
+package ua.com.foxminded.vehicles.controller;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.transaction.BeforeTransaction;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import ua.com.foxminded.vehicles.entity.ModelEntity;
+import ua.com.foxminded.vehicles.entitymother.ModelEntityMother;
+import ua.com.foxminded.vehicles.model.Model;
+import ua.com.foxminded.vehicles.repository.ModelRepository;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+@Transactional
+@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
+class ModelControllerIntegrationTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ModelRepository modelRepository;
+    
+    private ModelEntity modelEntity;
+    private Model model;
+    private String modelJson;
+    private String modelsJson;
+    private ObjectMapper mapper;
+    private List<Model> models;
+    
+    @BeforeTransaction
+    void init() {
+        modelEntity = ModelEntityMother.complete().build();
+        modelRepository.saveAndFlush(modelEntity);
+        
+    }
+    
+    @BeforeEach
+    void setUp() throws JsonProcessingException {
+        model = Model.builder().name(modelEntity.getName())
+                               .vehicles(new HashSet<>()).build();
+        models = Arrays.asList(model);
+        mapper = new ObjectMapper();
+        modelJson = mapper.writeValueAsString(model);
+        modelsJson = mapper.writeValueAsString(models);
+    }
+    
+    @Test
+    void save_ShouldPersistModelData() throws Exception {
+        model.setName("Fusion");
+        String modelJson = mapper.writeValueAsString(model);
+        mockMvc.perform(post("/v1/manufacturers/models/model").contentType(MediaType.APPLICATION_JSON)
+                                                              .content(modelJson))
+               .andExpect(status().is2xxSuccessful());
+        
+        Optional<ModelEntity> persistedModel = modelRepository.findById(model.getName());
+        assertTrue(persistedModel.isPresent());
+    }
+    
+    @Test
+    void getByName_ShouldReturnModel() throws Exception {
+        mockMvc.perform(get("/v1/manufacturers/models/{name}", modelEntity.getName()))
+               .andExpect(status().is2xxSuccessful())
+               .andExpect(content().json(modelJson));
+    }
+    
+    @Test
+    void getAll_ShouldReturnModelsList() throws Exception {
+        mockMvc.perform(get("/v1/manufacturers/models/list"))
+               .andExpect(status().is2xxSuccessful())
+               .andExpect(content().json(modelsJson));
+    }
+    
+    @Test
+    void updateName_ShouldUpdateModelName() throws Exception {
+        String newName = "Q8";
+        mockMvc.perform(put("/v1/manufacturers/models/{name}", modelEntity.getName())
+                    .param("newName", newName))
+               .andExpect(status().is2xxSuccessful());
+        
+        Optional<ModelEntity> updatedModelOpt = modelRepository.findById(newName);
+        assertTrue(updatedModelOpt.isPresent());
+    }
+    
+    @Test
+    void deleteByName_ShouldDeleteModel() throws Exception {
+        mockMvc.perform(delete("/v1/manufacturers/models/{name}", modelEntity.getName()))
+               .andExpect(status().is2xxSuccessful());
+        
+        Optional<ModelEntity> modelEntityOpt = modelRepository.findById(modelEntity.getName());
+        assertTrue(modelEntityOpt.isEmpty());
+    }
+}

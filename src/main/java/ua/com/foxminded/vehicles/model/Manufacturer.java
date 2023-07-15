@@ -3,6 +3,7 @@ package ua.com.foxminded.vehicles.model;
 import java.io.Serializable;
 import java.util.Set;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +19,7 @@ public class Manufacturer implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
+    @NotBlank
     private String name;
     
     @ToString.Exclude

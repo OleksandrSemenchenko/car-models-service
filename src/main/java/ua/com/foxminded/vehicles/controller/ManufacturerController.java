@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.vehicles.model.Manufacturer;
@@ -39,7 +40,7 @@ public class ManufacturerController extends DefaultController {
     }
     
     @PostMapping("/manufacturer")
-    public Manufacturer save(@RequestBody Manufacturer manufacturer) {
+    public Manufacturer save(@Valid @RequestBody Manufacturer manufacturer) {
         return manufacturerService.save(manufacturer);
     }
     

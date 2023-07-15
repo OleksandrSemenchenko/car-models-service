@@ -61,7 +61,7 @@ public class ModelServiceImpl implements ModelService {
             ModelEntity updatedEntity = modelRepository.findById(oldName).orElseThrow();
             return modelMapper.map(updatedEntity, Model.class);
         } catch (DataAccessException | IllegalArgumentException | 
-                MappingException | ConfigurationException e) {
+                 MappingException | ConfigurationException e) {
             throw new ServiceException(MODEL_UPDATE_ERROR, e);
         }
     }
@@ -79,10 +79,12 @@ public class ModelServiceImpl implements ModelService {
     @Override
     public Model getByName(String name) {
         try {
-            ModelEntity vehicle = modelRepository.findById(name)
+            ModelEntity entity = modelRepository.findById(name)
                     .orElseThrow(() -> new ServiceException(VEHICLE_ABSENCE));
-            return modelMapper.map(vehicle, Model.class);
-        } catch (DataAccessException e) {
+            Model model = modelMapper.map(entity, Model.class);
+            return model;
+        } catch (DataAccessException | IllegalArgumentException | 
+                 MappingException | ConfigurationException e) {
             throw new ServiceException(VEHICLE_FETCH_ERROR, e);
         }
     }
