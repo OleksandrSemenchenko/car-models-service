@@ -1,7 +1,10 @@
 package ua.com.foxminded.vehicles.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,6 +30,8 @@ import ua.com.foxminded.vehicles.service.ModelService;
 @Validated
 public class ModelController extends DefaultController {
     
+    public static final String NAME_FIELD = "name";
+    
     private final ModelService modelService;
     
     @PostMapping("/model")
@@ -39,9 +44,11 @@ public class ModelController extends DefaultController {
         return modelService.getByName(name);
     }
     
-    @GetMapping("/list")
-    public List<Model> getAll() {
-        return modelService.getAll();
+    @GetMapping("/page")
+    public Page<Model> getAll(@PageableDefault(page = PAGE_NUMBER_DEF, size = PAGE_SIZE_DEF) 
+                              @SortDefault(sort = NAME_FIELD, direction = Sort.Direction.DESC)
+                              Pageable pageable) {
+        return modelService.getAll(pageable);
     }
     
     @PutMapping("/{name}")

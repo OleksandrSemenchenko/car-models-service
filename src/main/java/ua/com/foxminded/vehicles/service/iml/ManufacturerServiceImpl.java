@@ -7,13 +7,14 @@ import static ua.com.foxminded.vehicles.exception.ErrorCode.MANUFACTURER_FETCH_E
 import static ua.com.foxminded.vehicles.exception.ErrorCode.MANUFACTURER_UPDATE_ERROR;
 
 import java.lang.reflect.Type;
-import java.util.List;
 
 import org.hibernate.boot.MappingException;
 import org.modelmapper.ConfigurationException;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +30,7 @@ import ua.com.foxminded.vehicles.service.ManufacturerService;
 @RequiredArgsConstructor
 public class ManufacturerServiceImpl implements ManufacturerService {
     
-    public static final Type MANUFACTURERS_LIST_TYPE = new TypeToken<List<Manufacturer>>() {}.getType();
+    public static final Type MANUFACTURERS_PAGE_TYPE = new TypeToken<Page<Manufacturer>>() {}.getType();
     
     private final ModelMapper modelMapper;
     private final ManufacturerRepository manufacturerRepository;
@@ -47,11 +48,10 @@ public class ManufacturerServiceImpl implements ManufacturerService {
     }
     
     @Override
-    public List<Manufacturer> getAll() {
+    public Page<Manufacturer> getAll(Pageable pageable) {
         try {
-            List<ManufacturerEntity> entities = manufacturerRepository.findAll();
-            return modelMapper.map(entities, MANUFACTURERS_LIST_TYPE);
-            
+            Page<ManufacturerEntity> entities = manufacturerRepository.findAll(pageable);
+            return modelMapper.map(entities, MANUFACTURERS_PAGE_TYPE);
         } catch (DataAccessException | IllegalArgumentException | 
                  ConfigurationException | MappingException e) {
             throw new ServiceException(MANUFACTURER_FETCH_ERROR, e);

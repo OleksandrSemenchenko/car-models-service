@@ -19,7 +19,6 @@ import jakarta.persistence.PersistenceUnit;
 import ua.com.foxminded.vehicles.entity.ManufacturerEntity;
 import ua.com.foxminded.vehicles.entitymother.ManufacturerEntityMother;
 
-
 @DataJpaTest
 @ActiveProfiles("test")
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)

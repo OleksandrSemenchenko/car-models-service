@@ -11,14 +11,12 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.transaction.BeforeTransaction;
-import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.vehicles.entity.ModelEntity;
 import ua.com.foxminded.vehicles.entitymother.ModelEntityMother;
 
 @DataJpaTest
 @ActiveProfiles("test")
-@Transactional
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class ModelRepositoryTest {
     

@@ -1,15 +1,20 @@
 package ua.com.foxminded.vehicles.service.iml;
 
-import static ua.com.foxminded.vehicles.exception.ErrorCode.*;
+import static ua.com.foxminded.vehicles.exception.ErrorCode.CATEGORY_ABSENCE;
+import static ua.com.foxminded.vehicles.exception.ErrorCode.CATEGORY_CREATE_ERROR;
+import static ua.com.foxminded.vehicles.exception.ErrorCode.CATEGORY_DELETE_ERROR;
+import static ua.com.foxminded.vehicles.exception.ErrorCode.CATEGORY_FETCH_ERROR;
+import static ua.com.foxminded.vehicles.exception.ErrorCode.CATEGORY_UPDATE_ERROR;
 
 import java.lang.reflect.Type;
-import java.util.List;
 
 import org.modelmapper.ConfigurationException;
 import org.modelmapper.MappingException;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +30,8 @@ import ua.com.foxminded.vehicles.service.CategoryService;
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     
-    public static final Type CATEGORIES_LIST_TYPE = 
-            new TypeToken<List<Category>>() {}.getType();
+    public static final Type CATEGORIES_PAGE_TYPE = 
+            new TypeToken<Page<Category>>() {}.getType();
     
     private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
@@ -44,10 +49,10 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> getAll() {
+    public Page<Category> getAll(Pageable pageable) {
         try {
-            List<CategoryEntity> entities = categoryRepository.findAll();
-            return modelMapper.map(entities, CATEGORIES_LIST_TYPE);
+            Page<CategoryEntity> entities = categoryRepository.findAll(pageable);
+            return modelMapper.map(entities, CATEGORIES_PAGE_TYPE);
         } catch (DataAccessException | IllegalArgumentException | 
                  MappingException | ConfigurationException e) {
             throw new ServiceException(CATEGORY_FETCH_ERROR, e);

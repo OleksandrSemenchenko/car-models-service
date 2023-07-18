@@ -1,15 +1,22 @@
 package ua.com.foxminded.vehicles.service.iml;
 
-import static ua.com.foxminded.vehicles.exception.ErrorCode.*;
+import static ua.com.foxminded.vehicles.exception.ErrorCode.CATEGORY_FETCH_ERROR;
+import static ua.com.foxminded.vehicles.exception.ErrorCode.MODEL_ABSENCE;
+import static ua.com.foxminded.vehicles.exception.ErrorCode.MODEL_CREATE_ERROR;
+import static ua.com.foxminded.vehicles.exception.ErrorCode.MODEL_DELETE_ERROR;
+import static ua.com.foxminded.vehicles.exception.ErrorCode.MODEL_UPDATE_ERROR;
+import static ua.com.foxminded.vehicles.exception.ErrorCode.VEHICLE_ABSENCE;
+import static ua.com.foxminded.vehicles.exception.ErrorCode.VEHICLE_FETCH_ERROR;
 
 import java.lang.reflect.Type;
-import java.util.List;
 
 import org.modelmapper.ConfigurationException;
 import org.modelmapper.MappingException;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +32,7 @@ import ua.com.foxminded.vehicles.service.ModelService;
 @RequiredArgsConstructor
 public class ModelServiceImpl implements ModelService {
     
-    public static final Type MODELS_LIST_TYPE = new TypeToken<List<Model>>() {}.getType();
+    public static final Type MODELS_PAGE_TYPE = new TypeToken<Page<Model>>() {}.getType();
     
     private final ModelRepository modelRepository;
     private final ModelMapper modelMapper;
@@ -43,10 +50,10 @@ public class ModelServiceImpl implements ModelService {
     }
 
     @Override
-    public List<Model> getAll() {
+    public Page<Model> getAll(Pageable pageable) {
         try {
-            List<ModelEntity> entities = modelRepository.findAll();
-            return modelMapper.map(entities, MODELS_LIST_TYPE);
+            Page<ModelEntity> entities = modelRepository.findAll(pageable);
+            return modelMapper.map(entities, MODELS_PAGE_TYPE);
         } catch (DataAccessException | IllegalArgumentException | 
                  MappingException | ConfigurationException e) {
             throw new ServiceException(CATEGORY_FETCH_ERROR, e);

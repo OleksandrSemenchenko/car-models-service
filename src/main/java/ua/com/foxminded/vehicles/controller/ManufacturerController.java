@@ -1,7 +1,10 @@
 package ua.com.foxminded.vehicles.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +28,8 @@ import ua.com.foxminded.vehicles.service.ManufacturerService;
 @Validated
 public class ManufacturerController extends DefaultController {
     
-    public static final String NEW_NAME_PARAMETER = "newName";
+    public static final String NAME_FIELD = "name";
+    public static final String NEW_NAME = "newName";
     
     private final ManufacturerService manufacturerService;
     
@@ -34,9 +38,11 @@ public class ManufacturerController extends DefaultController {
         return manufacturerService.getByName(name);
     }
     
-    @GetMapping("/list")
-    public List<Manufacturer> getAll() {
-        return manufacturerService.getAll();
+    @GetMapping("/page")
+    public Page<Manufacturer> getAll(@PageableDefault(page = PAGE_NUMBER_DEF, size = PAGE_SIZE_DEF) 
+                                     @SortDefault(sort = NAME_FIELD, direction = Sort.Direction.DESC)
+                                     Pageable pageable) {
+        return manufacturerService.getAll(pageable);
     }
     
     @PostMapping("/manufacturer")
@@ -46,7 +52,7 @@ public class ManufacturerController extends DefaultController {
     
     @PutMapping("/{name}")
     public void updateName(@PathVariable String name, 
-                           @RequestParam (NEW_NAME_PARAMETER) @NotBlank String newName) {
+                           @RequestParam (NEW_NAME) @NotBlank String newName) {
         manufacturerService.updateName(newName, name);
     }
     

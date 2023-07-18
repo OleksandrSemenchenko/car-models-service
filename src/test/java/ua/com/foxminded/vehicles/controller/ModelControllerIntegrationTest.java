@@ -6,11 +6,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ua.com.foxminded.vehicles.controller.DefaultController.PAGE_NUMBER_DEF;
+import static ua.com.foxminded.vehicles.controller.DefaultController.PAGE_SIZE_DEF;
+import static ua.com.foxminded.vehicles.controller.ModelController.NAME_FIELD;
+import static ua.com.foxminded.vehicles.entitymother.ModelEntityMother.MODEL_NAME;
 
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -50,9 +54,7 @@ class ModelControllerIntegrationTest {
     private ModelEntity modelEntity;
     private Model model;
     private String modelJson;
-    private String modelsJson;
     private ObjectMapper mapper;
-    private List<Model> models;
     
     @BeforeTransaction
     void init() {
@@ -65,10 +67,8 @@ class ModelControllerIntegrationTest {
     void setUp() throws JsonProcessingException {
         model = Model.builder().name(modelEntity.getName())
                                .vehicles(new HashSet<>()).build();
-        models = Arrays.asList(model);
         mapper = new ObjectMapper();
         modelJson = mapper.writeValueAsString(model);
-        modelsJson = mapper.writeValueAsString(models);
     }
     
     @Test
@@ -92,9 +92,14 @@ class ModelControllerIntegrationTest {
     
     @Test
     void getAll_ShouldReturnModelsList() throws Exception {
-        mockMvc.perform(get("/v1/manufacturers/models/list"))
+        mockMvc.perform(get("/v1/manufacturers/models/page")
+                    .param("page", String.valueOf(PAGE_NUMBER_DEF))
+                    .param("size", String.valueOf(PAGE_SIZE_DEF))
+                    .param("sort", new StringBuilder().append(NAME_FIELD)
+                                                      .append(",")
+                                                      .append(Sort.Direction.DESC).toString()))
                .andExpect(status().is2xxSuccessful())
-               .andExpect(content().json(modelsJson));
+               .andExpect(jsonPath(".name").value(MODEL_NAME));
     }
     
     @Test

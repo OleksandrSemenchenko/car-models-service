@@ -1,6 +1,6 @@
 package ua.com.foxminded.vehicles.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 
@@ -11,13 +11,11 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.transaction.BeforeTransaction;
-import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.foxminded.vehicles.entity.CategoryEntity;
 import ua.com.foxminded.vehicles.entitymother.CategoryEntityMother;
 
 @DataJpaTest
-@Transactional
 @ActiveProfiles("test")
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class CategoryRepositoryTest {
