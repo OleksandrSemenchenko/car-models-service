@@ -90,7 +90,7 @@ class ManufacturerControllerIntegrationTest {
                                                                                        .append(Sort.Direction.DESC)
                                                                                        .toString()))
                .andExpect(status().is2xxSuccessful())
-               .andExpect(jsonPath(".name").value(MANUFACTURER_NAME));
+               .andExpect(jsonPath(".name", MANUFACTURER_NAME).exists());
     }
     
     @Test

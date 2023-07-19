@@ -122,11 +122,15 @@ public class VehicleServiceImpl implements VehicleService {
                             .orElseThrow(() -> new ServiceException(CATEGORY_ABSENCE));
                     vehicleEntity.addCategory(categoryEntity);
                 }
-            } else if (vehicle.hasManufacturer()) {
+            }
+            
+            if (vehicle.hasManufacturer()) {
                 var manufacturerEntity = manufacturerRepository.findById(vehicle.getManufacturer().getName())
                         .orElseThrow(() -> new ServiceException(MANUFACTURER_ABSENCE));
                 vehicleEntity.setManufacturer(manufacturerEntity);
-            } else if (vehicle.hasModel()) {
+            } 
+            
+            if (vehicle.hasModel()) {
                 var modelEntity = modelRepository.findById(vehicle.getModel().getName())
                         .orElseThrow(() -> new ServiceException(ErrorCode.MODEL_ABSENCE));
                 vehicleEntity.setModel(modelEntity);

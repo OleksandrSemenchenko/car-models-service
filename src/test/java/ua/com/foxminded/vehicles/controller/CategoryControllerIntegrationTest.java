@@ -1,5 +1,6 @@
 package ua.com.foxminded.vehicles.controller;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -82,7 +83,7 @@ class CategoryControllerIntegrationTest {
         mockMvc.perform(put("/v1/categories/{name}", categoryEntity.getName())
                     .param(NEW_NAME, newName))
                .andExpect(status().is2xxSuccessful())
-               .andExpect(jsonPath(".name").value(newName));
+               .andExpect(jsonPath("$['name']", is(newName)));
     }
     
     @Test
@@ -94,14 +95,14 @@ class CategoryControllerIntegrationTest {
                                                       .append(",")
                                                       .append(Sort.Direction.DESC).toString()))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath(".name").value(categoryEntity.getName()));
+                .andExpect(jsonPath("$.content[0].['name']", is(categoryEntity.getName())));
     }
     
     @Test
     void getByName_ShouldReturnModel() throws Exception {
         mockMvc.perform(get("/v1/categories/{name}", categoryEntity.getName()))
                .andExpect(status().is2xxSuccessful())
-               .andExpect(jsonPath(".name").value(categoryEntity.getName()));
+               .andExpect(jsonPath("$['name']", is(categoryEntity.getName())));
     }
     
     @Test

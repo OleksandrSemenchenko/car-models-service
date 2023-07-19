@@ -1,6 +1,8 @@
 package ua.com.foxminded.vehicles.controller;
 
+import java.util.Arrays;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,13 +35,14 @@ import ua.com.foxminded.vehicles.service.VehicleService;
 @Validated
 public class VehicleController extends DefaultController {
     
-    private static final String CATEGORY_NAME = "category";
-    private static final String PRODUCTION_YEAR_FIELD = "productionYear";
-    private static final String MODEL_NAME = "model";
-    private static final String MANUFACTURER_NAME = "manufacturer";
-    private static final String MIN_PRODUCTION_YEAR = "minYear";
-    private static final String MAX_PRODUCTION_YEAR = "maxYear";
-    private static final String PRODUCTION_YEAR = "year";
+    public static final String CATEGORY_NAMES = "categories";
+    public static final String CATEGORY_NAME = "category";
+    public static final String PRODUCTION_YEAR_FIELD = "productionYear";
+    public static final String MODEL_NAME = "model";
+    public static final String MANUFACTURER_NAME = "manufacturer";
+    public static final String MIN_PRODUCTION_YEAR = "minYear";
+    public static final String MAX_PRODUCTION_YEAR = "maxYear";
+    public static final String PRODUCTION_YEAR = "year";
     
     private final VehicleService vehicleService;
     
@@ -79,7 +82,10 @@ public class VehicleController extends DefaultController {
     public Vehicle save(@PathVariable(MANUFACTURER_NAME) String manufacturerName, 
                         @PathVariable(MODEL_NAME) String modelName, 
                         @PathVariable(PRODUCTION_YEAR) int productionYear, 
-                        @RequestBody Set<Category> categories) {
+                        @RequestParam(CATEGORY_NAMES) String[] categoryNames) {
+        Set<Category> categories = Arrays.stream(categoryNames)
+                                         .map(name -> Category.builder().name(name).build())
+                                         .collect(Collectors.toSet());
        
         Manufacturer manufacturer = Manufacturer.builder().name(manufacturerName).build();
         Model model = Model.builder().name(modelName).build();
@@ -106,11 +112,16 @@ public class VehicleController extends DefaultController {
     @PutMapping("/manufacturers/{manufacturer}/models/{model}/{year}")
     public Vehicle update(@PathVariable(MANUFACTURER_NAME) @NotBlank String manufacturerName, 
                           @PathVariable(MODEL_NAME) @NotBlank String modelName,
-                          @PathVariable(PRODUCTION_YEAR) @NotBlank int productionYear,
+                          @PathVariable(PRODUCTION_YEAR) int productionYear,
+                          @RequestParam  String[] categoryNames,
                           @RequestBody @Valid Vehicle vehicle) {
+        Set<Category> categories = Arrays.stream(categoryNames)
+                                         .map(name -> Category.builder().name(name).build())
+                                         .collect(Collectors.toSet());
         vehicle.setManufacturer(Manufacturer.builder().name(manufacturerName).build());
         vehicle.setModel(Model.builder().name(modelName).build());
         vehicle.setProductionYear(productionYear);
+        vehicle.setCategories(categories);
         return vehicleService.update(vehicle);
     }
     

@@ -7,7 +7,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @Builder
@@ -22,6 +24,9 @@ public class Vehicle implements Serializable {
     private Integer productionYear;
     private Manufacturer manufacturer;
     private Model model;
+    
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<Category> categories;
     
     public boolean hasManufacturer() {
