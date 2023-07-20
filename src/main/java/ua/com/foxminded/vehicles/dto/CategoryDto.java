@@ -4,20 +4,24 @@ import java.util.Set;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
-@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
 public class CategoryDto {
     
+    @ToString.Include
+    @EqualsAndHashCode.Include
     private String name;
     
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private Set<VehicleDto> vehicles;
 }

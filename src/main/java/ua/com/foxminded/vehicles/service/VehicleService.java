@@ -24,10 +24,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.vehicles.dto.CategoryDto;
+import ua.com.foxminded.vehicles.dto.ManufacturerDto;
+import ua.com.foxminded.vehicles.dto.ModelDto;
 import ua.com.foxminded.vehicles.dto.VehicleDto;
 import ua.com.foxminded.vehicles.entity.Category;
+import ua.com.foxminded.vehicles.entity.Manufacturer;
+import ua.com.foxminded.vehicles.entity.Model;
 import ua.com.foxminded.vehicles.entity.Vehicle;
 import ua.com.foxminded.vehicles.exception.ErrorCode;
 import ua.com.foxminded.vehicles.exception.ServiceException;
@@ -38,17 +41,35 @@ import ua.com.foxminded.vehicles.repository.VehicleRepository;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class VehicleService {
     
     public static final Type VEHICLES_PAGE_TYPE = new TypeToken<Page<VehicleDto>>() {}.getType();
     
-    private final VehicleRepository vehicleRepository;
-    private final CategoryRepository categoryRepository;
-    private final ModelRepository modelRepository;
-    private final ManufacturerRepository manufacturerRepository;
-    private final ModelMapper modelMapper;
+    private VehicleRepository vehicleRepository;
+    private CategoryRepository categoryRepository;
+    private ModelRepository modelRepository;
+    private ManufacturerRepository manufacturerRepository;
+    private ModelMapper modelMapper;
     
+    public VehicleService(VehicleRepository vehicleRepository, 
+                          CategoryRepository categoryRepository,
+                          ModelRepository modelRepository, 
+                          ManufacturerRepository manufacturerRepository, 
+                          ModelMapper modelMapper) {
+        this.vehicleRepository = vehicleRepository;
+        this.categoryRepository = categoryRepository;
+        this.modelRepository = modelRepository;
+        this.manufacturerRepository = manufacturerRepository;
+        this.modelMapper = modelMapper;
+        
+        modelMapper.createTypeMap(Model.class, ModelDto.class)
+                   .addMappings(propertyMap -> propertyMap.skip(ModelDto::setVehicles));
+        modelMapper.createTypeMap(Manufacturer.class, ManufacturerDto.class)
+                   .addMappings(propertyMap -> propertyMap.skip(ManufacturerDto::setVehicles));
+        modelMapper.createTypeMap(Category.class, CategoryDto.class)
+                   .addMappings(propertyMap -> propertyMap.skip(CategoryDto::setVehicles));
+    }
+
     public Page<VehicleDto> getByCategory(String categoryName, Pageable pageable) {
         try {
             categoryRepository.findById(categoryName).orElseThrow(() -> new ServiceException(CATEGORY_ABSENCE));
@@ -89,8 +110,8 @@ public class VehicleService {
     }
     
     public Page<VehicleDto> getByManufacturerNameAndMinYear(String manufacturerName, 
-                                                         int minYear, 
-                                                         Pageable pageable) {
+                                                            int minYear, 
+                                                            Pageable pageable) {
         try {
             manufacturerRepository.findById(manufacturerName)
                                   .orElseThrow(() -> new ServiceException(ErrorCode.MANUFACTURER_ABSENCE));

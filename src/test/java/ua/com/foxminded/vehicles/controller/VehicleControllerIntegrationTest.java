@@ -108,27 +108,27 @@ class VehicleControllerIntegrationTest {
                     .param(CATEGORY_NAMES, categoryEntity.getName()))
                .andExpect(status().is2xxSuccessful())
                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-               .andExpect(jsonPath("$..productionYear[1]", is(PRODUCTION_YEAR)));
+               .andExpect(jsonPath("$.productionYear", is(PRODUCTION_YEAR)));
     }
     
     
     @Test
     void getAll_ShouldReturnVehiclesPage() throws Exception {
-        mockMvc.perform(get("/v1/vehicles/page").param("page", String.valueOf(PAGE_NUMBER_DEF))
-                                                .param("size", String.valueOf(PAGE_SIZE_DEF))
-                                                .param("sort", new StringBuilder().append(PRODUCTION_YEAR_FIELD)
-                                                                                  .append(",")
-                                                                                  .append(Sort.Direction.DESC)
-                                                                                  .toString()))
+        mockMvc.perform(get("/v1/vehicles").param("page", String.valueOf(PAGE_NUMBER_DEF))
+                                           .param("size", String.valueOf(PAGE_SIZE_DEF))
+                                           .param("sort", new StringBuilder().append(PRODUCTION_YEAR_FIELD)
+                                                                             .append(",")
+                                                                             .append(Sort.Direction.DESC)
+                                                                             .toString()))
                .andExpect(status().is2xxSuccessful())
-               .andExpect(jsonPath(".productionYear").value(vehicleEntity.getProductionYear()));
+               .andExpect(jsonPath("$..productionYear").value(vehicleEntity.getProductionYear()));
     }
     
     @Test
     void getById_ShouldReturnVehicle() throws Exception {
         mockMvc.perform(get("/v1/vehicles/{id}", vehicleEntity.getId()))
                .andExpect(status().is2xxSuccessful())
-               .andExpect(jsonPath(".productionYear").value(vehicleEntity.getProductionYear()));
+               .andExpect(jsonPath("$.productionYear").value(vehicleEntity.getProductionYear()));
     }
     
     @Test

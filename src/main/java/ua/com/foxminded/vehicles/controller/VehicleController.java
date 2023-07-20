@@ -46,12 +46,18 @@ public class VehicleController extends ExceptionHandlerController {
     private final VehicleService vehicleService;
     
     @GetMapping(value = "/vehicles", params = {MODEL_NAME})
-    public Page<VehicleDto> getByModel(@RequestParam(MODEL_NAME) String modelName, Pageable pageable) {
+    public Page<VehicleDto> getByModel(
+            @RequestParam(MODEL_NAME) String modelName, 
+            @SortDefault(sort = PRODUCTION_YEAR_FIELD, direction = Sort.Direction.DESC)
+            Pageable pageable) {
         return vehicleService.getByModel(modelName, pageable);
     }
     
     @GetMapping(value = "/vehicles", params = {CATEGORY_NAME})
-    public Page<VehicleDto> getByCategory(@RequestParam(CATEGORY_NAME) String categoryName, Pageable pageable) {
+    public Page<VehicleDto> getByCategory(
+            @RequestParam(CATEGORY_NAME) String categoryName, 
+            @SortDefault(sort = PRODUCTION_YEAR_FIELD, direction = Sort.Direction.DESC)   
+            Pageable pageable) {
         return vehicleService.getByCategory(categoryName, pageable);
     }
     

@@ -83,12 +83,12 @@ class ManufacturerControllerIntegrationTest {
     
     @Test
     void getAll_ShouldReturnManufacturersList() throws Exception {
-        mockMvc.perform(get("/v1/manufacturers/page").param("page", String.valueOf(PAGE_NUMBER_DEF))
-                                                     .param("size", String.valueOf(PAGE_SIZE_DEF))
-                                                     .param("sort", new StringBuilder().append(NAME_FIELD)
-                                                                                       .append(",")
-                                                                                       .append(Sort.Direction.DESC)
-                                                                                       .toString()))
+        mockMvc.perform(get("/v1/manufacturers").param("page", String.valueOf(PAGE_NUMBER_DEF))
+                                                .param("size", String.valueOf(PAGE_SIZE_DEF))
+                                                .param("sort", new StringBuilder().append(NAME_FIELD)
+                                                                                  .append(",")
+                                                                                  .append(Sort.Direction.DESC)
+                                                                                  .toString()))
                .andExpect(status().is2xxSuccessful())
                .andExpect(jsonPath(".name", MANUFACTURER_NAME).exists());
     }

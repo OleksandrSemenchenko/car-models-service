@@ -5,21 +5,25 @@ import java.util.Set;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
+@ToString(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ManufacturerDto {
 
     @NotBlank
+    @ToString.Include
+    @EqualsAndHashCode.Include
     private String name;
     
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private Set<VehicleDto> vehicles;
 }

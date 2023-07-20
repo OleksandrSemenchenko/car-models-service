@@ -12,6 +12,7 @@ public class ServiceConfig {
     ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        modelMapper.getConfiguration().setPreferNestedProperties(false);
         return modelMapper;
     }
 }

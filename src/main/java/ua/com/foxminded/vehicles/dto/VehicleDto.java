@@ -28,9 +28,11 @@ public class VehicleDto {
     @EqualsAndHashCode.Include
     @ToString.Include
     private Integer productionYear;
+    
     private ManufacturerDto manufacturer;
     
     private ModelDto model;
+    
     private Set<CategoryDto> categories;
     
     public boolean hasManufacturer() {

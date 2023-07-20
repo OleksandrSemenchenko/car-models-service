@@ -88,7 +88,7 @@ class CategoryControllerIntegrationTest {
     
     @Test
     void getAll_ShouldReturnModelsPage() throws Exception {
-        mockMvc.perform(get("/v1/categories/page")
+        mockMvc.perform(get("/v1/categories")
                     .param("page", String.valueOf(PAGE_NUMBER_DEF))
                     .param("size", String.valueOf(PAGE_SIZE_DEF))
                     .param("sort", new StringBuilder().append(CategoryController.NAME_FIELD)

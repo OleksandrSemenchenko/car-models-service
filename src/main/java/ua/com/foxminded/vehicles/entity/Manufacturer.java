@@ -9,26 +9,30 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity
 @Table(name = "manufacturers")
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
+@ToString(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Manufacturer implements Serializable {
     
     private static final long serialVersionUID = 1L;
 
     @Id
+    @EqualsAndHashCode.Include
+    @ToString.Include
     private String name;
     
     @OneToMany(mappedBy = "manufacturer")
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private Set<Vehicle> vhicles;
 }
