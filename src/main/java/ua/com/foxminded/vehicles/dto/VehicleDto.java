@@ -20,8 +20,6 @@ import lombok.ToString;
 @ToString(onlyExplicitlyIncluded = true)
 public class VehicleDto {
 
-    private static final long serialVersionUID = 1L;
-    
     @NotNull
     @EqualsAndHashCode.Include
     @ToString.Include
