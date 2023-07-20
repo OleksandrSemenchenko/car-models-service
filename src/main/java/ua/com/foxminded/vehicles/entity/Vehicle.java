@@ -15,50 +15,56 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity
 @Table(name = "vehicles")
-@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class VehicleEntity implements Serializable {
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
+public class Vehicle implements Serializable {
     
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @EqualsAndHashCode.Include
+    @ToString.Include
     private String id;
     
     @Column(name = "production_year")
+    @EqualsAndHashCode.Include
+    @ToString.Include
     private Integer productionYear;
     
     @ManyToOne
     @JoinColumn(name = "manufacturer_name")
-    private ManufacturerEntity manufacturer;
+    private Manufacturer manufacturer;
     
     @ManyToOne
     @JoinColumn(name = "model_name")
-    private ModelEntity model;
+    private Model model;
     
     @ManyToMany
     @JoinTable(name = "vehicle_category", 
                joinColumns = @JoinColumn(name = "vehicle_id", referencedColumnName = "id"),
                inverseJoinColumns = @JoinColumn(name = "category_name", referencedColumnName = "name"))
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private Set<CategoryEntity> categories;
+    private Set<Category> categories;
     
-    public void addCategory(CategoryEntity category) {
+    public void addCategory(Category category) {
         this.categories.add(category);
         category.getVehicles().add(this);
     }
     
-    public void removeCategory(CategoryEntity category) {
+    public void removeCategory(Category category) {
         this.categories.remove(category);
         category.getVehicles().remove(this);
     }

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.ServletRequestBindingException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +18,8 @@ import ua.com.foxminded.vehicles.exception.ServiceException;
 import ua.com.foxminded.vehicles.exception.ValidationError;
 
 @Slf4j
-public class DefaultController {
+@ControllerAdvice
+public class ExceptionHandlerController {
     
     public static final int PAGE_NUMBER_DEF = 0;
     public static final int PAGE_SIZE_DEF = 100;

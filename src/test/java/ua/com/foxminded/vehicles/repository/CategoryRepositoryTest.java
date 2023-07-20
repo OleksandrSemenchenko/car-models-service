@@ -12,8 +12,8 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.transaction.BeforeTransaction;
 
-import ua.com.foxminded.vehicles.entity.CategoryEntity;
-import ua.com.foxminded.vehicles.entitymother.CategoryEntityMother;
+import ua.com.foxminded.vehicles.entity.Category;
+import ua.com.foxminded.vehicles.entitymother.CategoryMother;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -23,11 +23,11 @@ class CategoryRepositoryTest {
     @Autowired
     private CategoryRepository categoryRepository;
     
-    private CategoryEntity category;
+    private Category category;
     
     @BeforeTransaction
     void init() {
-        category = CategoryEntityMother.complete().build();
+        category = CategoryMother.complete().build();
         categoryRepository.saveAndFlush(category);
     }
 
@@ -35,7 +35,7 @@ class CategoryRepositoryTest {
     void updateName_ShouldUpdateName() {
         String newName = "Sedan";
         categoryRepository.updateName(newName, category.getName());
-        Optional<CategoryEntity> categoryOpt = categoryRepository.findById(newName);
+        Optional<Category> categoryOpt = categoryRepository.findById(newName);
         
         assertTrue(categoryOpt.isPresent());
     }

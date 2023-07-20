@@ -8,10 +8,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ua.com.foxminded.vehicles.controller.DefaultController.PAGE_NUMBER_DEF;
-import static ua.com.foxminded.vehicles.controller.DefaultController.PAGE_SIZE_DEF;
+import static ua.com.foxminded.vehicles.controller.ExceptionHandlerController.PAGE_NUMBER_DEF;
+import static ua.com.foxminded.vehicles.controller.ExceptionHandlerController.PAGE_SIZE_DEF;
 import static ua.com.foxminded.vehicles.controller.ModelController.NAME_FIELD;
-import static ua.com.foxminded.vehicles.entitymother.ModelEntityMother.MODEL_NAME;
+import static ua.com.foxminded.vehicles.entitymother.ModelMother.MODEL_NAME;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -33,9 +33,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import ua.com.foxminded.vehicles.entity.ModelEntity;
-import ua.com.foxminded.vehicles.entitymother.ModelEntityMother;
-import ua.com.foxminded.vehicles.model.Model;
+import ua.com.foxminded.vehicles.entity.Model;
+import ua.com.foxminded.vehicles.entitymother.ModelMother;
+import ua.com.foxminded.vehicles.model.ModelDto;
 import ua.com.foxminded.vehicles.repository.ModelRepository;
 
 @SpringBootTest
@@ -51,21 +51,21 @@ class ModelControllerIntegrationTest {
     @Autowired
     private ModelRepository modelRepository;
     
-    private ModelEntity modelEntity;
-    private Model model;
+    private Model modelEntity;
+    private ModelDto model;
     private String modelJson;
     private ObjectMapper mapper;
     
     @BeforeTransaction
     void init() {
-        modelEntity = ModelEntityMother.complete().build();
+        modelEntity = ModelMother.complete().build();
         modelRepository.saveAndFlush(modelEntity);
         
     }
     
     @BeforeEach
     void setUp() throws JsonProcessingException {
-        model = Model.builder().name(modelEntity.getName())
+        model = ModelDto.builder().name(modelEntity.getName())
                                .vehicles(new HashSet<>()).build();
         mapper = new ObjectMapper();
         modelJson = mapper.writeValueAsString(model);
@@ -79,7 +79,7 @@ class ModelControllerIntegrationTest {
                                                               .content(modelJson))
                .andExpect(status().is2xxSuccessful());
         
-        Optional<ModelEntity> persistedModel = modelRepository.findById(model.getName());
+        Optional<Model> persistedModel = modelRepository.findById(model.getName());
         assertTrue(persistedModel.isPresent());
     }
     
@@ -109,7 +109,7 @@ class ModelControllerIntegrationTest {
                     .param("newName", newName))
                .andExpect(status().is2xxSuccessful());
         
-        Optional<ModelEntity> updatedModelOpt = modelRepository.findById(newName);
+        Optional<Model> updatedModelOpt = modelRepository.findById(newName);
         assertTrue(updatedModelOpt.isPresent());
     }
     
@@ -118,7 +118,7 @@ class ModelControllerIntegrationTest {
         mockMvc.perform(delete("/v1/manufacturers/models/{name}", modelEntity.getName()))
                .andExpect(status().is2xxSuccessful());
         
-        Optional<ModelEntity> modelEntityOpt = modelRepository.findById(modelEntity.getName());
+        Optional<Model> modelEntityOpt = modelRepository.findById(modelEntity.getName());
         assertTrue(modelEntityOpt.isEmpty());
     }
 }

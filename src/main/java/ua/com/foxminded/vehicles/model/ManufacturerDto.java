@@ -15,7 +15,7 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Manufacturer implements Serializable {
+public class ManufacturerDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
@@ -24,5 +24,5 @@ public class Manufacturer implements Serializable {
     
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<Vehicle> vehicles;
+    private Set<VehicleDto> vehicles;
 }

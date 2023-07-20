@@ -6,28 +6,35 @@ import java.util.Set;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
-@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Vehicle implements Serializable {
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
+public class VehicleDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
     @NotNull
+    @EqualsAndHashCode.Include
+    @ToString.Include
     private String id;
-    private Integer productionYear;
-    private Manufacturer manufacturer;
-    private Model model;
     
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private Set<Category> categories;
+    @EqualsAndHashCode.Include
+    @ToString.Include
+    private Integer productionYear;
+    private ManufacturerDto manufacturer;
+    
+    private ModelDto model;
+    private Set<CategoryDto> categories;
     
     public boolean hasManufacturer() {
         return manufacturer != null;

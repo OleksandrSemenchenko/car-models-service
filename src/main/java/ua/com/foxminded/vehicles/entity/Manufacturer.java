@@ -15,20 +15,20 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Entity
-@Table(name = "models")
+@Table(name = "manufacturers")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ModelEntity implements Serializable {
+public class Manufacturer implements Serializable {
     
     private static final long serialVersionUID = 1L;
 
     @Id
     private String name;
     
-    @OneToMany(mappedBy = "model")
+    @OneToMany(mappedBy = "manufacturer")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<VehicleEntity> vehicles;
+    private Set<Vehicle> vhicles;
 }

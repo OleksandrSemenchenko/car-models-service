@@ -1,7 +1,8 @@
 package ua.com.foxminded.vehicles.controller;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -11,8 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ua.com.foxminded.vehicles.controller.DefaultController.PAGE_NUMBER_DEF;
-import static ua.com.foxminded.vehicles.controller.DefaultController.PAGE_SIZE_DEF;
+import static ua.com.foxminded.vehicles.controller.ExceptionHandlerController.PAGE_NUMBER_DEF;
+import static ua.com.foxminded.vehicles.controller.ExceptionHandlerController.PAGE_SIZE_DEF;
 import static ua.com.foxminded.vehicles.controller.VehicleController.CATEGORY_NAMES;
 import static ua.com.foxminded.vehicles.controller.VehicleController.PRODUCTION_YEAR_FIELD;
 
@@ -34,16 +35,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import ua.com.foxminded.vehicles.entity.CategoryEntity;
-import ua.com.foxminded.vehicles.entity.ManufacturerEntity;
-import ua.com.foxminded.vehicles.entity.ModelEntity;
-import ua.com.foxminded.vehicles.entity.VehicleEntity;
-import ua.com.foxminded.vehicles.entitymother.CategoryEntityMother;
-import ua.com.foxminded.vehicles.entitymother.ManufacturerEntityMother;
-import ua.com.foxminded.vehicles.entitymother.ModelEntityMother;
-import ua.com.foxminded.vehicles.entitymother.VehicleEntityMother;
-import ua.com.foxminded.vehicles.model.Category;
-import ua.com.foxminded.vehicles.model.Vehicle;
+import ua.com.foxminded.vehicles.entity.Category;
+import ua.com.foxminded.vehicles.entity.Manufacturer;
+import ua.com.foxminded.vehicles.entity.Model;
+import ua.com.foxminded.vehicles.entity.Vehicle;
+import ua.com.foxminded.vehicles.entitymother.CategoryMother;
+import ua.com.foxminded.vehicles.entitymother.ManufacturerMother;
+import ua.com.foxminded.vehicles.entitymother.ModelMother;
+import ua.com.foxminded.vehicles.entitymother.VehicleMother;
+import ua.com.foxminded.vehicles.model.CategoryDto;
+import ua.com.foxminded.vehicles.model.VehicleDto;
 import ua.com.foxminded.vehicles.repository.CategoryRepository;
 import ua.com.foxminded.vehicles.repository.ManufacturerRepository;
 import ua.com.foxminded.vehicles.repository.ModelRepository;
@@ -73,28 +74,28 @@ class VehicleControllerIntegrationTest {
     @Autowired
     private CategoryRepository categoryRepository;
     
-    private VehicleEntity vehicleEntity;
-    private ModelEntity modelEntity;
-    private ManufacturerEntity manufacturerEntity;
-    private CategoryEntity categoryEntity;
-    private Category category;
+    private Vehicle vehicleEntity;
+    private Model modelEntity;
+    private Manufacturer manufacturerEntity;
+    private Category categoryEntity;
+    private CategoryDto category;
     private ObjectMapper mapper;
     
     @BeforeTransaction
     void init() {
         mapper = new ObjectMapper();
 
-        categoryEntity = CategoryEntityMother.complete().build();
+        categoryEntity = CategoryMother.complete().build();
         categoryRepository.saveAndFlush(categoryEntity);
-        category = Category.builder().name(categoryEntity.getName()).build();
+        category = CategoryDto.builder().name(categoryEntity.getName()).build();
         
-        modelEntity = ModelEntityMother.complete().build();
+        modelEntity = ModelMother.complete().build();
         modelRepository.saveAndFlush(modelEntity);
         
-        manufacturerEntity = ManufacturerEntityMother.complete().build();
+        manufacturerEntity = ManufacturerMother.complete().build();
         manufacturerRepository.saveAndFlush(manufacturerEntity);
 
-        vehicleEntity = VehicleEntityMother.complete().build();
+        vehicleEntity = VehicleMother.complete().build();
         vehicleRepository.saveAndFlush(vehicleEntity);
     }
     
@@ -106,7 +107,8 @@ class VehicleControllerIntegrationTest {
                              String.valueOf(PRODUCTION_YEAR))
                     .param(CATEGORY_NAMES, categoryEntity.getName()))
                .andExpect(status().is2xxSuccessful())
-               .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+               .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+               .andExpect(jsonPath("$..productionYear[1]", is(PRODUCTION_YEAR)));
     }
     
     
@@ -131,8 +133,8 @@ class VehicleControllerIntegrationTest {
     
     @Test
     void update_ShouldReturnUpdatedVehicle() throws Exception {
-        Category category = Category.builder().name(categoryEntity.getName()).build();
-        Vehicle vehicle = Vehicle.builder().id(vehicleEntity.getId()).categories(Set.of(category)).build();
+        CategoryDto category = CategoryDto.builder().name(categoryEntity.getName()).build();
+        VehicleDto vehicle = VehicleDto.builder().id(vehicleEntity.getId()).categories(Set.of(category)).build();
         String vehicleJson = mapper.writeValueAsString(vehicle);
         
         mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{modle}/{year}", 
@@ -145,7 +147,7 @@ class VehicleControllerIntegrationTest {
                .andDo(print())
                .andExpect(jsonPath("$['productionYear']", is(PRODUCTION_YEAR)));
         
-        VehicleEntity persistedVehicle = vehicleRepository.findById(vehicleEntity.getId()).orElseThrow();
+        Vehicle persistedVehicle = vehicleRepository.findById(vehicleEntity.getId()).orElseThrow();
         
         assertEquals(category.getName(), persistedVehicle.getCategories().iterator().next().getName());
         assertEquals(manufacturerEntity.getName(), persistedVehicle.getManufacturer().getName());
@@ -158,7 +160,7 @@ class VehicleControllerIntegrationTest {
         mockMvc.perform(delete("/v1/vehicles/{id}", vehicleEntity.getId()))
                .andExpect(status().is2xxSuccessful());
         
-        Optional<VehicleEntity> vehicleOpt = vehicleRepository.findById(vehicleEntity.getId());
+        Optional<Vehicle> vehicleOpt = vehicleRepository.findById(vehicleEntity.getId());
         
         assertTrue(vehicleOpt.isEmpty());
     }

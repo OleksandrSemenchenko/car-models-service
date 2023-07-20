@@ -10,10 +10,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ua.com.foxminded.vehicles.controller.CategoryController.NEW_NAME;
-import static ua.com.foxminded.vehicles.controller.DefaultController.PAGE_NUMBER_DEF;
-import static ua.com.foxminded.vehicles.controller.DefaultController.PAGE_SIZE_DEF;
-import static ua.com.foxminded.vehicles.entitymother.CategoryEntityMother.CATEGORY_NAME;
+import static ua.com.foxminded.vehicles.controller.CategoryController.NAME;
+import static ua.com.foxminded.vehicles.controller.ExceptionHandlerController.PAGE_NUMBER_DEF;
+import static ua.com.foxminded.vehicles.controller.ExceptionHandlerController.PAGE_SIZE_DEF;
+import static ua.com.foxminded.vehicles.entitymother.CategoryMother.CATEGORY_NAME;
 
 import java.util.Optional;
 
@@ -33,9 +33,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import ua.com.foxminded.vehicles.entity.CategoryEntity;
-import ua.com.foxminded.vehicles.entitymother.CategoryEntityMother;
-import ua.com.foxminded.vehicles.model.Category;
+import ua.com.foxminded.vehicles.entity.Category;
+import ua.com.foxminded.vehicles.entitymother.CategoryMother;
+import ua.com.foxminded.vehicles.model.CategoryDto;
 import ua.com.foxminded.vehicles.repository.CategoryRepository;
 
 @SpringBootTest
@@ -51,20 +51,20 @@ class CategoryControllerIntegrationTest {
     @Autowired
     private CategoryRepository categoryRepository;
     
-    private Category category;
-    private CategoryEntity categoryEntity;
+    private CategoryDto category;
+    private Category categoryEntity;
     private ObjectMapper mapper;
     
     @BeforeTransaction
     void init() {
-        categoryEntity = CategoryEntityMother.complete().build();
+        categoryEntity = CategoryMother.complete().build();
         categoryRepository.saveAndFlush(categoryEntity);
     }
     
     @BeforeEach
     void setUp() throws JsonProcessingException {
         mapper = new ObjectMapper();
-        category = Category.builder().name(CATEGORY_NAME).build();
+        category = CategoryDto.builder().name(CATEGORY_NAME).build();
     }
     
     @Test
@@ -72,7 +72,7 @@ class CategoryControllerIntegrationTest {
         mockMvc.perform(delete("/v1/categories/{name}", categoryEntity.getName()))
                .andExpect(status().is2xxSuccessful());
         
-        Optional<CategoryEntity> categoryOpt = categoryRepository.findById(categoryEntity.getName());
+        Optional<Category> categoryOpt = categoryRepository.findById(categoryEntity.getName());
         
         assertTrue(categoryOpt.isEmpty());
     }
@@ -81,7 +81,7 @@ class CategoryControllerIntegrationTest {
     void updateName() throws Exception {
         String newName = "Sedan";
         mockMvc.perform(put("/v1/categories/{name}", categoryEntity.getName())
-                    .param(NEW_NAME, newName))
+                    .param(NAME, newName))
                .andExpect(status().is2xxSuccessful())
                .andExpect(jsonPath("$['name']", is(newName)));
     }

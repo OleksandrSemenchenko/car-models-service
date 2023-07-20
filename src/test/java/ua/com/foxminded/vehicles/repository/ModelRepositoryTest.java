@@ -12,8 +12,8 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.transaction.BeforeTransaction;
 
-import ua.com.foxminded.vehicles.entity.ModelEntity;
-import ua.com.foxminded.vehicles.entitymother.ModelEntityMother;
+import ua.com.foxminded.vehicles.entity.Model;
+import ua.com.foxminded.vehicles.entitymother.ModelMother;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -23,11 +23,11 @@ class ModelRepositoryTest {
     @Autowired
     private ModelRepository modelRepostory;
     
-    private ModelEntity model;
+    private Model model;
     
     @BeforeTransaction
     void init() {
-        model = ModelEntityMother.complete().build();
+        model = ModelMother.complete().build();
         modelRepostory.saveAndFlush(model);
     }
     
@@ -35,7 +35,7 @@ class ModelRepositoryTest {
     void updateName_ShouldUpdateName() {
         String newName = "Q7";
         modelRepostory.updateName(newName, model.getName());
-        Optional<ModelEntity> updatedModelOpt = modelRepostory.findById(newName);
+        Optional<Model> updatedModelOpt = modelRepostory.findById(newName);
         
         assertTrue(updatedModelOpt.isPresent());
     }

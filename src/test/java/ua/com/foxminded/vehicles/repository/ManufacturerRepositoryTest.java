@@ -16,8 +16,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.PersistenceUnit;
-import ua.com.foxminded.vehicles.entity.ManufacturerEntity;
-import ua.com.foxminded.vehicles.entitymother.ManufacturerEntityMother;
+import ua.com.foxminded.vehicles.entity.Manufacturer;
+import ua.com.foxminded.vehicles.entitymother.ManufacturerMother;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -35,11 +35,11 @@ class ManufacturerRepositoryTest {
     @Autowired
     private ManufacturerRepository manufacturerRepository;
     
-    private ManufacturerEntity manufacturer;
+    private Manufacturer manufacturer;
     
     @BeforeEach
     void setUp() {
-        manufacturer = ManufacturerEntityMother.complete().build();
+        manufacturer = ManufacturerMother.complete().build();
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
         
@@ -51,7 +51,7 @@ class ManufacturerRepositoryTest {
     void updateName_ShouldUpdateName() {
         String newName = "Volkswagen";
         manufacturerRepository.updateName(newName, manufacturer.getName());
-        Optional<ManufacturerEntity> updatedManufacturerOpt = manufacturerRepository.findById(newName);
+        Optional<Manufacturer> updatedManufacturerOpt = manufacturerRepository.findById(newName);
         assertTrue(updatedManufacturerOpt.isPresent());
     }
 }

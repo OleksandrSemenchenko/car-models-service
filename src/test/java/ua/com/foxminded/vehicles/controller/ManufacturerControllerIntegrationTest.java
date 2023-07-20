@@ -9,11 +9,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ua.com.foxminded.vehicles.controller.DefaultController.PAGE_NUMBER_DEF;
-import static ua.com.foxminded.vehicles.controller.DefaultController.PAGE_SIZE_DEF;
+import static ua.com.foxminded.vehicles.controller.ExceptionHandlerController.PAGE_NUMBER_DEF;
+import static ua.com.foxminded.vehicles.controller.ExceptionHandlerController.PAGE_SIZE_DEF;
 import static ua.com.foxminded.vehicles.controller.ManufacturerController.NAME_FIELD;
 import static ua.com.foxminded.vehicles.controller.ManufacturerController.NEW_NAME;
-import static ua.com.foxminded.vehicles.entitymother.ManufacturerEntityMother.MANUFACTURER_NAME;
+import static ua.com.foxminded.vehicles.entitymother.ManufacturerMother.MANUFACTURER_NAME;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,9 +36,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import ua.com.foxminded.vehicles.entity.ManufacturerEntity;
-import ua.com.foxminded.vehicles.entitymother.ManufacturerEntityMother;
-import ua.com.foxminded.vehicles.model.Manufacturer;
+import ua.com.foxminded.vehicles.entity.Manufacturer;
+import ua.com.foxminded.vehicles.entitymother.ManufacturerMother;
+import ua.com.foxminded.vehicles.model.ManufacturerDto;
 import ua.com.foxminded.vehicles.repository.ManufacturerRepository;
 
 @SpringBootTest
@@ -54,22 +54,22 @@ class ManufacturerControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
     
-    private ManufacturerEntity manufacturerEntity;
+    private Manufacturer manufacturerEntity;
     private ObjectMapper mapper;
     private String jsonManufacturer;
-    private Manufacturer manufacturer;
-    List<Manufacturer> manufacturersList; 
+    private ManufacturerDto manufacturer;
+    List<ManufacturerDto> manufacturersList; 
     
     @BeforeTransaction
     void init() {
-        manufacturerEntity = ManufacturerEntityMother.complete().build();
+        manufacturerEntity = ManufacturerMother.complete().build();
         manufacturerRepository.saveAndFlush(manufacturerEntity);
     }
     
     @BeforeEach
     void setUp() throws JsonProcessingException {
         mapper = new ObjectMapper();
-        manufacturer = Manufacturer.builder().name(manufacturerEntity.getName()).build();
+        manufacturer = ManufacturerDto.builder().name(manufacturerEntity.getName()).build();
         manufacturersList = Arrays.asList(manufacturer);
         jsonManufacturer = mapper.writeValueAsString(manufacturer);
     }
@@ -95,7 +95,7 @@ class ManufacturerControllerIntegrationTest {
     
     @Test
     void save_ShouldPersistManufacturerData() throws Exception {
-        Manufacturer newManufacturer = Manufacturer.builder().name("Bradley").build();
+        ManufacturerDto newManufacturer = ManufacturerDto.builder().name("Bradley").build();
         String newJsonManufacturer = mapper.writeValueAsString(newManufacturer);
         mockMvc.perform(post("/v1/manufacturers/manufacturer")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -111,7 +111,7 @@ class ManufacturerControllerIntegrationTest {
                     .param(NEW_NAME, newName))
                .andExpect(status().is2xxSuccessful());
         
-        ManufacturerEntity updatedEntity = manufacturerRepository.findById(newName).orElseThrow();
+        Manufacturer updatedEntity = manufacturerRepository.findById(newName).orElseThrow();
         
         assertEquals(newName, updatedEntity.getName());
     }
@@ -121,7 +121,7 @@ class ManufacturerControllerIntegrationTest {
         mockMvc.perform(delete("/v1/manufacturers/{name}", manufacturerEntity.getName()))
                .andExpect(status().is2xxSuccessful());
         
-        Optional<ManufacturerEntity> manufacturerOptional = manufacturerRepository
+        Optional<Manufacturer> manufacturerOptional = manufacturerRepository
                 .findById(manufacturerEntity.getName());
         
         assertTrue(manufacturerOptional.isEmpty());

@@ -7,14 +7,13 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.0.8</version>
-        <relativePath /> <!-- lookup parent from repository -->
+        <relativePath />
     </parent>
     <groupId>ua.com.foxminded</groupId>
-    <artifactId>project</artifactId>
+    <artifactId>vehicles-data</artifactId>
     <version>1.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
-    <name>project</name>
-    <description>Demo project for Spring Boot</description>
+    <name>Vehicles data microservice</name>
     <properties>
         <java.version>17</java.version>
     </properties>

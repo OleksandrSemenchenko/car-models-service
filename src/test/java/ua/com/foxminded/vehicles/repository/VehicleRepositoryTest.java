@@ -16,14 +16,14 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.transaction.BeforeTransaction;
 
-import ua.com.foxminded.vehicles.entity.CategoryEntity;
-import ua.com.foxminded.vehicles.entity.ManufacturerEntity;
-import ua.com.foxminded.vehicles.entity.ModelEntity;
-import ua.com.foxminded.vehicles.entity.VehicleEntity;
-import ua.com.foxminded.vehicles.entitymother.CategoryEntityMother;
-import ua.com.foxminded.vehicles.entitymother.ManufacturerEntityMother;
-import ua.com.foxminded.vehicles.entitymother.ModelEntityMother;
-import ua.com.foxminded.vehicles.entitymother.VehicleEntityMother;
+import ua.com.foxminded.vehicles.entity.Category;
+import ua.com.foxminded.vehicles.entity.Manufacturer;
+import ua.com.foxminded.vehicles.entity.Model;
+import ua.com.foxminded.vehicles.entity.Vehicle;
+import ua.com.foxminded.vehicles.entitymother.CategoryMother;
+import ua.com.foxminded.vehicles.entitymother.ManufacturerMother;
+import ua.com.foxminded.vehicles.entitymother.ModelMother;
+import ua.com.foxminded.vehicles.entitymother.VehicleMother;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -44,32 +44,32 @@ class VehicleRepositoryTest {
     @Autowired
     private ModelRepository modelRepository;
     
-    private ModelEntity model;
-    private CategoryEntity category;
-    private ManufacturerEntity manufacturer;
-    private VehicleEntity firstVehicle;
-    private  VehicleEntity secondVehicle;
+    private Model model;
+    private Category category;
+    private Manufacturer manufacturer;
+    private Vehicle firstVehicle;
+    private  Vehicle secondVehicle;
     private Pageable pageable;
     
     @BeforeTransaction
     void init() {
-        manufacturer = ManufacturerEntityMother.complete().build();
+        manufacturer = ManufacturerMother.complete().build();
         manufacturerRepository.saveAndFlush(manufacturer);
         
-        category = CategoryEntityMother.complete().build();
+        category = CategoryMother.complete().build();
         categoryRepository.saveAndFlush(category);
         
-        model = ModelEntityMother.complete().build();
+        model = ModelMother.complete().build();
         modelRepository.saveAndFlush(model);
         
-        firstVehicle = VehicleEntityMother.complete()
+        firstVehicle = VehicleMother.complete()
                                           .manufacturer(manufacturer)
                                           .model(model).build();
         firstVehicle.setCategories(new HashSet<>());
-        category.setVehicles(new HashSet<VehicleEntity>());
+        category.setVehicles(new HashSet<Vehicle>());
         firstVehicle.addCategory(category);
         
-        secondVehicle = VehicleEntity.builder().productionYear(PRODUCTION_YEAR)
+        secondVehicle = Vehicle.builder().productionYear(PRODUCTION_YEAR)
                                               .manufacturer(manufacturer).build();
         vehicleRepository.saveAndFlush(firstVehicle);
         vehicleRepository.saveAndFlush(secondVehicle);
@@ -81,21 +81,21 @@ class VehicleRepositoryTest {
     }
     
     void findByModelName_ShouldReturnVehiclesPage() {
-        Page<VehicleEntity> vehicles = vehicleRepository.findByModelName(model.getName(), pageable);
+        Page<Vehicle> vehicles = vehicleRepository.findByModelName(model.getName(), pageable);
         
         assertEquals(model, vehicles.getContent().iterator().next().getModel());
     }
     
     @Test
     void findByCategoriesName_ShouldReturnVehiclesPage() {
-        Page<VehicleEntity> vehicles = vehicleRepository.findByCategoriesName(category.getName(), pageable);
+        Page<Vehicle> vehicles = vehicleRepository.findByCategoriesName(category.getName(), pageable);
         
         assertEquals(category, vehicles.getContent().iterator().next().getCategories().iterator().next());
     }
     
     @Test
     void findByManufacturerNameAndProductionYearLessThanEqual_ShouldReturnVehiclesPage() {
-        Page<VehicleEntity> vehiclesPage = vehicleRepository.findByManufacturerNameAndProductionYearLessThanEqual(
+        Page<Vehicle> vehiclesPage = vehicleRepository.findByManufacturerNameAndProductionYearLessThanEqual(
                 manufacturer.getName(), secondVehicle.getProductionYear(), pageable);
         
         assertEquals(secondVehicle, vehiclesPage.getContent().iterator().next());
@@ -103,7 +103,7 @@ class VehicleRepositoryTest {
     
     @Test
     void findByManufacturerNameAndProductionYearGreaterThan_ShouldReturnVehiclesPage() {
-        Page<VehicleEntity> vehiclesPage = vehicleRepository
+        Page<Vehicle> vehiclesPage = vehicleRepository
                 .findByManufacturerNameAndProductionYearGreaterThanEqual(
                         manufacturer.getName(), firstVehicle.getProductionYear(), pageable);
         
