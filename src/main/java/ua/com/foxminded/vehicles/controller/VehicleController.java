@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
-import ua.com.foxminded.vehicles.model.CategoryDto;
-import ua.com.foxminded.vehicles.model.ManufacturerDto;
-import ua.com.foxminded.vehicles.model.ModelDto;
-import ua.com.foxminded.vehicles.model.VehicleDto;
+import ua.com.foxminded.vehicles.dto.CategoryDto;
+import ua.com.foxminded.vehicles.dto.ManufacturerDto;
+import ua.com.foxminded.vehicles.dto.ModelDto;
+import ua.com.foxminded.vehicles.dto.VehicleDto;
 import ua.com.foxminded.vehicles.service.VehicleService;
 
 @RestController

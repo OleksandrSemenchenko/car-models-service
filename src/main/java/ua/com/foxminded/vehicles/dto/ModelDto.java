@@ -1,8 +1,8 @@
-package ua.com.foxminded.vehicles.model;
+package ua.com.foxminded.vehicles.dto;
 
-import java.io.Serializable;
 import java.util.Set;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,12 +12,11 @@ import lombok.ToString;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class CategoryDto implements Serializable {
-    
-    private static final long serialVersionUID = 1L;
-    
+@AllArgsConstructor
+public class ModelDto {
+
+    @NotBlank
     private String name;
     
     @ToString.Exclude

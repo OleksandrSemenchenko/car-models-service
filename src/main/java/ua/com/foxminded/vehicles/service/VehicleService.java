@@ -25,12 +25,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import ua.com.foxminded.vehicles.dto.CategoryDto;
+import ua.com.foxminded.vehicles.dto.VehicleDto;
 import ua.com.foxminded.vehicles.entity.Category;
 import ua.com.foxminded.vehicles.entity.Vehicle;
 import ua.com.foxminded.vehicles.exception.ErrorCode;
 import ua.com.foxminded.vehicles.exception.ServiceException;
-import ua.com.foxminded.vehicles.model.CategoryDto;
-import ua.com.foxminded.vehicles.model.VehicleDto;
 import ua.com.foxminded.vehicles.repository.CategoryRepository;
 import ua.com.foxminded.vehicles.repository.ManufacturerRepository;
 import ua.com.foxminded.vehicles.repository.ModelRepository;

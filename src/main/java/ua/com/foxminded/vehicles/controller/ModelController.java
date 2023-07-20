@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
-import ua.com.foxminded.vehicles.model.ModelDto;
+import ua.com.foxminded.vehicles.dto.ModelDto;
 import ua.com.foxminded.vehicles.service.ModelService;
 
 @Controller

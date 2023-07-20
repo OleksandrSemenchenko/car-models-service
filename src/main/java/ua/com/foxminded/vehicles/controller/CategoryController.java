@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import ua.com.foxminded.vehicles.model.CategoryDto;
+import ua.com.foxminded.vehicles.dto.CategoryDto;
 import ua.com.foxminded.vehicles.service.CategoryService;
 
 @RestController

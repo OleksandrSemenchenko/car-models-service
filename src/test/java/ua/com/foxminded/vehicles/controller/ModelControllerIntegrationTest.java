@@ -33,9 +33,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ua.com.foxminded.vehicles.dto.ModelDto;
 import ua.com.foxminded.vehicles.entity.Model;
 import ua.com.foxminded.vehicles.entitymother.ModelMother;
-import ua.com.foxminded.vehicles.model.ModelDto;
 import ua.com.foxminded.vehicles.repository.ModelRepository;
 
 @SpringBootTest

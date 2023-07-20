@@ -1,6 +1,5 @@
-package ua.com.foxminded.vehicles.model;
+package ua.com.foxminded.vehicles.dto;
 
-import java.io.Serializable;
 import java.util.Set;
 
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +18,7 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(onlyExplicitlyIncluded = true)
-public class VehicleDto implements Serializable {
+public class VehicleDto {
 
     private static final long serialVersionUID = 1L;
     

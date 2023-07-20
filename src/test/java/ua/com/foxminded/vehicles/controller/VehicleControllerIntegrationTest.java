@@ -35,6 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ua.com.foxminded.vehicles.dto.CategoryDto;
+import ua.com.foxminded.vehicles.dto.VehicleDto;
 import ua.com.foxminded.vehicles.entity.Category;
 import ua.com.foxminded.vehicles.entity.Manufacturer;
 import ua.com.foxminded.vehicles.entity.Model;
@@ -43,8 +45,6 @@ import ua.com.foxminded.vehicles.entitymother.CategoryMother;
 import ua.com.foxminded.vehicles.entitymother.ManufacturerMother;
 import ua.com.foxminded.vehicles.entitymother.ModelMother;
 import ua.com.foxminded.vehicles.entitymother.VehicleMother;
-import ua.com.foxminded.vehicles.model.CategoryDto;
-import ua.com.foxminded.vehicles.model.VehicleDto;
 import ua.com.foxminded.vehicles.repository.CategoryRepository;
 import ua.com.foxminded.vehicles.repository.ManufacturerRepository;
 import ua.com.foxminded.vehicles.repository.ModelRepository;

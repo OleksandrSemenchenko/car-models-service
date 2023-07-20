@@ -21,9 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import ua.com.foxminded.vehicles.dto.ModelDto;
 import ua.com.foxminded.vehicles.entity.Model;
 import ua.com.foxminded.vehicles.exception.ServiceException;
-import ua.com.foxminded.vehicles.model.ModelDto;
 import ua.com.foxminded.vehicles.repository.ModelRepository;
 
 @Service
