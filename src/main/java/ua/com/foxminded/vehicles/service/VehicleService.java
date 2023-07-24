@@ -2,38 +2,27 @@ package ua.com.foxminded.vehicles.service;
 
 import static ua.com.foxminded.vehicles.exception.ErrorCode.CATEGORY_ABSENCE;
 import static ua.com.foxminded.vehicles.exception.ErrorCode.MANUFACTURER_ABSENCE;
+import static ua.com.foxminded.vehicles.exception.ErrorCode.MODEL_ABSENCE;
 import static ua.com.foxminded.vehicles.exception.ErrorCode.VEHICLE_ABSENCE;
-import static ua.com.foxminded.vehicles.exception.ErrorCode.VEHICLE_CREATE_ERROR;
-import static ua.com.foxminded.vehicles.exception.ErrorCode.VEHICLE_DELETE_ERROR;
-import static ua.com.foxminded.vehicles.exception.ErrorCode.VEHICLE_FETCH_ERROR;
-import static ua.com.foxminded.vehicles.exception.ErrorCode.VEHICLE_UPDATE_ERROR;
 
-import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.modelmapper.ConfigurationException;
-import org.modelmapper.MappingException;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.vehicles.dto.CategoryDto;
-import ua.com.foxminded.vehicles.dto.ManufacturerDto;
-import ua.com.foxminded.vehicles.dto.ModelDto;
 import ua.com.foxminded.vehicles.dto.VehicleDto;
 import ua.com.foxminded.vehicles.entity.Category;
-import ua.com.foxminded.vehicles.entity.Manufacturer;
-import ua.com.foxminded.vehicles.entity.Model;
 import ua.com.foxminded.vehicles.entity.Vehicle;
 import ua.com.foxminded.vehicles.exception.ErrorCode;
 import ua.com.foxminded.vehicles.exception.ServiceException;
+import ua.com.foxminded.vehicles.mapper.VehicleMapper;
 import ua.com.foxminded.vehicles.repository.CategoryRepository;
 import ua.com.foxminded.vehicles.repository.ManufacturerRepository;
 import ua.com.foxminded.vehicles.repository.ModelRepository;
@@ -41,93 +30,49 @@ import ua.com.foxminded.vehicles.repository.VehicleRepository;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class VehicleService {
     
-    public static final Type VEHICLES_PAGE_TYPE = new TypeToken<Page<VehicleDto>>() {}.getType();
+    private final VehicleRepository vehicleRepository;
+    private final CategoryRepository categoryRepository;
+    private final ModelRepository modelRepository;
+    private final ManufacturerRepository manufacturerRepository;
+    private final VehicleMapper vehicleMapper;
     
-    private VehicleRepository vehicleRepository;
-    private CategoryRepository categoryRepository;
-    private ModelRepository modelRepository;
-    private ManufacturerRepository manufacturerRepository;
-    private ModelMapper modelMapper;
-    
-    public VehicleService(VehicleRepository vehicleRepository, 
-                          CategoryRepository categoryRepository,
-                          ModelRepository modelRepository, 
-                          ManufacturerRepository manufacturerRepository, 
-                          ModelMapper modelMapper) {
-        this.vehicleRepository = vehicleRepository;
-        this.categoryRepository = categoryRepository;
-        this.modelRepository = modelRepository;
-        this.manufacturerRepository = manufacturerRepository;
-        this.modelMapper = modelMapper;
-        
-        modelMapper.createTypeMap(Model.class, ModelDto.class)
-                   .addMappings(propertyMap -> propertyMap.skip(ModelDto::setVehicles));
-        modelMapper.createTypeMap(Manufacturer.class, ManufacturerDto.class)
-                   .addMappings(propertyMap -> propertyMap.skip(ManufacturerDto::setVehicles));
-        modelMapper.createTypeMap(Category.class, CategoryDto.class)
-                   .addMappings(propertyMap -> propertyMap.skip(CategoryDto::setVehicles));
-    }
-
     public Page<VehicleDto> getByCategory(String categoryName, Pageable pageable) {
-        try {
-            categoryRepository.findById(categoryName).orElseThrow(() -> new ServiceException(CATEGORY_ABSENCE));
-            Page<Vehicle> vehicles = vehicleRepository.findByCategoriesName(categoryName, pageable);
-            return modelMapper.map(vehicles, VEHICLES_PAGE_TYPE);
-        } catch (DataAccessException | IllegalArgumentException | 
-                 MappingException | ConfigurationException e) {
-            throw new ServiceException(VEHICLE_FETCH_ERROR, e);
-        }
+            categoryRepository.findById(categoryName)
+                              .orElseThrow(() -> new ServiceException(CATEGORY_ABSENCE));
+            return vehicleRepository.findByCategoriesName(categoryName, pageable)
+                                    .map(vehicleMapper::map);
     }
     
     public Page<VehicleDto> getByModel(String modelName, Pageable pageable) {
-        try {
             modelRepository.findById(modelName)
-                           .orElseThrow(() -> new ServiceException(ErrorCode.MODEL_ABSENCE));
-            Page<Vehicle> vehicles = vehicleRepository.findByModelName(modelName, pageable);
-            return modelMapper.map(vehicles, VEHICLES_PAGE_TYPE);
-        } catch (DataAccessException | IllegalArgumentException | 
-                 MappingException | ConfigurationException e) {
-            throw new ServiceException(VEHICLE_FETCH_ERROR);
-        }
+                           .orElseThrow(() -> new ServiceException(MODEL_ABSENCE));
+            return vehicleRepository.findByModelName(modelName, pageable)
+                                    .map(vehicleMapper::map);
     }
     
     public Page<VehicleDto> getByManufacturerNameAndMaxYear(String manufacturerName, 
-                                                         int maxYear, 
-                                                         Pageable pageable) {
-        try {
+                                                            int maxYear, 
+                                                            Pageable pageable) {
             manufacturerRepository.findById(manufacturerName)
                                   .orElseThrow(() -> new ServiceException(MANUFACTURER_ABSENCE));
-            Page<Vehicle> vehicles = vehicleRepository
-                    .findByManufacturerNameAndProductionYearLessThanEqual(
-                            manufacturerName, maxYear, pageable);
-            return modelMapper.map(vehicles, VEHICLES_PAGE_TYPE);
-        } catch (DataAccessException | IllegalArgumentException | 
-                 MappingException | ConfigurationException e) {
-            throw new ServiceException(VEHICLE_FETCH_ERROR, e);
-        }
+            return vehicleRepository.findByManufacturerNameAndProductionYearLessThanEqual(
+                            manufacturerName, maxYear, pageable).map(vehicleMapper::map);
     }
     
     public Page<VehicleDto> getByManufacturerNameAndMinYear(String manufacturerName, 
                                                             int minYear, 
                                                             Pageable pageable) {
-        try {
             manufacturerRepository.findById(manufacturerName)
-                                  .orElseThrow(() -> new ServiceException(ErrorCode.MANUFACTURER_ABSENCE));
-            Page<Vehicle> vehiclesPage = vehicleRepository
-                    .findByManufacturerNameAndProductionYearGreaterThanEqual(manufacturerName, minYear, pageable);
-            return modelMapper.map(vehiclesPage, VEHICLES_PAGE_TYPE);
-        } catch (DataAccessException | IllegalArgumentException | 
-                 MappingException | ConfigurationException e) {
-            throw new ServiceException(VEHICLE_FETCH_ERROR, e);
-        }
+                                  .orElseThrow(() -> new ServiceException(MANUFACTURER_ABSENCE));
+            return vehicleRepository.findByManufacturerNameAndProductionYearGreaterThanEqual(
+                    manufacturerName, minYear, pageable).map(vehicleMapper::map);
     }
     
     public VehicleDto save(VehicleDto vehicle) {
-        try {
-            var vehicleEntity = Vehicle.builder()
-                    .productionYear(vehicle.getProductionYear()).build();
+            var vehicleEntity = Vehicle.builder().productionYear(vehicle.getProductionYear()).build();
             
             if (vehicle.hasCategories()) {
                 vehicleEntity.setCategories(new HashSet<>());
@@ -152,27 +97,14 @@ public class VehicleService {
             }
             
             Vehicle persistedVehicle = vehicleRepository.saveAndFlush(vehicleEntity);
-            
-            VehicleDto createdVehicle = modelMapper.map(persistedVehicle, VehicleDto.class);
-            return createdVehicle;
-        } catch (DataAccessException | IllegalArgumentException | 
-                 MappingException | ConfigurationException e) {
-            throw new ServiceException(VEHICLE_CREATE_ERROR, e);
-        }
+            return vehicleMapper.map(persistedVehicle);
     }
     
     public Page<VehicleDto> getAll(Pageable pageable) {
-        try {
-            Page<Vehicle> entities = vehicleRepository.findAll(pageable);
-            return modelMapper.map(entities, VEHICLES_PAGE_TYPE);
-        } catch (DataAccessException | IllegalArgumentException | 
-                 MappingException | ConfigurationException e) {
-            throw new ServiceException(VEHICLE_FETCH_ERROR, e);
-        }
+            return vehicleRepository.findAll(pageable).map(vehicleMapper::map);
     }
     
     public VehicleDto update(VehicleDto vehicle) {
-        try {
             var vehicleEntity = vehicleRepository.findById(vehicle.getId())
                     .orElseThrow(() -> new ServiceException(VEHICLE_ABSENCE));
             
@@ -182,30 +114,18 @@ public class VehicleService {
             updateCategories(vehicle, vehicleEntity);
            
             Vehicle updatedVehicle = vehicleRepository.saveAndFlush(vehicleEntity);
-            return modelMapper.map(updatedVehicle, VehicleDto.class);
-        } catch (DataAccessException | IllegalArgumentException | 
-                 MappingException | ConfigurationException e) {
-            throw new ServiceException(VEHICLE_UPDATE_ERROR, e);
-        }
+            return vehicleMapper.map(updatedVehicle);
     }
     
     public void deleteById(String id) {
-        try {
             vehicleRepository.findById(id).orElseThrow(() -> new ServiceException(VEHICLE_ABSENCE));
             vehicleRepository.deleteById(id);
-        } catch (DataAccessException | IllegalArgumentException e) {
-            throw new ServiceException(VEHICLE_DELETE_ERROR, e);
-        }
     }
     
     public VehicleDto getById(String id) {
-        try {
             Vehicle entity = vehicleRepository.findById(id)
                     .orElseThrow(() -> new ServiceException(VEHICLE_ABSENCE));
-            return modelMapper.map(entity, VehicleDto.class);
-        } catch (DataAccessException e) {
-            throw new ServiceException(VEHICLE_FETCH_ERROR, e);
-        }
+            return vehicleMapper.map(entity);
     }
     
     private void updateCategories(VehicleDto vehicle, Vehicle vehicleEntity) {

@@ -20,9 +20,9 @@ import lombok.ToString;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ModelDto {
 
-    @NotBlank
     @ToString.Include
     @EqualsAndHashCode.Include
+    @NotBlank
     private String name;
     
     private Set<VehicleDto> vehicles;

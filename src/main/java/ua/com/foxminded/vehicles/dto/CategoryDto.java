@@ -2,6 +2,7 @@ package ua.com.foxminded.vehicles.dto;
 
 import java.util.Set;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -21,6 +22,7 @@ public class CategoryDto {
     
     @ToString.Include
     @EqualsAndHashCode.Include
+    @NotBlank
     private String name;
     
     private Set<VehicleDto> vehicles;

@@ -21,9 +21,6 @@ import ua.com.foxminded.vehicles.exception.ValidationError;
 @ControllerAdvice
 public class ExceptionHandlerController {
     
-    public static final int PAGE_NUMBER_DEF = 0;
-    public static final int PAGE_SIZE_DEF = 100;
-    
     @ExceptionHandler(ServletRequestBindingException.class)
     public ResponseEntity<ErrorResponse> handleBindingException(ServletRequestBindingException e, 
                                                                 HttpServletRequest request) {

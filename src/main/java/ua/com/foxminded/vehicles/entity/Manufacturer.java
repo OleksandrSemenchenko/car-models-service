@@ -34,5 +34,5 @@ public class Manufacturer implements Serializable {
     private String name;
     
     @OneToMany(mappedBy = "manufacturer")
-    private Set<Vehicle> vhicles;
+    private Set<Vehicle> vehicles;
 }

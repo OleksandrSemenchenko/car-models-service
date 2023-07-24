@@ -47,12 +47,10 @@ public class Vehicle implements Serializable {
     
     @ManyToOne
     @JoinColumn(name = "manufacturer_name")
-    @EqualsAndHashCode.Include
     private Manufacturer manufacturer;
     
     @ManyToOne
     @JoinColumn(name = "model_name")
-    @EqualsAndHashCode.Include
     private Model model;
     
     @ManyToMany

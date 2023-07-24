@@ -20,17 +20,17 @@ import ua.com.foxminded.vehicles.entity.Category;
 import ua.com.foxminded.vehicles.entity.Manufacturer;
 import ua.com.foxminded.vehicles.entity.Model;
 import ua.com.foxminded.vehicles.entity.Vehicle;
-import ua.com.foxminded.vehicles.entitymother.CategoryMother;
-import ua.com.foxminded.vehicles.entitymother.ManufacturerMother;
-import ua.com.foxminded.vehicles.entitymother.ModelMother;
-import ua.com.foxminded.vehicles.entitymother.VehicleMother;
 
 @DataJpaTest
 @ActiveProfiles("test")
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class VehicleRepositoryTest {
     
-    public static final int PRODUCTION_YEAR = 2022;
+    public static final String MANUFACTURER_NAME = "Audi";
+    public static final String CATEGORY_NAME = "SUV";
+    public static final String MODEL_NAME = "Q8";
+    public static final int SECOND_VEHICLE_PRODUCTION_YEAR = 2022;
+    public static final int FIRST_VEHICLE_PRODUCTION_YEAR = 2023;
 
     @Autowired
     private VehicleRepository vehicleRepository;
@@ -53,25 +53,27 @@ class VehicleRepositoryTest {
     
     @BeforeTransaction
     void init() {
-        manufacturer = ManufacturerMother.complete().build();
+        manufacturer = Manufacturer.builder().name(MANUFACTURER_NAME).build();
         manufacturerRepository.saveAndFlush(manufacturer);
         
-        category = CategoryMother.complete().build();
+        category = Category.builder().name(CATEGORY_NAME).build();
         categoryRepository.saveAndFlush(category);
+        category.setVehicles(new HashSet<Vehicle>());
         
-        model = ModelMother.complete().build();
+        model = Model.builder().name(MODEL_NAME).build();
         modelRepository.saveAndFlush(model);
         
-        firstVehicle = VehicleMother.complete()
-                                          .manufacturer(manufacturer)
-                                          .model(model).build();
-        firstVehicle.setCategories(new HashSet<>());
-        category.setVehicles(new HashSet<Vehicle>());
+        firstVehicle = Vehicle.builder().productionYear(FIRST_VEHICLE_PRODUCTION_YEAR)
+                                        .manufacturer(manufacturer)
+                                        .model(model)
+                                        .categories(new HashSet<>())
+                                        .build();
         firstVehicle.addCategory(category);
-        
-        secondVehicle = Vehicle.builder().productionYear(PRODUCTION_YEAR)
-                                              .manufacturer(manufacturer).build();
         vehicleRepository.saveAndFlush(firstVehicle);
+        
+        secondVehicle = Vehicle.builder().productionYear(SECOND_VEHICLE_PRODUCTION_YEAR)
+                                         .manufacturer(manufacturer)
+                                         .build();
         vehicleRepository.saveAndFlush(secondVehicle);
     }
     
