@@ -3,6 +3,11 @@ spring:
   jpa:
     show_sql: false
     generate-ddl: false
+  data:
+    web:
+      pageable:
+        default-page-size: 100
+        max-page-size: 200
 ---
 spring:
   config:
@@ -16,8 +21,3 @@ spring:
     password: 1234
   flyway:
     enabled: true
-  data:
-    web:
-      pageable:
-        default-page-size: 100
-         

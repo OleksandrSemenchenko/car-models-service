@@ -1,9 +1,10 @@
 package ua.com.foxminded.vehicles.service;
 
-import static ua.com.foxminded.vehicles.exception.ErrorCode.CATEGORY_ABSENCE;
-import static ua.com.foxminded.vehicles.exception.ErrorCode.MANUFACTURER_ABSENCE;
-import static ua.com.foxminded.vehicles.exception.ErrorCode.MODEL_ABSENCE;
-import static ua.com.foxminded.vehicles.exception.ErrorCode.VEHICLE_ABSENCE;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static ua.com.foxminded.vehicles.service.CategoryService.CATEGORY_IS_NOT_PRESENT;
+import static ua.com.foxminded.vehicles.service.ManufacturerService.MANUFACTURER_IS_NOT_PRESENT;
+import static ua.com.foxminded.vehicles.service.ModelService.MODEL_IS_NOT_PRESENT;
 
 import java.util.HashSet;
 import java.util.List;
@@ -20,7 +21,6 @@ import ua.com.foxminded.vehicles.dto.CategoryDto;
 import ua.com.foxminded.vehicles.dto.VehicleDto;
 import ua.com.foxminded.vehicles.entity.Category;
 import ua.com.foxminded.vehicles.entity.Vehicle;
-import ua.com.foxminded.vehicles.exception.ErrorCode;
 import ua.com.foxminded.vehicles.exception.ServiceException;
 import ua.com.foxminded.vehicles.mapper.VehicleMapper;
 import ua.com.foxminded.vehicles.repository.CategoryRepository;
@@ -33,6 +33,9 @@ import ua.com.foxminded.vehicles.repository.VehicleRepository;
 @RequiredArgsConstructor
 public class VehicleService {
     
+    public static final String VEHICLE_IS_NOT_PRESENT = "The vehicle with id=\"%s\" is not present";
+    public static final String VEHICLE_IS_PRESENT = "The vehicle with id=\"%s\" has already present";
+    
     private final VehicleRepository vehicleRepository;
     private final CategoryRepository categoryRepository;
     private final ModelRepository modelRepository;
@@ -40,15 +43,17 @@ public class VehicleService {
     private final VehicleMapper vehicleMapper;
     
     public Page<VehicleDto> getByCategory(String categoryName, Pageable pageable) {
-            categoryRepository.findById(categoryName)
-                              .orElseThrow(() -> new ServiceException(CATEGORY_ABSENCE));
+            categoryRepository.findById(categoryName).orElseThrow(
+                    () -> new ServiceException(String.format(CATEGORY_IS_NOT_PRESENT, categoryName), 
+                                               BAD_REQUEST));
             return vehicleRepository.findByCategoriesName(categoryName, pageable)
                                     .map(vehicleMapper::map);
     }
     
     public Page<VehicleDto> getByModel(String modelName, Pageable pageable) {
-            modelRepository.findById(modelName)
-                           .orElseThrow(() -> new ServiceException(MODEL_ABSENCE));
+            modelRepository.findById(modelName).orElseThrow(
+                    () -> new ServiceException(String.format(MODEL_IS_NOT_PRESENT, modelName), 
+                                               BAD_REQUEST));
             return vehicleRepository.findByModelName(modelName, pageable)
                                     .map(vehicleMapper::map);
     }
@@ -56,8 +61,9 @@ public class VehicleService {
     public Page<VehicleDto> getByManufacturerNameAndMaxYear(String manufacturerName, 
                                                             int maxYear, 
                                                             Pageable pageable) {
-            manufacturerRepository.findById(manufacturerName)
-                                  .orElseThrow(() -> new ServiceException(MANUFACTURER_ABSENCE));
+            manufacturerRepository.findById(manufacturerName).orElseThrow(
+                    () -> new ServiceException(String.format(MANUFACTURER_IS_NOT_PRESENT, manufacturerName), 
+                                               BAD_REQUEST));
             return vehicleRepository.findByManufacturerNameAndProductionYearLessThanEqual(
                             manufacturerName, maxYear, pageable).map(vehicleMapper::map);
     }
@@ -65,8 +71,9 @@ public class VehicleService {
     public Page<VehicleDto> getByManufacturerNameAndMinYear(String manufacturerName, 
                                                             int minYear, 
                                                             Pageable pageable) {
-            manufacturerRepository.findById(manufacturerName)
-                                  .orElseThrow(() -> new ServiceException(MANUFACTURER_ABSENCE));
+            manufacturerRepository.findById(manufacturerName).orElseThrow(
+                    () -> new ServiceException(String.format(MANUFACTURER_IS_NOT_PRESENT, manufacturerName), 
+                                               BAD_REQUEST));
             return vehicleRepository.findByManufacturerNameAndProductionYearGreaterThanEqual(
                     manufacturerName, minYear, pageable).map(vehicleMapper::map);
     }
@@ -78,21 +85,28 @@ public class VehicleService {
                 vehicleEntity.setCategories(new HashSet<>());
                 
                 for (CategoryDto category : vehicle.getCategories()) {
-                    var categoryEntity = categoryRepository.findById(category.getName())
-                            .orElseThrow(() -> new ServiceException(CATEGORY_ABSENCE));
+                    var categoryName = category.getName();
+                    var categoryEntity = categoryRepository.findById(categoryName).orElseThrow(
+                            () -> new ServiceException(String.format(CATEGORY_IS_NOT_PRESENT, categoryName), 
+                                                       BAD_REQUEST));
                     vehicleEntity.addCategory(categoryEntity);
                 }
             }
             
             if (vehicle.hasManufacturer()) {
-                var manufacturerEntity = manufacturerRepository.findById(vehicle.getManufacturer().getName())
-                        .orElseThrow(() -> new ServiceException(MANUFACTURER_ABSENCE));
+                var manufacturerName = vehicle.getManufacturer().getName();
+                var manufacturerEntity = manufacturerRepository.findById(manufacturerName)
+                        .orElseThrow(() -> new ServiceException(String.format(MANUFACTURER_IS_NOT_PRESENT, 
+                                                                              manufacturerName), 
+                                                                BAD_REQUEST));
                 vehicleEntity.setManufacturer(manufacturerEntity);
             } 
             
             if (vehicle.hasModel()) {
-                var modelEntity = modelRepository.findById(vehicle.getModel().getName())
-                        .orElseThrow(() -> new ServiceException(ErrorCode.MODEL_ABSENCE));
+                var modelName = vehicle.getModel().getName();
+                var modelEntity = modelRepository.findById(modelName).orElseThrow(
+                        () -> new ServiceException(String.format(MODEL_IS_NOT_PRESENT, modelName), 
+                                                                 BAD_REQUEST));
                 vehicleEntity.setModel(modelEntity);
             }
             
@@ -105,9 +119,9 @@ public class VehicleService {
     }
     
     public VehicleDto update(VehicleDto vehicle) {
-            var vehicleEntity = vehicleRepository.findById(vehicle.getId())
-                    .orElseThrow(() -> new ServiceException(VEHICLE_ABSENCE));
-            
+            var vehicleEntity = vehicleRepository.findById(vehicle.getId()).orElseThrow(
+                    () -> new ServiceException(String.format(VEHICLE_IS_NOT_PRESENT, vehicle.getId()), 
+                                                             BAD_REQUEST));
             vehicleEntity.setProductionYear(vehicle.getProductionYear());
             updateManufacturer(vehicle, vehicleEntity);
             updateModel(vehicle, vehicleEntity);
@@ -118,13 +132,14 @@ public class VehicleService {
     }
     
     public void deleteById(String id) {
-            vehicleRepository.findById(id).orElseThrow(() -> new ServiceException(VEHICLE_ABSENCE));
+            vehicleRepository.findById(id).orElseThrow(
+                    () -> new ServiceException(String.format(VEHICLE_IS_NOT_PRESENT, id), NO_CONTENT));
             vehicleRepository.deleteById(id);
     }
     
     public VehicleDto getById(String id) {
-            Vehicle entity = vehicleRepository.findById(id)
-                    .orElseThrow(() -> new ServiceException(VEHICLE_ABSENCE));
+            Vehicle entity = vehicleRepository.findById(id).orElseThrow(
+                    () -> new ServiceException(String.format(VEHICLE_IS_NOT_PRESENT, id), BAD_REQUEST));
             return vehicleMapper.map(entity);
     }
     
@@ -155,16 +170,21 @@ public class VehicleService {
     
     private void addCategories(Set<CategoryDto> categories, Vehicle vehicleEntity) {
         for (CategoryDto category : categories) {
-            var categoryEntity = categoryRepository.findById(category.getName())
-                    .orElseThrow(() -> new ServiceException(CATEGORY_ABSENCE));
+            var categoryName = category.getName();
+            var categoryEntity = categoryRepository.findById(categoryName)
+                    .orElseThrow(() -> new ServiceException(String.format(CATEGORY_IS_NOT_PRESENT, 
+                                                                          categoryName), 
+                                                            BAD_REQUEST));
             vehicleEntity.addCategory(categoryEntity);
         }
     }
     
     private void updateModel(VehicleDto vehicle, Vehicle vehicleEntity) {
         if (vehicle.hasModel()) {
-            var modelEntity = modelRepository.findById(vehicle.getModel().getName())
-                    .orElseThrow(() -> new ServiceException(ErrorCode.MODEL_ABSENCE));
+            var modelName = vehicle.getModel().getName();
+            var modelEntity = modelRepository.findById(modelName)
+                    .orElseThrow(() -> new ServiceException(String.format(MODEL_IS_NOT_PRESENT, modelName), 
+                                                            BAD_REQUEST));
             vehicleEntity.setModel(modelEntity);
         } else {
             vehicleEntity.setModel(null);
@@ -173,8 +193,11 @@ public class VehicleService {
     
     private void updateManufacturer(VehicleDto vehicle, Vehicle vehicleEntity) {
         if (vehicle.hasManufacturer()) {
-            var manufacturerEntity = manufacturerRepository.findById(vehicle.getManufacturer().getName())
-                    .orElseThrow(() -> new ServiceException(MANUFACTURER_ABSENCE));
+            var manufacturerName = vehicle.getManufacturer().getName();
+            var manufacturerEntity = manufacturerRepository.findById(manufacturerName)
+                    .orElseThrow(() -> new ServiceException(String.format(MANUFACTURER_IS_NOT_PRESENT, 
+                                                                          manufacturerName), 
+                                                            BAD_REQUEST));
             vehicleEntity.setManufacturer(manufacturerEntity);
         } else {
             vehicleEntity.setManufacturer(null);

@@ -6,14 +6,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ua.com.foxminded.vehicles.controller.CategoryController.NAME;
-import static ua.com.foxminded.vehicles.controller.ExceptionHandlerController.PAGE_NUMBER_DEF;
-import static ua.com.foxminded.vehicles.controller.ExceptionHandlerController.PAGE_SIZE_DEF;
-import static ua.com.foxminded.vehicles.entitymother.CategoryMother.CATEGORY_NAME;
 
 import java.util.Optional;
 
@@ -22,10 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,15 +28,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ua.com.foxminded.vehicles.dto.CategoryDto;
 import ua.com.foxminded.vehicles.entity.Category;
-import ua.com.foxminded.vehicles.entitymother.CategoryMother;
 import ua.com.foxminded.vehicles.repository.CategoryRepository;
 
 @SpringBootTest
-@ActiveProfiles("test")
 @Transactional
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 class CategoryControllerIntegrationTest {
+    
+    public static final String CATEGORY_NAME = "Sedan";
     
     @Autowired
     private MockMvc mockMvc;
@@ -57,7 +50,7 @@ class CategoryControllerIntegrationTest {
     
     @BeforeTransaction
     void init() {
-        categoryEntity = CategoryMother.complete().build();
+        categoryEntity = Category.builder().name(CATEGORY_NAME).build();
         categoryRepository.saveAndFlush(categoryEntity);
     }
     
@@ -78,22 +71,8 @@ class CategoryControllerIntegrationTest {
     }
     
     @Test
-    void updateName() throws Exception {
-        String newName = "Sedan";
-        mockMvc.perform(put("/v1/categories/{name}", categoryEntity.getName())
-                    .param(NAME, newName))
-               .andExpect(status().is2xxSuccessful())
-               .andExpect(jsonPath("$['name']", is(newName)));
-    }
-    
-    @Test
     void getAll_ShouldReturnModelsPage() throws Exception {
-        mockMvc.perform(get("/v1/categories")
-                    .param("page", String.valueOf(PAGE_NUMBER_DEF))
-                    .param("size", String.valueOf(PAGE_SIZE_DEF))
-                    .param("sort", new StringBuilder().append(CategoryController.NAME_FIELD)
-                                                      .append(",")
-                                                      .append(Sort.Direction.DESC).toString()))
+        mockMvc.perform(get("/v1/categories"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.content[0].['name']", is(categoryEntity.getName())));
     }

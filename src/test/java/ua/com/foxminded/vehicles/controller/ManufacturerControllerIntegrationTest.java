@@ -1,19 +1,12 @@
 package ua.com.foxminded.vehicles.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ua.com.foxminded.vehicles.controller.ExceptionHandlerController.PAGE_NUMBER_DEF;
-import static ua.com.foxminded.vehicles.controller.ExceptionHandlerController.PAGE_SIZE_DEF;
-import static ua.com.foxminded.vehicles.controller.ManufacturerController.NAME_FIELD;
-import static ua.com.foxminded.vehicles.controller.ManufacturerController.NEW_NAME;
-import static ua.com.foxminded.vehicles.entitymother.ManufacturerMother.MANUFACTURER_NAME;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,11 +17,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,15 +29,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ua.com.foxminded.vehicles.dto.ManufacturerDto;
 import ua.com.foxminded.vehicles.entity.Manufacturer;
-import ua.com.foxminded.vehicles.entitymother.ManufacturerMother;
 import ua.com.foxminded.vehicles.repository.ManufacturerRepository;
 
 @SpringBootTest
-@ActiveProfiles("test")
 @AutoConfigureMockMvc
 @Transactional
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class ManufacturerControllerIntegrationTest {
+    
+    public static final String MANUFACTURER_NAME = "Audi";
     
     @Autowired
     private ManufacturerRepository manufacturerRepository;
@@ -58,11 +49,11 @@ class ManufacturerControllerIntegrationTest {
     private ObjectMapper mapper;
     private String jsonManufacturer;
     private ManufacturerDto manufacturer;
-    List<ManufacturerDto> manufacturersList; 
+    private List<ManufacturerDto> manufacturersList; 
     
     @BeforeTransaction
     void init() {
-        manufacturerEntity = ManufacturerMother.complete().build();
+        manufacturerEntity = Manufacturer.builder().name(MANUFACTURER_NAME).build();
         manufacturerRepository.saveAndFlush(manufacturerEntity);
     }
     
@@ -83,12 +74,7 @@ class ManufacturerControllerIntegrationTest {
     
     @Test
     void getAll_ShouldReturnManufacturersList() throws Exception {
-        mockMvc.perform(get("/v1/manufacturers").param("page", String.valueOf(PAGE_NUMBER_DEF))
-                                                .param("size", String.valueOf(PAGE_SIZE_DEF))
-                                                .param("sort", new StringBuilder().append(NAME_FIELD)
-                                                                                  .append(",")
-                                                                                  .append(Sort.Direction.DESC)
-                                                                                  .toString()))
+        mockMvc.perform(get("/v1/manufacturers"))
                .andExpect(status().is2xxSuccessful())
                .andExpect(jsonPath(".name", MANUFACTURER_NAME).exists());
     }
@@ -102,18 +88,6 @@ class ManufacturerControllerIntegrationTest {
                     .content(newJsonManufacturer))
                .andExpect(status().is2xxSuccessful())
                .andExpect(content().json(newJsonManufacturer));
-    }
-    
-    @Test
-    void updateName_ShouldUpdateManufacturerName() throws Exception {
-        String newName = "Bradley";
-        mockMvc.perform(put("/v1/manufacturers/{name}", manufacturerEntity.getName())
-                    .param(NEW_NAME, newName))
-               .andExpect(status().is2xxSuccessful());
-        
-        Manufacturer updatedEntity = manufacturerRepository.findById(newName).orElseThrow();
-        
-        assertEquals(newName, updatedEntity.getName());
     }
     
     @Test

@@ -13,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.transaction.BeforeTransaction;
 
 import ua.com.foxminded.vehicles.entity.Category;
@@ -22,7 +21,6 @@ import ua.com.foxminded.vehicles.entity.Model;
 import ua.com.foxminded.vehicles.entity.Vehicle;
 
 @DataJpaTest
-@ActiveProfiles("test")
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class VehicleRepositoryTest {
     

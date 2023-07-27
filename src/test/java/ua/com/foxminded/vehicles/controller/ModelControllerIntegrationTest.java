@@ -8,10 +8,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ua.com.foxminded.vehicles.controller.ExceptionHandlerController.PAGE_NUMBER_DEF;
-import static ua.com.foxminded.vehicles.controller.ExceptionHandlerController.PAGE_SIZE_DEF;
-import static ua.com.foxminded.vehicles.controller.ModelController.NAME_FIELD;
-import static ua.com.foxminded.vehicles.entitymother.ModelMother.MODEL_NAME;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -21,11 +17,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,15 +29,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ua.com.foxminded.vehicles.dto.ModelDto;
 import ua.com.foxminded.vehicles.entity.Model;
-import ua.com.foxminded.vehicles.entitymother.ModelMother;
 import ua.com.foxminded.vehicles.repository.ModelRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
 @Transactional
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class ModelControllerIntegrationTest {
+    
+    public static final String MODEL_NAME = "A7";
 
     @Autowired
     private MockMvc mockMvc;
@@ -58,7 +52,7 @@ class ModelControllerIntegrationTest {
     
     @BeforeTransaction
     void init() {
-        modelEntity = ModelMother.complete().build();
+        modelEntity = Model.builder().name(MODEL_NAME).build();
         modelRepository.saveAndFlush(modelEntity);
         
     }
@@ -92,12 +86,7 @@ class ModelControllerIntegrationTest {
     
     @Test
     void getAll_ShouldReturnModelsList() throws Exception {
-        mockMvc.perform(get("/v1/manufacturers/models/page")
-                    .param("page", String.valueOf(PAGE_NUMBER_DEF))
-                    .param("size", String.valueOf(PAGE_SIZE_DEF))
-                    .param("sort", new StringBuilder().append(NAME_FIELD)
-                                                      .append(",")
-                                                      .append(Sort.Direction.DESC).toString()))
+        mockMvc.perform(get("/v1/manufacturers/models/page"))
                .andExpect(status().is2xxSuccessful())
                .andExpect(jsonPath(".name").value(MODEL_NAME));
     }

@@ -46,7 +46,7 @@ public class CategoryController {
     }
     
     @GetMapping
-    public Page<CategoryDto> getAll(@SortDefault(sort =  NAME_FIELD, direction = Sort.Direction.DESC)
+    public Page<CategoryDto> getAll(@SortDefault(sort = NAME_FIELD, direction = Sort.Direction.DESC)
                                     Pageable pageable) {
         return categoryService.getAll(pageable);
     }

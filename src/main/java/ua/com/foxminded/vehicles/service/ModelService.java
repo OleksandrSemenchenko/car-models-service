@@ -1,7 +1,7 @@
 package ua.com.foxminded.vehicles.service;
 
-import static ua.com.foxminded.vehicles.exception.ErrorCode.MODEL_ABSENCE;
-import static ua.com.foxminded.vehicles.exception.ErrorCode.VEHICLE_ABSENCE;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,11 +19,18 @@ import ua.com.foxminded.vehicles.repository.ModelRepository;
 @Transactional
 @RequiredArgsConstructor
 public class ModelService {
+    
+    public static final String MODEL_IS_NOT_PRESENT = "The model \"%s\" is not present"; 
+    public static final String MODEL_IS_PRESENT = "The model \"%s\" has been present";
 
     private final ModelRepository modelRepository;
     private final ModelMapper modelMapper;
 
     public ModelDto save(ModelDto model) {
+        if (modelRepository.findById(model.getName()).isPresent()) {
+            throw new ServiceException(String.format(MODEL_IS_PRESENT, model.getName()), BAD_REQUEST);
+        }
+        
         Model entity = modelMapper.map(model);
         Model persistedEntity = modelRepository.saveAndFlush(entity);
         return modelMapper.map(persistedEntity);
@@ -34,13 +41,14 @@ public class ModelService {
     }
 
     public void deleteByName(String name) {
-            modelRepository.findById(name).orElseThrow(() -> new ServiceException(MODEL_ABSENCE));
+            modelRepository.findById(name).orElseThrow(
+                    () -> new ServiceException(String.format(MODEL_IS_PRESENT, name), NO_CONTENT));
             modelRepository.deleteById(name);
     }
 
     public ModelDto getByName(String name) {
-            Model entity = modelRepository.findById(name)
-                    .orElseThrow(() -> new ServiceException(VEHICLE_ABSENCE));
+            Model entity = modelRepository.findById(name).orElseThrow(
+                    () -> new ServiceException(String.format(MODEL_IS_NOT_PRESENT, name), BAD_REQUEST));
             return modelMapper.map(entity);
     }
 }

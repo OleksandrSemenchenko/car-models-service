@@ -1,6 +1,5 @@
 package ua.com.foxminded.vehicles.entity;
 
-import java.io.Serializable;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -30,10 +29,8 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(onlyExplicitlyIncluded = true)
-public class Vehicle implements Serializable {
+public class Vehicle {
     
-    private static final long serialVersionUID = 1L;
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @EqualsAndHashCode.Include

@@ -2,7 +2,7 @@ package ua.com.foxminded.vehicles.dto;
 
 import java.util.Set;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -20,7 +20,7 @@ import lombok.ToString;
 @ToString(onlyExplicitlyIncluded = true)
 public class VehicleDto {
 
-    @NotNull
+    @NotBlank
     @EqualsAndHashCode.Include
     @ToString.Include
     private String id;

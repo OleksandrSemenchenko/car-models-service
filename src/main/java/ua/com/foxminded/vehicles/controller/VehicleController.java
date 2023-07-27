@@ -36,63 +36,57 @@ import ua.com.foxminded.vehicles.service.VehicleService;
 @Validated
 public class VehicleController {
     
-    public static final String CATEGORY_NAME = "category";
     public static final String PRODUCTION_YEAR_FIELD = "productionYear";
-    public static final String MODEL_NAME = "model";
-    public static final String MANUFACTURER_NAME = "manufacturer";
     public static final String MIN_PRODUCTION_YEAR = "minYear";
     public static final String MAX_PRODUCTION_YEAR = "maxYear";
-    public static final String PRODUCTION_YEAR = "year";
     
     private final VehicleService vehicleService;
     
-    @GetMapping(value = "/vehicles", params = {MODEL_NAME})
-    public Page<VehicleDto> getByModel(
-            @RequestParam(MODEL_NAME) String modelName, 
-            @SortDefault(sort = PRODUCTION_YEAR_FIELD, direction = Sort.Direction.DESC)
-            Pageable pageable) {
-        return vehicleService.getByModel(modelName, pageable);
+    @GetMapping(value = "/models/{model}/vehicles")
+    public Page<VehicleDto> getByModel(@PathVariable String model, 
+                                       @SortDefault(sort = PRODUCTION_YEAR_FIELD, 
+                                                    direction = Sort.Direction.DESC)
+                                       Pageable pageable) {
+        return vehicleService.getByModel(model, pageable);
     }
     
-    @GetMapping(value = "/vehicles", params = {CATEGORY_NAME})
-    public Page<VehicleDto> getByCategory(
-            @RequestParam(CATEGORY_NAME) String categoryName, 
-            @SortDefault(sort = PRODUCTION_YEAR_FIELD, direction = Sort.Direction.DESC)   
-            Pageable pageable) {
-        return vehicleService.getByCategory(categoryName, pageable);
+    @GetMapping(value = "/categories/{category}/vehicles")
+    public Page<VehicleDto> getByCategory(@PathVariable String category, 
+                                          @SortDefault(sort = PRODUCTION_YEAR_FIELD, 
+                                                       direction = Sort.Direction.DESC)   
+                                          Pageable pageable) {
+        return vehicleService.getByCategory(category, pageable);
     }
     
-    @GetMapping(value = "/vehicles", params = {MANUFACTURER_NAME, MAX_PRODUCTION_YEAR}) 
-    public Page<VehicleDto> getByManufacturerAndMaxProductionYear(
-            @NotBlank @RequestParam(MANUFACTURER_NAME) String manufacturerName, 
-            @RequestParam(MAX_PRODUCTION_YEAR) int maxYear, 
-            @SortDefault(sort = PRODUCTION_YEAR_FIELD, direction = Sort.Direction.DESC)
-            Pageable pageable) {
+    @GetMapping(value = "/manufacturers/{manufacturer}/vehicles", params = MAX_PRODUCTION_YEAR) 
+    public Page<VehicleDto> getByManufacturerAndMaxProductionYear(@NotBlank @PathVariable String manufacturer, 
+                                                                  @RequestParam int maxYear, 
+                                                                  @SortDefault(sort = PRODUCTION_YEAR_FIELD, 
+                                                                               direction = Sort.Direction.DESC)
+                                                                  Pageable pageable) {
         
-        return vehicleService.getByManufacturerNameAndMaxYear(manufacturerName, maxYear, pageable);
+        return vehicleService.getByManufacturerNameAndMaxYear(manufacturer, maxYear, pageable);
     }
     
-    @GetMapping(value = "/vehicles", params = {MANUFACTURER_NAME, MIN_PRODUCTION_YEAR}) 
-    public Page<VehicleDto> getByManufacturerAndMinProductionYear(
-            @NotBlank @RequestParam(MANUFACTURER_NAME) String manufacturerName, 
-            @RequestParam(MIN_PRODUCTION_YEAR) int minYear, 
-            @SortDefault(sort = PRODUCTION_YEAR_FIELD, direction = Sort.Direction.DESC)
-            Pageable pageable) {
+    @GetMapping(value = "/manufacturers/{manufacturer}/vehicles", params = MIN_PRODUCTION_YEAR) 
+    public Page<VehicleDto> getByManufacturerAndMinProductionYear(@PathVariable String manufacturer,
+                                                                  @RequestParam int minYear, 
+                                                                  @SortDefault(sort = PRODUCTION_YEAR_FIELD, 
+                                                                               direction = Sort.Direction.DESC)
+                                                                  Pageable pageable) {
         
-        return vehicleService.getByManufacturerNameAndMinYear(manufacturerName, minYear, pageable);
+        return vehicleService.getByManufacturerNameAndMinYear(manufacturer, minYear, pageable);
     }
     
     @PostMapping("/manufacturers/{manufacturer}/models/{model}/{year}")
-    public ResponseEntity<String> save(@PathVariable(MANUFACTURER_NAME) String manufacturerName, 
-                                       @PathVariable(MODEL_NAME) String modelName, 
-                                       @PathVariable(PRODUCTION_YEAR) int productionYear, 
+    public ResponseEntity<String> save(@PathVariable String manufacturer, 
+                                       @PathVariable String model, 
+                                       @PathVariable int year, 
                                        @RequestBody VehicleDto vehicle, 
                                        HttpServletRequest request) {
-        ManufacturerDto manufacturer = ManufacturerDto.builder().name(manufacturerName).build();
-        ModelDto model = ModelDto.builder().name(modelName).build();
-        vehicle.setManufacturer(manufacturer);
-        vehicle.setModel(model);
-        vehicle.setProductionYear(productionYear);
+        vehicle.setManufacturer(ManufacturerDto.builder().name(manufacturer).build());
+        vehicle.setModel(ModelDto.builder().name(model).build());
+        vehicle.setProductionYear(year);
 
         VehicleDto createdVehicle = vehicleService.save(vehicle);
         
@@ -106,25 +100,26 @@ public class VehicleController {
     }
     
     @GetMapping("/vehicles")
-    public Page<VehicleDto> getAll(@SortDefault(sort = PRODUCTION_YEAR_FIELD, direction = Sort.Direction.DESC)
+    public Page<VehicleDto> getAll(@SortDefault(sort = PRODUCTION_YEAR_FIELD, 
+                                                direction = Sort.Direction.DESC)
                                    Pageable pageable) {
         return vehicleService.getAll(pageable);
     }
     
     @GetMapping("/vehicles/{id}")
-    public VehicleDto getById(@PathVariable @NotBlank String id) {
+    public VehicleDto getById(@PathVariable String id) {
         return vehicleService.getById(id);
     }
     
     @PutMapping("/manufacturers/{manufacturer}/models/{model}/{year}")
-    public ResponseEntity<String> update(@PathVariable(MANUFACTURER_NAME) @NotBlank String manufacturerName, 
-                                         @PathVariable(MODEL_NAME) @NotBlank String modelName,
-                                         @PathVariable(PRODUCTION_YEAR) int productionYear,
+    public ResponseEntity<String> update(@PathVariable String manufacturer, 
+                                         @PathVariable String model,
+                                         @PathVariable int year,
                                          @RequestBody @Valid VehicleDto vehicle, 
                                          HttpServletRequest request) {
-        vehicle.setManufacturer(ManufacturerDto.builder().name(manufacturerName).build());
-        vehicle.setModel(ModelDto.builder().name(modelName).build());
-        vehicle.setProductionYear(productionYear);
+        vehicle.setManufacturer(ManufacturerDto.builder().name(manufacturer).build());
+        vehicle.setModel(ModelDto.builder().name(model).build());
+        vehicle.setProductionYear(year);
         VehicleDto updatedVehicle = vehicleService.update(vehicle);
         URI location = UriComponentsBuilder.newInstance().scheme(request.getScheme())
                                                          .host(request.getServerName())
@@ -134,11 +129,12 @@ public class VehicleController {
                                                          .toUri();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.setLocation(location);
-        return new ResponseEntity<>(responseHeaders, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(responseHeaders, HttpStatus.OK);
     }
     
     @DeleteMapping("/vehicles/{id}")
-    public void deleteById(@PathVariable @NotBlank String id) {
+    public ResponseEntity<String> deleteById(@PathVariable String id) {
         vehicleService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

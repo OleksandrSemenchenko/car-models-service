@@ -1,5 +1,7 @@
 package ua.com.foxminded.vehicles.exception;
 
+import org.springframework.http.HttpStatus;
+
 import lombok.Getter;
 
 @Getter
@@ -7,7 +9,7 @@ public class ServiceException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
     
-    private ErrorCode errorCode;
+    private HttpStatus httpStatus;
     
     public ServiceException() {
         super();
@@ -17,21 +19,12 @@ public class ServiceException extends RuntimeException {
         super(message);
     }
     
-    public ServiceException(ErrorCode errorCode) {
-        this(errorCode.getDescription());
-        this.errorCode = errorCode;
-    }
-    
     public ServiceException(String message, Throwable cause) {
         super(message, cause);
     }
     
-    public ServiceException(ErrorCode errorCode, String message, Throwable cause) {
-        super(message, cause);
-        this.errorCode = errorCode;
-    }
-    
-    public ServiceException(ErrorCode errorCode, Throwable cause) {
-        this(errorCode, cause.getMessage(), cause);
+    public ServiceException(String message, HttpStatus httpStatus) {
+        this(message);
+        this.httpStatus = httpStatus;
     }
 }

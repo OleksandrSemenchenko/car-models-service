@@ -25,7 +25,7 @@ import ua.com.foxminded.vehicles.service.ModelService;
 
 @Controller
 @ResponseBody
-@RequestMapping("/v1/manufacturers/models")
+@RequestMapping("/v1")
 @RequiredArgsConstructor
 @Validated
 public class ModelController {
@@ -49,7 +49,7 @@ public class ModelController {
         return modelService.getByName(name);
     }
     
-    @GetMapping
+    @GetMapping("/models")
     public Page<ModelDto> getAll(@SortDefault(sort = NAME_FIELD, direction = Sort.Direction.DESC)
                                  Pageable pageable) {
         return modelService.getAll(pageable);
