@@ -34,7 +34,7 @@ public class ModelController {
     
     private final ModelService modelService;
     
-    @PostMapping
+    @PostMapping("/models")
     public ResponseEntity<String> save(@RequestBody @Valid ModelDto model) {
         ModelDto createdModel = modelService.save(model);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -44,7 +44,7 @@ public class ModelController {
         return ResponseEntity.created(location).build();
     }
     
-    @GetMapping("/{name}")
+    @GetMapping("/models/{name}")
     public ModelDto getByName(@PathVariable String name) {
         return modelService.getByName(name);
     }
@@ -55,7 +55,7 @@ public class ModelController {
         return modelService.getAll(pageable);
     }
     
-    @DeleteMapping("/{name}")
+    @DeleteMapping("/models/{name}")
     public void deleteByName(@PathVariable String name) {
         modelService.deleteByName(name);
     }

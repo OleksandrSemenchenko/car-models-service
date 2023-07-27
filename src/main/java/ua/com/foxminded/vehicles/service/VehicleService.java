@@ -33,8 +33,8 @@ import ua.com.foxminded.vehicles.repository.VehicleRepository;
 @RequiredArgsConstructor
 public class VehicleService {
     
-    public static final String VEHICLE_IS_NOT_PRESENT = "The vehicle with id=\"%s\" is not present";
-    public static final String VEHICLE_IS_PRESENT = "The vehicle with id=\"%s\" has already present";
+    public static final String VEHICLE_IS_NOT_PRESENT = "The vehicle with id=\"%s\" doesn't exist";
+    public static final String VEHICLE_IS_PRESENT = "The vehicle with id=\"%s\" already exists";
     
     private final VehicleRepository vehicleRepository;
     private final CategoryRepository categoryRepository;

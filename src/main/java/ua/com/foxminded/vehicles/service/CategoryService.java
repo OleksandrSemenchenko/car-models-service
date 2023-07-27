@@ -20,8 +20,8 @@ import ua.com.foxminded.vehicles.repository.CategoryRepository;
 @RequiredArgsConstructor
 public class CategoryService {
     
-    public static final String CATEGORY_IS_PRESENT = "The category \"%s\" has already present";
-    public static final String CATEGORY_IS_NOT_PRESENT = "The category \"%s\" is not present";
+    public static final String CATEGORY_IS_PRESENT = "The category \"%s\" already exists";
+    public static final String CATEGORY_IS_NOT_PRESENT = "The category \"%s\" doesn't exist";
     
     
     private final CategoryRepository categoryRepository;

@@ -1,15 +1,15 @@
 package ua.com.foxminded.vehicles.controller;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -45,58 +45,99 @@ class ManufacturerControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
     
-    private Manufacturer manufacturerEntity;
+    private Manufacturer manufacturer;
+    private ManufacturerDto manufacturerDto;
     private ObjectMapper mapper;
-    private String jsonManufacturer;
-    private ManufacturerDto manufacturer;
-    private List<ManufacturerDto> manufacturersList; 
+    private String manufacturerDtoJson;
     
     @BeforeTransaction
     void init() {
-        manufacturerEntity = Manufacturer.builder().name(MANUFACTURER_NAME).build();
-        manufacturerRepository.saveAndFlush(manufacturerEntity);
+        manufacturer = Manufacturer.builder().name(MANUFACTURER_NAME).build();
+        manufacturerRepository.saveAndFlush(manufacturer);
     }
     
     @BeforeEach
     void setUp() throws JsonProcessingException {
+        manufacturerDto = ManufacturerDto.builder().name(manufacturer.getName()).build();
         mapper = new ObjectMapper();
-        manufacturer = ManufacturerDto.builder().name(manufacturerEntity.getName()).build();
-        manufacturersList = Arrays.asList(manufacturer);
-        jsonManufacturer = mapper.writeValueAsString(manufacturer);
+        manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
     }
     
     @Test
-    void getByName_ShouldReturnManufacturerObject() throws Exception {
-        mockMvc.perform(get("/v1/manufacturers/{name}", manufacturerEntity.getName()))
-               .andExpect(status().is2xxSuccessful())
-               .andExpect(content().json(jsonManufacturer));
+    void getByName_ShouldReturnStatus400_WhenManufactuerDoesNotExist() throws Exception {
+        String notExistingManufacturerName = "Ford";
+        mockMvc.perform(get("/v1/manufacturers/{name}", notExistingManufacturerName))
+               .andExpect(status().is(400));
     }
     
     @Test
-    void getAll_ShouldReturnManufacturersList() throws Exception {
+    void getByName_ShouldReturnStatusIsOk() throws Exception {
+        mockMvc.perform(get("/v1/manufacturers/{name}", manufacturer.getName()))
+               .andExpect(status().isOk())
+               .andExpect(content().json(manufacturerDtoJson));
+    }
+    
+    @Test
+    void getAll_ShouldReturnStatusIsOk() throws Exception {
         mockMvc.perform(get("/v1/manufacturers"))
-               .andExpect(status().is2xxSuccessful())
-               .andExpect(jsonPath(".name", MANUFACTURER_NAME).exists());
+               .andExpect(status().is(200))
+               .andExpect(jsonPath("$.content[0].name", manufacturerDto.getName()).exists());
     }
     
     @Test
-    void save_ShouldPersistManufacturerData() throws Exception {
-        ManufacturerDto newManufacturer = ManufacturerDto.builder().name("Bradley").build();
-        String newJsonManufacturer = mapper.writeValueAsString(newManufacturer);
-        mockMvc.perform(post("/v1/manufacturers/manufacturer")
+    void save_ShouldReturnStatus400_WhenMethodArgumentNotValid() throws Exception {
+        manufacturerDto.setName("");
+        ManufacturerDto manufacturer = ManufacturerDto.builder().name(manufacturerDto.getName()).build();
+        String manufacturerDtoJson = mapper.writeValueAsString(manufacturer);
+        
+        mockMvc.perform(post("/v1/manufacturers")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(newJsonManufacturer))
-               .andExpect(status().is2xxSuccessful())
-               .andExpect(content().json(newJsonManufacturer));
+                    .content(manufacturerDtoJson))
+               .andExpect(status().is(400));
     }
     
     @Test
-    void deleteByName_ShouldDeleteManufacturer() throws Exception {
-        mockMvc.perform(delete("/v1/manufacturers/{name}", manufacturerEntity.getName()))
-               .andExpect(status().is2xxSuccessful());
+    void save_ShouldReturnStatus400_WhenModelAlreadyExists() throws Exception {
+        ManufacturerDto manufacturer = ManufacturerDto.builder().name(manufacturerDto.getName()).build();
+        String manufacturerDtoJson = mapper.writeValueAsString(manufacturer);
+        
+        mockMvc.perform(post("/v1/manufacturers")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(manufacturerDtoJson))
+               .andExpect(status().is(400));
+    }
+    
+    @Test
+    void save_ShouldReturnStatusIsOk() throws Exception {
+        String manufacturerName = "Ford";
+        ManufacturerDto manufacturerDto = ManufacturerDto.builder().name(manufacturerName).build();
+        String manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
+        
+        mockMvc.perform(post("/v1/manufacturers")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(manufacturerDtoJson))
+               .andExpect(status().is(201))
+               .andExpect(header().string("Location", 
+                                          containsString("/v1/manufacturers/" + manufacturerName)));
+
+        Optional<Manufacturer> manufacturer = manufacturerRepository.findById(manufacturerName);
+        assertTrue(manufacturer.isPresent());
+    }
+    
+    @Test
+    void deleteByName_ShouldREturnStatus204_WhenManufacturerDoesNotExist() throws Exception {
+        String notExistingManufacturerName = "Ford";
+        mockMvc.perform(delete("/v1/manufacturers/{name}", notExistingManufacturerName))
+               .andExpect(status().is(204));
+    }
+    
+    @Test
+    void deleteByName_ShouldReturnStatusIsOk() throws Exception {
+        mockMvc.perform(delete("/v1/manufacturers/{name}", manufacturer.getName()))
+               .andExpect(status().isOk());
         
         Optional<Manufacturer> manufacturerOptional = manufacturerRepository
-                .findById(manufacturerEntity.getName());
+                .findById(manufacturer.getName());
         
         assertTrue(manufacturerOptional.isEmpty());
     }

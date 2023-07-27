@@ -83,7 +83,7 @@ public class ExceptionHandlerController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentViolation(MethodArgumentNotValidException e, 
-                                                                       HttpServletRequest request) {
+                                                       HttpServletRequest request) {
         log.error("Method argument validation exception");
         List<ValidationError> validationErrors = buildValidationError(e);
         ErrorResponse errorResponse = new ErrorResponse(validationErrors);

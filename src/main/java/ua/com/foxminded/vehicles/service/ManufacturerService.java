@@ -20,8 +20,8 @@ import ua.com.foxminded.vehicles.repository.ManufacturerRepository;
 @RequiredArgsConstructor
 public class ManufacturerService {
     
-    public static final String MANUFACTURER_IS_PRESENT = "The manufacturer \"%s\" has already present";
-    public static final String MANUFACTURER_IS_NOT_PRESENT = "The manufacturer \"%s\" is not present";
+    public static final String MANUFACTURER_IS_PRESENT = "The manufacturer \"%s\" already exists";
+    public static final String MANUFACTURER_IS_NOT_PRESENT = "The manufacturer \"%s\" doesn't exist";
 
     private final ManufacturerRepository manufacturerRepository;
     private final ManufacturerMapper manufacturerMapper;

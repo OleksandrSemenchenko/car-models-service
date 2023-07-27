@@ -20,8 +20,8 @@ import ua.com.foxminded.vehicles.repository.ModelRepository;
 @RequiredArgsConstructor
 public class ModelService {
     
-    public static final String MODEL_IS_NOT_PRESENT = "The model \"%s\" is not present"; 
-    public static final String MODEL_IS_PRESENT = "The model \"%s\" has been present";
+    public static final String MODEL_IS_NOT_PRESENT = "The model \"%s\" doesn't exist"; 
+    public static final String MODEL_IS_PRESENT = "The model \"%s\" already exists";
 
     private final ModelRepository modelRepository;
     private final ModelMapper modelMapper;

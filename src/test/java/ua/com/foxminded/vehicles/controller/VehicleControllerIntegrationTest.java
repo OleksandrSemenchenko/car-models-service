@@ -103,7 +103,7 @@ class VehicleControllerIntegrationTest {
     }
     
     @Test
-    void getByModel_ShouldReturnStatus400_WhenModelIsNotPresent() throws Exception {
+    void getByModel_ShouldReturnStatus400_WhenModelDoesNotExist() throws Exception {
         String notExistingModelName = "EcoSport";
         
         mockMvc.perform(get("/v1/models/{model}/vehicles", notExistingModelName))
@@ -118,7 +118,7 @@ class VehicleControllerIntegrationTest {
     }
     
     @Test
-    void getByCategory_ShouldReturnStatus400_WhenCategoryIsNotPresent() throws Exception {
+    void getByCategory_ShouldReturnStatus400_WhenCategoryDoesNotExist() throws Exception {
         String notExistingCategoryName = "SUV";
         mockMvc.perform(get("/v1/categories/{category}/vehicles", notExistingCategoryName))
                .andExpect(status().is(400));
@@ -132,7 +132,7 @@ class VehicleControllerIntegrationTest {
     }
     
     @Test
-    void getByManufacturerAndMaxProductionYear_ShouldREturnStatus400_WhenManufacturerIsNotPresent() 
+    void getByManufacturerAndMaxProductionYear_ShouldREturnStatus400_WhenManufacturerDoesNotExist() 
             throws Exception {
         String notExistingManufacturerName = "Reno";
         String maxYear = String.valueOf(vehicleEntity.getProductionYear());
@@ -154,7 +154,7 @@ class VehicleControllerIntegrationTest {
     }
     
     @Test
-    void getByManufacturerNameAndMinProductionYear_ShouldReturnStatus400_WhenManufacturerIsNotPresent() 
+    void getByManufacturerNameAndMinProductionYear_ShouldReturnStatus400_WhenManufacturerDoesNotExist() 
             throws Exception {
         String notExistingManufacturerName = "Reno";
         String minYear = String.valueOf(youngerVehicleEntity.getProductionYear());
@@ -176,7 +176,7 @@ class VehicleControllerIntegrationTest {
     }
     
     @Test
-    void save_ShouldReturnStatus400_WhenCategoryIsNotPresent() throws Exception {
+    void save_ShouldReturnStatus400_WhenCategoryDoesNotExist() throws Exception {
         String notExistingCategoryName = "Pickup";
         CategoryDto categoryDto = CategoryDto.builder().name(notExistingCategoryName).build();
         VehicleDto vehicleDto = VehicleDto.builder().categories(Set.of(categoryDto)).build();
@@ -193,7 +193,7 @@ class VehicleControllerIntegrationTest {
     
     
     @Test
-    void save_ShouldReturnStatus400_WhenModelIsNotPresent() throws Exception {
+    void save_ShouldReturnStatus400_WhenModelDoesNotExist() throws Exception {
         CategoryDto categoryDto = CategoryDto.builder().name(categoryEntity.getName()).build();
         VehicleDto vehicleDto = VehicleDto.builder().categories(Set.of(categoryDto)).build();
         String vehicleDtoJson = mapper.writeValueAsString(vehicleDto);
@@ -209,7 +209,7 @@ class VehicleControllerIntegrationTest {
     }
     
     @Test
-    void save_ShouldReturnStatus400_WhenManufacturerIsNotPresent() throws Exception {
+    void save_ShouldReturnStatus400_WhenManufacturerDoesNotExist() throws Exception {
         CategoryDto categoryDto = CategoryDto.builder().name(categoryEntity.getName()).build();
         VehicleDto vehicleDto = VehicleDto.builder().categories(Set.of(categoryDto)).build();
         String vehicleDtoJson = mapper.writeValueAsString(vehicleDto);
@@ -263,7 +263,7 @@ class VehicleControllerIntegrationTest {
     }
     
     @Test
-    void update_ShouldReturnStatus400_WhenModelIsNotPresent() throws Exception {
+    void update_ShouldReturnStatus400_WhenModelDoesNotExist() throws Exception {
         CategoryDto category = CategoryDto.builder().name(categoryEntity.getName()).build();
         VehicleDto vehicle = VehicleDto.builder().id(vehicleEntity.getId()).categories(Set.of(category)).build();
         String vehicleJson = mapper.writeValueAsString(vehicle);
@@ -279,7 +279,7 @@ class VehicleControllerIntegrationTest {
     }
     
     @Test
-    void update_ShouldReturnStatus400_WhenManufacturerIsNotPresent() throws Exception {
+    void update_ShouldReturnStatus400_WhenManufacturerDoesNotExist() throws Exception {
         CategoryDto category = CategoryDto.builder().name(categoryEntity.getName()).build();
         VehicleDto vehicle = VehicleDto.builder().id(vehicleEntity.getId()).categories(Set.of(category)).build();
         String vehicleJson = mapper.writeValueAsString(vehicle);
@@ -295,9 +295,9 @@ class VehicleControllerIntegrationTest {
     }
     
     @Test
-    void update_ShouldReturnStatus400_WhenVehicleIdIsNotPresent() throws Exception {
-        String notExistinId = "1";
-        VehicleDto vehicle = VehicleDto.builder().id(notExistinId).build();
+    void update_ShouldReturnStatus400_WhenVehicleDoesNotExist() throws Exception {
+        String notExistingId = "1";
+        VehicleDto vehicle = VehicleDto.builder().id(notExistingId).build();
         String vehicleJson = mapper.writeValueAsString(vehicle);
         
         mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{modle}/{year}", 
@@ -310,7 +310,7 @@ class VehicleControllerIntegrationTest {
     }
     
     @Test
-    void update_ShouldReturnStatus400_WhenVehicleIdConstraintViolation() throws Exception {
+    void update_ShouldReturnStatus400_WhenMethodArgumentNotValid() throws Exception {
         VehicleDto vehicle = VehicleDto.builder().build();
         String vehicleJson = mapper.writeValueAsString(vehicle);
         
