@@ -21,7 +21,7 @@ import ua.com.foxminded.vehicles.repository.CategoryRepository;
 public class CategoryService {
     
     public static final String CATEGORY_IS_PRESENT = "The category \"%s\" already exists";
-    public static final String CATEGORY_IS_NOT_PRESENT = "The category \"%s\" doesn't exist";
+    public static final String NO_CATEGORY = "The category \"%s\" doesn't exist";
     
     
     private final CategoryRepository categoryRepository;
@@ -43,13 +43,13 @@ public class CategoryService {
 
     public void deleleteByName(String name) {
             categoryRepository.findById(name).orElseThrow(
-                    () -> new ServiceException(String.format(CATEGORY_IS_NOT_PRESENT, name), NO_CONTENT));
+                    () -> new ServiceException(String.format(NO_CATEGORY, name), NO_CONTENT));
             categoryRepository.deleteById(name);
     }
     
     public CategoryDto getByName(String name) {
             Category entity = categoryRepository.findById(name)
-                    .orElseThrow(() -> new ServiceException(String.format(CATEGORY_IS_NOT_PRESENT, name), 
+                    .orElseThrow(() -> new ServiceException(String.format(NO_CATEGORY, name), 
                                                             BAD_REQUEST));
             return categoryMapper.map(entity);
     }

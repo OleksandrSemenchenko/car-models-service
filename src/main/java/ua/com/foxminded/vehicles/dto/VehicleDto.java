@@ -25,7 +25,6 @@ public class VehicleDto {
     @ToString.Include
     private String id;
     
-    @EqualsAndHashCode.Include
     @ToString.Include
     private Integer productionYear;
     

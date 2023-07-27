@@ -21,7 +21,7 @@ import ua.com.foxminded.vehicles.repository.ManufacturerRepository;
 public class ManufacturerService {
     
     public static final String MANUFACTURER_IS_PRESENT = "The manufacturer \"%s\" already exists";
-    public static final String MANUFACTURER_IS_NOT_PRESENT = "The manufacturer \"%s\" doesn't exist";
+    public static final String NO_MANUFACTURER = "The manufacturer \"%s\" doesn't exist";
 
     private final ManufacturerRepository manufacturerRepository;
     private final ManufacturerMapper manufacturerMapper;
@@ -43,13 +43,13 @@ public class ManufacturerService {
 
     public void deleteByName(String name) {
         manufacturerRepository.findById(name).orElseThrow(
-                () -> new ServiceException(String.format(MANUFACTURER_IS_NOT_PRESENT, name), NO_CONTENT));
+                () -> new ServiceException(String.format(NO_MANUFACTURER, name), NO_CONTENT));
         manufacturerRepository.deleteById(name);
     }
 
     public ManufacturerDto getByName(String name) {
         Manufacturer entity = manufacturerRepository.findById(name).orElseThrow(
-                () -> new ServiceException(String.format(MANUFACTURER_IS_NOT_PRESENT, name), BAD_REQUEST));
+                () -> new ServiceException(String.format(NO_MANUFACTURER, name), BAD_REQUEST));
         return manufacturerMapper.map(entity);
     }
 }

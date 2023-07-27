@@ -23,7 +23,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.vehicles.dto.ManufacturerDto;
 import ua.com.foxminded.vehicles.dto.ModelDto;
@@ -59,7 +58,7 @@ public class VehicleController {
     }
     
     @GetMapping(value = "/manufacturers/{manufacturer}/vehicles", params = MAX_PRODUCTION_YEAR) 
-    public Page<VehicleDto> getByManufacturerAndMaxProductionYear(@NotBlank @PathVariable String manufacturer, 
+    public Page<VehicleDto> getByManufacturerAndMaxProductionYear(@PathVariable String manufacturer, 
                                                                   @RequestParam int maxYear, 
                                                                   @SortDefault(sort = PRODUCTION_YEAR_FIELD, 
                                                                                direction = Sort.Direction.DESC)
@@ -133,8 +132,7 @@ public class VehicleController {
     }
     
     @DeleteMapping("/vehicles/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable String id) {
+    public void deleteById(@PathVariable String id) {
         vehicleService.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

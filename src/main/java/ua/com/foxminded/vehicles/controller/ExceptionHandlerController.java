@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.ServletRequestBindingException;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import ua.com.foxminded.vehicles.exception.ErrorResponse;
 import ua.com.foxminded.vehicles.exception.ServiceException;
@@ -31,6 +29,7 @@ public class ExceptionHandlerController {
     @ExceptionHandler(ServletRequestBindingException.class)
     public ErrorResponse handleBindingException(ServletRequestBindingException e, 
                                                 HttpServletRequest request) {
+        log.error("Binding exception", e);
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setError(BAD_REQUEST.getReasonPhrase());
         errorResponse.setMessage(e.getMessage());
@@ -38,24 +37,6 @@ public class ExceptionHandlerController {
         errorResponse.setStatus(BAD_REQUEST.value());
         errorResponse.setTimestamp(new Date());
         return errorResponse;
-    }
-    
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException e, 
-                                                                            HttpServletRequest request) {
-        log.error("Constraint violation exception", e);
-        List<ValidationError> violations = e.getConstraintViolations()
-                .stream()
-                .map(violation -> new ValidationError(violation.getPropertyPath().toString(), 
-                                                      violation.getMessage()))
-                .toList();
-        ErrorResponse errorResponse = new ErrorResponse(violations);
-        errorResponse.setPath(request.getRequestURI());
-        errorResponse.setMessage(e.getMessage());
-        errorResponse.setStatus(BAD_REQUEST.value());
-        errorResponse.setTimestamp(new Date());
-        errorResponse.setError(BAD_REQUEST.getReasonPhrase());
-        return ResponseEntity.status(BAD_REQUEST).body(errorResponse);
     }
     
     @ExceptionHandler(Exception.class)

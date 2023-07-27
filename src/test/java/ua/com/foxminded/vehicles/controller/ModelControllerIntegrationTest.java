@@ -99,7 +99,7 @@ class ModelControllerIntegrationTest {
     }
     
     @Test
-    void getByName_ShouldReturnStatus400_WhenModelDoesNotExist() throws Exception {
+    void getByName_ShouldReturnStatus400_WhenNoModel() throws Exception {
         String notExistingModelName = "Camaro";
         mockMvc.perform(get("/v1/models/{name}", notExistingModelName))
                .andExpect(status().is(400));
@@ -113,14 +113,14 @@ class ModelControllerIntegrationTest {
     }
     
     @Test
-    void getAll_ShouldReturnModelsList() throws Exception {
+    void getAll_ShouldReturnStatusIsOk() throws Exception {
         mockMvc.perform(get("/v1/models"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.content", Matchers.hasSize(1)));
     }
     
     @Test
-    void deleteByName_ShouldReturnStatus204_WhenModelDoesNotExist() throws Exception {
+    void deleteByName_ShouldReturnStatus204_WhenNoModel() throws Exception {
         String notExistingModelName = "Enclave";
         mockMvc.perform(delete("/v1/models/{name}", notExistingModelName))
                .andExpect(status().is(204));

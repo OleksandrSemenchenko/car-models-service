@@ -81,7 +81,7 @@ class CategoryControllerIntegrationTest {
     }
     
     @Test
-    void save_ShouldReturnStatusOk() throws Exception {
+    void save_ShouldReturnStatusIsOk() throws Exception {
         categoryDto.setName("SUV");
         String categoryJson = mapper.writeValueAsString(categoryDto);
         
@@ -93,7 +93,7 @@ class CategoryControllerIntegrationTest {
     }
     
     @Test
-    void getByName_ShouldReturnStatus400_WhenCategoryDoesNotExist() throws Exception {
+    void getByName_ShouldReturnStatus400_WhenNoCategory() throws Exception {
         String notExistingCategoryName = "SUV";
         mockMvc.perform(get("/v1/categories/{name}", notExistingCategoryName))
                .andExpect(status().is(400));
@@ -114,7 +114,7 @@ class CategoryControllerIntegrationTest {
     }
     
     @Test
-    void deleteByName_ShouldReturnStatus204_WhenCategoryDoesNotExist() throws Exception {
+    void deleteByName_ShouldReturnStatus204_WhenNoCategory() throws Exception {
         String notExistingCategoryName = "SUV";
         mockMvc.perform(delete("/v1/categories/{name}", notExistingCategoryName))
                .andExpect(status().is(204));

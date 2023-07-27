@@ -20,7 +20,7 @@ import ua.com.foxminded.vehicles.repository.ModelRepository;
 @RequiredArgsConstructor
 public class ModelService {
     
-    public static final String MODEL_IS_NOT_PRESENT = "The model \"%s\" doesn't exist"; 
+    public static final String NO_MODEL = "The model \"%s\" doesn't exist"; 
     public static final String MODEL_IS_PRESENT = "The model \"%s\" already exists";
 
     private final ModelRepository modelRepository;
@@ -48,7 +48,7 @@ public class ModelService {
 
     public ModelDto getByName(String name) {
             Model entity = modelRepository.findById(name).orElseThrow(
-                    () -> new ServiceException(String.format(MODEL_IS_NOT_PRESENT, name), BAD_REQUEST));
+                    () -> new ServiceException(String.format(NO_MODEL, name), BAD_REQUEST));
             return modelMapper.map(entity);
     }
 }

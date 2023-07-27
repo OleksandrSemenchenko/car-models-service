@@ -64,7 +64,7 @@ class ManufacturerControllerIntegrationTest {
     }
     
     @Test
-    void getByName_ShouldReturnStatus400_WhenManufactuerDoesNotExist() throws Exception {
+    void getByName_ShouldReturnStatus400_WhenNoManufactuer() throws Exception {
         String notExistingManufacturerName = "Ford";
         mockMvc.perform(get("/v1/manufacturers/{name}", notExistingManufacturerName))
                .andExpect(status().is(400));
@@ -125,7 +125,7 @@ class ManufacturerControllerIntegrationTest {
     }
     
     @Test
-    void deleteByName_ShouldREturnStatus204_WhenManufacturerDoesNotExist() throws Exception {
+    void deleteByName_ShouldReturnStatus204_WhenNoManufacturer() throws Exception {
         String notExistingManufacturerName = "Ford";
         mockMvc.perform(delete("/v1/manufacturers/{name}", notExistingManufacturerName))
                .andExpect(status().is(204));

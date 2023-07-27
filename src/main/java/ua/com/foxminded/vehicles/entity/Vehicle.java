@@ -38,7 +38,6 @@ public class Vehicle {
     private String id;
     
     @Column(name = "production_year")
-    @EqualsAndHashCode.Include
     @ToString.Include
     private Integer productionYear;
     
