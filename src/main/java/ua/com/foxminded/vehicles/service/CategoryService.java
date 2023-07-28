@@ -19,38 +19,36 @@ import ua.com.foxminded.vehicles.repository.CategoryRepository;
 @Transactional
 @RequiredArgsConstructor
 public class CategoryService {
-    
+
     public static final String CATEGORY_IS_PRESENT = "The category \"%s\" already exists";
     public static final String NO_CATEGORY = "The category \"%s\" doesn't exist";
-    
-    
+
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
 
     public CategoryDto save(CategoryDto model) {
-            if (categoryRepository.findById(model.getName()).isPresent()) {
-               throw new ServiceException(String.format(CATEGORY_IS_PRESENT, model.getName()), BAD_REQUEST); 
-            }
-            
-            Category entity = categoryMapper.map(model);
-            Category persistedEntity = categoryRepository.saveAndFlush(entity);
-            return categoryMapper.map(persistedEntity);
+        if (categoryRepository.findById(model.getName()).isPresent()) {
+            throw new ServiceException(String.format(CATEGORY_IS_PRESENT, model.getName()), BAD_REQUEST);
+        }
+
+        Category entity = categoryMapper.map(model);
+        Category persistedEntity = categoryRepository.saveAndFlush(entity);
+        return categoryMapper.map(persistedEntity);
     }
 
     public Page<CategoryDto> getAll(Pageable pageable) {
-            return categoryRepository.findAll(pageable).map(categoryMapper::map);
+        return categoryRepository.findAll(pageable).map(categoryMapper::map);
     }
 
     public void deleleteByName(String name) {
-            categoryRepository.findById(name).orElseThrow(
-                    () -> new ServiceException(String.format(NO_CATEGORY, name), NO_CONTENT));
-            categoryRepository.deleteById(name);
+        categoryRepository.findById(name)
+                .orElseThrow(() -> new ServiceException(String.format(NO_CATEGORY, name), NO_CONTENT));
+        categoryRepository.deleteById(name);
     }
-    
+
     public CategoryDto getByName(String name) {
-            Category entity = categoryRepository.findById(name)
-                    .orElseThrow(() -> new ServiceException(String.format(NO_CATEGORY, name), 
-                                                            BAD_REQUEST));
-            return categoryMapper.map(entity);
+        Category entity = categoryRepository.findById(name)
+                .orElseThrow(() -> new ServiceException(String.format(NO_CATEGORY, name), BAD_REQUEST));
+        return categoryMapper.map(entity);
     }
 }

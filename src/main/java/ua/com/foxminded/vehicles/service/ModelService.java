@@ -19,8 +19,8 @@ import ua.com.foxminded.vehicles.repository.ModelRepository;
 @Transactional
 @RequiredArgsConstructor
 public class ModelService {
-    
-    public static final String NO_MODEL = "The model \"%s\" doesn't exist"; 
+
+    public static final String NO_MODEL = "The model \"%s\" doesn't exist";
     public static final String MODEL_IS_PRESENT = "The model \"%s\" already exists";
 
     private final ModelRepository modelRepository;
@@ -30,7 +30,7 @@ public class ModelService {
         if (modelRepository.findById(model.getName()).isPresent()) {
             throw new ServiceException(String.format(MODEL_IS_PRESENT, model.getName()), BAD_REQUEST);
         }
-        
+
         Model entity = modelMapper.map(model);
         Model persistedEntity = modelRepository.saveAndFlush(entity);
         return modelMapper.map(persistedEntity);
@@ -41,14 +41,14 @@ public class ModelService {
     }
 
     public void deleteByName(String name) {
-            modelRepository.findById(name).orElseThrow(
-                    () -> new ServiceException(String.format(MODEL_IS_PRESENT, name), NO_CONTENT));
-            modelRepository.deleteById(name);
+        modelRepository.findById(name)
+                .orElseThrow(() -> new ServiceException(String.format(MODEL_IS_PRESENT, name), NO_CONTENT));
+        modelRepository.deleteById(name);
     }
 
     public ModelDto getByName(String name) {
-            Model entity = modelRepository.findById(name).orElseThrow(
-                    () -> new ServiceException(String.format(NO_MODEL, name), BAD_REQUEST));
-            return modelMapper.map(entity);
+        Model entity = modelRepository.findById(name)
+                .orElseThrow(() -> new ServiceException(String.format(NO_MODEL, name), BAD_REQUEST));
+        return modelMapper.map(entity);
     }
 }

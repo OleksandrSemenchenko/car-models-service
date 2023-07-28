@@ -3,9 +3,10 @@ package ua.com.foxminded.vehicles.controller;
 import java.net.URI;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.SortDefault;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import ua.com.foxminded.vehicles.config.PageSortConfig;
 import ua.com.foxminded.vehicles.dto.ManufacturerDto;
 import ua.com.foxminded.vehicles.dto.ModelDto;
 import ua.com.foxminded.vehicles.dto.VehicleDto;
@@ -35,46 +37,38 @@ import ua.com.foxminded.vehicles.service.VehicleService;
 @Validated
 public class VehicleController {
     
-    public static final String PRODUCTION_YEAR_FIELD = "productionYear";
     public static final String MIN_PRODUCTION_YEAR = "minYear";
     public static final String MAX_PRODUCTION_YEAR = "maxYear";
     
     private final VehicleService vehicleService;
+    private final PageSortConfig sortConfig;
     
     @GetMapping(value = "/models/{model}/vehicles")
-    public Page<VehicleDto> getByModel(@PathVariable String model, 
-                                       @SortDefault(sort = PRODUCTION_YEAR_FIELD, 
-                                                    direction = Sort.Direction.DESC)
-                                       Pageable pageable) {
-        return vehicleService.getByModel(model, pageable);
+    public Page<VehicleDto> getByModel(@PathVariable String model, Pageable pageable) {
+        Pageable pageableDef = setDefaults(pageable);
+        return vehicleService.getByModel(model, pageableDef);
     }
     
     @GetMapping(value = "/categories/{category}/vehicles")
-    public Page<VehicleDto> getByCategory(@PathVariable String category, 
-                                          @SortDefault(sort = PRODUCTION_YEAR_FIELD, 
-                                                       direction = Sort.Direction.DESC)   
-                                          Pageable pageable) {
-        return vehicleService.getByCategory(category, pageable);
+    public Page<VehicleDto> getByCategory(@PathVariable String category, Pageable pageable) {
+        Pageable pageableDef = setDefaults(pageable);
+        return vehicleService.getByCategory(category, pageableDef);
     }
     
     @GetMapping(value = "/manufacturers/{manufacturer}/vehicles", params = MAX_PRODUCTION_YEAR) 
     public Page<VehicleDto> getByManufacturerAndMaxProductionYear(@PathVariable String manufacturer, 
                                                                   @RequestParam int maxYear, 
-                                                                  @SortDefault(sort = PRODUCTION_YEAR_FIELD, 
-                                                                               direction = Sort.Direction.DESC)
                                                                   Pageable pageable) {
-        
-        return vehicleService.getByManufacturerNameAndMaxYear(manufacturer, maxYear, pageable);
+        Pageable pageableDef = setDefaults(pageable);
+        return vehicleService.getByManufacturerNameAndMaxYear(manufacturer, maxYear, pageableDef);
     }
     
     @GetMapping(value = "/manufacturers/{manufacturer}/vehicles", params = MIN_PRODUCTION_YEAR) 
     public Page<VehicleDto> getByManufacturerAndMinProductionYear(@PathVariable String manufacturer,
                                                                   @RequestParam int minYear, 
-                                                                  @SortDefault(sort = PRODUCTION_YEAR_FIELD, 
-                                                                               direction = Sort.Direction.DESC)
                                                                   Pageable pageable) {
-        
-        return vehicleService.getByManufacturerNameAndMinYear(manufacturer, minYear, pageable);
+        Pageable pageableDef = setDefaults(pageable);
+        return vehicleService.getByManufacturerNameAndMinYear(manufacturer, minYear, pageableDef);
     }
     
     @PostMapping("/manufacturers/{manufacturer}/models/{model}/{year}")
@@ -99,10 +93,9 @@ public class VehicleController {
     }
     
     @GetMapping("/vehicles")
-    public Page<VehicleDto> getAll(@SortDefault(sort = PRODUCTION_YEAR_FIELD, 
-                                                direction = Sort.Direction.DESC)
-                                   Pageable pageable) {
-        return vehicleService.getAll(pageable);
+    public Page<VehicleDto> getAll(Pageable pageable) {
+        Pageable pageableDef = setDefaults(pageable);
+        return vehicleService.getAll(pageableDef);
     }
     
     @GetMapping("/vehicles/{id}")
@@ -134,5 +127,14 @@ public class VehicleController {
     @DeleteMapping("/vehicles/{id}")
     public void deleteById(@PathVariable String id) {
         vehicleService.deleteById(id);
+    }
+    
+    private Pageable setDefaults(Pageable pageable) {
+        Direction direction = sortConfig.getVehicleSortDirection();
+        String sortParameter = sortConfig.getVehicleSortParameter();
+        Sort sortDef = Sort.by(direction, sortParameter);
+        return PageRequest.of(pageable.getPageNumber(), 
+                              pageable.getPageSize(),
+                              pageable.getSortOr(sortDef));
     }
 }

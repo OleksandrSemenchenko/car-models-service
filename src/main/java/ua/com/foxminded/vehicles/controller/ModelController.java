@@ -3,9 +3,10 @@ package ua.com.foxminded.vehicles.controller;
 import java.net.URI;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.SortDefault;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import ua.com.foxminded.vehicles.config.PageSortConfig;
 import ua.com.foxminded.vehicles.dto.ModelDto;
 import ua.com.foxminded.vehicles.service.ModelService;
 
@@ -30,9 +32,8 @@ import ua.com.foxminded.vehicles.service.ModelService;
 @Validated
 public class ModelController {
     
-    public static final String NAME_FIELD = "name";
-    
     private final ModelService modelService;
+    private final PageSortConfig sortConfig;
     
     @PostMapping("/models")
     public ResponseEntity<String> save(@RequestBody @Valid ModelDto model) {
@@ -50,13 +51,22 @@ public class ModelController {
     }
     
     @GetMapping("/models")
-    public Page<ModelDto> getAll(@SortDefault(sort = NAME_FIELD, direction = Sort.Direction.DESC)
-                                 Pageable pageable) {
-        return modelService.getAll(pageable);
+    public Page<ModelDto> getAll(Pageable pageable) {
+        Pageable pageableDef = setDefaults(pageable);
+        return modelService.getAll(pageableDef);
     }
     
     @DeleteMapping("/models/{name}")
     public void deleteByName(@PathVariable String name) {
         modelService.deleteByName(name);
+    }
+    
+    private Pageable setDefaults(Pageable pageable) {
+        Direction direction = sortConfig.getModelSortDirection();
+        String sortParameter = sortConfig.getModelSortParameter();
+        Sort sortDef = Sort.by(direction, sortParameter);
+        return PageRequest.of(pageable.getPageNumber(), 
+                              pageable.getPageSize(),
+                              pageable.getSortOr(sortDef));
     }
 }

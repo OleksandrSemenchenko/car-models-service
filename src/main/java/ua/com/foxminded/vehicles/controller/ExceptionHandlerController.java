@@ -3,12 +3,11 @@ package ua.com.foxminded.vehicles.controller;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
-import java.net.URI;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.ServletRequestBindingException;
@@ -27,6 +26,7 @@ import ua.com.foxminded.vehicles.exception.ValidationError;
 public class ExceptionHandlerController {
     
     @ExceptionHandler(ServletRequestBindingException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBindingException(ServletRequestBindingException e, 
                                                 HttpServletRequest request) {
         log.error("Binding exception", e);
@@ -40,6 +40,7 @@ public class ExceptionHandlerController {
     }
     
     @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleUncaughtExceptions(Exception e, HttpServletRequest request) {
         log.error("Uncought exception", e);
         ErrorResponse errorResponse = new ErrorResponse();
@@ -47,17 +48,20 @@ public class ExceptionHandlerController {
         errorResponse.setMessage(e.getMessage());
         errorResponse.setPath(request.getRequestURI());
         errorResponse.setTimestamp(new Date());
+        errorResponse.setStatus(INTERNAL_SERVER_ERROR.value());
         return errorResponse;
     }
     
     @ExceptionHandler(ServiceException.class)
-    public ProblemDetail handleServiceException(ServiceException e, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleServiceException(ServiceException e, HttpServletRequest request) {
         log.error("Service excetpion", e);
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(e.getHttpStatus(), e.getMessage());
-        problemDetail.setTitle(e.getHttpStatus().getReasonPhrase());
-        problemDetail.setInstance(URI.create(request.getRequestURI()));
-        problemDetail.setProperty("timestamp", new Date());
-        return problemDetail;
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setError(e.getHttpStatus().getReasonPhrase());
+        errorResponse.setMessage(e.getMessage());
+        errorResponse.setPath(request.getRequestURI());
+        errorResponse.setTimestamp(new Date());
+        errorResponse.setStatus(e.getHttpStatus().value());
+        return ResponseEntity.status(e.getHttpStatus()).body(errorResponse);
     }
     
     
@@ -65,7 +69,7 @@ public class ExceptionHandlerController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentViolation(MethodArgumentNotValidException e, 
                                                        HttpServletRequest request) {
-        log.error("Method argument validation exception");
+        log.error("Method argument not valid exception");
         List<ValidationError> validationErrors = buildValidationError(e);
         ErrorResponse errorResponse = new ErrorResponse(validationErrors);
         errorResponse.setError(BAD_REQUEST.getReasonPhrase());
