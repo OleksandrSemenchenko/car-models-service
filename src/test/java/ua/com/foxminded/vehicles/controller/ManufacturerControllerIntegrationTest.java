@@ -64,10 +64,10 @@ class ManufacturerControllerIntegrationTest {
     }
     
     @Test
-    void getByName_ShouldReturnStatus400_WhenNoManufactuer() throws Exception {
+    void getByName_ShouldReturnStatus404_WhenNoManufactuer() throws Exception {
         String notExistingManufacturerName = "Ford";
         mockMvc.perform(get("/v1/manufacturers/{name}", notExistingManufacturerName))
-               .andExpect(status().is(400));
+               .andExpect(status().isNotFound());
     }
     
     @Test
@@ -97,14 +97,16 @@ class ManufacturerControllerIntegrationTest {
     }
     
     @Test
-    void save_ShouldReturnStatus400_WhenModelAlreadyExists() throws Exception {
+    void save_ShouldReturnStatus303_WhenModelAlreadyExists() throws Exception {
         ManufacturerDto manufacturer = ManufacturerDto.builder().name(manufacturerDto.getName()).build();
         String manufacturerDtoJson = mapper.writeValueAsString(manufacturer);
         
         mockMvc.perform(post("/v1/manufacturers")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(manufacturerDtoJson))
-               .andExpect(status().is(400));
+               .andExpect(status().is(303))
+               .andExpect(header().string("Location", 
+                                          containsString("/v1/manufacturers/" + manufacturerDto.getName())));
     }
     
     @Test
@@ -125,16 +127,16 @@ class ManufacturerControllerIntegrationTest {
     }
     
     @Test
-    void deleteByName_ShouldReturnStatus204_WhenNoManufacturer() throws Exception {
+    void deleteByName_ShouldReturnStatus404_WhenNoManufacturer() throws Exception {
         String notExistingManufacturerName = "Ford";
         mockMvc.perform(delete("/v1/manufacturers/{name}", notExistingManufacturerName))
-               .andExpect(status().is(204));
+               .andExpect(status().isNotFound());
     }
     
     @Test
-    void deleteByName_ShouldReturnStatusIsOk() throws Exception {
+    void deleteByName_ShouldReturnStatus204() throws Exception {
         mockMvc.perform(delete("/v1/manufacturers/{name}", manufacturer.getName()))
-               .andExpect(status().isOk());
+               .andExpect(status().isNoContent());
         
         Optional<Manufacturer> manufacturerOptional = manufacturerRepository
                 .findById(manufacturer.getName());

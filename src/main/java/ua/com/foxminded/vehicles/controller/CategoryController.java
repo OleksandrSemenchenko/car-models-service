@@ -1,5 +1,7 @@
 package ua.com.foxminded.vehicles.controller;
 
+import static org.springframework.http.HttpStatus.SEE_OTHER;
+
 import java.net.URI;
 
 import org.springframework.data.domain.Page;
@@ -32,17 +34,23 @@ public class CategoryController {
     
     @PostMapping
     public ResponseEntity<String> save(@RequestBody @Valid CategoryDto category) {
-        CategoryDto createdCategory = categoryService.save(category);
         URI location = ServletUriComponentsBuilder.fromCurrentRequestUri()
                                                   .path("/{name}")
-                                                  .buildAndExpand(createdCategory.getName())
+                                                  .buildAndExpand(category.getName())
                                                   .toUri();
-        return ResponseEntity.created(location).build();
+        if (categoryService.existsByName(category.getName())) {
+            return ResponseEntity.status(SEE_OTHER)
+                                 .location(location).build();
+        } else {
+            categoryService.save(category);
+            return ResponseEntity.created(location).build();
+        }
     }
     
     @GetMapping("/{name}")
-    public CategoryDto getByName(@PathVariable String name) {
-        return categoryService.getByName(name);
+    public ResponseEntity<CategoryDto> getByName(@PathVariable String name) {
+        CategoryDto category = categoryService.getByName(name);
+        return ResponseEntity.ok(category);
     }
     
     @GetMapping
@@ -52,8 +60,9 @@ public class CategoryController {
     }
     
     @DeleteMapping("/{name}")
-    public void deleteByName(@PathVariable String name) {
+    public ResponseEntity<String> deleteByName(@PathVariable String name) {
         categoryService.deleleteByName(name);
+        return ResponseEntity.noContent().build();
     }
     
     private Pageable setDefaults(Pageable pageable) {

@@ -78,10 +78,11 @@ class ModelControllerIntegrationTest {
     }
     
     @Test
-    void save_ShouldReturnStatus400_WhenModelAlreadyExists() throws Exception {
+    void save_ShouldReturnStatus303_WhenModelAlreadyExists() throws Exception {
         mockMvc.perform(post("/v1/models").contentType(MediaType.APPLICATION_JSON)
                                           .content(modelDtoJson))
-               .andExpect(status().is(400));
+               .andExpect(status().is(303))
+               .andExpect(header().string("Location", containsString("/v1/models/" + modelDto.getName())));
     }
     
     @Test
@@ -99,10 +100,10 @@ class ModelControllerIntegrationTest {
     }
     
     @Test
-    void getByName_ShouldReturnStatus400_WhenNoModel() throws Exception {
+    void getByName_ShouldReturnStatus404_WhenNoModel() throws Exception {
         String notExistingModelName = "Camaro";
         mockMvc.perform(get("/v1/models/{name}", notExistingModelName))
-               .andExpect(status().is(400));
+               .andExpect(status().isNotFound());
     }
     
     @Test
@@ -120,16 +121,16 @@ class ModelControllerIntegrationTest {
     }
     
     @Test
-    void deleteByName_ShouldReturnStatus204_WhenNoModel() throws Exception {
+    void deleteByName_ShouldReturnStatus404_WhenNoModel() throws Exception {
         String notExistingModelName = "Enclave";
         mockMvc.perform(delete("/v1/models/{name}", notExistingModelName))
-               .andExpect(status().is(204));
+               .andExpect(status().is(404));
     }
     
     @Test
-    void deleteByName_ShouldReturnStatusIsOk() throws Exception {
+    void deleteByName_ShouldReturnStatusIs204() throws Exception {
         mockMvc.perform(delete("/v1/models/{name}", model.getName()))
-               .andExpect(status().isOk());
+               .andExpect(status().isNoContent());
         
         Optional<Model> modelEntityOpt = modelRepository.findById(model.getName());
         assertTrue(modelEntityOpt.isEmpty());

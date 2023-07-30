@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,8 +35,9 @@ public class ManufacturerController {
     private final PageSortConfig sortConfig;
     
     @GetMapping("/{name}")
-    public ManufacturerDto getByName(@PathVariable String name) {
-        return manufacturerService.getByName(name);
+    public ResponseEntity<ManufacturerDto> getByName(@PathVariable String name) {
+        ManufacturerDto manufacturer = manufacturerService.getByName(name);
+        return ResponseEntity.ok(manufacturer);
     }
     
     @GetMapping
@@ -46,16 +48,23 @@ public class ManufacturerController {
     
     @PostMapping
     public ResponseEntity<String> save(@RequestBody @Valid ManufacturerDto manufacturer) {
-        ManufacturerDto createdManufacturer = manufacturerService.save(manufacturer);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{name}")
-                                                  .buildAndExpand(createdManufacturer.getName())
+                                                  .buildAndExpand(manufacturer.getName())
                                                   .toUri();
-        return ResponseEntity.created(location).build();
+        
+        if (manufacturerService.existsByName(manufacturer.getName())) {
+            return ResponseEntity.status(HttpStatus.SEE_OTHER)
+                                 .location(location).build();
+        } else {
+            manufacturerService.save(manufacturer);
+            return ResponseEntity.created(location).build();
+        }
     }
     
     @DeleteMapping("/{name}")
-    public void deleteByName(@PathVariable String name) {
+    public ResponseEntity<String> deleteByName(@PathVariable String name) {
         manufacturerService.deleteByName(name);
+        return ResponseEntity.noContent().build();
     }
     
     private Pageable setDefaults(Pageable pageable) {

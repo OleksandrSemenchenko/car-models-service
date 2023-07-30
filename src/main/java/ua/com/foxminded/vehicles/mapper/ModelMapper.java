@@ -12,8 +12,8 @@ import ua.com.foxminded.vehicles.entity.Model;
 public interface ModelMapper {
     
     @Mapping(target = "vehicles", ignore = true)
-    public ModelDto map(Model model);
+    ModelDto map(Model model);
     
     @InheritInverseConfiguration
-    public Model map(ModelDto modelDto);
+    Model map(ModelDto modelDto);
 }

@@ -80,15 +80,15 @@ public class VehicleController {
         vehicle.setManufacturer(ManufacturerDto.builder().name(manufacturer).build());
         vehicle.setModel(ModelDto.builder().name(model).build());
         vehicle.setProductionYear(year);
-
-        VehicleDto createdVehicle = vehicleService.save(vehicle);
         
         URI location = UriComponentsBuilder.newInstance().scheme(request.getScheme())
                                                          .host(request.getServerName())
                                                          .port(request.getServerPort())
                                                          .path("/v1/vehicles/{id}")
-                                                         .buildAndExpand(createdVehicle.getId())
+                                                         .buildAndExpand(vehicle.getId())
                                                          .toUri();
+        
+        vehicleService.save(vehicle);
         return ResponseEntity.created(location).build();
     }
     
@@ -99,8 +99,9 @@ public class VehicleController {
     }
     
     @GetMapping("/vehicles/{id}")
-    public VehicleDto getById(@PathVariable String id) {
-        return vehicleService.getById(id);
+    public ResponseEntity<VehicleDto> getById(@PathVariable String id) {
+        VehicleDto vehicle = vehicleService.getById(id);
+        return ResponseEntity.ok(vehicle);
     }
     
     @PutMapping("/manufacturers/{manufacturer}/models/{model}/{year}")
@@ -112,6 +113,7 @@ public class VehicleController {
         vehicle.setManufacturer(ManufacturerDto.builder().name(manufacturer).build());
         vehicle.setModel(ModelDto.builder().name(model).build());
         vehicle.setProductionYear(year);
+        
         VehicleDto updatedVehicle = vehicleService.update(vehicle);
         URI location = UriComponentsBuilder.newInstance().scheme(request.getScheme())
                                                          .host(request.getServerName())
@@ -125,8 +127,9 @@ public class VehicleController {
     }
     
     @DeleteMapping("/vehicles/{id}")
-    public void deleteById(@PathVariable String id) {
+    public ResponseEntity<String> deleteById(@PathVariable String id) {
         vehicleService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
     
     private Pageable setDefaults(Pageable pageable) {

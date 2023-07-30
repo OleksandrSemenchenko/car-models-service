@@ -13,7 +13,7 @@ public interface VehicleMapper {
     @Mapping(target = "categories", qualifiedByName = "categoriesDtoWithoutRelationships")
     @Mapping(target = "model.vehicles", ignore = true)
     @Mapping(target = "manufacturer.vehicles", ignore = true)
-    public VehicleDto map(Vehicle vehicle);
+    VehicleDto map(Vehicle vehicle);
     
-    public Vehicle map(VehicleDto vehicleDto);
+    Vehicle map(VehicleDto vehicleDto);
 }

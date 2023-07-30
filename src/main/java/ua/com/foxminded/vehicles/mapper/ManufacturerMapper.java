@@ -13,8 +13,8 @@ import ua.com.foxminded.vehicles.entity.Manufacturer;
 public interface ManufacturerMapper {
     
     @Mapping(target = "vehicles", ignore = true)
-    public ManufacturerDto map(Manufacturer manufacturer);
+    ManufacturerDto map(Manufacturer manufacturer);
     
     @InheritInverseConfiguration
-    public Manufacturer map(ManufacturerDto manufacturerDto);
+    Manufacturer map(ManufacturerDto manufacturerDto);
 }

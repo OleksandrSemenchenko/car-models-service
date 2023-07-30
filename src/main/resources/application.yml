@@ -8,6 +8,15 @@ spring:
       pageable:
         default-page-size: 100
         max-page-size: 200
+
+category-sort-prameter: name
+category-sort-direction: ASC
+manufacturer-sort-parameter: name
+manufacturer-sort-direction: ASC
+model-sort-parameter: name
+model-sort-direction: ASC
+vehicle-sort-parameter: productionYear
+vehicle-sort-direction: DESC
 ---
 spring:
   config:

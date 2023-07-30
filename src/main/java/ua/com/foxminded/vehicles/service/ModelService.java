@@ -1,7 +1,6 @@
 package ua.com.foxminded.vehicles.service;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
+import java.util.NoSuchElementException;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.vehicles.dto.ModelDto;
 import ua.com.foxminded.vehicles.entity.Model;
-import ua.com.foxminded.vehicles.exception.ServiceException;
 import ua.com.foxminded.vehicles.mapper.ModelMapper;
 import ua.com.foxminded.vehicles.repository.ModelRepository;
 
@@ -21,34 +19,34 @@ import ua.com.foxminded.vehicles.repository.ModelRepository;
 public class ModelService {
 
     public static final String NO_MODEL = "The model \"%s\" doesn't exist";
-    public static final String MODEL_IS_PRESENT = "The model \"%s\" already exists";
 
     private final ModelRepository modelRepository;
     private final ModelMapper modelMapper;
+    
+    public boolean existsByName(String name) {
+        return modelRepository.existsById(name);
+    }
 
-    public ModelDto save(ModelDto model) {
-        if (modelRepository.findById(model.getName()).isPresent()) {
-            throw new ServiceException(String.format(MODEL_IS_PRESENT, model.getName()), BAD_REQUEST);
-        }
-
-        Model entity = modelMapper.map(model);
-        Model persistedEntity = modelRepository.saveAndFlush(entity);
-        return modelMapper.map(persistedEntity);
+    public ModelDto save(ModelDto modelDto) {
+        Model model = modelMapper.map(modelDto);
+        Model persistedModel = modelRepository.saveAndFlush(model);
+        return modelMapper.map(persistedModel);
     }
 
     public Page<ModelDto> getAll(Pageable pageable) {
-        return modelRepository.findAll(pageable).map(modelMapper::map);
+        return modelRepository.findAll(pageable)
+                              .map(modelMapper::map);
     }
 
     public void deleteByName(String name) {
         modelRepository.findById(name)
-                .orElseThrow(() -> new ServiceException(String.format(MODEL_IS_PRESENT, name), NO_CONTENT));
+                       .orElseThrow(() -> new NoSuchElementException(String.format(NO_MODEL, name)));
         modelRepository.deleteById(name);
     }
 
     public ModelDto getByName(String name) {
-        Model entity = modelRepository.findById(name)
-                .orElseThrow(() -> new ServiceException(String.format(NO_MODEL, name), BAD_REQUEST));
-        return modelMapper.map(entity);
+        Model model = modelRepository.findById(name).orElseThrow(
+                () -> new NoSuchElementException(String.format(NO_MODEL, name)));
+        return modelMapper.map(model);
     }
 }

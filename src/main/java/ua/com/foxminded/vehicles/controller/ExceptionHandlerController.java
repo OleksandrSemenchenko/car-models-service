@@ -2,9 +2,11 @@ package ua.com.foxminded.vehicles.controller;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import ua.com.foxminded.vehicles.exception.ErrorResponse;
-import ua.com.foxminded.vehicles.exception.ServiceException;
 import ua.com.foxminded.vehicles.exception.ValidationError;
 
 @Slf4j
@@ -41,8 +42,8 @@ public class ExceptionHandlerController {
     
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleUncaughtExceptions(Exception e, HttpServletRequest request) {
-        log.error("Uncought exception", e);
+    public ErrorResponse handleUnexpectedException(Exception e, HttpServletRequest request) {
+        log.error("Unexpected exception", e);
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setError(INTERNAL_SERVER_ERROR.getReasonPhrase());
         errorResponse.setMessage(e.getMessage());
@@ -52,16 +53,18 @@ public class ExceptionHandlerController {
         return errorResponse;
     }
     
-    @ExceptionHandler(ServiceException.class)
-    public ResponseEntity<ErrorResponse> handleServiceException(ServiceException e, HttpServletRequest request) {
-        log.error("Service excetpion", e);
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<ErrorResponse> handleNoSuchElementException(NoSuchElementException e, 
+                                                                      HttpServletRequest request) {
+        log.error("Not such element excetpion", e);
         ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setError(e.getHttpStatus().getReasonPhrase());
+        errorResponse.setError(HttpStatus.NOT_FOUND.getReasonPhrase());
         errorResponse.setMessage(e.getMessage());
         errorResponse.setPath(request.getRequestURI());
         errorResponse.setTimestamp(new Date());
-        errorResponse.setStatus(e.getHttpStatus().value());
-        return ResponseEntity.status(e.getHttpStatus()).body(errorResponse);
+        errorResponse.setStatus(NOT_FOUND.value());
+        return ResponseEntity.status(NOT_FOUND)
+                             .body(errorResponse);
     }
     
     

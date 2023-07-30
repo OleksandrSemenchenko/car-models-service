@@ -62,22 +62,26 @@ class CategoryControllerIntegrationTest {
     }
     
     @Test
-    void save_ShouldReturnStatus400_WhenMethodArgumentNotValid() throws Exception {
+    void save_ShouldReturnStatus303_WhenMethodArgumentNotValid() throws Exception {
         category.setName("");
         String categoryJson = mapper.writeValueAsString(categoryDto);
         
         mockMvc.perform(post("/v1/categories").contentType(APPLICATION_JSON)
                                               .content(categoryJson))
-               .andExpect(status().is(400));
+               .andExpect(status().is(303))
+               .andExpect(header().string("Location", containsString("/v1/categories/" + 
+                                                                     categoryDto.getName())));
     }
     
     @Test
-    void save_ShouldReturnStatus400_WhenCategoryAlreadyExists() throws Exception {
+    void save_ShouldReturnStatus303_WhenCategoryAlreadyExists() throws Exception {
         String categoryJson = mapper.writeValueAsString(categoryDto);
         
         mockMvc.perform(post("/v1/categories").contentType(APPLICATION_JSON)
                                               .content(categoryJson))
-               .andExpect(status().is(400));
+               .andExpect(status().is(303))
+               .andExpect(header().string("Location", containsString("/v1/categories/" + 
+                                                                     categoryDto.getName())));
     }
     
     @Test
@@ -93,10 +97,10 @@ class CategoryControllerIntegrationTest {
     }
     
     @Test
-    void getByName_ShouldReturnStatus400_WhenNoCategory() throws Exception {
+    void getByName_ShouldReturnStatus404_WhenNoCategory() throws Exception {
         String notExistingCategoryName = "SUV";
         mockMvc.perform(get("/v1/categories/{name}", notExistingCategoryName))
-               .andExpect(status().is(400));
+               .andExpect(status().isNotFound());
     }
     
     @Test
@@ -114,16 +118,16 @@ class CategoryControllerIntegrationTest {
     }
     
     @Test
-    void deleteByName_ShouldReturnStatus204_WhenNoCategory() throws Exception {
+    void deleteByName_ShouldReturnStatus404_WhenNoCategory() throws Exception {
         String notExistingCategoryName = "SUV";
         mockMvc.perform(delete("/v1/categories/{name}", notExistingCategoryName))
-               .andExpect(status().is(204));
+               .andExpect(status().isNotFound());
     }
     
     @Test
-    void deleteByName_ShouldReturnStatusIsOk() throws Exception {
+    void deleteByName_ShouldReturnStatusIs204() throws Exception {
         mockMvc.perform(delete("/v1/categories/{name}", category.getName()))
-               .andExpect(status().isOk());
+               .andExpect(status().isNoContent());
         
         Optional<Category> categoryOpt = categoryRepository.findById(category.getName());
         assertTrue(categoryOpt.isEmpty());

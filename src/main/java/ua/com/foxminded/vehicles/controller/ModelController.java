@@ -1,5 +1,7 @@
 package ua.com.foxminded.vehicles.controller;
 
+import static org.springframework.http.HttpStatus.SEE_OTHER;
+
 import java.net.URI;
 
 import org.springframework.data.domain.Page;
@@ -37,17 +39,24 @@ public class ModelController {
     
     @PostMapping("/models")
     public ResponseEntity<String> save(@RequestBody @Valid ModelDto model) {
-        ModelDto createdModel = modelService.save(model);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                                                   .path("/{name}")
-                                                  .buildAndExpand(createdModel.getName())
+                                                  .buildAndExpand(model.getName())
                                                   .toUri();
-        return ResponseEntity.created(location).build();
+        
+        if (modelService.existsByName(model.getName())) {
+            return ResponseEntity.status(SEE_OTHER)
+                                 .location(location).build();
+        } else {
+            modelService.save(model);
+            return ResponseEntity.created(location).build();
+        }
     }
     
     @GetMapping("/models/{name}")
-    public ModelDto getByName(@PathVariable String name) {
-        return modelService.getByName(name);
+    public ResponseEntity<ModelDto> getByName(@PathVariable String name) {
+        ModelDto model = modelService.getByName(name);
+        return ResponseEntity.ok(model);
     }
     
     @GetMapping("/models")
@@ -57,8 +66,9 @@ public class ModelController {
     }
     
     @DeleteMapping("/models/{name}")
-    public void deleteByName(@PathVariable String name) {
+    public ResponseEntity<String> deleteByName(@PathVariable String name) {
         modelService.deleteByName(name);
+        return ResponseEntity.noContent().build();
     }
     
     private Pageable setDefaults(Pageable pageable) {

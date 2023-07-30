@@ -17,12 +17,12 @@ public interface CategoryMapper {
     
     @Named("categoriesDtoWithoutRelationships")
     @IterableMapping(qualifiedByName = "categoryDtoWithoutRelationships")
-    public Set<CategoryDto>  mapWhithoutRelationships(Set<Category> categories);
+    Set<CategoryDto>  mapWhithoutRelationships(Set<Category> categories);
     
     @Named("categoryDtoWithoutRelationships")
     @Mapping(target = "vehicles", ignore = true)
-    public CategoryDto map(Category category);
+    CategoryDto map(Category category);
     
     @InheritInverseConfiguration
-    public Category map(CategoryDto categoryDto);
+    Category map(CategoryDto categoryDto);
 }
