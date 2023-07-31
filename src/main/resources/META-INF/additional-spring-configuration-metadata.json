@@ -1,0 +1,81 @@
+{
+	"properties": [
+		{
+			"name": "category.sort-parameter",
+			"type": "java.lang.String",
+			"description": "The parameter by which sorting a categories list"
+		},
+		{
+			"name": "category.sort-direction",
+			"type": "org.springframework.data.domain.Sort.Direction",
+			"description": "Sorting direction"
+		},
+		{
+			"name": "manufacturer.sort-parameter",
+			"type": "java.lang.String",
+			"description": "The parameter by which sorting a manufacturers list"
+		},
+		{
+			"name": "manufacturer.sort-direction",
+			"type": "org.springframework.data.domain.Sort.Direction",
+			"description": "Sorting direction"
+		},
+		{
+			"name": "model.sort-parameter",
+			"type": "java.lang.String",
+			"description": "The parameter by which sorting a models list"
+		},
+		{
+			"name": "model.sort-direction",
+			"type": "org.springframework.data.domain.Sort.Direction",
+			"description": "Sorting direction"
+		},
+		{
+			"name": "vehicle.sort-parameter",
+			"type": "java.lang.String",
+			"description": "The parameter by which sorting a vhicles list"
+		},
+		{
+			"name": "vehicle.sort-direction",
+			"type": "org.springframework.data.domain.Sort.Direction",
+			"description": "Sorting direction"
+		}
+	],
+	"hints": [
+		{
+			"name": "category.sort-parameter",
+			"values": [
+				{
+					"value": "name"
+				}
+			]
+		},
+		{
+			"name": "manufacturer.sort-parameter",
+			"values": [
+				{
+					"value": "name"
+				}
+			]
+		},
+		{
+			"name": "model.sort-parameter",
+			"values": [
+				{
+					"value": "name"
+				}
+			]
+		},
+		{
+			"name": "vehicle.sort-parameter",
+			"values": [
+				{
+					"value": "id"
+				},
+				{
+					"value": "productionYear"
+				}
+			]
+		}
+	]
+}
