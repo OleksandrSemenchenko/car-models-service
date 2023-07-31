@@ -2,6 +2,7 @@ package ua.com.foxminded.vehicles.controller;
 
 import java.net.URI;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +22,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import ua.com.foxminded.vehicles.config.PageSortConfig;
 import ua.com.foxminded.vehicles.dto.ManufacturerDto;
 import ua.com.foxminded.vehicles.service.ManufacturerService;
 
@@ -31,8 +31,13 @@ import ua.com.foxminded.vehicles.service.ManufacturerService;
 @Validated
 public class ManufacturerController {
     
+    @Value("${manufacturer.sort-parameter}")
+    private String sortParameter;
+    
+    @Value("${manufacturer.sort-direction}")
+    private String sortDirection;
+    
     private final ManufacturerService manufacturerService;
-    private final PageSortConfig sortConfig;
     
     @GetMapping("/{name}")
     public ResponseEntity<ManufacturerDto> getByName(@PathVariable String name) {
@@ -68,8 +73,7 @@ public class ManufacturerController {
     }
     
     private Pageable setDefaults(Pageable pageable) {
-        Direction direction = sortConfig.getManufacturerSortDirection();
-        String sortParameter = sortConfig.getManufacturerSortParameter();
+        Direction direction = Direction.valueOf(sortDirection);
         Sort sortDef = Sort.by(direction, sortParameter);
         return PageRequest.of(pageable.getPageNumber(), 
                               pageable.getPageSize(),

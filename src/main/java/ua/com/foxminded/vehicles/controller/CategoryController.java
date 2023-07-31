@@ -4,10 +4,12 @@ import static org.springframework.http.HttpStatus.SEE_OTHER;
 
 import java.net.URI;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +22,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import ua.com.foxminded.vehicles.config.PageSortConfig;
 import ua.com.foxminded.vehicles.dto.CategoryDto;
 import ua.com.foxminded.vehicles.service.CategoryService;
 
@@ -29,7 +30,12 @@ import ua.com.foxminded.vehicles.service.CategoryService;
 @RequestMapping("/v1/categories")
 public class CategoryController {
     
-    private final PageSortConfig sortConfig;
+    @Value("${category.sort-parameter}")
+    private String sortParameter;
+    
+    @Value("${category.sort-direction}")
+    private String sortDirection;
+    
     private final CategoryService categoryService;
     
     @PostMapping
@@ -66,8 +72,7 @@ public class CategoryController {
     }
     
     private Pageable setDefaults(Pageable pageable) {
-        Sort.Direction direction = sortConfig.getCategorySortDirection();
-        String sortParameter = sortConfig.getCategorySortParameter();
+        Direction direction = Direction.valueOf(sortDirection);
         Sort sortDef = Sort.by(direction, sortParameter);
         return PageRequest.of(pageable.getPageNumber(), 
                               pageable.getPageSize(),

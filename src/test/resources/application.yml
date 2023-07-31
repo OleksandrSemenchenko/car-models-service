@@ -1,3 +1,4 @@
+---
 spring:
   flyway:
     enabled: false
@@ -20,3 +21,12 @@ logging:
   level:
     root: warn
     org: warn
+---
+category.sort-parameter: name
+category.sort-direction: ASC
+manufacturer.sort-parameter: name
+manufacturer.sort-direction: ASC
+model.sort-parameter: name
+model.sort-direction: ASC
+vehicle.sort-parameter: productionYear
+vehicle.sort-direction: DESC

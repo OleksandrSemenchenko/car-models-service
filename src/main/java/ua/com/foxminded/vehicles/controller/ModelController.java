@@ -4,6 +4,7 @@ import static org.springframework.http.HttpStatus.SEE_OTHER;
 
 import java.net.URI;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +24,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import ua.com.foxminded.vehicles.config.PageSortConfig;
 import ua.com.foxminded.vehicles.dto.ModelDto;
 import ua.com.foxminded.vehicles.service.ModelService;
 
@@ -34,8 +34,13 @@ import ua.com.foxminded.vehicles.service.ModelService;
 @Validated
 public class ModelController {
     
+    @Value("${model.sort-parameter}")
+    private String modelSortParameter;
+    
+    @Value("${model.sort-direction}")
+    private String modelSortDirection;
+    
     private final ModelService modelService;
-    private final PageSortConfig sortConfig;
     
     @PostMapping("/models")
     public ResponseEntity<String> save(@RequestBody @Valid ModelDto model) {
@@ -72,9 +77,8 @@ public class ModelController {
     }
     
     private Pageable setDefaults(Pageable pageable) {
-        Direction direction = sortConfig.getModelSortDirection();
-        String sortParameter = sortConfig.getModelSortParameter();
-        Sort sortDef = Sort.by(direction, sortParameter);
+        Direction direction = Direction.valueOf(modelSortDirection);
+        Sort sortDef = Sort.by(direction, modelSortParameter);
         return PageRequest.of(pageable.getPageNumber(), 
                               pageable.getPageSize(),
                               pageable.getSortOr(sortDef));

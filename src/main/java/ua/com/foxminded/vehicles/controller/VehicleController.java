@@ -2,6 +2,7 @@ package ua.com.foxminded.vehicles.controller;
 
 import java.net.URI;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +26,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import ua.com.foxminded.vehicles.config.PageSortConfig;
 import ua.com.foxminded.vehicles.dto.ManufacturerDto;
 import ua.com.foxminded.vehicles.dto.ModelDto;
 import ua.com.foxminded.vehicles.dto.VehicleDto;
@@ -40,8 +40,13 @@ public class VehicleController {
     public static final String MIN_PRODUCTION_YEAR = "minYear";
     public static final String MAX_PRODUCTION_YEAR = "maxYear";
     
+    @Value("${vehicle.sort-parameter}")
+    private String sortParameter;
+    
+    @Value("${vehicle.sort-direction}")
+    private String sortDirection;
+    
     private final VehicleService vehicleService;
-    private final PageSortConfig sortConfig;
     
     @GetMapping(value = "/models/{model}/vehicles")
     public Page<VehicleDto> getByModel(@PathVariable String model, Pageable pageable) {
@@ -133,8 +138,7 @@ public class VehicleController {
     }
     
     private Pageable setDefaults(Pageable pageable) {
-        Direction direction = sortConfig.getVehicleSortDirection();
-        String sortParameter = sortConfig.getVehicleSortParameter();
+        Direction direction = Direction.valueOf(sortDirection);
         Sort sortDef = Sort.by(direction, sortParameter);
         return PageRequest.of(pageable.getPageNumber(), 
                               pageable.getPageSize(),
