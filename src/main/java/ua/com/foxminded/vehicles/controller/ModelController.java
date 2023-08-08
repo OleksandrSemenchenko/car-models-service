@@ -1,7 +1,5 @@
 package ua.com.foxminded.vehicles.controller;
 
-import static org.springframework.http.HttpStatus.SEE_OTHER;
-
 import java.net.URI;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +10,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +28,6 @@ import ua.com.foxminded.vehicles.service.ModelService;
 @ResponseBody
 @RequestMapping("/v1")
 @RequiredArgsConstructor
-@Validated
 public class ModelController {
     
     @Value("${application.sort.model.by}")
@@ -44,18 +40,13 @@ public class ModelController {
     
     @PostMapping("/models")
     public ResponseEntity<String> save(@RequestBody @Valid ModelDto model) {
+        modelService.save(model);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                                                   .path("/{name}")
                                                   .buildAndExpand(model.getName())
                                                   .toUri();
-        
-        if (modelService.existsByName(model.getName())) {
-            return ResponseEntity.status(SEE_OTHER)
-                                 .location(location).build();
-        } else {
-            modelService.save(model);
-            return ResponseEntity.created(location).build();
-        }
+
+        return ResponseEntity.created(location).build();
     }
     
     @GetMapping("/models/{name}")
@@ -66,8 +57,8 @@ public class ModelController {
     
     @GetMapping("/models")
     public Page<ModelDto> getAll(Pageable pageable) {
-        Pageable pageableDefault = setDefaults(pageable);
-        return modelService.getAll(pageableDefault);
+        Pageable defaultPageable = setDefaults(pageable);
+        return modelService.getAll(defaultPageable);
     }
     
     @DeleteMapping("/models/{name}")
@@ -78,9 +69,9 @@ public class ModelController {
     
     private Pageable setDefaults(Pageable pageable) {
         Direction direction = Direction.valueOf(modelSortDirection);
-        Sort sortDefault = Sort.by(direction, sortBy);
+        Sort defaultSort = Sort.by(direction, sortBy);
         return PageRequest.of(pageable.getPageNumber(), 
                               pageable.getPageSize(),
-                              pageable.getSortOr(sortDefault));
+                              pageable.getSortOr(defaultSort));
     }
 }

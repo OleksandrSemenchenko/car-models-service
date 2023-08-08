@@ -2,7 +2,6 @@ package ua.com.foxminded.vehicles.controller;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.time.Instant;
 import java.util.List;
@@ -18,12 +17,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import ua.com.foxminded.vehicles.exception.CategoryNotFoundException;
 import ua.com.foxminded.vehicles.exception.ErrorResponse;
-import ua.com.foxminded.vehicles.exception.ManufacturerNotFoundException;
-import ua.com.foxminded.vehicles.exception.ModelNotFoundException;
+import ua.com.foxminded.vehicles.exception.ServiceException;
 import ua.com.foxminded.vehicles.exception.ValidationError;
-import ua.com.foxminded.vehicles.exception.VehicleNotFoundException;
 
 @Slf4j
 @ControllerAdvice
@@ -44,13 +40,12 @@ public class ExceptionHandlerController {
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e, request);
     }
     
-    @ExceptionHandler({CategoryNotFoundException.class, ManufacturerNotFoundException.class, 
-                       ModelNotFoundException.class, VehicleNotFoundException.class})
-    public ResponseEntity<ErrorResponse> handleNoSuchElementException(RuntimeException e, 
-                                                                      HttpServletRequest request) {
-        log.error("Not such element excetpion", e);
-        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.NOT_FOUND, e, request);
-        return ResponseEntity.status(NOT_FOUND)
+    @ExceptionHandler(ServiceException.class)
+    public ResponseEntity<ErrorResponse> handleServiceException(ServiceException e, 
+                                                                HttpServletRequest request) {
+        log.error("Service exception", e);
+        ErrorResponse errorResponse = buildErrorResponse(e.getHttpStatus(), e, request);
+        return ResponseEntity.status(e.getHttpStatus())
                              .body(errorResponse);
     }
     

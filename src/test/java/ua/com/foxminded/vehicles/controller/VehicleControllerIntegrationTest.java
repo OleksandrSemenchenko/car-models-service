@@ -16,8 +16,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ua.com.foxminded.vehicles.controller.CategoryControllerIntegrationTest.CATEGORY_NAME;
 import static ua.com.foxminded.vehicles.controller.ManufacturerControllerIntegrationTest.MANUFACTURER_NAME;
 import static ua.com.foxminded.vehicles.controller.ModelControllerIntegrationTest.MODEL_NAME;
-import static ua.com.foxminded.vehicles.controller.VehicleController.MAX_PRODUCTION_YEAR;
-import static ua.com.foxminded.vehicles.controller.VehicleController.MIN_PRODUCTION_YEAR;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -103,76 +101,54 @@ class VehicleControllerIntegrationTest {
     }
     
     @Test
-    void getByModel_ShouldReturnStatus404_WhenNoModel() throws Exception {
-        String notExistingModelName = "EcoSport";
+    void getAllByOptionalParameters_ShouldReturnStatus404_WhenNotExistingParameters() throws Exception {
+        String notExistingModel = "Insight";
+        String notExistingCategory = "Coupe";
+        String notExistingManufacturer = "Peugeot";
         
-        mockMvc.perform(get("/v1/models/{model}/vehicles", notExistingModelName))
-               .andExpect(status().isNotFound());
-    }
-    
-    @Test
-    void getByModel_ShouldReturnStatusIsOk() throws Exception {
-        mockMvc.perform(get("/v1/models/{model}/vehicles", model.getName()))
+        mockMvc.perform(get("/v1/vehicles").param("model", notExistingModel)
+                                           .param("category", notExistingCategory)
+                                           .param("manufacturer", notExistingManufacturer)
+                                           .param("maxYear", String.valueOf(vehicle.getProductionYear()))
+                                           .param("minYear", String.valueOf(vehicle.getProductionYear())))
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$.content[0].id", is(vehicle.getId())));
+               .andExpect(jsonPath("$.content", hasSize(0)));
     }
     
     @Test
-    void getByCategory_ShouldReturnStatus404_WhenNoCategory() throws Exception {
-        String notExistingCategoryName = "SUV";
-        mockMvc.perform(get("/v1/categories/{category}/vehicles", notExistingCategoryName))
-               .andExpect(status().isNotFound());
-    }
-    
-    @Test
-    void getByCategory_ShouldReturnStatusIsOk() throws Exception {
-        mockMvc.perform(get("/v1/categories/{category}/vehicles", category.getName()))
-               .andExpect(status().isOk())
-               .andExpect(jsonPath("$.content[0].id", is(vehicle.getId())));
-    }
-    
-    @Test
-    void getByManufacturerAndMaxProductionYear_ShouldReturnStatus404_WhenNoManufacturer() 
-            throws Exception {
-        String notExistingManufacturerName = "Reno";
-        String maxYear = String.valueOf(vehicle.getProductionYear());
-
-        mockMvc.perform(get("/v1/manufacturers/{manufacturer}/vehicles", notExistingManufacturerName)
-                    .param(MAX_PRODUCTION_YEAR, maxYear))
-               .andExpect(status().isNotFound());
-    }
-    
-    @Test
-    void getByManufacturerAndMaxProductionYear_ShouldReturnStatusIsOk() throws Exception {
-        String maxYear = String.valueOf(vehicle.getProductionYear());
-
-        mockMvc.perform(get("/v1/manufacturers/{manufacturer}/vehicles", manufacturer.getName())
-                    .param(MAX_PRODUCTION_YEAR, maxYear))
+    void getAllByOptionalParameters_ShouldReturnStatusIsOk_WhenParametersArePresent() throws Exception {
+        mockMvc.perform(get("/v1/vehicles").param("model", model.getName())
+                                           .param("category", category.getName())
+                                           .param("manufacturer", manufacturer.getName())
+                                           .param("maxYear", String.valueOf(vehicle.getProductionYear()))
+                                           .param("minYear", String.valueOf(vehicle.getProductionYear())))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.content", hasSize(1)))
-               .andExpect(jsonPath("$.content[0].id", is(vehicle.getId())));
+               .andExpect(jsonPath("$.content[0].productionYear", is(vehicle.getProductionYear())))
+               .andExpect(jsonPath("$.content[0].manufacturer.name", is(manufacturer.getName())))
+               .andExpect(jsonPath("$.content[0].categories[0].name", is(category.getName())));
     }
     
     @Test
-    void getByManufacturerNameAndMinProductionYear_ShouldReturnStatus404_WhenNoManufacturer() 
-            throws Exception {
-        String notExistingManufacturerName = "Reno";
-        String minYear = String.valueOf(youngerVehicle.getProductionYear());
-
-        mockMvc.perform(get("/v1/manufacturers/{manufacturer}/vehicles", notExistingManufacturerName)
-               .param(MIN_PRODUCTION_YEAR, minYear))
+    void getAllByOptionalParameters_ShouldReturnStatusIsOk_WhenNoParameters() throws Exception {
+        mockMvc.perform(get("/v1/vehicles"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.content", hasSize(2)));
+    }
+    
+    @Test
+    void getById_ShouldReturnStatus404_WhenNoVehicle() throws Exception {
+        String notExistingId = "1";
+        
+        mockMvc.perform(get("/v1/vehicles/{id}", notExistingId))
                .andExpect(status().isNotFound());
     }
     
     @Test
-    void getByManufacturerNameAndMinYear_ShouldReturnStatusIsOk() throws Exception {
-        String minYear = String.valueOf(youngerVehicle.getProductionYear());
-        
-        mockMvc.perform(get("/v1/manufacturers/{manufacturer}/vehicles", manufacturer.getName())
-                    .param(MIN_PRODUCTION_YEAR, minYear))
+    void getById_ShouldReturnStatusIsOk() throws Exception {
+        mockMvc.perform(get("/v1/vehicles/{id}", vehicle.getId()))
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$.content", hasSize(1)))
-               .andExpect(jsonPath("$.content[0].id", is(youngerVehicle.getId())));
+               .andExpect(jsonPath("$.productionYear").value(vehicle.getProductionYear()));
     }
     
     @Test
@@ -189,7 +165,6 @@ class VehicleControllerIntegrationTest {
                                                              .content(vehicleDtoJson))
                .andExpect(status().isNotFound());
     }
-    
     
     @Test
     void save_ShouldReturnStatus404_WhenNoModel() throws Exception {
@@ -238,25 +213,19 @@ class VehicleControllerIntegrationTest {
     }
     
     @Test
-    void getAll_ShouldReturnStatusIsOk() throws Exception {
-        mockMvc.perform(get("/v1/vehicles"))
-               .andExpect(status().isOk())
-               .andExpect(jsonPath("$.content", hasSize(2)));
-    }
-    
-    @Test
-    void getById_ShouldReturnStatus404_WhenNoVehicle() throws Exception {
-        String notExistingId = "1";
+    void update_ShouldReturnStatus404_WhenNoCategory() throws Exception {
+        String notExistingCategoryName = "Coupe";
+        CategoryDto categoryDto = CategoryDto.builder().name(notExistingCategoryName).build();
+        VehicleDto vehicleDto = VehicleDto.builder().id(vehicle.getId())
+                                                    .categories(Set.of(categoryDto)).build();
+        String vehicleDtoJson = mapper.writeValueAsString(vehicleDto);
         
-        mockMvc.perform(get("/v1/vehicles/{id}", notExistingId))
+        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{modle}/{year}", 
+                            manufacturer.getName(), 
+                            model.getName(), 
+                            PRODUCTION_YEAR).contentType(APPLICATION_JSON)
+                                            .content(vehicleDtoJson))
                .andExpect(status().isNotFound());
-    }
-    
-    @Test
-    void getById_ShouldReturnStatusIsOk() throws Exception {
-        mockMvc.perform(get("/v1/vehicles/{id}", vehicle.getId()))
-               .andExpect(status().isOk())
-               .andExpect(jsonPath("$.productionYear").value(vehicle.getProductionYear()));
     }
     
     @Test
@@ -330,8 +299,7 @@ class VehicleControllerIntegrationTest {
                             PRODUCTION_YEAR)
                     .contentType(APPLICATION_JSON)
                     .content(vehicleDtoJson))
-               .andExpect(status().isOk())
-               .andExpect(header().string("Location", containsString("/v1/vehicles/")));
+               .andExpect(status().isOk());
         
         Vehicle persistedVehicle = vehicleRepository.findById(vehicle.getId()).orElseThrow();
         

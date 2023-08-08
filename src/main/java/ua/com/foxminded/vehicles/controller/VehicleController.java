@@ -52,13 +52,13 @@ public class VehicleController {
                                                        @RequestParam(required = false) Integer maxYear,
                                                        @RequestParam(required = false) Integer minYear,
                                                        Pageable pageable) {
-        Pageable pageableDefault = setDefaults(pageable);
+        Pageable defaultPageable = setDefaults(pageable);
         FilterParameter parameter = FilterParameter.builder().modelName(model)
                                                              .categoryName(category)
                                                              .manufacturerName(manufacturer)
                                                              .maxYear(maxYear)
                                                              .minYear(minYear).build();
-        return vehicleService.getAllByOptionalPredicates(parameter, pageableDefault);
+        return vehicleService.getAllByOptionalPredicates(parameter, defaultPageable);
     }
     
     @GetMapping("/vehicles/{id}")
@@ -109,9 +109,9 @@ public class VehicleController {
     
     private Pageable setDefaults(Pageable pageable) {
         Direction direction = Direction.valueOf(sortDirection);
-        Sort sortDefault = Sort.by(direction, sortBy);
+        Sort defaulSort = Sort.by(direction, sortBy);
         return PageRequest.of(pageable.getPageNumber(), 
                               pageable.getPageSize(),
-                              pageable.getSortOr(sortDefault));
+                              pageable.getSortOr(defaulSort));
     }
 }

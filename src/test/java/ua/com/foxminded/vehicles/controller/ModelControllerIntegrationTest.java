@@ -78,11 +78,10 @@ class ModelControllerIntegrationTest {
     }
     
     @Test
-    void save_ShouldReturnStatus303_WhenModelAlreadyExists() throws Exception {
+    void save_ShouldReturnStatus409_WhenModelAlreadyExists() throws Exception {
         mockMvc.perform(post("/v1/models").contentType(MediaType.APPLICATION_JSON)
                                           .content(modelDtoJson))
-               .andExpect(status().is(303))
-               .andExpect(header().string("Location", containsString("/v1/models/" + modelDto.getName())));
+               .andExpect(status().is(409));
     }
     
     @Test

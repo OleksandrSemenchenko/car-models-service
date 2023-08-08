@@ -97,16 +97,14 @@ class ManufacturerControllerIntegrationTest {
     }
     
     @Test
-    void save_ShouldReturnStatus303_WhenModelAlreadyExists() throws Exception {
+    void save_ShouldReturnStatus409_WhenModelAlreadyExists() throws Exception {
         ManufacturerDto manufacturer = ManufacturerDto.builder().name(manufacturerDto.getName()).build();
         String manufacturerDtoJson = mapper.writeValueAsString(manufacturer);
         
         mockMvc.perform(post("/v1/manufacturers")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(manufacturerDtoJson))
-               .andExpect(status().is(303))
-               .andExpect(header().string("Location", 
-                                          containsString("/v1/manufacturers/" + manufacturerDto.getName())));
+               .andExpect(status().is(409));
     }
     
     @Test

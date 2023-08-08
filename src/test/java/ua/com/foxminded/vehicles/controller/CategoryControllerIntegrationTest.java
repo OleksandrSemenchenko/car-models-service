@@ -62,26 +62,22 @@ class CategoryControllerIntegrationTest {
     }
     
     @Test
-    void save_ShouldReturnStatus303_WhenMethodArgumentNotValid() throws Exception {
-        category.setName("");
+    void save_ShouldReturnStatus400_WhenMethodArgumentNotValid() throws Exception {
+        categoryDto.setName("");
         String categoryJson = mapper.writeValueAsString(categoryDto);
         
         mockMvc.perform(post("/v1/categories").contentType(APPLICATION_JSON)
                                               .content(categoryJson))
-               .andExpect(status().is(303))
-               .andExpect(header().string("Location", containsString("/v1/categories/" + 
-                                                                     categoryDto.getName())));
+               .andExpect(status().is(400));
     }
     
     @Test
-    void save_ShouldReturnStatus303_WhenCategoryAlreadyExists() throws Exception {
+    void save_ShouldReturnStatus409_WhenCategoryAlreadyExists() throws Exception {
         String categoryJson = mapper.writeValueAsString(categoryDto);
         
         mockMvc.perform(post("/v1/categories").contentType(APPLICATION_JSON)
                                               .content(categoryJson))
-               .andExpect(status().is(303))
-               .andExpect(header().string("Location", containsString("/v1/categories/" + 
-                                                                     categoryDto.getName())));
+               .andExpect(status().is(409));
     }
     
     @Test

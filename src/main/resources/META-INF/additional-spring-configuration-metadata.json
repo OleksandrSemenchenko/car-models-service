@@ -1,49 +1,49 @@
 {
 	"properties": [
 		{
-			"name": "category.sort-parameter",
+			"name": "application.sort.category.by",
 			"type": "java.lang.String",
 			"description": "The parameter by which sorting a categories list"
 		},
 		{
-			"name": "category.sort-direction",
+			"name": "application.sort.category.direction",
 			"type": "org.springframework.data.domain.Sort.Direction",
 			"description": "Sorting direction"
 		},
 		{
-			"name": "manufacturer.sort-parameter",
+			"name": "application.sort.manufacturer.by",
 			"type": "java.lang.String",
 			"description": "The parameter by which sorting a manufacturers list"
 		},
 		{
-			"name": "manufacturer.sort-direction",
+			"name": "application.sort.manufacturer.direction",
 			"type": "org.springframework.data.domain.Sort.Direction",
 			"description": "Sorting direction"
 		},
 		{
-			"name": "model.sort-parameter",
+			"name": "application.sort.model.by",
 			"type": "java.lang.String",
 			"description": "The parameter by which sorting a models list"
 		},
 		{
-			"name": "model.sort-direction",
+			"name": "application.sort.model.direction",
 			"type": "org.springframework.data.domain.Sort.Direction",
 			"description": "Sorting direction"
 		},
 		{
-			"name": "vehicle.sort-parameter",
+			"name": "application.sort.vehicle.by",
 			"type": "java.lang.String",
 			"description": "The parameter by which sorting a vhicles list"
 		},
 		{
-			"name": "vehicle.sort-direction",
+			"name": "application.sort.vehicle.direction",
 			"type": "org.springframework.data.domain.Sort.Direction",
 			"description": "Sorting direction"
 		}
 	],
 	"hints": [
 		{
-			"name": "category.sort-parameter",
+			"name": "application.sort.category.by",
 			"values": [
 				{
 					"value": "name"
@@ -51,7 +51,7 @@
 			]
 		},
 		{
-			"name": "manufacturer.sort-parameter",
+			"name": "application.sort.manufacturer.by",
 			"values": [
 				{
 					"value": "name"
@@ -59,7 +59,7 @@
 			]
 		},
 		{
-			"name": "model.sort-parameter",
+			"name": "application.sort.model.by",
 			"values": [
 				{
 					"value": "name"
@@ -67,7 +67,7 @@
 			]
 		},
 		{
-			"name": "vehicle.sort-parameter",
+			"name": "application.sort.vehicle.by",
 			"values": [
 				{
 					"value": "id"

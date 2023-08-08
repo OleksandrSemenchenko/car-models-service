@@ -1,7 +1,5 @@
 package ua.com.foxminded.vehicles.controller;
 
-import static org.springframework.http.HttpStatus.SEE_OTHER;
-
 import java.net.URI;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -40,17 +38,12 @@ public class CategoryController {
     
     @PostMapping
     public ResponseEntity<String> save(@RequestBody @Valid CategoryDto category) {
+        categoryService.save(category);
         URI location = ServletUriComponentsBuilder.fromCurrentRequestUri()
                                                   .path("/{name}")
                                                   .buildAndExpand(category.getName())
                                                   .toUri();
-        if (categoryService.existsByName(category.getName())) {
-            return ResponseEntity.status(SEE_OTHER)
-                                 .location(location).build();
-        } else {
-            categoryService.save(category);
-            return ResponseEntity.created(location).build();
-        }
+        return ResponseEntity.created(location).build();
     }
     
     @GetMapping("/{name}")
@@ -61,8 +54,8 @@ public class CategoryController {
     
     @GetMapping
     public Page<CategoryDto> getAll(Pageable pageable) {
-        Pageable pageableDefault = setDefaults(pageable);
-        return categoryService.getAll(pageableDefault);
+        Pageable defaultPageable = setDefaults(pageable);
+        return categoryService.getAll(defaultPageable);
     }
     
     @DeleteMapping("/{name}")
@@ -73,9 +66,9 @@ public class CategoryController {
     
     private Pageable setDefaults(Pageable pageable) {
         Direction direction = Direction.valueOf(sortDirection);
-        Sort sortDefault = Sort.by(direction, sortBy);
+        Sort defaultSort = Sort.by(direction, sortBy);
         return PageRequest.of(pageable.getPageNumber(), 
                               pageable.getPageSize(),
-                              pageable.getSortOr(sortDefault));
+                              pageable.getSortOr(defaultSort));
     }
 }
