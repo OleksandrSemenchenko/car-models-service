@@ -6,12 +6,12 @@ import static ua.com.foxminded.vehicles.service.ModelService.NO_MODEL;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,12 +19,18 @@ import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.vehicles.dto.CategoryDto;
 import ua.com.foxminded.vehicles.dto.VehicleDto;
 import ua.com.foxminded.vehicles.entity.Category;
+import ua.com.foxminded.vehicles.entity.FilterParameter;
 import ua.com.foxminded.vehicles.entity.Vehicle;
+import ua.com.foxminded.vehicles.exception.CategoryNotFoundException;
+import ua.com.foxminded.vehicles.exception.ManufacturerNotFoundException;
+import ua.com.foxminded.vehicles.exception.ModelNotFoundException;
+import ua.com.foxminded.vehicles.exception.VehicleNotFoundException;
 import ua.com.foxminded.vehicles.mapper.VehicleMapper;
 import ua.com.foxminded.vehicles.repository.CategoryRepository;
 import ua.com.foxminded.vehicles.repository.ManufacturerRepository;
 import ua.com.foxminded.vehicles.repository.ModelRepository;
 import ua.com.foxminded.vehicles.repository.VehicleRepository;
+import ua.com.foxminded.vehicles.repository.VehicleSpecification;
 
 @Service
 @Transactional
@@ -38,39 +44,12 @@ public class VehicleService {
     private final ModelRepository modelRepository;
     private final ManufacturerRepository manufacturerRepository;
     private final VehicleMapper vehicleMapper;
-
-    public Page<VehicleDto> getByCategory(String categoryName, Pageable pageable) {
-        categoryRepository.findById(categoryName).orElseThrow(
-                () -> new NoSuchElementException(String.format(NO_CATEGORY, categoryName)));
-        return vehicleRepository.findByCategoriesName(categoryName, pageable)
-                                .map(vehicleMapper::map);
-    }
-
-    public Page<VehicleDto> getByModel(String modelName, Pageable pageable) {
-        modelRepository.findById(modelName).orElseThrow(
-                () -> new NoSuchElementException(String.format(NO_MODEL, modelName)));
-        return vehicleRepository.findByModelName(modelName, pageable)
-                                .map(vehicleMapper::map);
-    }
-
-    public Page<VehicleDto> getByManufacturerNameAndMaxYear(String manufacturerName, 
-                                                            int maxYear, 
-                                                            Pageable pageable) {
-        manufacturerRepository.findById(manufacturerName).orElseThrow(
-                () -> new NoSuchElementException(String.format(NO_MANUFACTURER, manufacturerName)));
-        return vehicleRepository.findByManufacturerNameAndProductionYearLessThanEqual(
-                manufacturerName, maxYear, pageable).map(vehicleMapper::map);
-    }
-
-    public Page<VehicleDto> getByManufacturerNameAndMinYear(String manufacturerName, 
-                                                            int minYear, 
-                                                            Pageable pageable) {
-        manufacturerRepository.findById(manufacturerName).orElseThrow(
-                () -> new NoSuchElementException(String.format(NO_MANUFACTURER, manufacturerName)));
-        return vehicleRepository.findByManufacturerNameAndProductionYearGreaterThanEqual(
-                manufacturerName, minYear, pageable).map(vehicleMapper::map);
-    }
     
+    public Page<VehicleDto> getAllByOptionalPredicates(FilterParameter parameter, Pageable pageable) {
+        Specification<Vehicle> specification = VehicleSpecification.getSpecification(parameter);
+        return vehicleRepository.findAll(specification, pageable).map(vehicleMapper::map);
+     }
+
     public boolean existsById(String id) {
         return vehicleRepository.existsById(id);
     }
@@ -86,14 +65,9 @@ public class VehicleService {
         return vehicleMapper.map(persistedVehicle);
     }
 
-    public Page<VehicleDto> getAll(Pageable pageable) {
-        return vehicleRepository.findAll(pageable)
-                                .map(vehicleMapper::map);
-    }
-
     public VehicleDto update(VehicleDto vehicleDto) {
         var vehicle = vehicleRepository.findById(vehicleDto.getId()).orElseThrow(
-                () -> new NoSuchElementException(String.format(NO_VEHICLE, vehicleDto.getId())));
+                () -> new VehicleNotFoundException(String.format(NO_VEHICLE, vehicleDto.getId())));
         
         vehicle.setProductionYear(vehicleDto.getProductionYear());
         
@@ -107,13 +81,13 @@ public class VehicleService {
 
     public void deleteById(String id) {
         vehicleRepository.findById(id).orElseThrow(
-                () -> new NoSuchElementException(String.format(NO_VEHICLE, id)));
+                () -> new VehicleNotFoundException(String.format(NO_VEHICLE, id)));
         vehicleRepository.deleteById(id);
     }
 
     public VehicleDto getById(String id) {
         Vehicle vehicle = vehicleRepository.findById(id).orElseThrow(
-                () -> new NoSuchElementException(String.format(NO_VEHICLE, id)));
+                () -> new VehicleNotFoundException(String.format(NO_VEHICLE, id)));
         return vehicleMapper.map(vehicle);
     }
 
@@ -146,7 +120,7 @@ public class VehicleService {
         for (CategoryDto categoryDto : categoriesDto) {
             var categoryName = categoryDto.getName();
             var category = categoryRepository.findById(categoryName).orElseThrow(
-                    () -> new NoSuchElementException(String.format(NO_CATEGORY, categoryName)));
+                    () -> new CategoryNotFoundException(String.format(NO_CATEGORY, categoryName)));
             vehicle.addCategory(category);
         }
     }
@@ -155,7 +129,7 @@ public class VehicleService {
         if (vehicleDto.hasModel()) {
             var modelName = vehicleDto.getModel().getName();
             var model = modelRepository.findById(modelName).orElseThrow(
-                    () -> new NoSuchElementException(String.format(NO_MODEL, modelName)));
+                    () -> new ModelNotFoundException(String.format(NO_MODEL, modelName)));
             vehicle.setModel(model);
         } else {
             vehicle.setModel(null);
@@ -166,7 +140,7 @@ public class VehicleService {
         if (vehicleDto.hasManufacturer()) {
             var manufacturerName = vehicleDto.getManufacturer().getName();
             var manufacturer = manufacturerRepository.findById(manufacturerName).orElseThrow(
-                    () -> new NoSuchElementException(String.format(NO_MANUFACTURER, manufacturerName)));
+                    () -> new ManufacturerNotFoundException(String.format(NO_MANUFACTURER, manufacturerName)));
             vehicle.setManufacturer(manufacturer);
         } else {
             vehicle.setManufacturer(null);

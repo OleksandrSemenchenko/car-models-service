@@ -34,10 +34,10 @@ import ua.com.foxminded.vehicles.service.ModelService;
 @Validated
 public class ModelController {
     
-    @Value("${model.sort-parameter}")
-    private String modelSortParameter;
+    @Value("${application.sort.model.by}")
+    private String sortBy;
     
-    @Value("${model.sort-direction}")
+    @Value("${application.sort.model.direction}")
     private String modelSortDirection;
     
     private final ModelService modelService;
@@ -66,8 +66,8 @@ public class ModelController {
     
     @GetMapping("/models")
     public Page<ModelDto> getAll(Pageable pageable) {
-        Pageable pageableDef = setDefaults(pageable);
-        return modelService.getAll(pageableDef);
+        Pageable pageableDefault = setDefaults(pageable);
+        return modelService.getAll(pageableDefault);
     }
     
     @DeleteMapping("/models/{name}")
@@ -78,9 +78,9 @@ public class ModelController {
     
     private Pageable setDefaults(Pageable pageable) {
         Direction direction = Direction.valueOf(modelSortDirection);
-        Sort sortDef = Sort.by(direction, modelSortParameter);
+        Sort sortDefault = Sort.by(direction, sortBy);
         return PageRequest.of(pageable.getPageNumber(), 
                               pageable.getPageSize(),
-                              pageable.getSortOr(sortDef));
+                              pageable.getSortOr(sortDefault));
     }
 }

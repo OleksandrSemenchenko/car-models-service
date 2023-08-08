@@ -3,10 +3,11 @@ package ua.com.foxminded.vehicles.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import ua.com.foxminded.vehicles.entity.Vehicle;
 
-public interface VehicleRepository extends JpaRepository<Vehicle, String> {
+public interface VehicleRepository extends JpaRepository<Vehicle, String>, JpaSpecificationExecutor<Vehicle> {
     
     Page<Vehicle> findByModelName(String modelName, Pageable pageable);
     

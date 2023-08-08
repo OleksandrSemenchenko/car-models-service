@@ -1,7 +1,5 @@
 package ua.com.foxminded.vehicles.service;
 
-import java.util.NoSuchElementException;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -10,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.vehicles.dto.CategoryDto;
 import ua.com.foxminded.vehicles.entity.Category;
+import ua.com.foxminded.vehicles.exception.CategoryNotFoundException;
 import ua.com.foxminded.vehicles.mapper.CategoryMapper;
 import ua.com.foxminded.vehicles.repository.CategoryRepository;
 
@@ -40,13 +39,13 @@ public class CategoryService {
 
     public void deleleteByName(String name) {
         categoryRepository.findById(name).orElseThrow(
-                () -> new NoSuchElementException(String.format(NO_CATEGORY, name)));
+                () -> new CategoryNotFoundException(String.format(NO_CATEGORY, name)));
         categoryRepository.deleteById(name);
     }
 
     public CategoryDto getByName(String name) {
         Category category = categoryRepository.findById(name).orElseThrow(
-                () -> new NoSuchElementException(String.format(NO_CATEGORY, name)));
+                () -> new CategoryNotFoundException(String.format(NO_CATEGORY, name)));
         return categoryMapper.map(category);
     }
 }

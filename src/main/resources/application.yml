@@ -9,10 +9,25 @@ spring:
         default-page-size: 100
         max-page-size: 200
 ---
+application:
+  sort:
+    category:
+      by: name
+      direction: ASC
+    manufacturer:
+      by: name
+      direction: ASC
+    model:
+      by: name
+      direction: ASC
+    vehicle:
+      by: productionYear
+      direction: DESC
+
 category.sort-parameter: name
-category.sort-direction: asc
+category.sort-direction: ASC
 manufacturer.sort-parameter: name
-manufacturer.sort-direction: asc
+manufacturer.sort-direction: ASC
 model.sort-parameter: name
 model.sort-direction: ASC
 vehicle.sort-parameter: productionYear

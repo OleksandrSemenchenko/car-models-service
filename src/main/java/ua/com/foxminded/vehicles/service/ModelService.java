@@ -1,7 +1,5 @@
 package ua.com.foxminded.vehicles.service;
 
-import java.util.NoSuchElementException;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -10,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.vehicles.dto.ModelDto;
 import ua.com.foxminded.vehicles.entity.Model;
+import ua.com.foxminded.vehicles.exception.ModelNotFoundException;
 import ua.com.foxminded.vehicles.mapper.ModelMapper;
 import ua.com.foxminded.vehicles.repository.ModelRepository;
 
@@ -40,13 +39,13 @@ public class ModelService {
 
     public void deleteByName(String name) {
         modelRepository.findById(name)
-                       .orElseThrow(() -> new NoSuchElementException(String.format(NO_MODEL, name)));
+                       .orElseThrow(() -> new ModelNotFoundException(String.format(NO_MODEL, name)));
         modelRepository.deleteById(name);
     }
 
     public ModelDto getByName(String name) {
         Model model = modelRepository.findById(name).orElseThrow(
-                () -> new NoSuchElementException(String.format(NO_MODEL, name)));
+                () -> new ModelNotFoundException(String.format(NO_MODEL, name)));
         return modelMapper.map(model);
     }
 }

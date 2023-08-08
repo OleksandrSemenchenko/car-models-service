@@ -30,10 +30,10 @@ import ua.com.foxminded.vehicles.service.CategoryService;
 @RequestMapping("/v1/categories")
 public class CategoryController {
     
-    @Value("${category.sort-parameter}")
-    private String sortParameter;
+    @Value("${application.sort.category.by}")
+    private String sortBy;
     
-    @Value("${category.sort-direction}")
+    @Value("${application.sort.category.direction}")
     private String sortDirection;
     
     private final CategoryService categoryService;
@@ -61,8 +61,8 @@ public class CategoryController {
     
     @GetMapping
     public Page<CategoryDto> getAll(Pageable pageable) {
-        Pageable pageableDef = setDefaults(pageable);
-        return categoryService.getAll(pageableDef);
+        Pageable pageableDefault = setDefaults(pageable);
+        return categoryService.getAll(pageableDefault);
     }
     
     @DeleteMapping("/{name}")
@@ -73,9 +73,9 @@ public class CategoryController {
     
     private Pageable setDefaults(Pageable pageable) {
         Direction direction = Direction.valueOf(sortDirection);
-        Sort sortDef = Sort.by(direction, sortParameter);
+        Sort sortDefault = Sort.by(direction, sortBy);
         return PageRequest.of(pageable.getPageNumber(), 
                               pageable.getPageSize(),
-                              pageable.getSortOr(sortDef));
+                              pageable.getSortOr(sortDefault));
     }
 }
