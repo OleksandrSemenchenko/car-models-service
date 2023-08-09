@@ -1,11 +1,11 @@
-package ua.com.foxminded.vehicles.entity;
+package ua.com.foxminded.vehicles.specification;
 
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class FilterParameter {
+public class SpecificationParameters {
     
     private String modelName;
     private String categoryName;

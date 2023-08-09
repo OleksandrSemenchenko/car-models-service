@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.vehicles.dto.CategoryDto;
 import ua.com.foxminded.vehicles.dto.VehicleDto;
 import ua.com.foxminded.vehicles.entity.Category;
-import ua.com.foxminded.vehicles.entity.FilterParameter;
 import ua.com.foxminded.vehicles.entity.Vehicle;
 import ua.com.foxminded.vehicles.exception.ServiceException;
 import ua.com.foxminded.vehicles.mapper.VehicleMapper;
@@ -28,7 +27,8 @@ import ua.com.foxminded.vehicles.repository.CategoryRepository;
 import ua.com.foxminded.vehicles.repository.ManufacturerRepository;
 import ua.com.foxminded.vehicles.repository.ModelRepository;
 import ua.com.foxminded.vehicles.repository.VehicleRepository;
-import ua.com.foxminded.vehicles.repository.VehicleSpecification;
+import ua.com.foxminded.vehicles.specification.SpecificationParameters;
+import ua.com.foxminded.vehicles.specification.VehicleSpecification;
 
 @Service
 @Transactional
@@ -43,8 +43,8 @@ public class VehicleService {
     private final ManufacturerRepository manufacturerRepository;
     private final VehicleMapper vehicleMapper;
     
-    public Page<VehicleDto> getAllByOptionalPredicates(FilterParameter parameter, Pageable pageable) {
-        Specification<Vehicle> specification = VehicleSpecification.getSpecification(parameter);
+    public Page<VehicleDto> getAllByOptionalPredicates(SpecificationParameters parameters, Pageable pageable) {
+        Specification<Vehicle> specification = VehicleSpecification.getSpecification(parameters);
         return vehicleRepository.findAll(specification, pageable).map(vehicleMapper::map);
      }
 

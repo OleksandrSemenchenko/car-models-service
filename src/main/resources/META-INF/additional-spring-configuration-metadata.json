@@ -1,81 +1,81 @@
 {
-	"properties": [
-		{
-			"name": "application.sort.category.by",
-			"type": "java.lang.String",
-			"description": "The parameter by which sorting a categories list"
-		},
-		{
-			"name": "application.sort.category.direction",
-			"type": "org.springframework.data.domain.Sort.Direction",
-			"description": "Sorting direction"
-		},
-		{
-			"name": "application.sort.manufacturer.by",
-			"type": "java.lang.String",
-			"description": "The parameter by which sorting a manufacturers list"
-		},
-		{
-			"name": "application.sort.manufacturer.direction",
-			"type": "org.springframework.data.domain.Sort.Direction",
-			"description": "Sorting direction"
-		},
-		{
-			"name": "application.sort.model.by",
-			"type": "java.lang.String",
-			"description": "The parameter by which sorting a models list"
-		},
-		{
-			"name": "application.sort.model.direction",
-			"type": "org.springframework.data.domain.Sort.Direction",
-			"description": "Sorting direction"
-		},
-		{
-			"name": "application.sort.vehicle.by",
-			"type": "java.lang.String",
-			"description": "The parameter by which sorting a vhicles list"
-		},
-		{
-			"name": "application.sort.vehicle.direction",
-			"type": "org.springframework.data.domain.Sort.Direction",
-			"description": "Sorting direction"
-		}
-	],
-	"hints": [
-		{
-			"name": "application.sort.category.by",
-			"values": [
-				{
-					"value": "name"
-				}
-			]
-		},
-		{
-			"name": "application.sort.manufacturer.by",
-			"values": [
-				{
-					"value": "name"
-				}
-			]
-		},
-		{
-			"name": "application.sort.model.by",
-			"values": [
-				{
-					"value": "name"
-				}
-			]
-		},
-		{
-			"name": "application.sort.vehicle.by",
-			"values": [
-				{
-					"value": "id"
-				},
-				{
-					"value": "productionYear"
-				}
-			]
-		}
-	]
+  "properties": [
+    {
+      "name": "application.sort.category.by",
+      "type": "java.lang.String",
+      "description": "The parameter by which sorting a categories list"
+    },
+    {
+      "name": "application.sort.category.direction",
+      "type": "org.springframework.data.domain.Sort.Direction",
+      "description": "Sorting direction"
+    },
+    {
+      "name": "application.sort.manufacturer.by",
+      "type": "java.lang.String",
+      "description": "The parameter by which sorting a manufacturers list"
+    },
+    {
+      "name": "application.sort.manufacturer.direction",
+      "type": "org.springframework.data.domain.Sort.Direction",
+      "description": "Sorting direction"
+    },
+    {
+      "name": "application.sort.model.by",
+      "type": "java.lang.String",
+      "description": "The parameter by which sorting a models list"
+    },
+    {
+      "name": "application.sort.model.direction",
+      "type": "org.springframework.data.domain.Sort.Direction",
+      "description": "Sorting direction"
+    },
+    {
+      "name": "application.sort.vehicle.by",
+      "type": "java.lang.String",
+      "description": "The parameter by which sorting a vhicles list"
+    },
+    {
+      "name": "application.sort.vehicle.direction",
+      "type": "org.springframework.data.domain.Sort.Direction",
+      "description": "Sorting direction"
+    }
+  ],
+  "hints": [
+    {
+      "name": "application.sort.category.by",
+      "values": [
+        {
+          "value": "name"
+        }
+      ]
+    },
+    {
+      "name": "application.sort.manufacturer.by",
+      "values": [
+        {
+          "value": "name"
+        }
+      ]
+    },
+    {
+      "name": "application.sort.model.by",
+      "values": [
+        {
+          "value": "name"
+        }
+      ]
+    },
+    {
+      "name": "application.sort.vehicle.by",
+      "values": [
+        {
+          "value": "id"
+        },
+        {
+          "value": "productionYear"
+        }
+      ]
+    }
+  ]
 }

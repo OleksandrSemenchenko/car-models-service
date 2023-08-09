@@ -27,8 +27,8 @@ import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.vehicles.dto.ManufacturerDto;
 import ua.com.foxminded.vehicles.dto.ModelDto;
 import ua.com.foxminded.vehicles.dto.VehicleDto;
-import ua.com.foxminded.vehicles.entity.FilterParameter;
 import ua.com.foxminded.vehicles.service.VehicleService;
+import ua.com.foxminded.vehicles.specification.SpecificationParameters;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,7 +40,7 @@ public class VehicleController {
     private String sortBy;
     
     @Value("${application.sort.vehicle.direction}")
-    private String sortDirection;
+    private String vehicleSortDirection;
     
     private final VehicleService vehicleService;
     
@@ -53,12 +53,12 @@ public class VehicleController {
                                                        @RequestParam(required = false) Integer minYear,
                                                        Pageable pageable) {
         Pageable defaultPageable = setDefaults(pageable);
-        FilterParameter parameter = FilterParameter.builder().modelName(model)
-                                                             .categoryName(category)
-                                                             .manufacturerName(manufacturer)
-                                                             .maxYear(maxYear)
-                                                             .minYear(minYear).build();
-        return vehicleService.getAllByOptionalPredicates(parameter, defaultPageable);
+        SpecificationParameters parameters = SpecificationParameters.builder().modelName(model)
+                                                                    .categoryName(category)
+                                                                    .manufacturerName(manufacturer)
+                                                                    .maxYear(maxYear)
+                                                                    .minYear(minYear).build();
+        return vehicleService.getAllByOptionalPredicates(parameters, defaultPageable);
     }
     
     @GetMapping("/vehicles/{id}")
@@ -82,7 +82,6 @@ public class VehicleController {
                                                   .path("/v1/vehicles/{id}")
                                                   .buildAndExpand(persistedVehicle.getId())
                                                   .toUri();
-        
         return ResponseEntity.created(location).build();
     }
     
@@ -97,7 +96,6 @@ public class VehicleController {
         vehicle.setProductionYear(year);
 
         vehicleService.update(vehicle);
-
         return ResponseEntity.ok().build();
     }
     
@@ -108,7 +106,7 @@ public class VehicleController {
     }
     
     private Pageable setDefaults(Pageable pageable) {
-        Direction direction = Direction.valueOf(sortDirection);
+        Direction direction = Direction.valueOf(vehicleSortDirection);
         Sort defaulSort = Sort.by(direction, sortBy);
         return PageRequest.of(pageable.getPageNumber(), 
                               pageable.getPageSize(),

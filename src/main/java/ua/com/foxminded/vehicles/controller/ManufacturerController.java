@@ -32,7 +32,7 @@ public class ManufacturerController {
     private String sortBy;
     
     @Value("${application.sort.manufacturer.direction}")
-    private String sortDirection;
+    private String manufacturerSortDirection;
     
     private final ManufacturerService manufacturerService;
     
@@ -55,7 +55,6 @@ public class ManufacturerController {
                                                   .path("/{name}")
                                                   .buildAndExpand(manufacturer.getName())
                                                   .toUri();
-
         return ResponseEntity.created(location).build();
     }
     
@@ -66,7 +65,7 @@ public class ManufacturerController {
     }
     
     private Pageable setDefaults(Pageable pageable) {
-        Direction direction = Direction.valueOf(sortDirection);
+        Direction direction = Direction.valueOf(manufacturerSortDirection);
         Sort defaultSort = Sort.by(direction, sortBy);
         return PageRequest.of(pageable.getPageNumber(), 
                               pageable.getPageSize(),

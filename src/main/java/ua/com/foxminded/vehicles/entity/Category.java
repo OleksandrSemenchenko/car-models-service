@@ -3,7 +3,6 @@ package ua.com.foxminded.vehicles.entity;
 import java.util.Set;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
@@ -31,6 +30,6 @@ public class Category {
     @EqualsAndHashCode.Include
     private String name;
     
-    @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "categories")
     private Set<Vehicle> vehicles;
 }

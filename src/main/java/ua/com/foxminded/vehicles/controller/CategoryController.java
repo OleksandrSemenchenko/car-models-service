@@ -32,7 +32,7 @@ public class CategoryController {
     private String sortBy;
     
     @Value("${application.sort.category.direction}")
-    private String sortDirection;
+    private String categorySortDirection;
     
     private final CategoryService categoryService;
     
@@ -65,7 +65,7 @@ public class CategoryController {
     }
     
     private Pageable setDefaults(Pageable pageable) {
-        Direction direction = Direction.valueOf(sortDirection);
+        Direction direction = Direction.valueOf(categorySortDirection);
         Sort defaultSort = Sort.by(direction, sortBy);
         return PageRequest.of(pageable.getPageNumber(), 
                               pageable.getPageSize(),

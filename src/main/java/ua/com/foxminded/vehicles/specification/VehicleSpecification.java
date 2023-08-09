@@ -1,4 +1,4 @@
-package ua.com.foxminded.vehicles.repository;
+package ua.com.foxminded.vehicles.specification;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,6 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.SetJoin;
 import ua.com.foxminded.vehicles.entity.Category;
 import ua.com.foxminded.vehicles.entity.Category_;
-import ua.com.foxminded.vehicles.entity.FilterParameter;
 import ua.com.foxminded.vehicles.entity.Manufacturer_;
 import ua.com.foxminded.vehicles.entity.Model_;
 import ua.com.foxminded.vehicles.entity.Vehicle;
@@ -20,7 +19,7 @@ public class VehicleSpecification {
     private VehicleSpecification() {
     }
 
-    public static Specification<Vehicle> getSpecification(FilterParameter parameter) {
+    public static Specification<Vehicle> getSpecification(SpecificationParameters parameter) {
         return (vehicleRoot, vehicleQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             
