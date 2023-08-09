@@ -37,7 +37,7 @@ import ua.com.foxminded.vehicles.specification.SpecificationParameters;
 public class VehicleController {
     
     @Value("${application.sort.vehicle.by}")
-    private String sortBy;
+    private String vehicleSortBy;
     
     @Value("${application.sort.vehicle.direction}")
     private String vehicleSortDirection;
@@ -52,7 +52,7 @@ public class VehicleController {
                                                        @RequestParam(required = false) Integer maxYear,
                                                        @RequestParam(required = false) Integer minYear,
                                                        Pageable pageable) {
-        Pageable defaultPageable = setDefaults(pageable);
+        Pageable defaultPageable = setDefaultsForVehiclePageable(pageable);
         SpecificationParameters parameters = SpecificationParameters.builder().modelName(model)
                                                                     .categoryName(category)
                                                                     .manufacturerName(manufacturer)
@@ -105,9 +105,9 @@ public class VehicleController {
         return ResponseEntity.noContent().build();
     }
     
-    private Pageable setDefaults(Pageable pageable) {
+    private Pageable setDefaultsForVehiclePageable(Pageable pageable) {
         Direction direction = Direction.valueOf(vehicleSortDirection);
-        Sort defaulSort = Sort.by(direction, sortBy);
+        Sort defaulSort = Sort.by(direction, vehicleSortBy);
         return PageRequest.of(pageable.getPageNumber(), 
                               pageable.getPageSize(),
                               pageable.getSortOr(defaulSort));

@@ -8,7 +8,6 @@ import org.mapstruct.MappingConstants;
 import ua.com.foxminded.vehicles.dto.ManufacturerDto;
 import ua.com.foxminded.vehicles.entity.Manufacturer;
 
-
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ManufacturerMapper {
     

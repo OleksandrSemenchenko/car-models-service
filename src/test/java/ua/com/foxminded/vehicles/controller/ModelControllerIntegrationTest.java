@@ -64,7 +64,7 @@ class ModelControllerIntegrationTest {
     @BeforeEach
     void setUp() throws JsonProcessingException {
         modelDto = ModelDto.builder().name(model.getName())
-                                  .vehicles(new HashSet<>()).build();
+                                     .vehicles(new HashSet<>()).build();
         mapper = new ObjectMapper();
     }
     

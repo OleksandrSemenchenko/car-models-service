@@ -88,9 +88,9 @@ class VehicleControllerIntegrationTest {
         manufacturerRepository.saveAndFlush(manufacturer);
 
         vehicle = Vehicle.builder().productionYear(PRODUCTION_YEAR)
-                                         .manufacturer(manufacturer)
-                                         .categories(new HashSet<>())
-                                         .model(model).build();
+                                   .manufacturer(manufacturer)
+                                   .categories(new HashSet<>())
+                                   .model(model).build();
         category.setVehicles(new HashSet<>());
         vehicle.addCategory(category);
         int moreRecentProductionYear = 2023;

@@ -29,7 +29,7 @@ import ua.com.foxminded.vehicles.service.ManufacturerService;
 public class ManufacturerController {
     
     @Value("${application.sort.manufacturer.by}")
-    private String sortBy;
+    private String manufacturerSortBy;
     
     @Value("${application.sort.manufacturer.direction}")
     private String manufacturerSortDirection;
@@ -44,7 +44,7 @@ public class ManufacturerController {
     
     @GetMapping
     public Page<ManufacturerDto> getAll(Pageable pageable) {
-        Pageable defaultPageable = setDefaults(pageable);
+        Pageable defaultPageable = setDefaultsForManufacturerPageable(pageable);
         return manufacturerService.getAll(defaultPageable);
     }
     
@@ -64,9 +64,9 @@ public class ManufacturerController {
         return ResponseEntity.noContent().build();
     }
     
-    private Pageable setDefaults(Pageable pageable) {
+    private Pageable setDefaultsForManufacturerPageable(Pageable pageable) {
         Direction direction = Direction.valueOf(manufacturerSortDirection);
-        Sort defaultSort = Sort.by(direction, sortBy);
+        Sort defaultSort = Sort.by(direction, manufacturerSortBy);
         return PageRequest.of(pageable.getPageNumber(), 
                               pageable.getPageSize(),
                               pageable.getSortOr(defaultSort));
