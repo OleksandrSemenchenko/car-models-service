@@ -9,7 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.vehicles.dto.ManufacturerDto;
 import ua.com.foxminded.vehicles.entity.Manufacturer;
-import ua.com.foxminded.vehicles.exception.ServiceException;
+import ua.com.foxminded.vehicles.exception.AlreadyExistsException;
+import ua.com.foxminded.vehicles.exception.NotFoundException;
 import ua.com.foxminded.vehicles.mapper.ManufacturerMapper;
 import ua.com.foxminded.vehicles.repository.ManufacturerRepository;
 
@@ -19,15 +20,15 @@ import ua.com.foxminded.vehicles.repository.ManufacturerRepository;
 public class ManufacturerService {
     
     public static final String NO_MANUFACTURER = "The manufacturer '%s' doesn't exist";
-    public static final String MANUFACTURER_IS_PRESENT = "The manufacturer '%s' already exists";
+    public static final String MANUFACTURER_ALREADY_EXISTS = "The manufacturer '%s' already exists";
 
     private final ManufacturerRepository manufacturerRepository;
     private final ManufacturerMapper manufacturerMapper;
     
     public ManufacturerDto save(ManufacturerDto manufacturerDto) {
         if (manufacturerRepository.existsById(manufacturerDto.getName())) {
-            throw new ServiceException(String.format(MANUFACTURER_IS_PRESENT, manufacturerDto.getName()), 
-                                       HttpStatus.CONFLICT); 
+            throw new AlreadyExistsException(String.format(MANUFACTURER_ALREADY_EXISTS, manufacturerDto.getName()), 
+                                             HttpStatus.CONFLICT); 
         }
         
         Manufacturer manufacturer = manufacturerMapper.map(manufacturerDto);
@@ -42,13 +43,13 @@ public class ManufacturerService {
 
     public void deleteByName(String name) {
         manufacturerRepository.findById(name).orElseThrow(
-                () -> new ServiceException(String.format(NO_MANUFACTURER, name), HttpStatus.NOT_FOUND));
+                () -> new NotFoundException(String.format(NO_MANUFACTURER, name), HttpStatus.NOT_FOUND));
         manufacturerRepository.deleteById(name);
     }
 
     public ManufacturerDto getByName(String name) {
         Manufacturer manufacturer = manufacturerRepository.findById(name).orElseThrow(
-                () -> new ServiceException(String.format(NO_MANUFACTURER, name), HttpStatus.NOT_FOUND));
+                () -> new NotFoundException(String.format(NO_MANUFACTURER, name), HttpStatus.NOT_FOUND));
         return manufacturerMapper.map(manufacturer);
     }
 }

@@ -21,7 +21,7 @@ import ua.com.foxminded.vehicles.dto.CategoryDto;
 import ua.com.foxminded.vehicles.dto.VehicleDto;
 import ua.com.foxminded.vehicles.entity.Category;
 import ua.com.foxminded.vehicles.entity.Vehicle;
-import ua.com.foxminded.vehicles.exception.ServiceException;
+import ua.com.foxminded.vehicles.exception.NotFoundException;
 import ua.com.foxminded.vehicles.mapper.VehicleMapper;
 import ua.com.foxminded.vehicles.repository.CategoryRepository;
 import ua.com.foxminded.vehicles.repository.ManufacturerRepository;
@@ -61,7 +61,7 @@ public class VehicleService {
 
     public VehicleDto update(VehicleDto vehicleDto) {
         var vehicle = vehicleRepository.findById(vehicleDto.getId()).orElseThrow(
-                () -> new ServiceException(String.format(NO_VEHICLE, vehicleDto.getId()), HttpStatus.NOT_FOUND));
+                () -> new NotFoundException(String.format(NO_VEHICLE, vehicleDto.getId()), HttpStatus.NOT_FOUND));
         
         vehicle.setProductionYear(vehicleDto.getProductionYear());
         
@@ -75,13 +75,13 @@ public class VehicleService {
 
     public void deleteById(String id) {
         vehicleRepository.findById(id).orElseThrow(
-                () -> new ServiceException(String.format(NO_VEHICLE, id), HttpStatus.NOT_FOUND));
+                () -> new NotFoundException(String.format(NO_VEHICLE, id), HttpStatus.NOT_FOUND));
         vehicleRepository.deleteById(id);
     }
 
     public VehicleDto getById(String id) {
         Vehicle vehicle = vehicleRepository.findById(id).orElseThrow(
-                () -> new ServiceException(String.format(NO_VEHICLE, id), HttpStatus.NOT_FOUND));
+                () -> new NotFoundException(String.format(NO_VEHICLE, id), HttpStatus.NOT_FOUND));
         return vehicleMapper.map(vehicle);
     }
 
@@ -114,7 +114,7 @@ public class VehicleService {
         for (CategoryDto categoryDto : categoriesDto) {
             var categoryName = categoryDto.getName();
             var category = categoryRepository.findById(categoryName).orElseThrow(
-                    () -> new ServiceException(String.format(NO_CATEGORY, categoryName), HttpStatus.NOT_FOUND));
+                    () -> new NotFoundException(String.format(NO_CATEGORY, categoryName), HttpStatus.NOT_FOUND));
             vehicle.addCategory(category);
         }
     }
@@ -123,7 +123,7 @@ public class VehicleService {
         if (vehicleDto.hasModel()) {
             var modelName = vehicleDto.getModel().getName();
             var model = modelRepository.findById(modelName).orElseThrow(
-                    () -> new ServiceException(String.format(NO_MODEL, modelName), HttpStatus.NOT_FOUND));
+                    () -> new NotFoundException(String.format(NO_MODEL, modelName), HttpStatus.NOT_FOUND));
             vehicle.setModel(model);
         } else {
             vehicle.setModel(null);
@@ -134,8 +134,8 @@ public class VehicleService {
         if (vehicleDto.hasManufacturer()) {
             var manufacturerName = vehicleDto.getManufacturer().getName();
             var manufacturer = manufacturerRepository.findById(manufacturerName).orElseThrow(
-                    () -> new ServiceException(String.format(NO_MANUFACTURER, manufacturerName), 
-                                               HttpStatus.NOT_FOUND));
+                    () -> new NotFoundException(String.format(NO_MANUFACTURER, manufacturerName), 
+                                                HttpStatus.NOT_FOUND));
             vehicle.setManufacturer(manufacturer);
         } else {
             vehicle.setManufacturer(null);

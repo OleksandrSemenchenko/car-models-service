@@ -9,7 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.vehicles.dto.ModelDto;
 import ua.com.foxminded.vehicles.entity.Model;
-import ua.com.foxminded.vehicles.exception.ServiceException;
+import ua.com.foxminded.vehicles.exception.AlreadyExistsException;
+import ua.com.foxminded.vehicles.exception.NotFoundException;
 import ua.com.foxminded.vehicles.mapper.ModelMapper;
 import ua.com.foxminded.vehicles.repository.ModelRepository;
 
@@ -19,15 +20,15 @@ import ua.com.foxminded.vehicles.repository.ModelRepository;
 public class ModelService {
 
     public static final String NO_MODEL = "The model '%s' doesn't exist";
-    public static final String MODEL_IS_PRESENT = "The model '%s' already exists";
+    public static final String MODEL_ALREADY_EXISTS = "The model '%s' already exists";
 
     private final ModelRepository modelRepository;
     private final ModelMapper modelMapper;
     
     public ModelDto save(ModelDto modelDto) {
         if (modelRepository.existsById(modelDto.getName())) {
-            throw new ServiceException(String.format(MODEL_IS_PRESENT, modelDto.getName()), 
-                                       HttpStatus.CONFLICT);
+            throw new AlreadyExistsException(String.format(MODEL_ALREADY_EXISTS, modelDto.getName()), 
+                                             HttpStatus.CONFLICT);
         }
         
         Model model = modelMapper.map(modelDto);
@@ -42,13 +43,13 @@ public class ModelService {
 
     public void deleteByName(String name) {
         modelRepository.findById(name).orElseThrow(
-                () -> new ServiceException(String.format(NO_MODEL, name), HttpStatus.NOT_FOUND));
+                () -> new NotFoundException(String.format(NO_MODEL, name), HttpStatus.NOT_FOUND));
         modelRepository.deleteById(name);
     }
 
     public ModelDto getByName(String name) {
         Model model = modelRepository.findById(name).orElseThrow(
-                () -> new ServiceException(String.format(NO_MODEL, name), HttpStatus.NOT_FOUND));
+                () -> new NotFoundException(String.format(NO_MODEL, name), HttpStatus.NOT_FOUND));
         return modelMapper.map(model);
     }
 }

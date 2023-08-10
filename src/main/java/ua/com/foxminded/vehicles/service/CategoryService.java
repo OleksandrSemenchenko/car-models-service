@@ -9,7 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.vehicles.dto.CategoryDto;
 import ua.com.foxminded.vehicles.entity.Category;
-import ua.com.foxminded.vehicles.exception.ServiceException;
+import ua.com.foxminded.vehicles.exception.AlreadyExistsException;
+import ua.com.foxminded.vehicles.exception.NotFoundException;
 import ua.com.foxminded.vehicles.mapper.CategoryMapper;
 import ua.com.foxminded.vehicles.repository.CategoryRepository;
 
@@ -19,7 +20,7 @@ import ua.com.foxminded.vehicles.repository.CategoryRepository;
 public class CategoryService {
 
     public static final String NO_CATEGORY = "The category '%s' doesn't exist";
-    public static final String CATEGORY_IS_PRESENT = "The category '%s' already exists";
+    public static final String CATEGORY_ALREADY_EXISTS = "The category '%s' already exists";
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
@@ -30,8 +31,8 @@ public class CategoryService {
 
     public CategoryDto save(CategoryDto categoryDto) {
         if (categoryRepository.existsById(categoryDto.getName())) {
-            throw new ServiceException(String.format(NO_CATEGORY, categoryDto.getName()), 
-                                       HttpStatus.CONFLICT);
+            throw new AlreadyExistsException(String.format(CATEGORY_ALREADY_EXISTS, categoryDto.getName()), 
+                                             HttpStatus.CONFLICT);
         }
         
         Category category = categoryMapper.map(categoryDto);
@@ -46,13 +47,13 @@ public class CategoryService {
 
     public void deleleteByName(String name) {
         categoryRepository.findById(name).orElseThrow(
-                () -> new ServiceException(String.format(NO_CATEGORY, name), HttpStatus.NOT_FOUND));
+                () -> new NotFoundException(String.format(NO_CATEGORY, name), HttpStatus.NOT_FOUND));
         categoryRepository.deleteById(name);
     }
 
     public CategoryDto getByName(String name) {
         Category category = categoryRepository.findById(name).orElseThrow(
-                () -> new ServiceException(String.format(NO_CATEGORY, name), HttpStatus.NOT_FOUND));
+                () -> new NotFoundException(String.format(NO_CATEGORY, name), HttpStatus.NOT_FOUND));
         return categoryMapper.map(category);
     }
 }
