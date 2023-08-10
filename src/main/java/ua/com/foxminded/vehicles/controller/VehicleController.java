@@ -46,19 +46,19 @@ public class VehicleController {
     
     
     @GetMapping("/vehicles")
-    public Page<VehicleDto> getAllByOptionalParameters(@RequestParam(required = false) String model, 
-                                                       @RequestParam(required = false) String category,
-                                                       @RequestParam(required = false) String manufacturer,
-                                                       @RequestParam(required = false) Integer maxYear,
-                                                       @RequestParam(required = false) Integer minYear,
-                                                       Pageable pageable) {
+    public Page<VehicleDto> search(@RequestParam(required = false) String model, 
+                                   @RequestParam(required = false) String category,
+                                   @RequestParam(required = false) String manufacturer,
+                                   @RequestParam(required = false) Integer maxYear,
+                                   @RequestParam(required = false) Integer minYear,
+                                   Pageable pageable) {
         Pageable defaultPageable = setDefaultsForVehiclePageable(pageable);
         SpecificationParameters parameters = SpecificationParameters.builder().modelName(model)
                                                                     .categoryName(category)
                                                                     .manufacturerName(manufacturer)
                                                                     .maxYear(maxYear)
                                                                     .minYear(minYear).build();
-        return vehicleService.getAllByOptionalPredicates(parameters, defaultPageable);
+        return vehicleService.searchByOptionalPredicates(parameters, defaultPageable);
     }
     
     @GetMapping("/vehicles/{id}")

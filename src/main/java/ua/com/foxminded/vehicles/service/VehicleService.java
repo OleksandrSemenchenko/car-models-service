@@ -43,7 +43,7 @@ public class VehicleService {
     private final ManufacturerRepository manufacturerRepository;
     private final VehicleMapper vehicleMapper;
     
-    public Page<VehicleDto> getAllByOptionalPredicates(SpecificationParameters parameters, Pageable pageable) {
+    public Page<VehicleDto> searchByOptionalPredicates(SpecificationParameters parameters, Pageable pageable) {
         Specification<Vehicle> specification = VehicleSpecification.getSpecification(parameters);
         return vehicleRepository.findAll(specification, pageable).map(vehicleMapper::map);
      }

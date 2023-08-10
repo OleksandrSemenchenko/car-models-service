@@ -101,7 +101,7 @@ class VehicleControllerIntegrationTest {
     }
     
     @Test
-    void getAllByOptionalParameters_ShouldReturnStatus404_WhenNotExistingParameters() throws Exception {
+    void search_ShouldReturnStatus404_WhenNotExistingParameters() throws Exception {
         String notExistingModel = "Insight";
         String notExistingCategory = "Coupe";
         String notExistingManufacturer = "Peugeot";
@@ -116,7 +116,7 @@ class VehicleControllerIntegrationTest {
     }
     
     @Test
-    void getAllByOptionalParameters_ShouldReturnStatusIsOk_WhenParametersArePresent() throws Exception {
+    void search_ShouldReturnStatusIsOk_WhenParametersArePresent() throws Exception {
         mockMvc.perform(get("/v1/vehicles").param("model", model.getName())
                                            .param("category", category.getName())
                                            .param("manufacturer", manufacturer.getName())
@@ -130,7 +130,7 @@ class VehicleControllerIntegrationTest {
     }
     
     @Test
-    void getAllByOptionalParameters_ShouldReturnStatusIsOk_WhenNoParameters() throws Exception {
+    void search_ShouldReturnStatusIsOk_WhenNoParameters() throws Exception {
         mockMvc.perform(get("/v1/vehicles"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.content", hasSize(2)));
