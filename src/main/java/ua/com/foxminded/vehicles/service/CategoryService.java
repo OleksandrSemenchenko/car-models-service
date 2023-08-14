@@ -2,7 +2,6 @@ package ua.com.foxminded.vehicles.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,8 +30,7 @@ public class CategoryService {
 
     public CategoryDto save(CategoryDto categoryDto) {
         if (categoryRepository.existsById(categoryDto.getName())) {
-            throw new AlreadyExistsException(String.format(CATEGORY_ALREADY_EXISTS, categoryDto.getName()), 
-                                             HttpStatus.CONFLICT);
+            throw new AlreadyExistsException(String.format(CATEGORY_ALREADY_EXISTS, categoryDto.getName()));
         }
         
         Category category = categoryMapper.map(categoryDto);
@@ -47,13 +45,13 @@ public class CategoryService {
 
     public void deleleteByName(String name) {
         categoryRepository.findById(name).orElseThrow(
-                () -> new NotFoundException(String.format(NO_CATEGORY, name), HttpStatus.NOT_FOUND));
+                () -> new NotFoundException(String.format(NO_CATEGORY, name)));
         categoryRepository.deleteById(name);
     }
 
     public CategoryDto getByName(String name) {
         Category category = categoryRepository.findById(name).orElseThrow(
-                () -> new NotFoundException(String.format(NO_CATEGORY, name), HttpStatus.NOT_FOUND));
+                () -> new NotFoundException(String.format(NO_CATEGORY, name)));
         return categoryMapper.map(category);
     }
 }

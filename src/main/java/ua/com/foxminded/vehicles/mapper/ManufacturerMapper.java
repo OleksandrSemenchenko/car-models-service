@@ -11,9 +11,17 @@ import ua.com.foxminded.vehicles.entity.Manufacturer;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ManufacturerMapper {
     
-    @Mapping(target = "vehicles", ignore = true)
     ManufacturerDto map(Manufacturer manufacturer);
     
     @InheritInverseConfiguration
+    @Mapping(target = "vehicles", ignore = true)
     Manufacturer map(ManufacturerDto manufacturerDto);
+    
+    default String asString(Manufacturer manufacturer) {
+        return manufacturer.getName();
+    }
+    
+    default Manufacturer stringToManufacturer(String name) {
+        return Manufacturer.builder().name(name).build();
+    }
 }

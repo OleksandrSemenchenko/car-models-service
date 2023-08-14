@@ -2,7 +2,6 @@ package ua.com.foxminded.vehicles.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +26,7 @@ public class ManufacturerService {
     
     public ManufacturerDto save(ManufacturerDto manufacturerDto) {
         if (manufacturerRepository.existsById(manufacturerDto.getName())) {
-            throw new AlreadyExistsException(String.format(MANUFACTURER_ALREADY_EXISTS, manufacturerDto.getName()), 
-                                             HttpStatus.CONFLICT); 
+            throw new AlreadyExistsException(String.format(MANUFACTURER_ALREADY_EXISTS, manufacturerDto.getName())); 
         }
         
         Manufacturer manufacturer = manufacturerMapper.map(manufacturerDto);
@@ -43,13 +41,13 @@ public class ManufacturerService {
 
     public void deleteByName(String name) {
         manufacturerRepository.findById(name).orElseThrow(
-                () -> new NotFoundException(String.format(NO_MANUFACTURER, name), HttpStatus.NOT_FOUND));
+                () -> new NotFoundException(String.format(NO_MANUFACTURER, name)));
         manufacturerRepository.deleteById(name);
     }
 
     public ManufacturerDto getByName(String name) {
         Manufacturer manufacturer = manufacturerRepository.findById(name).orElseThrow(
-                () -> new NotFoundException(String.format(NO_MANUFACTURER, name), HttpStatus.NOT_FOUND));
+                () -> new NotFoundException(String.format(NO_MANUFACTURER, name)));
         return manufacturerMapper.map(manufacturer);
     }
 }

@@ -1,5 +1,7 @@
 package ua.com.foxminded.vehicles.controller;
 
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+
 import java.net.URI;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -32,12 +35,12 @@ public class CategoryController {
     private String categorySortBy;
     
     @Value("${application.sort.category.direction}")
-    private String categorySortDirection;
+    private Direction categorySortDirection;
     
     private final CategoryService categoryService;
     
     @PostMapping
-    public ResponseEntity<String> save(@RequestBody @Valid CategoryDto category) {
+    public ResponseEntity<Void> save(@RequestBody @Valid CategoryDto category) {
         categoryService.save(category);
         URI location = ServletUriComponentsBuilder.fromCurrentRequestUri()
                                                   .path("/{name}")
@@ -47,26 +50,24 @@ public class CategoryController {
     }
     
     @GetMapping("/{name}")
-    public ResponseEntity<CategoryDto> getByName(@PathVariable String name) {
-        CategoryDto category = categoryService.getByName(name);
-        return ResponseEntity.ok(category);
+    public CategoryDto getByName(@PathVariable String name) {
+        return categoryService.getByName(name);
     }
     
     @GetMapping
     public Page<CategoryDto> getAll(Pageable pageable) {
-        Pageable defaultPageable = setDefaultsForCategoryPageable(pageable);
-        return categoryService.getAll(defaultPageable);
+        Pageable pageRequest = setDefaultSortIfNeeded(pageable);
+        return categoryService.getAll(pageRequest);
     }
     
     @DeleteMapping("/{name}")
-    public ResponseEntity<String> deleteByName(@PathVariable String name) {
+    @ResponseStatus(NO_CONTENT)
+    public void deleteByName(@PathVariable String name) {
         categoryService.deleleteByName(name);
-        return ResponseEntity.noContent().build();
     }
     
-    private Pageable setDefaultsForCategoryPageable(Pageable pageable) {
-        Direction direction = Direction.valueOf(categorySortDirection);
-        Sort defaultSort = Sort.by(direction, categorySortBy);
+    private Pageable setDefaultSortIfNeeded(Pageable pageable) {
+        Sort defaultSort = Sort.by(categorySortDirection, categorySortBy);
         return PageRequest.of(pageable.getPageNumber(), 
                               pageable.getPageSize(),
                               pageable.getSortOr(defaultSort));

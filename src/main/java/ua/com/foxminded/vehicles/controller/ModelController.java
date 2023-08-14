@@ -1,5 +1,7 @@
 package ua.com.foxminded.vehicles.controller;
 
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+
 import java.net.URI;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -32,12 +35,12 @@ public class ModelController {
     private String modelSortBy;
     
     @Value("${application.sort.model.direction}")
-    private String modelSortDirection;
+    private Direction modelSortDirection;
     
     private final ModelService modelService;
     
     @PostMapping("/models")
-    public ResponseEntity<String> save(@RequestBody @Valid ModelDto model) {
+    public ResponseEntity<Void> save(@RequestBody @Valid ModelDto model) {
         modelService.save(model);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                                                   .path("/{name}")
@@ -47,26 +50,24 @@ public class ModelController {
     }
     
     @GetMapping("/models/{name}")
-    public ResponseEntity<ModelDto> getByName(@PathVariable String name) {
-        ModelDto model = modelService.getByName(name);
-        return ResponseEntity.ok(model);
+    public ModelDto getByName(@PathVariable String name) {
+        return modelService.getByName(name);
     }
     
     @GetMapping("/models")
     public Page<ModelDto> getAll(Pageable pageable) {
-        Pageable defaultPageable = setDefaultsForModelPageable(pageable);
-        return modelService.getAll(defaultPageable);
+        Pageable pageRequest = setDefaultSortIfNeeded(pageable);
+        return modelService.getAll(pageRequest);
     }
     
     @DeleteMapping("/models/{name}")
-    public ResponseEntity<String> deleteByName(@PathVariable String name) {
+    @ResponseStatus(NO_CONTENT)
+    public void deleteByName(@PathVariable String name) {
         modelService.deleteByName(name);
-        return ResponseEntity.noContent().build();
     }
     
-    private Pageable setDefaultsForModelPageable(Pageable pageable) {
-        Direction direction = Direction.valueOf(modelSortDirection);
-        Sort defaultSort = Sort.by(direction, modelSortBy);
+    private Pageable setDefaultSortIfNeeded(Pageable pageable) {
+        Sort defaultSort = Sort.by(modelSortDirection, modelSortBy);
         return PageRequest.of(pageable.getPageNumber(), 
                               pageable.getPageSize(),
                               pageable.getSortOr(defaultSort));

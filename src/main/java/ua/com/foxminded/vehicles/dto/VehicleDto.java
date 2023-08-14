@@ -2,47 +2,22 @@ package ua.com.foxminded.vehicles.dto;
 
 import java.util.Set;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
+@Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ToString(onlyExplicitlyIncluded = true)
+@AllArgsConstructor
 public class VehicleDto {
 
-    @NotBlank
-    @EqualsAndHashCode.Include
-    @ToString.Include
+    @NotNull
     private String id;
-    
-    @ToString.Include
-    private Integer productionYear;
-    
-    private ManufacturerDto manufacturer;
-    
-    private ModelDto model;
-    
-    private Set<CategoryDto> categories;
-    
-    public boolean hasManufacturer() {
-        return manufacturer != null;
-    }
-    
-    public boolean hasModel() {
-        return model != null;
-    }
-    
-    public boolean hasCategories() {
-        return categories != null;
-    }
+    private Integer year;
+    private String manufacturer;
+    private String model;
+    private Set<String> categories;
 }

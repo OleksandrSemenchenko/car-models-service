@@ -1,5 +1,7 @@
 package ua.com.foxminded.vehicles.controller;
 
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+
 import java.net.URI;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -32,24 +35,23 @@ public class ManufacturerController {
     private String manufacturerSortBy;
     
     @Value("${application.sort.manufacturer.direction}")
-    private String manufacturerSortDirection;
+    private Direction manufacturerSortDirection;
     
     private final ManufacturerService manufacturerService;
     
     @GetMapping("/{name}")
-    public ResponseEntity<ManufacturerDto> getByName(@PathVariable String name) {
-        ManufacturerDto manufacturer = manufacturerService.getByName(name);
-        return ResponseEntity.ok(manufacturer);
+    public ManufacturerDto getByName(@PathVariable String name) {
+        return manufacturerService.getByName(name);
     }
     
     @GetMapping
     public Page<ManufacturerDto> getAll(Pageable pageable) {
-        Pageable defaultPageable = setDefaultsForManufacturerPageable(pageable);
-        return manufacturerService.getAll(defaultPageable);
+        Pageable pageRequest = setDefaultSortIfNeeded(pageable);
+        return manufacturerService.getAll(pageRequest);
     }
     
     @PostMapping
-    public ResponseEntity<String> save(@RequestBody @Valid ManufacturerDto manufacturer) {
+    public ResponseEntity<Void> save(@RequestBody @Valid ManufacturerDto manufacturer) {
         manufacturerService.save(manufacturer);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                                                   .path("/{name}")
@@ -59,14 +61,13 @@ public class ManufacturerController {
     }
     
     @DeleteMapping("/{name}")
-    public ResponseEntity<String> deleteByName(@PathVariable String name) {
+    @ResponseStatus(NO_CONTENT)
+    public void deleteByName(@PathVariable String name) {
         manufacturerService.deleteByName(name);
-        return ResponseEntity.noContent().build();
     }
     
-    private Pageable setDefaultsForManufacturerPageable(Pageable pageable) {
-        Direction direction = Direction.valueOf(manufacturerSortDirection);
-        Sort defaultSort = Sort.by(direction, manufacturerSortBy);
+    private Pageable setDefaultSortIfNeeded(Pageable pageable) {
+        Sort defaultSort = Sort.by(manufacturerSortDirection, manufacturerSortBy);
         return PageRequest.of(pageable.getPageNumber(), 
                               pageable.getPageSize(),
                               pageable.getSortOr(defaultSort));

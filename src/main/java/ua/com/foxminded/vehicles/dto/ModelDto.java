@@ -1,29 +1,17 @@
 package ua.com.foxminded.vehicles.dto;
 
-import java.util.Set;
-
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 @Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-@ToString(onlyExplicitlyIncluded = true)
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ModelDto {
 
-    @ToString.Include
-    @EqualsAndHashCode.Include
     @NotBlank
     private String name;
-    
-    private Set<VehicleDto> vehicles;
 }

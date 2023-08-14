@@ -19,18 +19,18 @@ public class VehicleSpecification {
     private VehicleSpecification() {
     }
 
-    public static Specification<Vehicle> getSpecification(SpecificationParameters parameter) {
+    public static Specification<Vehicle> getSpecification(SearchFilter parameter) {
         return (vehicleRoot, vehicleQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             
-            if (parameter.getManufacturerName() != null) {
+            if (parameter.getManufacturer() != null) {
                 predicates.add(criteriaBuilder.equal(vehicleRoot.get(Vehicle_.manufacturer).get(Manufacturer_.name), 
-                                                     parameter.getManufacturerName()));
+                                                     parameter.getManufacturer()));
             }
             
-            if (parameter.getCategoryName() != null) {
+            if (parameter.getCategory() != null) {
                 SetJoin<Vehicle, Category> category = vehicleRoot.join(Vehicle_.categories);
-                predicates.add(criteriaBuilder.equal(category.get(Category_.name), parameter.getCategoryName()));
+                predicates.add(criteriaBuilder.equal(category.get(Category_.name), parameter.getCategory()));
             }
             
             if (parameter.getMaxYear() != null) {
@@ -43,9 +43,9 @@ public class VehicleSpecification {
                                                                     parameter.getMinYear()));
             }
             
-            if (parameter.getModelName() != null) {
+            if (parameter.getModel() != null) {
                 predicates.add(criteriaBuilder.equal(vehicleRoot.get(Vehicle_.model).get(Model_.name), 
-                                                     parameter.getModelName()));
+                                                     parameter.getModel()));
             }
             
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

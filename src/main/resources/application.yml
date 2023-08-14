@@ -9,6 +9,12 @@ spring:
         default-page-size: 100
         max-page-size: 200
 ---
+server:
+  error:
+    include-message: always
+    include-exception: true
+    include-binding-errors: always
+---
 application:
   sort:
     category:

@@ -11,9 +11,17 @@ import ua.com.foxminded.vehicles.entity.Model;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ModelMapper {
     
-    @Mapping(target = "vehicles", ignore = true)
     ModelDto map(Model model);
     
     @InheritInverseConfiguration
+    @Mapping(target = "vehicles", ignore = true)
     Model map(ModelDto modelDto);
+    
+    default String asString(Model model) {
+        return model.getName();
+    }
+    
+    default Model stringToCategory(String name) {
+        return Model.builder().name(name).build();
+    }
 }

@@ -2,7 +2,6 @@ package ua.com.foxminded.vehicles.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +26,7 @@ public class ModelService {
     
     public ModelDto save(ModelDto modelDto) {
         if (modelRepository.existsById(modelDto.getName())) {
-            throw new AlreadyExistsException(String.format(MODEL_ALREADY_EXISTS, modelDto.getName()), 
-                                             HttpStatus.CONFLICT);
+            throw new AlreadyExistsException(String.format(MODEL_ALREADY_EXISTS, modelDto.getName()));
         }
         
         Model model = modelMapper.map(modelDto);
@@ -43,13 +41,13 @@ public class ModelService {
 
     public void deleteByName(String name) {
         modelRepository.findById(name).orElseThrow(
-                () -> new NotFoundException(String.format(NO_MODEL, name), HttpStatus.NOT_FOUND));
+                () -> new NotFoundException(String.format(NO_MODEL, name)));
         modelRepository.deleteById(name);
     }
 
     public ModelDto getByName(String name) {
         Model model = modelRepository.findById(name).orElseThrow(
-                () -> new NotFoundException(String.format(NO_MODEL, name), HttpStatus.NOT_FOUND));
+                () -> new NotFoundException(String.format(NO_MODEL, name)));
         return modelMapper.map(model);
     }
 }
