@@ -1,6 +1,7 @@
 package ua.com.foxminded.vehicles.controller;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static ua.com.foxminded.vehicles.service.ModelService.NO_MODEL;
 
 import java.net.URI;
 
@@ -24,6 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.vehicles.dto.ModelDto;
+import ua.com.foxminded.vehicles.exception.NotFoundException;
 import ua.com.foxminded.vehicles.service.ModelService;
 
 @RestController
@@ -51,12 +53,13 @@ public class ModelController {
     
     @GetMapping("/models/{name}")
     public ModelDto getByName(@PathVariable String name) {
-        return modelService.getByName(name);
+        return modelService.getByName(name).orElseThrow(
+                () -> new NotFoundException(String.format(NO_MODEL, name)));
     }
     
     @GetMapping("/models")
-    public Page<ModelDto> getAll(Pageable pageable) {
-        Pageable pageRequest = setDefaultSortIfNeeded(pageable);
+    public Page<ModelDto> getAll(Pageable pageRequest) {
+        pageRequest = setDefaultSortIfNeeded(pageRequest);
         return modelService.getAll(pageRequest);
     }
     
@@ -66,10 +69,14 @@ public class ModelController {
         modelService.deleteByName(name);
     }
     
-    private Pageable setDefaultSortIfNeeded(Pageable pageable) {
-        Sort defaultSort = Sort.by(modelSortDirection, modelSortBy);
-        return PageRequest.of(pageable.getPageNumber(), 
-                              pageable.getPageSize(),
-                              pageable.getSortOr(defaultSort));
+    private Pageable setDefaultSortIfNeeded(Pageable pageRequest) {
+        if (pageRequest.getSort().isUnsorted()) {
+            Sort defaultSort = Sort.by(modelSortDirection, modelSortBy);
+            return PageRequest.of(pageRequest.getPageNumber(), 
+                                  pageRequest.getPageSize(),
+                                  pageRequest.getSortOr(defaultSort));
+        } else {
+            return pageRequest;
+        }
     }
 }

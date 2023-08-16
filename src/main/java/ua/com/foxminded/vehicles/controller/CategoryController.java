@@ -1,6 +1,7 @@
 package ua.com.foxminded.vehicles.controller;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static ua.com.foxminded.vehicles.service.CategoryService.NO_CATEGORY;
 
 import java.net.URI;
 
@@ -24,6 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.vehicles.dto.CategoryDto;
+import ua.com.foxminded.vehicles.exception.NotFoundException;
 import ua.com.foxminded.vehicles.service.CategoryService;
 
 @RestController
@@ -51,12 +53,13 @@ public class CategoryController {
     
     @GetMapping("/{name}")
     public CategoryDto getByName(@PathVariable String name) {
-        return categoryService.getByName(name);
+        return categoryService.getByName(name).orElseThrow(
+                () -> new NotFoundException(String.format(NO_CATEGORY, name)));
     }
     
     @GetMapping
-    public Page<CategoryDto> getAll(Pageable pageable) {
-        Pageable pageRequest = setDefaultSortIfNeeded(pageable);
+    public Page<CategoryDto> getAll(Pageable pageRequest) {
+        pageRequest = setDefaultSortIfNeeded(pageRequest);
         return categoryService.getAll(pageRequest);
     }
     
@@ -66,10 +69,15 @@ public class CategoryController {
         categoryService.deleleteByName(name);
     }
     
-    private Pageable setDefaultSortIfNeeded(Pageable pageable) {
-        Sort defaultSort = Sort.by(categorySortDirection, categorySortBy);
-        return PageRequest.of(pageable.getPageNumber(), 
-                              pageable.getPageSize(),
-                              pageable.getSortOr(defaultSort));
+    private Pageable setDefaultSortIfNeeded(Pageable pageRequest) {
+        if (pageRequest.getSort().isUnsorted()) {
+            Sort defaultSort = Sort.by(categorySortDirection, categorySortBy);
+            pageRequest.getSortOr(defaultSort);
+            return PageRequest.of(pageRequest.getPageNumber(), 
+                                  pageRequest.getPageSize(),
+                                  pageRequest.getSortOr(defaultSort));
+        } else {
+            return pageRequest;
+        }
     }
 }

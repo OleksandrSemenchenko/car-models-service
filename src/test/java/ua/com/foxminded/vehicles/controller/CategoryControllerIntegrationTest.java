@@ -20,7 +20,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,14 +45,7 @@ class CategoryControllerIntegrationTest {
     private CategoryRepository categoryRepository;
     
     private CategoryDto categoryDto;
-    private Category category;
     private ObjectMapper mapper;
-    
-    @BeforeTransaction
-    void init() {
-        category = Category.builder().name(CATEGORY_NAME).build();
-        categoryRepository.saveAndFlush(category);
-    }
     
     @BeforeEach
     void setUp() throws JsonProcessingException {
@@ -64,10 +56,10 @@ class CategoryControllerIntegrationTest {
     @Test
     void save_ShouldReturnStatus400_WhenMethodArgumentNotValid() throws Exception {
         categoryDto.setName("");
-        String categoryJson = mapper.writeValueAsString(categoryDto);
+        String categoryDtoJson = mapper.writeValueAsString(categoryDto);
         
         mockMvc.perform(post("/v1/categories").contentType(APPLICATION_JSON)
-                                              .content(categoryJson))
+                                              .content(categoryDtoJson))
                .andExpect(status().is(400));
     }
     
@@ -82,14 +74,14 @@ class CategoryControllerIntegrationTest {
     
     @Test
     void save_ShouldReturnStatusIsOk() throws Exception {
-        categoryDto.setName("SUV");
-        String categoryJson = mapper.writeValueAsString(categoryDto);
+        String newCategoryName = "SUV";
+        categoryDto.setName(newCategoryName);
+        String categoryDtoJson = mapper.writeValueAsString(categoryDto);
         
         mockMvc.perform(post("/v1/categories").contentType(APPLICATION_JSON)
-                                              .content(categoryJson))
+                                              .content(categoryDtoJson))
                .andExpect(status().is(201))
-               .andExpect(header().string("Location", containsString("/v1/categories/" + 
-                                                                     categoryDto.getName())));
+               .andExpect(header().string("Location", containsString("/v1/categories/" + newCategoryName)));
     }
     
     @Test
@@ -101,16 +93,16 @@ class CategoryControllerIntegrationTest {
     
     @Test
     void getByName_ShouldReturnStatusIsOk() throws Exception {
-        mockMvc.perform(get("/v1/categories/{name}", category.getName()))
+        mockMvc.perform(get("/v1/categories/{name}", CATEGORY_NAME))
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$['name']", is(category.getName())));
+               .andExpect(jsonPath("$['name']", is(CATEGORY_NAME)));
     }
     
     @Test
     void getAll_ShouldReturnStatusIsOk() throws Exception {
         mockMvc.perform(get("/v1/categories"))
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$.content[0].['name']", is(category.getName())));
+               .andExpect(jsonPath("$.content[0].['name']", is(CATEGORY_NAME)));
     }
     
     @Test
@@ -122,10 +114,10 @@ class CategoryControllerIntegrationTest {
     
     @Test
     void deleteByName_ShouldReturnStatusIs204() throws Exception {
-        mockMvc.perform(delete("/v1/categories/{name}", category.getName()))
+        mockMvc.perform(delete("/v1/categories/{name}", CATEGORY_NAME))
                .andExpect(status().isNoContent());
         
-        Optional<Category> categoryOpt = categoryRepository.findById(category.getName());
-        assertTrue(categoryOpt.isEmpty());
+        Optional<Category> categoryOptional = categoryRepository.findById(CATEGORY_NAME);
+        assertTrue(categoryOptional.isEmpty());
     }
 }

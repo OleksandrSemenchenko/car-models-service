@@ -36,7 +36,6 @@ public class ExceptionHandlerController {
         return errorResponse;
     }
     
-    
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(BAD_REQUEST)
     public ValidationErrorResponse handleMethodArgumentNotValid(MethodArgumentNotValidException e, 

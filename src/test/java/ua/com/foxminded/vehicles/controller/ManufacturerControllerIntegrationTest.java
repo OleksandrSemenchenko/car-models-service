@@ -20,7 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,22 +44,13 @@ class ManufacturerControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
     
-    private Manufacturer manufacturer;
     private ManufacturerDto manufacturerDto;
     private ObjectMapper mapper;
-    private String manufacturerDtoJson;
-    
-    @BeforeTransaction
-    void init() {
-        manufacturer = Manufacturer.builder().name(MANUFACTURER_NAME).build();
-        manufacturerRepository.saveAndFlush(manufacturer);
-    }
     
     @BeforeEach
     void setUp() throws JsonProcessingException {
-        manufacturerDto = ManufacturerDto.builder().name(manufacturer.getName()).build();
+        manufacturerDto = ManufacturerDto.builder().name(MANUFACTURER_NAME).build();
         mapper = new ObjectMapper();
-        manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
     }
     
     @Test
@@ -72,7 +62,9 @@ class ManufacturerControllerIntegrationTest {
     
     @Test
     void getByName_ShouldReturnStatusIsOk() throws Exception {
-        mockMvc.perform(get("/v1/manufacturers/{name}", manufacturer.getName()))
+        String manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
+        
+        mockMvc.perform(get("/v1/manufacturers/{name}", MANUFACTURER_NAME))
                .andExpect(status().isOk())
                .andExpect(content().json(manufacturerDtoJson));
     }
@@ -81,14 +73,13 @@ class ManufacturerControllerIntegrationTest {
     void getAll_ShouldReturnStatusIsOk() throws Exception {
         mockMvc.perform(get("/v1/manufacturers"))
                .andExpect(status().is(200))
-               .andExpect(jsonPath("$.content[0].name", manufacturerDto.getName()).exists());
+               .andExpect(jsonPath("$.content[0].name", MANUFACTURER_NAME).exists());
     }
     
     @Test
     void save_ShouldReturnStatus400_WhenMethodArgumentNotValid() throws Exception {
-        manufacturerDto.setName("");
-        ManufacturerDto manufacturer = ManufacturerDto.builder().name(manufacturerDto.getName()).build();
-        String manufacturerDtoJson = mapper.writeValueAsString(manufacturer);
+        ManufacturerDto manufacturerDto = ManufacturerDto.builder().name("").build();
+        String manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
         
         mockMvc.perform(post("/v1/manufacturers")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -98,8 +89,7 @@ class ManufacturerControllerIntegrationTest {
     
     @Test
     void save_ShouldReturnStatus409_WhenModelAlreadyExists() throws Exception {
-        ManufacturerDto manufacturer = ManufacturerDto.builder().name(manufacturerDto.getName()).build();
-        String manufacturerDtoJson = mapper.writeValueAsString(manufacturer);
+        String manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
         
         mockMvc.perform(post("/v1/manufacturers")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -133,11 +123,10 @@ class ManufacturerControllerIntegrationTest {
     
     @Test
     void deleteByName_ShouldReturnStatus204() throws Exception {
-        mockMvc.perform(delete("/v1/manufacturers/{name}", manufacturer.getName()))
+        mockMvc.perform(delete("/v1/manufacturers/{name}", MANUFACTURER_NAME))
                .andExpect(status().isNoContent());
         
-        Optional<Manufacturer> manufacturerOptional = manufacturerRepository
-                .findById(manufacturer.getName());
+        Optional<Manufacturer> manufacturerOptional = manufacturerRepository.findById(MANUFACTURER_NAME);
         
         assertTrue(manufacturerOptional.isEmpty());
     }

@@ -1,5 +1,7 @@
 package ua.com.foxminded.vehicles.service;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,7 @@ public class ModelService {
         }
         
         Model model = modelMapper.map(modelDto);
-        Model persistedModel = modelRepository.saveAndFlush(model);
+        Model persistedModel = modelRepository.save(model);
         return modelMapper.map(persistedModel);
     }
 
@@ -45,9 +47,7 @@ public class ModelService {
         modelRepository.deleteById(name);
     }
 
-    public ModelDto getByName(String name) {
-        Model model = modelRepository.findById(name).orElseThrow(
-                () -> new NotFoundException(String.format(NO_MODEL, name)));
-        return modelMapper.map(model);
+    public Optional<ModelDto> getByName(String name) {
+        return modelRepository.findById(name).map(modelMapper::map);
     }
 }

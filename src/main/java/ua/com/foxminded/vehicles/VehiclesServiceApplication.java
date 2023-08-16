@@ -6,11 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class VehiclesServiceApplication {
 
-    public static final String DEV_PROFILE = "dev";
-
     public static void main(String[] args) {
-        SpringApplication application = new SpringApplication(VehiclesServiceApplication.class);
-        application.setAdditionalProfiles(DEV_PROFILE);
-        application.run(args);
+        SpringApplication.run(VehiclesServiceApplication.class, args);
     }
 }

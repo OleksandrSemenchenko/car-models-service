@@ -17,6 +17,7 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: create-drop
+    defer-datasource-initialization: true
 logging:
   level:
     root: warn

@@ -1,5 +1,7 @@
 package ua.com.foxminded.vehicles.service;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,7 @@ public class ManufacturerService {
         }
         
         Manufacturer manufacturer = manufacturerMapper.map(manufacturerDto);
-        Manufacturer persistedManufacturer = manufacturerRepository.saveAndFlush(manufacturer);
+        Manufacturer persistedManufacturer = manufacturerRepository.save(manufacturer);
         return manufacturerMapper.map(persistedManufacturer);
     }
 
@@ -45,9 +47,7 @@ public class ManufacturerService {
         manufacturerRepository.deleteById(name);
     }
 
-    public ManufacturerDto getByName(String name) {
-        Manufacturer manufacturer = manufacturerRepository.findById(name).orElseThrow(
-                () -> new NotFoundException(String.format(NO_MANUFACTURER, name)));
-        return manufacturerMapper.map(manufacturer);
+    public Optional<ManufacturerDto> getByName(String name) {
+        return manufacturerRepository.findById(name).map(manufacturerMapper::map);
     }
 }

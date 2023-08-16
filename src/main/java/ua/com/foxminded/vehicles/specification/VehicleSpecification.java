@@ -47,7 +47,6 @@ public class VehicleSpecification {
                 predicates.add(criteriaBuilder.equal(vehicleRoot.get(Vehicle_.model).get(Model_.name), 
                                                      parameter.getModel()));
             }
-            
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }

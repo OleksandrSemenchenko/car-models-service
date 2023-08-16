@@ -1,6 +1,7 @@
 package ua.com.foxminded.vehicles.controller;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static ua.com.foxminded.vehicles.service.VehicleService.NO_VEHICLE;
 
 import java.net.URI;
 
@@ -29,6 +30,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.vehicles.dto.VehicleDto;
+import ua.com.foxminded.vehicles.exception.NotFoundException;
 import ua.com.foxminded.vehicles.service.VehicleService;
 import ua.com.foxminded.vehicles.specification.SearchFilter;
 
@@ -47,20 +49,20 @@ public class VehicleController {
     private final VehicleService vehicleService;
     
     @GetMapping("/vehicles")
-    public Page<VehicleDto> search(SearchFilter filter,
+    public Page<VehicleDto> search(SearchFilter searchFilter,
                                    @RequestParam(required = false) String model, 
                                    @RequestParam(required = false) String category,
                                    @RequestParam(required = false) String manufacturer,
                                    @RequestParam(required = false) @Positive Integer maxYear,
                                    @RequestParam(required = false) @Positive Integer minYear,
-                                   Pageable pageable) {
-        Pageable pageRequest = setDefaultSortIfNeeded(pageable);
-        return vehicleService.search(filter, pageRequest);
+                                   Pageable pageRequest) {
+        pageRequest = setDefaultSortIfNeeded(pageRequest);
+        return vehicleService.search(searchFilter, pageRequest);
     }
     
     @GetMapping("/vehicles/{id}")
     public VehicleDto getById(@PathVariable String id) {
-        return vehicleService.getById(id);
+        return vehicleService.getById(id).orElseThrow(() -> new NotFoundException(String.format(NO_VEHICLE, id)));
     }
     
     @PostMapping("/manufacturers/{manufacturer}/models/{model}/{year}")
@@ -100,10 +102,14 @@ public class VehicleController {
         vehicleService.deleteById(id);
     }
     
-    private Pageable setDefaultSortIfNeeded(Pageable pageable) {
-        Sort defaulSort = Sort.by(vehicleSortDirection, vehicleSortBy);
-        return PageRequest.of(pageable.getPageNumber(), 
-                              pageable.getPageSize(),
-                              pageable.getSortOr(defaulSort));
+    private Pageable setDefaultSortIfNeeded(Pageable pageRequest) {
+        if (pageRequest.getSort().isUnsorted()) {
+            Sort defaulSort = Sort.by(vehicleSortDirection, vehicleSortBy);
+            return PageRequest.of(pageRequest.getPageNumber(), 
+                                  pageRequest.getPageSize(),
+                                  pageRequest.getSortOr(defaulSort));
+        } else {
+            return pageRequest;
+        }
     }
 }

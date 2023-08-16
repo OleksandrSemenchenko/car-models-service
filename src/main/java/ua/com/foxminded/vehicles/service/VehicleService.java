@@ -6,6 +6,7 @@ import static ua.com.foxminded.vehicles.service.ModelService.NO_MODEL;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,10 +43,10 @@ public class VehicleService {
     private final ManufacturerRepository manufacturerRepository;
     private final VehicleMapper vehicleMapper;
     
-    public Page<VehicleDto> search(SearchFilter parameters, Pageable pageable) {
-        Specification<Vehicle> specification = VehicleSpecification.getSpecification(parameters);
+    public Page<VehicleDto> search(SearchFilter searchFilter, Pageable pageable) {
+        Specification<Vehicle> specification = VehicleSpecification.getSpecification(searchFilter);
         return vehicleRepository.findAll(specification, pageable).map(vehicleMapper::map);
-     }
+    }
 
     public VehicleDto save(VehicleDto vehicleDto) {
         var vehicle = Vehicle.builder().productionYear(vehicleDto.getYear()).build();
@@ -54,7 +55,7 @@ public class VehicleService {
         updateManufacturerRelation(vehicleDto, vehicle);
         updateModelRelation(vehicleDto, vehicle);
 
-        Vehicle persistedVehicle = vehicleRepository.saveAndFlush(vehicle);
+        Vehicle persistedVehicle = vehicleRepository.save(vehicle);
         return vehicleMapper.map(persistedVehicle);
     }
 
@@ -68,7 +69,7 @@ public class VehicleService {
         updateModelRelation(vehicleDto, vehicle);
         updateCategoryRelations(vehicleDto, vehicle);
 
-        Vehicle updatedVehicle = vehicleRepository.saveAndFlush(vehicle);
+        Vehicle updatedVehicle = vehicleRepository.save(vehicle);
         return vehicleMapper.map(updatedVehicle);
     }
 
@@ -78,31 +79,34 @@ public class VehicleService {
         vehicleRepository.deleteById(id);
     }
 
-    public VehicleDto getById(String id) {
-        Vehicle vehicle = vehicleRepository.findById(id).orElseThrow(
-                () -> new NotFoundException(String.format(NO_VEHICLE, id)));
-        return vehicleMapper.map(vehicle);
+    public Optional<VehicleDto> getById(String id) {
+        return vehicleRepository.findById(id).map(vehicleMapper::map);
     }
 
     private void updateCategoryRelations(VehicleDto vehicleDto, Vehicle vehicle) {
         if (vehicleDto.getCategories() != null && vehicle.getCategories() != null) {
-            List<Category> unnecessaryRelations = vehicle.getCategories().stream().filter(category -> {
+            List<Category> unnecessaryCategories = vehicle.getCategories().stream().filter(category -> {
                 return vehicleDto.getCategories().stream()
                         .noneMatch(categoryName -> category.getName().equals(categoryName));
             }).toList();
-
-            unnecessaryRelations.stream().forEach(vehicle::removeCategory);
             
-            Set<CategoryDto> necessaryRelations = vehicleDto.getCategories().stream().filter(categoryDto -> {
+            for (Category category : unnecessaryCategories) {
+                vehicle.removeCategory(category);
+            }
+            
+            Set<CategoryDto> necessaryCategories = vehicleDto.getCategories().stream().filter(categoryDto -> {
                 return vehicle.getCategories().stream()
                         .noneMatch(category -> categoryDto.equals(category.getName()));
             }).map(categoryName -> CategoryDto.builder().name(categoryName).build())
               .collect(Collectors.toSet());
             
-            addCategoryRelations(necessaryRelations, vehicle);
+            addCategoryRelations(necessaryCategories, vehicle);
         } else if (vehicleDto.getCategories() == null && vehicle.getCategories() != null) {
             Set<Category> unnecessaryRelations = vehicle.getCategories();
-            unnecessaryRelations.stream().forEach(vehicle::removeCategory);
+            
+            for(Category category : unnecessaryRelations) {
+                vehicle.removeCategory(category);
+            }
         } else if (vehicleDto.getCategories() != null) {
             Set<CategoryDto> necessaryRelations = vehicleDto.getCategories().stream()
                     .map(categoryName -> CategoryDto.builder().name(categoryName).build())

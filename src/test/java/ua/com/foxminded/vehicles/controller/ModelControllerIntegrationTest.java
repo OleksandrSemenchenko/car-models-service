@@ -10,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.HashSet;
 import java.util.Optional;
 
 import org.hamcrest.Matchers;
@@ -22,7 +21,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.transaction.BeforeTransaction;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,24 +45,12 @@ class ModelControllerIntegrationTest {
     @Autowired
     private ModelRepository modelRepository;
     
-    private Model model;
     private ModelDto modelDto;
-    private String modelDtoJson;
     private ObjectMapper mapper;
-    
-    @BeforeTransaction
-    void init() throws JsonProcessingException {
-        model = Model.builder().name(MODEL_NAME).build();
-        modelRepository.saveAndFlush(model);
-        modelDto = ModelDto.builder().name(MODEL_NAME).build();
-        mapper = new ObjectMapper();
-        modelDtoJson = mapper.writeValueAsString(modelDto);
-    }
     
     @BeforeEach
     void setUp() throws JsonProcessingException {
-        modelDto = ModelDto.builder().name(model.getName())
-                                     .vehicles(new HashSet<>()).build();
+        modelDto = ModelDto.builder().name(MODEL_NAME).build();
         mapper = new ObjectMapper();
     }
     
@@ -79,6 +65,7 @@ class ModelControllerIntegrationTest {
     
     @Test
     void save_ShouldReturnStatus409_WhenModelAlreadyExists() throws Exception {
+        String modelDtoJson = mapper.writeValueAsString(modelDto);
         mockMvc.perform(post("/v1/models").contentType(MediaType.APPLICATION_JSON)
                                           .content(modelDtoJson))
                .andExpect(status().is(409));
@@ -86,37 +73,39 @@ class ModelControllerIntegrationTest {
     
     @Test
     void save_ShouldReturnStatusIsOk() throws Exception {
-        modelDto.setName("Fusion");
-        String modelJson = mapper.writeValueAsString(modelDto);
+        String newModelName = "Fusion";
+        modelDto.setName(newModelName);
+        String modelDtoJson = mapper.writeValueAsString(modelDto);
         
         mockMvc.perform(post("/v1/models").contentType(MediaType.APPLICATION_JSON)
-                                          .content(modelJson))
+                                          .content(modelDtoJson))
                .andExpect(status().is(201))
-               .andExpect(header().string("Location", containsString("/v1/models/" + modelDto.getName())));
+               .andExpect(header().string("Location", containsString("/v1/models/" + newModelName)));
         
-        Optional<Model> persistedModel = modelRepository.findById(modelDto.getName());
+        Optional<Model> persistedModel = modelRepository.findById(newModelName);
         assertTrue(persistedModel.isPresent());
     }
     
     @Test
     void getByName_ShouldReturnStatus404_WhenNoModel() throws Exception {
-        String notExistingModelName = "Camaro";
+        String notExistingModelName = "Sonata";
         mockMvc.perform(get("/v1/models/{name}", notExistingModelName))
                .andExpect(status().isNotFound());
     }
     
     @Test
     void getByName_ShouldReturnStatusIsOk() throws Exception {
-        mockMvc.perform(get("/v1/models/{name}", model.getName()))
+        mockMvc.perform(get("/v1/models/{name}", MODEL_NAME))
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$.name", is(model.getName())));
+               .andExpect(jsonPath("$.name", is(MODEL_NAME)));
     }
     
     @Test
     void getAll_ShouldReturnStatusIsOk() throws Exception {
+        int persistedModelsQuantity = 1;
         mockMvc.perform(get("/v1/models"))
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$.content", Matchers.hasSize(1)));
+               .andExpect(jsonPath("$.content", Matchers.hasSize(persistedModelsQuantity)));
     }
     
     @Test
@@ -128,10 +117,10 @@ class ModelControllerIntegrationTest {
     
     @Test
     void deleteByName_ShouldReturnStatusIs204() throws Exception {
-        mockMvc.perform(delete("/v1/models/{name}", model.getName()))
+        mockMvc.perform(delete("/v1/models/{name}", MODEL_NAME))
                .andExpect(status().isNoContent());
         
-        Optional<Model> modelEntityOpt = modelRepository.findById(model.getName());
-        assertTrue(modelEntityOpt.isEmpty());
+        Optional<Model> modelEntityOptional = modelRepository.findById(MODEL_NAME);
+        assertTrue(modelEntityOptional.isEmpty());
     }
 }
