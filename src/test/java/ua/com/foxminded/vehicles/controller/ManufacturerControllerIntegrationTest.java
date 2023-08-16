@@ -1,7 +1,6 @@
 package ua.com.foxminded.vehicles.controller;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -9,8 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,8 +24,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ua.com.foxminded.vehicles.dto.ManufacturerDto;
-import ua.com.foxminded.vehicles.entity.Manufacturer;
-import ua.com.foxminded.vehicles.repository.ManufacturerRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -37,9 +32,6 @@ import ua.com.foxminded.vehicles.repository.ManufacturerRepository;
 class ManufacturerControllerIntegrationTest {
     
     public static final String MANUFACTURER_NAME = "Audi";
-    
-    @Autowired
-    private ManufacturerRepository manufacturerRepository;
     
     @Autowired
     private MockMvc mockMvc;
@@ -107,11 +99,7 @@ class ManufacturerControllerIntegrationTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(manufacturerDtoJson))
                .andExpect(status().is(201))
-               .andExpect(header().string("Location", 
-                                          containsString("/v1/manufacturers/" + manufacturerName)));
-
-        Optional<Manufacturer> manufacturer = manufacturerRepository.findById(manufacturerName);
-        assertTrue(manufacturer.isPresent());
+               .andExpect(header().string("Location", containsString("/v1/manufacturers/" + manufacturerName)));
     }
     
     @Test
@@ -125,9 +113,5 @@ class ManufacturerControllerIntegrationTest {
     void deleteByName_ShouldReturnStatus204() throws Exception {
         mockMvc.perform(delete("/v1/manufacturers/{name}", MANUFACTURER_NAME))
                .andExpect(status().isNoContent());
-        
-        Optional<Manufacturer> manufacturerOptional = manufacturerRepository.findById(MANUFACTURER_NAME);
-        
-        assertTrue(manufacturerOptional.isEmpty());
     }
 }

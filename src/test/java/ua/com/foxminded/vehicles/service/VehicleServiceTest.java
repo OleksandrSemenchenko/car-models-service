@@ -75,6 +75,7 @@ class VehicleServiceTest {
         when(vehicleRepository.findAll(ArgumentMatchers.<Specification<Vehicle>>any(), isA(Pageable.class)))
                 .thenReturn(vehiclesPage);
         vehicleService.search(seachFilter, pageable);
+        
         verify(vehicleRepository).findAll(ArgumentMatchers.<Specification<Vehicle>>any(), isA(Pageable.class));
         verify(vehicleMapper).map(isA(Vehicle.class));
     }
@@ -203,5 +204,4 @@ class VehicleServiceTest {
         verify(vehicleRepository).findById(anyString());
         verify(vehicleMapper).map(isA(Vehicle.class));
     }
-
 }

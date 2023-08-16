@@ -55,7 +55,7 @@ public class VehicleService {
         updateManufacturerRelation(vehicleDto, vehicle);
         updateModelRelation(vehicleDto, vehicle);
 
-        Vehicle persistedVehicle = vehicleRepository.save(vehicle);
+        var persistedVehicle = vehicleRepository.save(vehicle);
         return vehicleMapper.map(persistedVehicle);
     }
 
@@ -69,7 +69,7 @@ public class VehicleService {
         updateModelRelation(vehicleDto, vehicle);
         updateCategoryRelations(vehicleDto, vehicle);
 
-        Vehicle updatedVehicle = vehicleRepository.save(vehicle);
+        var updatedVehicle = vehicleRepository.save(vehicle);
         return vehicleMapper.map(updatedVehicle);
     }
 

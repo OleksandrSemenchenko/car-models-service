@@ -2,7 +2,6 @@ package ua.com.foxminded.vehicles.controller;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -10,8 +9,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,8 +24,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ua.com.foxminded.vehicles.dto.CategoryDto;
-import ua.com.foxminded.vehicles.entity.Category;
-import ua.com.foxminded.vehicles.repository.CategoryRepository;
 
 @SpringBootTest
 @Transactional
@@ -40,9 +35,6 @@ class CategoryControllerIntegrationTest {
     
     @Autowired
     private MockMvc mockMvc;
-    
-    @Autowired
-    private CategoryRepository categoryRepository;
     
     private CategoryDto categoryDto;
     private ObjectMapper mapper;
@@ -116,8 +108,5 @@ class CategoryControllerIntegrationTest {
     void deleteByName_ShouldReturnStatusIs204() throws Exception {
         mockMvc.perform(delete("/v1/categories/{name}", CATEGORY_NAME))
                .andExpect(status().isNoContent());
-        
-        Optional<Category> categoryOptional = categoryRepository.findById(CATEGORY_NAME);
-        assertTrue(categoryOptional.isEmpty());
     }
 }

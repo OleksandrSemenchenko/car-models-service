@@ -16,7 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import ua.com.foxminded.vehicles.dto.CategoryDto;
@@ -38,7 +37,7 @@ class CategoryServiceTest {
     @Mock
     private CategoryMapper categoryMapper;
     
-    Category category;
+    private Category category;
     
     @BeforeEach
     void SetUp() {
@@ -61,7 +60,7 @@ class CategoryServiceTest {
     
     @Test
     void getAll_ShouldPreformCorrectCalls() {
-        Pageable pageable = PageRequest.ofSize(1);
+        Pageable pageable = Pageable.unpaged();
         List<Category> categories = Arrays.asList(category);
         when(categoryRepository.findAll(pageable)).thenReturn(new PageImpl<Category>(categories));
         categoryService.getAll(pageable);

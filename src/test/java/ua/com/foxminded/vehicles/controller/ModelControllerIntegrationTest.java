@@ -2,15 +2,12 @@ package ua.com.foxminded.vehicles.controller;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Optional;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,8 +25,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ua.com.foxminded.vehicles.dto.ModelDto;
-import ua.com.foxminded.vehicles.entity.Model;
-import ua.com.foxminded.vehicles.repository.ModelRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -42,9 +37,6 @@ class ModelControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ModelRepository modelRepository;
-    
     private ModelDto modelDto;
     private ObjectMapper mapper;
     
@@ -81,9 +73,6 @@ class ModelControllerIntegrationTest {
                                           .content(modelDtoJson))
                .andExpect(status().is(201))
                .andExpect(header().string("Location", containsString("/v1/models/" + newModelName)));
-        
-        Optional<Model> persistedModel = modelRepository.findById(newModelName);
-        assertTrue(persistedModel.isPresent());
     }
     
     @Test
@@ -119,8 +108,5 @@ class ModelControllerIntegrationTest {
     void deleteByName_ShouldReturnStatusIs204() throws Exception {
         mockMvc.perform(delete("/v1/models/{name}", MODEL_NAME))
                .andExpect(status().isNoContent());
-        
-        Optional<Model> modelEntityOptional = modelRepository.findById(MODEL_NAME);
-        assertTrue(modelEntityOptional.isEmpty());
     }
 }

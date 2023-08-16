@@ -37,7 +37,7 @@ class ManufacturerServiceTestTest {
     @Mock
     private ManufacturerMapper manufacturerMapper;
     
-    Manufacturer manufacturer;
+    private Manufacturer manufacturer;
     
     @BeforeEach
     void SetUp() {
@@ -61,7 +61,6 @@ class ManufacturerServiceTestTest {
         List<Manufacturer> manufacturers = Arrays.asList(manufacturer);
         when(manufacturerRepository.findAll(isA(Pageable.class))).thenReturn(new PageImpl<Manufacturer>(manufacturers));
         Pageable pageable = Pageable.unpaged();
-        
         manufacturerService.getAll(pageable);
         
         verify(manufacturerRepository).findAll(isA(Pageable.class));
@@ -71,7 +70,6 @@ class ManufacturerServiceTestTest {
     @Test
     void deleteByName_ShouldPerformCorrectCalls() {
         when(manufacturerRepository.findById(anyString())).thenReturn(Optional.of(manufacturer));
-        
         manufacturerService.deleteByName(MANUFACTURER_NAME);
         
         verify(manufacturerRepository).findById(anyString());

@@ -10,7 +10,8 @@ import org.mapstruct.MappingConstants;
 import ua.com.foxminded.vehicles.dto.VehicleDto;
 import ua.com.foxminded.vehicles.entity.Vehicle;
 
-@Mapper(nullValueCheckStrategy = ALWAYS,  componentModel = MappingConstants.ComponentModel.SPRING, 
+@Mapper(nullValueCheckStrategy = ALWAYS,  
+        componentModel = MappingConstants.ComponentModel.SPRING, 
         uses = {CategoryMapper.class, ModelMapper.class, ManufacturerMapper.class})
 public interface VehicleMapper {
     
