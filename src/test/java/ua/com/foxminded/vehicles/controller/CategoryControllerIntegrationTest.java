@@ -46,7 +46,7 @@ class CategoryControllerIntegrationTest {
     }
     
     @Test
-    void save_ShouldReturnStatus400_WhenMethodArgumentNotValid() throws Exception {
+    void save_ShouldReturnStatus400_WhenMethodArgumentIsNotValid() throws Exception {
         categoryDto.setName("");
         String categoryDtoJson = mapper.writeValueAsString(categoryDto);
         
@@ -74,13 +74,6 @@ class CategoryControllerIntegrationTest {
                                               .content(categoryDtoJson))
                .andExpect(status().is(201))
                .andExpect(header().string("Location", containsString("/v1/categories/" + newCategoryName)));
-    }
-    
-    @Test
-    void getByName_ShouldReturnStatus404_WhenNoCategory() throws Exception {
-        String notExistingCategoryName = "SUV";
-        mockMvc.perform(get("/v1/categories/{name}", notExistingCategoryName))
-               .andExpect(status().isNotFound());
     }
     
     @Test

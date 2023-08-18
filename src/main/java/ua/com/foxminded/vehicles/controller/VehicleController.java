@@ -1,9 +1,9 @@
 package ua.com.foxminded.vehicles.controller;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static ua.com.foxminded.vehicles.service.VehicleService.NO_VEHICLE;
 
 import java.net.URI;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -20,17 +20,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.vehicles.dto.VehicleDto;
-import ua.com.foxminded.vehicles.exception.NotFoundException;
 import ua.com.foxminded.vehicles.service.VehicleService;
 import ua.com.foxminded.vehicles.specification.SearchFilter;
 
@@ -48,29 +45,29 @@ public class VehicleController {
     
     private final VehicleService vehicleService;
     
+    @GetMapping("/manufacturers/{manufacturer}/models/{model}/{year}")
+    public Optional<VehicleDto> searchByManufacturerAndModelAndYear(@PathVariable String manufacturer, 
+                                                                    @PathVariable String model, 
+                                                                    @PathVariable @Positive int year) {
+        return vehicleService.getByManufacturerAndModelAndYear(manufacturer, model, year);
+    }
+    
     @GetMapping("/vehicles")
-    public Page<VehicleDto> search(SearchFilter searchFilter,
-                                   @RequestParam(required = false) String model, 
-                                   @RequestParam(required = false) String category,
-                                   @RequestParam(required = false) String manufacturer,
-                                   @RequestParam(required = false) @Positive Integer maxYear,
-                                   @RequestParam(required = false) @Positive Integer minYear,
-                                   Pageable pageRequest) {
+    public Page<VehicleDto> search(@Valid SearchFilter searchFilter, Pageable pageRequest) {
         pageRequest = setDefaultSortIfNeeded(pageRequest);
         return vehicleService.search(searchFilter, pageRequest);
     }
     
     @GetMapping("/vehicles/{id}")
-    public VehicleDto getById(@PathVariable String id) {
-        return vehicleService.getById(id).orElseThrow(() -> new NotFoundException(String.format(NO_VEHICLE, id)));
+    public Optional<VehicleDto> getById(@PathVariable String id) {
+        return vehicleService.getById(id);
     }
     
     @PostMapping("/manufacturers/{manufacturer}/models/{model}/{year}")
     public ResponseEntity<Void> save(@PathVariable String manufacturer, 
                                      @PathVariable String model, 
-                                     @PathVariable int year, 
-                                     @RequestBody VehicleDto vehicle, 
-                                     HttpServletRequest request) {
+                                     @PathVariable @Positive int year, 
+                                     @RequestBody @Valid VehicleDto vehicle) {
         vehicle.setManufacturer(manufacturer);
         vehicle.setModel(model);
         vehicle.setYear(year);
@@ -85,15 +82,10 @@ public class VehicleController {
     
     @PutMapping("/manufacturers/{manufacturer}/models/{model}/{year}")
     public void update(@PathVariable String manufacturer, 
-                       @PathVariable String model,
-                       @PathVariable int year,
-                       @RequestBody @Valid VehicleDto vehicle, 
-                       HttpServletRequest request) {
-        vehicle.setManufacturer(manufacturer);
-        vehicle.setModel(model);
-        vehicle.setYear(year);
-
-        vehicleService.update(vehicle);
+                       @PathVariable String model, 
+                       @PathVariable @Positive int year,  
+                       @RequestBody @Valid VehicleDto vehicleDto) {
+        vehicleService.update(manufacturer, model, year, vehicleDto);
     }
     
     @DeleteMapping("/vehicles/{id}")
@@ -108,8 +100,7 @@ public class VehicleController {
             return PageRequest.of(pageRequest.getPageNumber(), 
                                   pageRequest.getPageSize(),
                                   pageRequest.getSortOr(defaulSort));
-        } else {
-            return pageRequest;
         }
+        return pageRequest;
     }
 }

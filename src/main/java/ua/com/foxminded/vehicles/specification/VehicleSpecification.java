@@ -19,33 +19,37 @@ public class VehicleSpecification {
     private VehicleSpecification() {
     }
 
-    public static Specification<Vehicle> getSpecification(SearchFilter parameter) {
+    public static Specification<Vehicle> getSpecification(SearchFilter searchFilter) {
         return (vehicleRoot, vehicleQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             
-            if (parameter.getManufacturer() != null) {
+            if (searchFilter.getManufacturer() != null) {
                 predicates.add(criteriaBuilder.equal(vehicleRoot.get(Vehicle_.manufacturer).get(Manufacturer_.name), 
-                                                     parameter.getManufacturer()));
+                                                     searchFilter.getManufacturer()));
             }
             
-            if (parameter.getCategory() != null) {
+            if (searchFilter.getCategory() != null) {
                 SetJoin<Vehicle, Category> category = vehicleRoot.join(Vehicle_.categories);
-                predicates.add(criteriaBuilder.equal(category.get(Category_.name), parameter.getCategory()));
+                predicates.add(criteriaBuilder.equal(category.get(Category_.name), searchFilter.getCategory()));
             }
             
-            if (parameter.getMaxYear() != null) {
+            if (searchFilter.getMaxYear() != null) {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(vehicleRoot.get(Vehicle_.productionYear), 
-                                                                 parameter.getMaxYear()));
+                                                                 searchFilter.getMaxYear()));
             }
             
-            if (parameter.getMinYear() != null) {
+            if (searchFilter.getMinYear() != null) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(vehicleRoot.get(Vehicle_.productionYear), 
-                                                                    parameter.getMinYear()));
+                                                                    searchFilter.getMinYear()));
             }
             
-            if (parameter.getModel() != null) {
+            if (searchFilter.getModel() != null) {
                 predicates.add(criteriaBuilder.equal(vehicleRoot.get(Vehicle_.model).get(Model_.name), 
-                                                     parameter.getModel()));
+                                                     searchFilter.getModel()));
+            }
+            
+            if (searchFilter.getYear() != null) {
+                predicates.add(criteriaBuilder.equal(vehicleRoot.get(Vehicle_.productionYear), searchFilter.getYear()));
             }
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };

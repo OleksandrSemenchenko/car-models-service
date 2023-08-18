@@ -21,6 +21,7 @@ import ua.com.foxminded.vehicles.dto.CategoryDto;
 import ua.com.foxminded.vehicles.dto.VehicleDto;
 import ua.com.foxminded.vehicles.entity.Category;
 import ua.com.foxminded.vehicles.entity.Vehicle;
+import ua.com.foxminded.vehicles.exception.AlreadyExistsException;
 import ua.com.foxminded.vehicles.exception.NotFoundException;
 import ua.com.foxminded.vehicles.mapper.VehicleMapper;
 import ua.com.foxminded.vehicles.repository.CategoryRepository;
@@ -35,7 +36,9 @@ import ua.com.foxminded.vehicles.specification.VehicleSpecification;
 @RequiredArgsConstructor
 public class VehicleService {
 
-    public static final String NO_VEHICLE = "The vehicle with id=%s doesn't exist";
+    public static final String NO_SUCH_VEHICLE = "Such vehicle doesn't exist";
+    public static final String NO_VEHICLE_ID = "The vehicle with id=%s doesn't exist";
+    public static final String VEHICLE_ALREADY_EXISTS = "Such vehicle with id='%s' already exists";
 
     private final VehicleRepository vehicleRepository;
     private final CategoryRepository categoryRepository;
@@ -43,13 +46,25 @@ public class VehicleService {
     private final ManufacturerRepository manufacturerRepository;
     private final VehicleMapper vehicleMapper;
     
+    public Optional<VehicleDto> getByManufacturerAndModelAndYear(String manufacturer, String model, int year) {
+        SearchFilter searchFilter = SearchFilter.builder().manufacturer(manufacturer).model(model).year(year).build();
+        Specification<Vehicle> specification = VehicleSpecification.getSpecification(searchFilter);
+        return vehicleRepository.findOne(specification).map(vehicleMapper::map);
+    }
+    
     public Page<VehicleDto> search(SearchFilter searchFilter, Pageable pageable) {
         Specification<Vehicle> specification = VehicleSpecification.getSpecification(searchFilter);
         return vehicleRepository.findAll(specification, pageable).map(vehicleMapper::map);
     }
 
     public VehicleDto save(VehicleDto vehicleDto) {
-        var vehicle = Vehicle.builder().productionYear(vehicleDto.getYear()).build();
+        throwIfPresentByManufacturerAndModelAndYear(vehicleDto.getManufacturer(), 
+                                                    vehicleDto.getModel(), 
+                                                    vehicleDto.getYear()); 
+        
+        var vehicle = Vehicle.builder().productionYear(vehicleDto.getYear())
+                                       .categories(new HashSet<>())
+                                       .build();
         
         updateCategoryRelations(vehicleDto, vehicle);
         updateManufacturerRelation(vehicleDto, vehicle);
@@ -59,10 +74,11 @@ public class VehicleService {
         return vehicleMapper.map(persistedVehicle);
     }
 
-    public VehicleDto update(VehicleDto vehicleDto) {
-        var vehicle = vehicleRepository.findById(vehicleDto.getId()).orElseThrow(
-                () -> new NotFoundException(String.format(NO_VEHICLE, vehicleDto.getId())));
-        
+    public VehicleDto update(String manufacturer, String model, int year, VehicleDto vehicleDto) {
+        SearchFilter searchFilter = SearchFilter.builder().manufacturer(manufacturer).model(model).year(year).build();
+        Specification<Vehicle> specification = VehicleSpecification.getSpecification(searchFilter);
+        var vehicle = vehicleRepository.findOne(specification).orElseThrow(
+                () -> new NotFoundException(NO_SUCH_VEHICLE));
         vehicle.setProductionYear(vehicleDto.getYear());
         
         updateManufacturerRelation(vehicleDto, vehicle);
@@ -75,45 +91,41 @@ public class VehicleService {
 
     public void deleteById(String id) {
         vehicleRepository.findById(id).orElseThrow(
-                () -> new NotFoundException(String.format(NO_VEHICLE, id)));
+                () -> new NotFoundException(String.format(NO_VEHICLE_ID, id)));
         vehicleRepository.deleteById(id);
     }
 
     public Optional<VehicleDto> getById(String id) {
         return vehicleRepository.findById(id).map(vehicleMapper::map);
     }
+    
+    private void throwIfPresentByManufacturerAndModelAndYear(String manufacturer, String model, int year) {
+        SearchFilter searchFilter = SearchFilter.builder().manufacturer(manufacturer).model(model).year(year).build();
+        Specification<Vehicle> specification = VehicleSpecification.getSpecification(searchFilter);
+        Optional<Vehicle> vehicleOptional = vehicleRepository.findOne(specification);
+        
+        if (vehicleOptional.isPresent()) {
+            throw new AlreadyExistsException(String.format(VEHICLE_ALREADY_EXISTS, vehicleOptional.get().getId())); 
+        }
+    }
 
     private void updateCategoryRelations(VehicleDto vehicleDto, Vehicle vehicle) {
-        if (vehicleDto.getCategories() != null && vehicle.getCategories() != null) {
-            List<Category> unnecessaryCategories = vehicle.getCategories().stream().filter(category -> {
-                return vehicleDto.getCategories().stream()
-                        .noneMatch(categoryName -> category.getName().equals(categoryName));
-            }).toList();
-            
-            for (Category category : unnecessaryCategories) {
-                vehicle.removeCategory(category);
-            }
-            
-            Set<CategoryDto> necessaryCategories = vehicleDto.getCategories().stream().filter(categoryDto -> {
-                return vehicle.getCategories().stream()
-                        .noneMatch(category -> categoryDto.equals(category.getName()));
-            }).map(categoryName -> CategoryDto.builder().name(categoryName).build())
-              .collect(Collectors.toSet());
-            
-            addCategoryRelations(necessaryCategories, vehicle);
-        } else if (vehicleDto.getCategories() == null && vehicle.getCategories() != null) {
-            Set<Category> unnecessaryRelations = vehicle.getCategories();
-            
-            for(Category category : unnecessaryRelations) {
-                vehicle.removeCategory(category);
-            }
-        } else if (vehicleDto.getCategories() != null) {
-            Set<CategoryDto> necessaryRelations = vehicleDto.getCategories().stream()
-                    .map(categoryName -> CategoryDto.builder().name(categoryName).build())
-                    .collect(Collectors.toSet());
-            vehicle.setCategories(new HashSet<>());
-            addCategoryRelations(necessaryRelations, vehicle);
+        List<Category> unnecessaryCategories = vehicle.getCategories().stream().filter(category -> {
+            return vehicleDto.getCategories().stream()
+                                             .noneMatch(categoryName -> category.getName().equals(categoryName));
+        }).toList();
+
+        for (Category category : unnecessaryCategories) {
+            vehicle.removeCategory(category);
         }
+
+        Set<CategoryDto> necessaryCategories = vehicleDto.getCategories().stream().filter(categoryDto -> {
+            return vehicle.getCategories().stream()
+                                          .noneMatch(category -> categoryDto.equals(category.getName()));
+        }).map(categoryName -> CategoryDto.builder().name(categoryName).build())
+          .collect(Collectors.toSet());
+
+        addCategoryRelations(necessaryCategories, vehicle);
     }
     
     private void addCategoryRelations(Set<CategoryDto> categoriesDto, Vehicle vehicle) {

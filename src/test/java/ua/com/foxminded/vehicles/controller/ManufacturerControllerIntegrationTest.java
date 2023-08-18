@@ -46,13 +46,6 @@ class ManufacturerControllerIntegrationTest {
     }
     
     @Test
-    void getByName_ShouldReturnStatus404_WhenNoManufactuer() throws Exception {
-        String notExistingManufacturerName = "Ford";
-        mockMvc.perform(get("/v1/manufacturers/{name}", notExistingManufacturerName))
-               .andExpect(status().isNotFound());
-    }
-    
-    @Test
     void getByName_ShouldReturnStatusIsOk() throws Exception {
         String manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
         
@@ -69,7 +62,7 @@ class ManufacturerControllerIntegrationTest {
     }
     
     @Test
-    void save_ShouldReturnStatus400_WhenMethodArgumentNotValid() throws Exception {
+    void save_ShouldReturnStatus400_WhenMethodArgumentIsNotValid() throws Exception {
         ManufacturerDto manufacturerDto = ManufacturerDto.builder().name("").build();
         String manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
         

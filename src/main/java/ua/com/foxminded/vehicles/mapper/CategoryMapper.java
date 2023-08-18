@@ -17,7 +17,7 @@ public interface CategoryMapper {
     @Mapping(target = "vehicles", ignore = true)
     Category map(CategoryDto categoryDto);
     
-    default String asString(Category category) {
+    default String categoryToString(Category category) {
         return category.getName();
     }
     

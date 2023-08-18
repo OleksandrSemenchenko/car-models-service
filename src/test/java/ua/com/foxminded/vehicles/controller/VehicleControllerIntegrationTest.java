@@ -50,12 +50,39 @@ class VehicleControllerIntegrationTest {
     void SetUp() {
         vehicleDto = VehicleDto.builder().id(VEHICLE_ID)
                                          .year(PRODUCTION_YEAR)
+                                         .categories(Set.of(CATEGORY_NAME))
                                          .build();
         mapper = new ObjectMapper();
     }
     
     @Test
-    void search_ShouldReturnStatus404_WhenNotExistingParameters() throws Exception {
+    void searchByManufacturerAndModelAndYear_ShouldReturnStaus400_WhenYearIsNotValid() throws Exception {
+        int notValidYear = -2023;
+        
+        mockMvc.perform(get("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
+                            MANUFACTURER_NAME, MODEL_NAME, notValidYear))
+               .andExpect(status().isBadRequest());
+    }
+    
+    @Test
+    void searchByManufacturerAndModelAndYear_ShouldReturnStausOk() throws Exception {
+        mockMvc.perform(get("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
+                            MANUFACTURER_NAME, MODEL_NAME, PRODUCTION_YEAR))
+               .andExpect(status().isOk());
+    }
+    
+    @Test
+    void search_ShouldReturnStatus400_WhenParametersAreNotValid() throws Exception {
+        String notValidMaxYear = "-2023";
+        String notValidMinYear = "-2021";
+        
+        mockMvc.perform(get("/v1/vehicles").param("maxYear", notValidMaxYear)
+                                           .param("minYear", notValidMinYear))
+               .andExpect(status().isBadRequest());
+    }
+    
+    @Test
+    void search_ShouldReturnStatus200_WhenNotExistingParameters() throws Exception {
         String notExistingModel = "Insight";
         String notExistingCategory = "Coupe";
         String notExistingManufacturer = "Peugeot";
@@ -83,19 +110,11 @@ class VehicleControllerIntegrationTest {
     
     @Test
     void search_ShouldReturnStatusIsOk_WhenNoParameters() throws Exception {
-        int persistedVehiclesQuantity = 2;
+        int persistedVehiclesQuantity = 1;
         
         mockMvc.perform(get("/v1/vehicles"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.content", hasSize(persistedVehiclesQuantity)));
-    }
-    
-    @Test
-    void getById_ShouldReturnStatus404_WhenNoVehicle() throws Exception {
-        String notExistingId = "10";
-        
-        mockMvc.perform(get("/v1/vehicles/{id}", notExistingId))
-               .andExpect(status().isNotFound());
     }
     
     @Test
@@ -146,6 +165,21 @@ class VehicleControllerIntegrationTest {
     }
     
     @Test
+    void save_ShouldReturnStatus400_WhenArgumentsAreNotValid() throws Exception {
+        vehicleDto.setCategories(null);
+        String vehicleDtoJson = mapper.writeValueAsString(vehicleDto);
+        String notValidYear = "-2023";
+        
+        mockMvc.perform(post("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
+                             MANUFACTURER_NAME, 
+                             MODEL_NAME, 
+                             notValidYear)
+                    .contentType(APPLICATION_JSON)
+                    .content(vehicleDtoJson))
+               .andExpect(status().is(400));
+    }
+    
+    @Test
     void save_ShouldReturnStatus201() throws Exception {
         vehicleDto.setId(null);
         String vehicleDtoJson = mapper.writeValueAsString(vehicleDto);
@@ -166,11 +200,12 @@ class VehicleControllerIntegrationTest {
         vehicleDto.setCategories(Set.of(notExistingCategoryName));
         String vehicleDtoJson = mapper.writeValueAsString(vehicleDto);
         
-        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{modle}/{year}", 
+        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{modle}/{year}/{id}", 
                             MANUFACTURER_NAME, 
                             MODEL_NAME, 
-                            PRODUCTION_YEAR).contentType(APPLICATION_JSON)
-                                            .content(vehicleDtoJson))
+                            PRODUCTION_YEAR, 
+                            VEHICLE_ID).contentType(APPLICATION_JSON)
+                                       .content(vehicleDtoJson))
                .andExpect(status().isNotFound());
     }
     
@@ -179,11 +214,12 @@ class VehicleControllerIntegrationTest {
         String vehicleDtoJson = mapper.writeValueAsString(vehicleDto);
         String notExistingModelName = "Pickup";
         
-        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{modle}/{year}", 
+        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{model}/{year}/{id}", 
                             MANUFACTURER_NAME, 
                             notExistingModelName, 
-                            PRODUCTION_YEAR).contentType(APPLICATION_JSON)
-                                            .content(vehicleDtoJson))
+                            PRODUCTION_YEAR, 
+                            VEHICLE_ID).contentType(APPLICATION_JSON)
+                                       .content(vehicleDtoJson))
                .andExpect(status().isNotFound());
     }
     
@@ -192,38 +228,41 @@ class VehicleControllerIntegrationTest {
         String vehicleDtoJson = mapper.writeValueAsString(vehicleDto);
         String notExistingManufacturerName = "Ford";
         
-        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{modle}/{year}", 
+        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{modle}/{year}/{id}", 
                             notExistingManufacturerName, 
                             MODEL_NAME, 
-                            PRODUCTION_YEAR).contentType(APPLICATION_JSON)
-                                            .content(vehicleDtoJson))
+                            PRODUCTION_YEAR, 
+                            VEHICLE_ID).contentType(APPLICATION_JSON)
+                                       .content(vehicleDtoJson))
                .andExpect(status().isNotFound());
     }
     
     @Test
     void update_ShouldReturnStatus404_WhenNoVehicle() throws Exception {
         String notExistingId = "10";
-        vehicleDto.setId(notExistingId);
         String vehicleDtoJson = mapper.writeValueAsString(vehicleDto);
         
-        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{modle}/{year}", 
+        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{modle}/{year}/{id}", 
                             MANUFACTURER_NAME, 
                             MODEL_NAME, 
-                            PRODUCTION_YEAR).contentType(APPLICATION_JSON)
-                                              .content(vehicleDtoJson))
+                            PRODUCTION_YEAR, 
+                            notExistingId).contentType(APPLICATION_JSON)
+                                          .content(vehicleDtoJson))
                .andExpect(status().isNotFound());
     }
     
     @Test
-    void update_ShouldReturnStatus400_WhenMethodArgumentNotValid() throws Exception {
-        vehicleDto.setId(null);
+    void update_ShouldReturnStatus400_WhenArgumentsAreNotValid() throws Exception {
+        vehicleDto.setCategories(null);
         String vehicleDtoJson = mapper.writeValueAsString(vehicleDto);
+        int notValidYear = -2023;
         
-        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{modle}/{year}", 
+        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{modle}/{year}/{id}", 
                             MANUFACTURER_NAME, 
                             MODEL_NAME, 
-                            PRODUCTION_YEAR).contentType(APPLICATION_JSON)
-                                            .content(vehicleDtoJson))
+                            notValidYear, 
+                            VEHICLE_ID).contentType(APPLICATION_JSON)
+                                       .content(vehicleDtoJson))
                .andExpect(status().is(400));
     }
     
@@ -232,10 +271,11 @@ class VehicleControllerIntegrationTest {
         vehicleDto.setCategories(Set.of(CATEGORY_NAME));
         String vehicleDtoJson = mapper.writeValueAsString(vehicleDto);
         
-        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{modle}/{year}", 
+        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{modle}/{year}/{id}", 
                             MANUFACTURER_NAME, 
                             MODEL_NAME, 
-                            PRODUCTION_YEAR)
+                            PRODUCTION_YEAR, 
+                            VEHICLE_ID)
                     .contentType(APPLICATION_JSON)
                     .content(vehicleDtoJson))
                .andExpect(status().isOk());

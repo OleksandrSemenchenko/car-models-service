@@ -17,7 +17,7 @@ public interface ModelMapper {
     @Mapping(target = "vehicles", ignore = true)
     Model map(ModelDto modelDto);
     
-    default String asString(Model model) {
+    default String modelToString(Model model) {
         return model.getName();
     }
     

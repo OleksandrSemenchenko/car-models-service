@@ -17,7 +17,7 @@ public interface ManufacturerMapper {
     @Mapping(target = "vehicles", ignore = true)
     Manufacturer map(ManufacturerDto manufacturerDto);
     
-    default String asString(Manufacturer manufacturer) {
+    default String manufacturerToString(Manufacturer manufacturer) {
         return manufacturer.getName();
     }
     

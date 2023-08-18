@@ -1,9 +1,9 @@
 package ua.com.foxminded.vehicles.controller;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static ua.com.foxminded.vehicles.service.ModelService.NO_MODEL;
 
 import java.net.URI;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -25,7 +25,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.vehicles.dto.ModelDto;
-import ua.com.foxminded.vehicles.exception.NotFoundException;
 import ua.com.foxminded.vehicles.service.ModelService;
 
 @RestController
@@ -52,9 +51,8 @@ public class ModelController {
     }
     
     @GetMapping("/models/{name}")
-    public ModelDto getByName(@PathVariable String name) {
-        return modelService.getByName(name).orElseThrow(
-                () -> new NotFoundException(String.format(NO_MODEL, name)));
+    public Optional<ModelDto> getByName(@PathVariable String name) {
+        return modelService.getByName(name);
     }
     
     @GetMapping("/models")
@@ -75,8 +73,7 @@ public class ModelController {
             return PageRequest.of(pageRequest.getPageNumber(), 
                                   pageRequest.getPageSize(),
                                   pageRequest.getSortOr(defaultSort));
-        } else {
-            return pageRequest;
         }
+        return pageRequest;
     }
 }

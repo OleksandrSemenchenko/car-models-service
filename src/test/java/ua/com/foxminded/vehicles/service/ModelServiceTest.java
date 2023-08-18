@@ -1,7 +1,6 @@
 package ua.com.foxminded.vehicles.service;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.isA;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -14,13 +13,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import ua.com.foxminded.vehicles.dto.ModelDto;
 import ua.com.foxminded.vehicles.entity.Model;
+import ua.com.foxminded.vehicles.exception.AlreadyExistsException;
+import ua.com.foxminded.vehicles.exception.NotFoundException;
 import ua.com.foxminded.vehicles.mapper.ModelMapper;
+import ua.com.foxminded.vehicles.mapper.ModelMapperImpl;
 import ua.com.foxminded.vehicles.repository.ModelRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,56 +38,71 @@ class ModelServiceTest {
     @Mock
     private ModelRepository modelRepository;
     
-    @Mock
-    private ModelMapper modelMapper;
+    @Spy
+    private ModelMapper modelMapper = new ModelMapperImpl();
     
     private Model model;
+    private ModelDto modelDto;
     
     @BeforeEach
     void SetUp() {
         model = Model.builder().name(MODEL_NAME).build();
+        modelDto = ModelDto.builder().name(MODEL_NAME).build();
     }
     
     @Test
-    void save_ShouldPerformCorrectCalls() {
-        when(modelRepository.existsById(anyString())).thenReturn(false);
-        when(modelMapper.map(isA(ModelDto.class))).thenReturn(model);
-        when(modelRepository.save(isA(Model.class))).thenReturn(model);
-        ModelDto modelDto = ModelDto.builder().name(MODEL_NAME).build();
+    void save_ShouldSaveModel() {
+        when(modelRepository.existsById(modelDto.getName())).thenReturn(false);
+        when(modelRepository.save(model)).thenReturn(model);
         modelService.save(modelDto);
         
-        verify(modelRepository).existsById(anyString());
-        verify(modelMapper).map(isA(ModelDto.class));
-        verify(modelRepository).save(isA(Model.class));
-        verify(modelMapper).map(isA(Model.class));
+        verify(modelRepository).existsById(modelDto.getName());
+        verify(modelMapper).map(modelDto);
+        verify(modelRepository).save(model);
+        verify(modelMapper).map(model);
     }
     
     @Test
-    void getAll_ShouldPerformCorrectCalls() {
+    void save_ShouldThrow_WhenNoSuchModel() {
+        when(modelRepository.existsById(modelDto.getName())).thenReturn(true);
+        
+        assertThrows(AlreadyExistsException.class, () -> modelService.save(modelDto));
+    }
+    
+    @Test
+    void getAll_ShouldGetModels() {
         List<Model> models = Arrays.asList(model);
-        when(modelRepository.findAll(isA(Pageable.class))).thenReturn(new PageImpl<Model>(models));
+        Page<Model> modelsPage = new PageImpl<>(models);
         Pageable pageable = Pageable.unpaged();
+        when(modelRepository.findAll(pageable)).thenReturn(modelsPage);
         modelService.getAll(pageable);
         
-        verify(modelRepository).findAll(isA(Pageable.class));
-        verify(modelMapper).map(isA(Model.class));
+        verify(modelRepository).findAll(pageable);
+        verify(modelMapper).map(model);
     }
     
     @Test
-    void deleteByName_ShouldPerformCorrectCalls() {
-        when(modelRepository.findById(anyString())).thenReturn(Optional.of(model));
+    void deleteByName_ShouldDeleteModel() {
+        when(modelRepository.findById(MODEL_NAME)).thenReturn(Optional.of(model));
         modelService.deleteByName(MODEL_NAME);
         
-        verify(modelRepository).findById(anyString());
-        verify(modelRepository).deleteById(anyString());
+        verify(modelRepository).findById(MODEL_NAME);
+        verify(modelRepository).deleteById(MODEL_NAME);
+    }
+    
+    @Test
+    void deleteByName_ShouldThrow_WhenNoSuchModel() {
+        when(modelRepository.findById(MODEL_NAME)).thenReturn(Optional.empty());
+        
+        assertThrows(NotFoundException.class, () -> modelService.deleteByName(MODEL_NAME));
     }
 
     @Test
-    void getByName_ShouldPerformCorrectCalls() {
-        when(modelRepository.findById(anyString())).thenReturn(Optional.of(model));
+    void getByName_ShouldGetModel() {
+        when(modelRepository.findById(MODEL_NAME)).thenReturn(Optional.of(model));
         modelService.getByName(MODEL_NAME);
         
-        verify(modelRepository).findById(anyString());
-        verify(modelMapper).map(isA(Model.class));
+        verify(modelRepository).findById(MODEL_NAME);
+        verify(modelMapper).map(model);
     }
 }

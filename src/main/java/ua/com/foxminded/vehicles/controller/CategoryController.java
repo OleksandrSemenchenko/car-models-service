@@ -1,9 +1,9 @@
 package ua.com.foxminded.vehicles.controller;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static ua.com.foxminded.vehicles.service.CategoryService.NO_CATEGORY;
 
 import java.net.URI;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -25,7 +25,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.vehicles.dto.CategoryDto;
-import ua.com.foxminded.vehicles.exception.NotFoundException;
 import ua.com.foxminded.vehicles.service.CategoryService;
 
 @RestController
@@ -52,9 +51,8 @@ public class CategoryController {
     }
     
     @GetMapping("/{name}")
-    public CategoryDto getByName(@PathVariable String name) {
-        return categoryService.getByName(name).orElseThrow(
-                () -> new NotFoundException(String.format(NO_CATEGORY, name)));
+    public Optional<CategoryDto> getByName(@PathVariable String name) {
+        return categoryService.getByName(name);
     }
     
     @GetMapping
@@ -76,8 +74,7 @@ public class CategoryController {
             return PageRequest.of(pageRequest.getPageNumber(), 
                                   pageRequest.getPageSize(),
                                   pageRequest.getSortOr(defaultSort));
-        } else {
-            return pageRequest;
-        }
+        } 
+        return pageRequest;
     }
 }

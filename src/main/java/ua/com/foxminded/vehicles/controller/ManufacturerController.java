@@ -1,9 +1,9 @@
 package ua.com.foxminded.vehicles.controller;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static ua.com.foxminded.vehicles.service.ManufacturerService.NO_MANUFACTURER;
 
 import java.net.URI;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -25,7 +25,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.vehicles.dto.ManufacturerDto;
-import ua.com.foxminded.vehicles.exception.NotFoundException;
 import ua.com.foxminded.vehicles.service.ManufacturerService;
 
 @RestController
@@ -42,9 +41,8 @@ public class ManufacturerController {
     private final ManufacturerService manufacturerService;
     
     @GetMapping("/{name}")
-    public ManufacturerDto getByName(@PathVariable String name) {
-        return manufacturerService.getByName(name).orElseThrow(
-                () -> new NotFoundException(String.format(NO_MANUFACTURER, name)));
+    public Optional<ManufacturerDto> getByName(@PathVariable String name) {
+        return manufacturerService.getByName(name);
     }
     
     @GetMapping
@@ -75,8 +73,7 @@ public class ManufacturerController {
             return PageRequest.of(pageRequest.getPageNumber(), 
                                   pageRequest.getPageSize(),
                                   pageRequest.getSortOr(defaultSort));
-        } else {
-            return pageRequest;
         }
+        return pageRequest;
     }
 }

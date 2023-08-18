@@ -76,13 +76,6 @@ class ModelControllerIntegrationTest {
     }
     
     @Test
-    void getByName_ShouldReturnStatus404_WhenNoModel() throws Exception {
-        String notExistingModelName = "Sonata";
-        mockMvc.perform(get("/v1/models/{name}", notExistingModelName))
-               .andExpect(status().isNotFound());
-    }
-    
-    @Test
     void getByName_ShouldReturnStatusIsOk() throws Exception {
         mockMvc.perform(get("/v1/models/{name}", MODEL_NAME))
                .andExpect(status().isOk())

@@ -1,7 +1,6 @@
 package ua.com.foxminded.vehicles.service;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.isA;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -14,13 +13,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import ua.com.foxminded.vehicles.dto.CategoryDto;
 import ua.com.foxminded.vehicles.entity.Category;
+import ua.com.foxminded.vehicles.exception.AlreadyExistsException;
+import ua.com.foxminded.vehicles.exception.NotFoundException;
 import ua.com.foxminded.vehicles.mapper.CategoryMapper;
+import ua.com.foxminded.vehicles.mapper.CategoryMapperImpl;
 import ua.com.foxminded.vehicles.repository.CategoryRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,56 +38,71 @@ class CategoryServiceTest {
     @Mock
     private CategoryRepository categoryRepository;
     
-    @Mock
-    private CategoryMapper categoryMapper;
+    @Spy
+    private CategoryMapper categoryMapper = new CategoryMapperImpl();
     
     private Category category;
+    private CategoryDto categoryDto;
     
     @BeforeEach
     void SetUp() {
         category = Category.builder().name(CATEGORY_NAME).build();
+        categoryDto = CategoryDto.builder().name(CATEGORY_NAME).build();
     }
     
     @Test
     void save_ShouldPerformCorrectCalls() {
-        when(categoryRepository.existsById(anyString())).thenReturn(false);
-        when(categoryMapper.map(isA(CategoryDto.class))).thenReturn(category);
-        when(categoryRepository.save(isA(Category.class))).thenReturn(category);
-        CategoryDto categoryDto = CategoryDto.builder().name(CATEGORY_NAME).build();
+        when(categoryRepository.existsById(CATEGORY_NAME)).thenReturn(false);
+        when(categoryRepository.save(category)).thenReturn(category);
         categoryService.save(categoryDto);
         
-        verify(categoryRepository).existsById(anyString());
-        verify(categoryMapper).map(isA(CategoryDto.class));
-        verify(categoryRepository).save(isA(Category.class));
-        verify(categoryMapper).map(isA(Category.class));
+        verify(categoryRepository).existsById(CATEGORY_NAME);
+        verify(categoryMapper).map(categoryDto);
+        verify(categoryRepository).save(category);
+        verify(categoryMapper).map(category);
     }
     
     @Test
-    void getAll_ShouldPreformCorrectCalls() {
+    void save_ShouldThrow_WhenSuchCategoryAlreadyExists() {
+        when(categoryRepository.existsById(categoryDto.getName())).thenReturn(true);
+        
+        assertThrows(AlreadyExistsException.class, () -> categoryService.save(categoryDto));
+    }
+    
+    @Test
+    void getAll_ShouldGetCategories() {
         Pageable pageable = Pageable.unpaged();
         List<Category> categories = Arrays.asList(category);
-        when(categoryRepository.findAll(pageable)).thenReturn(new PageImpl<Category>(categories));
+        Page<Category> categoriesPage = new PageImpl<>(categories);
+        when(categoryRepository.findAll(pageable)).thenReturn(categoriesPage);
         categoryService.getAll(pageable);
         
-        verify(categoryRepository).findAll(isA(Pageable.class));
-        verify(categoryMapper).map(isA(Category.class));
+        verify(categoryRepository).findAll(pageable);
+        verify(categoryMapper).map(category);
     }
     
     @Test
-    void deleteByName_ShouldPerformCorrectCalls() {
-        when(categoryRepository.findById(anyString())).thenReturn(Optional.of(category));
+    void deleteByName_ShouldDeleteCategory() {
+        when(categoryRepository.findById(CATEGORY_NAME)).thenReturn(Optional.of(category));
         categoryService.deleleteByName(CATEGORY_NAME);
         
-        verify(categoryRepository).findById(anyString());
-        verify(categoryRepository).deleteById(anyString());
+        verify(categoryRepository).findById(CATEGORY_NAME);
+        verify(categoryRepository).deleteById(CATEGORY_NAME);
+    }
+    
+    @Test
+    void deleteByName_ShouldThrow_WhenNoSuchCategory() {
+        when(categoryRepository.findById(CATEGORY_NAME)).thenReturn(Optional.empty());
+        
+        assertThrows(NotFoundException.class, () -> categoryService.deleleteByName(CATEGORY_NAME));
     }
 
     @Test
-    void getByName_ShouldPerformCorrectCalls() {
-        when(categoryRepository.findById(anyString())).thenReturn(Optional.of(category));
+    void getByName_ShouldGetCategory() {
+        when(categoryRepository.findById(CATEGORY_NAME)).thenReturn(Optional.of(category));
         categoryService.getByName(CATEGORY_NAME);
         
-        verify(categoryRepository).findById(anyString());
-        verify(categoryMapper).map(isA(Category.class));
+        verify(categoryRepository).findById(CATEGORY_NAME);
+        verify(categoryMapper).map(category);
     }
 }
