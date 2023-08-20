@@ -51,7 +51,7 @@ class ManufacturerServiceTest {
     }
     
     @Test
-    void save_ShouldPerformCorrectCalls() {
+    void save_ShouldSaveManufacturer() {
         when(manufacturerRepository.existsById(manufacturerDto.getName())).thenReturn(false);
         when(manufacturerMapper.map(manufacturerDto)).thenReturn(manufacturer);
         manufacturerService.save(manufacturerDto);

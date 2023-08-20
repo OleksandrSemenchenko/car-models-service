@@ -117,8 +117,7 @@ class VehicleServiceTest {
     @Test
     void save_ShouldSaveVehicle() {
         vehicle.setId(null);
-        when(vehicleRepository.findOne(ArgumentMatchers.<Specification<Vehicle>>any()))
-                .thenReturn(Optional.empty());
+        when(vehicleRepository.findOne(ArgumentMatchers.<Specification<Vehicle>>any())).thenReturn(Optional.empty());
         when(categoryRepository.findById(vehicleDto.getCategories()
                                                    .iterator()
                                                    .next())).thenReturn(Optional.of(category));
@@ -137,8 +136,7 @@ class VehicleServiceTest {
     
     @Test
     void save_ShouldThrow_WhenNoSuchModel() {
-        when(vehicleRepository.findOne(ArgumentMatchers.<Specification<Vehicle>>any()))
-                .thenReturn(Optional.empty());
+        when(vehicleRepository.findOne(ArgumentMatchers.<Specification<Vehicle>>any())).thenReturn(Optional.empty());
         when(categoryRepository.findById(vehicleDto.getCategories()
                                                    .iterator()
                                                    .next())).thenReturn(Optional.of(category));
@@ -150,8 +148,7 @@ class VehicleServiceTest {
     
     @Test
     void save_ShouldThrow_WhenNoSuchManufacturer() {
-        when(vehicleRepository.findOne(ArgumentMatchers.<Specification<Vehicle>>any()))
-                .thenReturn(Optional.empty());
+        when(vehicleRepository.findOne(ArgumentMatchers.<Specification<Vehicle>>any())).thenReturn(Optional.empty());
         when(categoryRepository.findById(vehicleDto.getCategories()
                                                    .iterator()
                                                    .next())).thenReturn(Optional.of(category));
@@ -162,8 +159,7 @@ class VehicleServiceTest {
     
     @Test
     void save_ShouldThrow_WhenNoSuchCategory() {
-        when(vehicleRepository.findOne(ArgumentMatchers.<Specification<Vehicle>>any()))
-                .thenReturn(Optional.empty());
+        when(vehicleRepository.findOne(ArgumentMatchers.<Specification<Vehicle>>any())).thenReturn(Optional.empty());
         when(categoryRepository.findById(vehicleDto.getCategories().iterator().next())).thenReturn(Optional.empty());
         
         assertThrows(NotFoundException.class, () -> vehicleService.save(vehicleDto));
@@ -211,6 +207,7 @@ class VehicleServiceTest {
     @Test
     void update_ShouldThrow_WhenNoSuchVehicle() {
         when(vehicleRepository.findOne(ArgumentMatchers.<Specification<Vehicle>>any())).thenReturn(Optional.empty());
+        
         assertThrows(NotFoundException.class, () -> vehicleService.update(vehicleDto));
     }
     
@@ -223,7 +220,7 @@ class VehicleServiceTest {
                                                      .build();
         vehicleDto.setCategories(Set.of(updatedCategoryName));
         when(vehicleRepository.findOne(ArgumentMatchers.<Specification<Vehicle>>any()))
-            .thenReturn(Optional.of(vehicle));
+                .thenReturn(Optional.of(vehicle));
         when(manufacturerRepository.findById(vehicleDto.getManufacturer())).thenReturn(Optional.of(manufacturer));
         when(modelRepository.findById(vehicleDto.getModel())).thenReturn(Optional.of(model));
         when(categoryRepository.findById(vehicleDto.getCategories()
@@ -237,7 +234,6 @@ class VehicleServiceTest {
                                                   .build();
         when(vehicleRepository.save(updatedVehicle)).thenReturn(updatedVehicle);
         when(vehicleMapper.map(updatedVehicle)).thenReturn(vehicleDto);
-        
         vehicleService.update(vehicleDto);
         
         verify(vehicleRepository).findOne(ArgumentMatchers.<Specification<Vehicle>>any());
@@ -250,9 +246,9 @@ class VehicleServiceTest {
     
     @Test
     void deleteById_ShouldThrow_WhenNoVehicle() {
-        String notExistingVehicleId = "10";
-        when(vehicleRepository.findById(notExistingVehicleId)).thenReturn(Optional.empty());
-        assertThrows(NotFoundException.class, () -> vehicleService.deleteById(notExistingVehicleId));
+        when(vehicleRepository.findById(VEHICLE_ID)).thenReturn(Optional.empty());
+        
+        assertThrows(NotFoundException.class, () -> vehicleService.deleteById(VEHICLE_ID));
     }
     
     @Test

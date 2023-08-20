@@ -55,7 +55,7 @@ class VehicleControllerIntegrationTest {
     }
     
     @Test
-    void searchByManufacturerAndModelAndYear_ShouldReturnStausOk() throws Exception {
+    void searchByManufacturerAndModelAndYear_ShouldReturnStaus200() throws Exception {
         mockMvc.perform(get("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, PRODUCTION_YEAR))
                .andExpect(status().isOk());
@@ -91,16 +91,16 @@ class VehicleControllerIntegrationTest {
     
     @Test
     void save_ShouldReturnStatus201() throws Exception {
-        int productionYear = 2023;
+        int notExistingProductionYear = 2023;
         String vehicleDtoJson = mapper.writeValueAsString(vehicleDto);
         
         mockMvc.perform(post("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
                              MANUFACTURER_NAME, 
                              MODEL_NAME, 
-                             productionYear)
+                             notExistingProductionYear)
                     .contentType(APPLICATION_JSON)
                     .content(vehicleDtoJson))
-               .andExpect(status().is(201))
+               .andExpect(status().isCreated())
                .andExpect(header().string("Location", containsString("/v1/vehicles/")));
     }
     

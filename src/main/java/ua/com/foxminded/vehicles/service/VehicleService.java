@@ -93,8 +93,7 @@ public class VehicleService {
     }
 
     public void deleteById(String id) {
-        vehicleRepository.findById(id).orElseThrow(
-                () -> new NotFoundException(String.format(NO_VEHICLE_ID, id)));
+        vehicleRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format(NO_VEHICLE_ID, id)));
         vehicleRepository.deleteById(id);
     }
 

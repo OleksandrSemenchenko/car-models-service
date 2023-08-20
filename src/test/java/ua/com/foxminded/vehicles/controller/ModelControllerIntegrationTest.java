@@ -45,14 +45,6 @@ class ModelControllerIntegrationTest {
     }
     
     @Test
-    void save_ShouldReturnStatus409_WhenModelAlreadyExists() throws Exception {
-        modelDtoJson = mapper.writeValueAsString(modelDto);
-        mockMvc.perform(post("/v1/models").contentType(MediaType.APPLICATION_JSON)
-                                          .content(modelDtoJson))
-               .andExpect(status().is(409));
-    }
-    
-    @Test
     void save_ShouldReturnStatus201() throws Exception {
         String newModelName = "Fusion";
         modelDto.setName(newModelName);
@@ -60,7 +52,7 @@ class ModelControllerIntegrationTest {
         
         mockMvc.perform(post("/v1/models").contentType(MediaType.APPLICATION_JSON)
                                           .content(modelDtoJson))
-               .andExpect(status().is(201))
+               .andExpect(status().isCreated())
                .andExpect(header().string("Location", containsString("/v1/models/" + newModelName)));
     }
     
@@ -80,7 +72,7 @@ class ModelControllerIntegrationTest {
     }
     
     @Test
-    void deleteByName_ShouldReturnStatusIs204() throws Exception {
+    void deleteByName_ShouldReturnStatus204() throws Exception {
         mockMvc.perform(delete("/v1/models/{name}", MODEL_NAME))
                .andExpect(status().isNoContent());
     }

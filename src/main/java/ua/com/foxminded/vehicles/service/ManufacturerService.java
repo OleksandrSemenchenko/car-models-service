@@ -37,8 +37,7 @@ public class ManufacturerService {
     }
 
     public Page<ManufacturerDto> getAll(Pageable pageable) {
-        return manufacturerRepository.findAll(pageable)
-                                     .map(manufacturerMapper::map);
+        return manufacturerRepository.findAll(pageable).map(manufacturerMapper::map);
     }
 
     public void deleteByName(String name) {

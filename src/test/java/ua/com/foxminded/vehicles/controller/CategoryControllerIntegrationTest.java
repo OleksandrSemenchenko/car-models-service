@@ -50,7 +50,7 @@ class CategoryControllerIntegrationTest {
         
         mockMvc.perform(post("/v1/categories").contentType(APPLICATION_JSON)
                                               .content(categoryDtoJson))
-               .andExpect(status().is(201))
+               .andExpect(status().isCreated())
                .andExpect(header().string("Location", containsString("/v1/categories/" + newCategoryName)));
     }
     

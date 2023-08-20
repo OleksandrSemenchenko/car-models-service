@@ -30,7 +30,7 @@ import ua.com.foxminded.vehicles.repository.ModelRepository;
 @ExtendWith(MockitoExtension.class)
 class ModelServiceTest {
     
-    public static final String MODEL_NAME = "Q7";
+    public static final String MODEL_NAME = "A7";
     
     @InjectMocks
     private ModelService modelService;

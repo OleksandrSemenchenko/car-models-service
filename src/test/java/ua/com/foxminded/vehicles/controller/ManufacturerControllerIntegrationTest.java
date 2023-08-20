@@ -55,7 +55,7 @@ class ManufacturerControllerIntegrationTest {
     @Test
     void getAll_ShouldReturnStatus200() throws Exception {
         mockMvc.perform(get("/v1/manufacturers"))
-               .andExpect(status().is(200))
+               .andExpect(status().isOk())
                .andExpect(jsonPath("$.content[0].name", MANUFACTURER_NAME).exists());
     }
     
@@ -68,7 +68,7 @@ class ManufacturerControllerIntegrationTest {
         mockMvc.perform(post("/v1/manufacturers")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(manufacturerDtoJson))
-               .andExpect(status().is(201))
+               .andExpect(status().isCreated())
                .andExpect(header().string("Location", containsString("/v1/manufacturers/" + notExistingManufacturer)));
     }
     

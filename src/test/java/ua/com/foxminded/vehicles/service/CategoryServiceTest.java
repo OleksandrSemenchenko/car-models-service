@@ -51,7 +51,7 @@ class CategoryServiceTest {
     }
     
     @Test
-    void save_ShouldPerformCorrectCalls() {
+    void save_ShouldSaveCategory() {
         when(categoryRepository.existsById(CATEGORY_NAME)).thenReturn(false);
         when(categoryRepository.save(category)).thenReturn(category);
         categoryService.save(categoryDto);

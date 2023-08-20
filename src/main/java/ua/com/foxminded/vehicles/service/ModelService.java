@@ -37,13 +37,11 @@ public class ModelService {
     }
 
     public Page<ModelDto> getAll(Pageable pageable) {
-        return modelRepository.findAll(pageable)
-                              .map(modelMapper::map);
+        return modelRepository.findAll(pageable).map(modelMapper::map);
     }
 
     public void deleteByName(String name) {
-        modelRepository.findById(name).orElseThrow(
-                () -> new NotFoundException(String.format(NO_MODEL, name)));
+        modelRepository.findById(name).orElseThrow(() -> new NotFoundException(String.format(NO_MODEL, name)));
         modelRepository.deleteById(name);
     }
 

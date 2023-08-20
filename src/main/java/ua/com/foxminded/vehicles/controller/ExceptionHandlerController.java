@@ -52,8 +52,8 @@ public class ExceptionHandlerController {
     
     private ValidationErrorResponse buildValidationErrorResponse(HttpStatus status, HttpServletRequest request) {
         return ValidationErrorResponse.builder().error(status.getReasonPhrase())
-                                      .path(request.getRequestURI())
-                                      .timestamp(Instant.now())
-                                      .status(status.value()).build();
+                                                .path(request.getRequestURI())
+                                                .timestamp(Instant.now())
+                                                .status(status.value()).build();
     }
 }

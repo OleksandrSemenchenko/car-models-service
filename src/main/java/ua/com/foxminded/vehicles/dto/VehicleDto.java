@@ -20,6 +20,6 @@ public class VehicleDto {
     private String manufacturer;
     private String model;
     
-    @NotNull @NotEmpty
+    @NotNull
     private Set<@NotNull @NotEmpty String> categories;
 }
