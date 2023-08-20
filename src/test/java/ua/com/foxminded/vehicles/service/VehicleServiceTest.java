@@ -186,8 +186,7 @@ class VehicleServiceTest {
         when(modelRepository.findById(vehicleDto.getModel())).thenReturn(Optional.of(model));
         when(categoryRepository.findById(vehicleDto.getCategories().iterator().next())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, 
-                () -> vehicleService.update(MANUFACTURER_NAME, MODEL_NAME, PRODUCTION_YEAR, vehicleDto));
+        assertThrows(NotFoundException.class, () -> vehicleService.update(vehicleDto));
     }
     
     @Test
@@ -197,8 +196,7 @@ class VehicleServiceTest {
         when(manufacturerRepository.findById(vehicleDto.getManufacturer())).thenReturn(Optional.of(manufacturer));
         when(modelRepository.findById(vehicleDto.getModel())).thenReturn(Optional.empty());
     
-        assertThrows(NotFoundException.class, 
-            () -> vehicleService.update(MANUFACTURER_NAME, MODEL_NAME, PRODUCTION_YEAR, vehicleDto));
+        assertThrows(NotFoundException.class, () -> vehicleService.update(vehicleDto));
     }
     
     @Test
@@ -207,15 +205,13 @@ class VehicleServiceTest {
                 .thenReturn(Optional.of(vehicle));
         when(manufacturerRepository.findById(vehicleDto.getManufacturer())).thenReturn(Optional.empty());
         
-        assertThrows(NotFoundException.class, 
-                () -> vehicleService.update(MANUFACTURER_NAME, MODEL_NAME, PRODUCTION_YEAR, vehicleDto));
+        assertThrows(NotFoundException.class, () -> vehicleService.update(vehicleDto));
     }
     
     @Test
     void update_ShouldThrow_WhenNoSuchVehicle() {
         when(vehicleRepository.findOne(ArgumentMatchers.<Specification<Vehicle>>any())).thenReturn(Optional.empty());
-        assertThrows(NotFoundException.class, 
-                () -> vehicleService.update(MANUFACTURER_NAME, MODEL_NAME, PRODUCTION_YEAR, vehicleDto));
+        assertThrows(NotFoundException.class, () -> vehicleService.update(vehicleDto));
     }
     
     
@@ -242,7 +238,7 @@ class VehicleServiceTest {
         when(vehicleRepository.save(updatedVehicle)).thenReturn(updatedVehicle);
         when(vehicleMapper.map(updatedVehicle)).thenReturn(vehicleDto);
         
-        vehicleService.update(MANUFACTURER_NAME, MODEL_NAME, PRODUCTION_YEAR, vehicleDto);
+        vehicleService.update(vehicleDto);
         
         verify(vehicleRepository).findOne(ArgumentMatchers.<Specification<Vehicle>>any());
         verify(manufacturerRepository).findById(vehicleDto.getManufacturer());

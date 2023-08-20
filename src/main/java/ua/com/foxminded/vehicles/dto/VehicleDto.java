@@ -16,18 +16,10 @@ import lombok.NoArgsConstructor;
 public class VehicleDto {
 
     private String id;
-    
-    @NotNull
-    @NotEmpty
     private Integer year;
-    
-    @NotNull
-    @NotEmpty
     private String manufacturer;
-    
-    @NotNull
-    @NotEmpty
     private String model;
     
+    @NotNull @NotEmpty
     private Set<@NotNull @NotEmpty String> categories;
 }

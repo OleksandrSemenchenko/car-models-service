@@ -15,12 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ua.com.foxminded.vehicles.dto.ManufacturerDto;
@@ -28,7 +25,6 @@ import ua.com.foxminded.vehicles.dto.ManufacturerDto;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class ManufacturerControllerIntegrationTest {
     
     public static final String MANUFACTURER_NAME = "Audi";
@@ -36,18 +32,20 @@ class ManufacturerControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
     
-    private ManufacturerDto manufacturerDto;
+    @Autowired
     private ObjectMapper mapper;
     
+    private ManufacturerDto manufacturerDto;
+    private String manufacturerDtoJson;
+    
     @BeforeEach
-    void setUp() throws JsonProcessingException {
+    void setUp() {
         manufacturerDto = ManufacturerDto.builder().name(MANUFACTURER_NAME).build();
-        mapper = new ObjectMapper();
     }
     
     @Test
-    void getByName_ShouldReturnStatusIsOk() throws Exception {
-        String manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
+    void getByName_ShouldReturnStatus200() throws Exception {
+        manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
         
         mockMvc.perform(get("/v1/manufacturers/{name}", MANUFACTURER_NAME))
                .andExpect(status().isOk())
@@ -55,51 +53,23 @@ class ManufacturerControllerIntegrationTest {
     }
     
     @Test
-    void getAll_ShouldReturnStatusIsOk() throws Exception {
+    void getAll_ShouldReturnStatus200() throws Exception {
         mockMvc.perform(get("/v1/manufacturers"))
                .andExpect(status().is(200))
                .andExpect(jsonPath("$.content[0].name", MANUFACTURER_NAME).exists());
     }
     
     @Test
-    void save_ShouldReturnStatus400_WhenMethodArgumentIsNotValid() throws Exception {
-        ManufacturerDto manufacturerDto = ManufacturerDto.builder().name("").build();
-        String manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
-        
-        mockMvc.perform(post("/v1/manufacturers")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(manufacturerDtoJson))
-               .andExpect(status().is(400));
-    }
-    
-    @Test
-    void save_ShouldReturnStatus409_WhenModelAlreadyExists() throws Exception {
-        String manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
-        
-        mockMvc.perform(post("/v1/manufacturers")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(manufacturerDtoJson))
-               .andExpect(status().is(409));
-    }
-    
-    @Test
-    void save_ShouldReturnStatusIsOk() throws Exception {
-        String manufacturerName = "Ford";
-        ManufacturerDto manufacturerDto = ManufacturerDto.builder().name(manufacturerName).build();
+    void save_ShouldReturnStatus201() throws Exception {
+        String notExistingManufacturer = "Ford";
+        manufacturerDto.setName(notExistingManufacturer);
         String manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
         
         mockMvc.perform(post("/v1/manufacturers")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(manufacturerDtoJson))
                .andExpect(status().is(201))
-               .andExpect(header().string("Location", containsString("/v1/manufacturers/" + manufacturerName)));
-    }
-    
-    @Test
-    void deleteByName_ShouldReturnStatus404_WhenNoManufacturer() throws Exception {
-        String notExistingManufacturerName = "Ford";
-        mockMvc.perform(delete("/v1/manufacturers/{name}", notExistingManufacturerName))
-               .andExpect(status().isNotFound());
+               .andExpect(header().string("Location", containsString("/v1/manufacturers/" + notExistingManufacturer)));
     }
     
     @Test

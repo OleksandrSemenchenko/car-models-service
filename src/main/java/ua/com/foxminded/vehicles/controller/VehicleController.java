@@ -46,9 +46,9 @@ public class VehicleController {
     private final VehicleService vehicleService;
     
     @GetMapping("/manufacturers/{manufacturer}/models/{model}/{year}")
-    public Optional<VehicleDto> searchByManufacturerAndModelAndYear(@PathVariable String manufacturer, 
-                                                                    @PathVariable String model, 
-                                                                    @PathVariable @Positive int year) {
+    public Optional<VehicleDto> getByManufacturerAndModelAndYear(@PathVariable String manufacturer, 
+                                                                 @PathVariable String model, 
+                                                                 @PathVariable @Positive int year) {
         return vehicleService.getByManufacturerAndModelAndYear(manufacturer, model, year);
     }
     
@@ -85,7 +85,10 @@ public class VehicleController {
                        @PathVariable String model, 
                        @PathVariable @Positive int year,  
                        @RequestBody @Valid VehicleDto vehicleDto) {
-        vehicleService.update(manufacturer, model, year, vehicleDto);
+        vehicleDto.setManufacturer(manufacturer);
+        vehicleDto.setModel(model);
+        vehicleDto.setYear(year);
+        vehicleService.update(vehicleDto);
     }
     
     @DeleteMapping("/vehicles/{id}")

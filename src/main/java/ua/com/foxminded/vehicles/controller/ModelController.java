@@ -28,7 +28,7 @@ import ua.com.foxminded.vehicles.dto.ModelDto;
 import ua.com.foxminded.vehicles.service.ModelService;
 
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/v1/models")
 @RequiredArgsConstructor
 public class ModelController {
     
@@ -40,7 +40,7 @@ public class ModelController {
     
     private final ModelService modelService;
     
-    @PostMapping("/models")
+    @PostMapping
     public ResponseEntity<Void> save(@RequestBody @Valid ModelDto model) {
         modelService.save(model);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -50,18 +50,18 @@ public class ModelController {
         return ResponseEntity.created(location).build();
     }
     
-    @GetMapping("/models/{name}")
+    @GetMapping("/{name}")
     public Optional<ModelDto> getByName(@PathVariable String name) {
         return modelService.getByName(name);
     }
     
-    @GetMapping("/models")
+    @GetMapping
     public Page<ModelDto> getAll(Pageable pageRequest) {
         pageRequest = setDefaultSortIfNeeded(pageRequest);
         return modelService.getAll(pageRequest);
     }
     
-    @DeleteMapping("/models/{name}")
+    @DeleteMapping("/{name}")
     @ResponseStatus(NO_CONTENT)
     public void deleteByName(@PathVariable String name) {
         modelService.deleteByName(name);

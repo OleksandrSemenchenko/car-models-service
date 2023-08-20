@@ -74,8 +74,11 @@ public class VehicleService {
         return vehicleMapper.map(persistedVehicle);
     }
 
-    public VehicleDto update(String manufacturer, String model, int year, VehicleDto vehicleDto) {
-        SearchFilter searchFilter = SearchFilter.builder().manufacturer(manufacturer).model(model).year(year).build();
+    public VehicleDto update(VehicleDto vehicleDto) {
+        SearchFilter searchFilter = SearchFilter.builder().manufacturer(vehicleDto.getManufacturer())
+                                                          .model(vehicleDto.getModel())
+                                                          .year(vehicleDto.getYear())
+                                                          .build();
         Specification<Vehicle> specification = VehicleSpecification.getSpecification(searchFilter);
         var vehicle = vehicleRepository.findOne(specification).orElseThrow(
                 () -> new NotFoundException(NO_SUCH_VEHICLE));

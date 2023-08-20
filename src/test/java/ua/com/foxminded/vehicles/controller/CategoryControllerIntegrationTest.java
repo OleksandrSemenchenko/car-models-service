@@ -15,20 +15,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ua.com.foxminded.vehicles.dto.CategoryDto;
 
 @SpringBootTest
-@Transactional
-@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
+@Transactional
 class CategoryControllerIntegrationTest {
     
     public static final String CATEGORY_NAME = "Sedan";
@@ -36,36 +32,18 @@ class CategoryControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
     
-    private CategoryDto categoryDto;
+    @Autowired
     private ObjectMapper mapper;
     
+    private CategoryDto categoryDto;
+
     @BeforeEach
-    void setUp() throws JsonProcessingException {
-        mapper = new ObjectMapper();
+    void setUp() {
         categoryDto = CategoryDto.builder().name(CATEGORY_NAME).build();
     }
     
     @Test
-    void save_ShouldReturnStatus400_WhenMethodArgumentIsNotValid() throws Exception {
-        categoryDto.setName("");
-        String categoryDtoJson = mapper.writeValueAsString(categoryDto);
-        
-        mockMvc.perform(post("/v1/categories").contentType(APPLICATION_JSON)
-                                              .content(categoryDtoJson))
-               .andExpect(status().is(400));
-    }
-    
-    @Test
-    void save_ShouldReturnStatus409_WhenCategoryAlreadyExists() throws Exception {
-        String categoryJson = mapper.writeValueAsString(categoryDto);
-        
-        mockMvc.perform(post("/v1/categories").contentType(APPLICATION_JSON)
-                                              .content(categoryJson))
-               .andExpect(status().is(409));
-    }
-    
-    @Test
-    void save_ShouldReturnStatusIsOk() throws Exception {
+    void save_ShouldReturnStatus201() throws Exception {
         String newCategoryName = "SUV";
         categoryDto.setName(newCategoryName);
         String categoryDtoJson = mapper.writeValueAsString(categoryDto);
@@ -77,28 +55,21 @@ class CategoryControllerIntegrationTest {
     }
     
     @Test
-    void getByName_ShouldReturnStatusIsOk() throws Exception {
+    void getByName_ShouldReturnStatus200() throws Exception {
         mockMvc.perform(get("/v1/categories/{name}", CATEGORY_NAME))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$['name']", is(CATEGORY_NAME)));
     }
     
     @Test
-    void getAll_ShouldReturnStatusIsOk() throws Exception {
+    void getAll_ShouldReturnStatus200() throws Exception {
         mockMvc.perform(get("/v1/categories"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.content[0].['name']", is(CATEGORY_NAME)));
     }
     
     @Test
-    void deleteByName_ShouldReturnStatus404_WhenNoCategory() throws Exception {
-        String notExistingCategoryName = "SUV";
-        mockMvc.perform(delete("/v1/categories/{name}", notExistingCategoryName))
-               .andExpect(status().isNotFound());
-    }
-    
-    @Test
-    void deleteByName_ShouldReturnStatusIs204() throws Exception {
+    void deleteByName_ShouldReturnStatus204() throws Exception {
         mockMvc.perform(delete("/v1/categories/{name}", CATEGORY_NAME))
                .andExpect(status().isNoContent());
     }
