@@ -17,11 +17,11 @@ public interface ModelNameMapper {
     @Mapping(target = "models", ignore = true)
     ModelName map(ModelNameDto modelNameDto);
     
-    default String modelToString(ModelName modelName) {
+    default String modelNameToString(ModelName modelName) {
         return modelName.getName();
     }
     
-    default ModelName stringToCategory(String name) {
+    default ModelName stringToModelName(String name) {
         return ModelName.builder().name(name).build();
     }
 }

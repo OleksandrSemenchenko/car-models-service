@@ -257,7 +257,7 @@ class ModelServiceTest {
     }
 
     @Test
-    void getById_ShouldGetModel() {
+    void getById_ShouldGetModelDto() {
         when(modelRepository.findById(MODEL_ID)).thenReturn(Optional.of(model));
         when(modelMapper.map(model)).thenReturn(modelDto);
         modelService.getById(MODEL_ID);
