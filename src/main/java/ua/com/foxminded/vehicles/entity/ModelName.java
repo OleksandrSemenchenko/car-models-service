@@ -15,7 +15,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "manufacturers")
+@Table(name = "model_names")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,13 +23,13 @@ import lombok.ToString;
 @Setter
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Manufacturer {
+public class ModelName {
     
     @Id
-    @EqualsAndHashCode.Include
     @ToString.Include
+    @EqualsAndHashCode.Include
     private String name;
     
-    @OneToMany(mappedBy = "manufacturer")
+    @OneToMany(mappedBy = "modelName")
     private Set<Model> models;
 }

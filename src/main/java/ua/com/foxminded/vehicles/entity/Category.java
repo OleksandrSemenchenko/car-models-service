@@ -31,5 +31,5 @@ public class Category {
     private String name;
     
     @ManyToMany(mappedBy = "categories")
-    private Set<Vehicle> vehicles;
+    private Set<Model> models;
 }

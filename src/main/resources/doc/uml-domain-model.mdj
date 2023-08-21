@@ -67,7 +67,7 @@
 											"top": 135,
 											"width": 167.9970703125,
 											"height": 13,
-											"text": "Vehicle"
+											"text": "Model"
 										},
 										{
 											"_type": "LabelView",
@@ -287,7 +287,7 @@
 											"top": 160,
 											"width": 167.9970703125,
 											"height": 13,
-											"text": "-id: String",
+											"text": "-objectId: String",
 											"horizontalAlignment": 0
 										},
 										{
@@ -306,7 +306,7 @@
 											"top": 175,
 											"width": 167.9970703125,
 											"height": 13,
-											"text": "-productionYear: Integer",
+											"text": "-year: Integer",
 											"horizontalAlignment": 0
 										},
 										{
@@ -344,7 +344,7 @@
 											"top": 205,
 											"width": 167.9970703125,
 											"height": 13,
-											"text": "-model: Model",
+											"text": "-modelName: ModelName",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1092,7 +1092,7 @@
 											"top": 151,
 											"width": 166,
 											"height": 13,
-											"text": "Model"
+											"text": "ModelName"
 										},
 										{
 											"_type": "LabelView",
@@ -1463,10 +1463,10 @@
 									"showShadow": false,
 									"left": 208,
 									"top": 168,
-									"width": 7.22998046875,
+									"width": 19.5126953125,
 									"height": 13,
-									"alpha": 0.9685085562568733,
-									"distance": 19.4164878389476,
+									"alpha": 0.7551041099007831,
+									"distance": 23.345235059857504,
 									"hostEdge": {
 										"$ref": "AAAAAAGJPnE8lICpn6A="
 									},
@@ -1538,7 +1538,7 @@
 									"hostEdge": {
 										"$ref": "AAAAAAGJPnE8lICpn6A="
 									},
-									"text": "1..*"
+									"text": "0..*"
 								},
 								{
 									"_type": "UMLQualifierCompartmentView",
@@ -1640,12 +1640,12 @@
 									"fillColor": "#737373",
 									"font": "Arial;13;0",
 									"showShadow": false,
-									"left": 582,
-									"top": 163,
+									"left": 581,
+									"top": 159,
 									"width": 76.9716796875,
 									"height": 13,
-									"alpha": 1.5707963267948966,
-									"distance": 15,
+									"alpha": -4.656891028985144,
+									"distance": 18.027756377319946,
 									"hostEdge": {
 										"$ref": "AAAAAAGJPosgVExNR+c="
 									},
@@ -1756,17 +1756,17 @@
 									"fillColor": "#737373",
 									"font": "Arial;13;0",
 									"showShadow": false,
-									"left": 552,
+									"left": 544,
 									"top": 160,
 									"width": 19.5126953125,
 									"height": 13,
-									"alpha": 0.6435009087933378,
-									"distance": 30,
+									"alpha": 0.844153675768429,
+									"distance": 24.08318915758459,
 									"hostEdge": {
 										"$ref": "AAAAAAGJPosgVExNR+c="
 									},
 									"edgePosition": 2,
-									"text": "1..*"
+									"text": "0..*"
 								},
 								{
 									"_type": "EdgeLabelView",
@@ -1824,12 +1824,12 @@
 									"fillColor": "#737373",
 									"font": "Arial;13;0",
 									"showShadow": false,
-									"left": 673,
+									"left": 672,
 									"top": 159,
 									"width": 19.5126953125,
 									"height": 13,
-									"alpha": -0.6857297336786239,
-									"distance": 28.42534080710379,
+									"alpha": -0.6640463738466713,
+									"distance": 29.206163733020468,
 									"hostEdge": {
 										"$ref": "AAAAAAGJPosgVExNR+c="
 									},
@@ -1935,17 +1935,17 @@
 									"fillColor": "#737373",
 									"font": "Arial;13;0",
 									"showShadow": false,
-									"left": 454,
-									"top": 311,
+									"left": 446,
+									"top": 310,
 									"width": 76.9716796875,
 									"height": 13,
-									"alpha": -1.548577590965414,
-									"distance": 45.0111097397076,
+									"alpha": -1.5167946655469702,
+									"distance": 37.05401462729781,
 									"hostEdge": {
 										"$ref": "AAAAAAGJPo1ClVKp6/s="
 									},
 									"edgePosition": 1,
-									"text": "assignedTo >"
+									"text": "assignedTo"
 								},
 								{
 									"_type": "EdgeLabelView",
@@ -2128,7 +2128,7 @@
 									"hostEdge": {
 										"$ref": "AAAAAAGJPo1ClVKp6/s="
 									},
-									"text": "1..*"
+									"text": "0..*"
 								},
 								{
 									"_type": "UMLQualifierCompartmentView",
@@ -2216,7 +2216,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
 					},
-					"name": "Vehicle",
+					"name": "Model",
 					"ownedElements": [
 						{
 							"_type": "UMLAssociation",
@@ -2407,7 +2407,7 @@
 								"reference": {
 									"$ref": "AAAAAAGI7U/A0GtuQKc="
 								},
-								"multiplicity": "1..*"
+								"multiplicity": "0..*"
 							},
 							"end2": {
 								"_type": "UMLAssociationEnd",
@@ -2492,7 +2492,7 @@
 							"_parent": {
 								"$ref": "AAAAAAGI7U/A0GtuQKc="
 							},
-							"name": "id",
+							"name": "objectId",
 							"visibility": "private",
 							"type": "String"
 						},
@@ -2502,7 +2502,7 @@
 							"_parent": {
 								"$ref": "AAAAAAGI7U/A0GtuQKc="
 							},
-							"name": "productionYear",
+							"name": "year",
 							"visibility": "private",
 							"type": "Integer"
 						},
@@ -2524,7 +2524,7 @@
 							"_parent": {
 								"$ref": "AAAAAAGI7U/A0GtuQKc="
 							},
-							"name": "model",
+							"name": "modelName",
 							"visibility": "private",
 							"type": {
 								"$ref": "AAAAAAGI8O9drZhi2Tw="
@@ -2616,7 +2616,7 @@
 							"_parent": {
 								"$ref": "AAAAAAGI7VDhFmugoz8="
 							},
-							"name": "assignedTo >",
+							"name": "assignedTo",
 							"end1": {
 								"_type": "UMLAssociationEnd",
 								"_id": "AAAAAAGJPo1ClVKm1K0=",
@@ -2637,7 +2637,7 @@
 								"reference": {
 									"$ref": "AAAAAAGI7U/A0GtuQKc="
 								},
-								"multiplicity": "1..*"
+								"multiplicity": "0..*"
 							}
 						}
 					],
@@ -2823,7 +2823,7 @@
 								"reference": {
 									"$ref": "AAAAAAGI7U/A0GtuQKc="
 								},
-								"multiplicity": "1..*"
+								"multiplicity": "0..*"
 							}
 						}
 					],
@@ -2982,7 +2982,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
 					},
-					"name": "Model",
+					"name": "ModelName",
 					"ownedElements": [
 						{
 							"_type": "UMLAssociation",

@@ -21,22 +21,22 @@
       "description": "Sorting direction"
     },
     {
+      "name": "application.sort.model-name.by",
+      "type": "java.lang.String",
+      "description": "The parameter by which sorting a model names list"
+    },
+    {
+      "name": "application.sort.model-name.direction",
+      "type": "org.springframework.data.domain.Sort.Direction",
+      "description": "Sorting direction"
+    },
+    {
       "name": "application.sort.model.by",
       "type": "java.lang.String",
       "description": "The parameter by which sorting a models list"
     },
     {
       "name": "application.sort.model.direction",
-      "type": "org.springframework.data.domain.Sort.Direction",
-      "description": "Sorting direction"
-    },
-    {
-      "name": "application.sort.vehicle.by",
-      "type": "java.lang.String",
-      "description": "The parameter by which sorting a vhicles list"
-    },
-    {
-      "name": "application.sort.vehicle.direction",
       "type": "org.springframework.data.domain.Sort.Direction",
       "description": "Sorting direction"
     }
@@ -59,7 +59,7 @@
       ]
     },
     {
-      "name": "application.sort.model.by",
+      "name": "application.sort.model-name.by",
       "values": [
         {
           "value": "name"
@@ -67,13 +67,13 @@
       ]
     },
     {
-      "name": "application.sort.vehicle.by",
+      "name": "application.sort.model.by",
       "values": [
         {
           "value": "id"
         },
         {
-          "value": "productionYear"
+          "value": "year"
         }
       ]
     }

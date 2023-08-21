@@ -2,8 +2,8 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/vehicles
-    username: vehicles
+    url: jdbc:postgresql://localhost:5432/cars
+    username: cars
     password: 1234
   flyway:
     enabled: true
@@ -30,10 +30,10 @@ application:
     manufacturer:
       by: name
       direction: ASC
-    model:
+    model-name:
       by: name
       direction: ASC
-    vehicle:
-      by: productionYear
+    model:
+      by: year
       direction: DESC
       

@@ -14,7 +14,7 @@ public interface CategoryMapper {
     CategoryDto map(Category category);
     
     @InheritInverseConfiguration
-    @Mapping(target = "vehicles", ignore = true)
+    @Mapping(target = "models", ignore = true)
     Category map(CategoryDto categoryDto);
     
     default String categoryToString(Category category) {

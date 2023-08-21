@@ -10,10 +10,10 @@
         <relativePath />
     </parent>
     <groupId>ua.com.foxminded</groupId>
-    <artifactId>vehicles-service</artifactId>
+    <artifactId>car-models-service</artifactId>
     <version>1.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
-    <name>Vehicles data microservice</name>
+    <name>Car models data microservice</name>
     
     <properties>
         <java.version>17</java.version>

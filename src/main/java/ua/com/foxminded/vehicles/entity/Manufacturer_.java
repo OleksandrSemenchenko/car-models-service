@@ -8,5 +8,5 @@ import jakarta.persistence.metamodel.StaticMetamodel;
 public class Manufacturer_ {
     
     public static volatile SingularAttribute<Manufacturer, String> name;
-    public static volatile SetAttribute<Manufacturer, Vehicle> vehicles;
+    public static volatile SetAttribute<Manufacturer, Model> models;
 }

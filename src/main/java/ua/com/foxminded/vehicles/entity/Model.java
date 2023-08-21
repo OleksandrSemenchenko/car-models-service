@@ -3,8 +3,13 @@ package ua.com.foxminded.vehicles.entity;
 import java.util.Set;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,19 +22,44 @@ import lombok.ToString;
 @Entity
 @Table(name = "models")
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
 public class Model {
     
     @Id
-    @ToString.Include
+    @GeneratedValue(strategy = GenerationType.UUID)
     @EqualsAndHashCode.Include
-    private String name;
+    @ToString.Include
+    private String id;
     
-    @OneToMany(mappedBy = "model")
-    private Set<Vehicle> vehicles;
+    @ToString.Include
+    private Integer year;
+    
+    @ManyToOne
+    @JoinColumn(name = "manufacturer_name")
+    private Manufacturer manufacturer;
+    
+    @ManyToOne
+    @JoinColumn(name = "name")
+    private ModelName modelName;
+    
+    @ManyToMany
+    @JoinTable(name = "model_category", 
+               joinColumns = @JoinColumn(name = "model_id", referencedColumnName = "id"),
+               inverseJoinColumns = @JoinColumn(name = "category_name", referencedColumnName = "name"))
+    private Set<Category> categories;
+    
+    public void addCategory(Category category) {
+        this.categories.add(category);
+        category.getModels().add(this);
+    }
+    
+    public void removeCategory(Category category) {
+        this.categories.remove(category);
+        category.getModels().remove(this);
+    }
 }

@@ -14,7 +14,7 @@ public interface ManufacturerMapper {
     ManufacturerDto map(Manufacturer manufacturer);
     
     @InheritInverseConfiguration
-    @Mapping(target = "vehicles", ignore = true)
+    @Mapping(target = "models", ignore = true)
     Manufacturer map(ManufacturerDto manufacturerDto);
     
     default String manufacturerToString(Manufacturer manufacturer) {
