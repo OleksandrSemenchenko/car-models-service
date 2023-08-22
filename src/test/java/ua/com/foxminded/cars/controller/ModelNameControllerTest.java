@@ -1,6 +1,7 @@
 package ua.com.foxminded.cars.controller;
 
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,8 +46,7 @@ class ModelNameControllerTest {
     void save_ShouldReturnStatus400_WhenMethodArgumentNotValidException() throws Exception {
         modelNameDto.setName(null);
         modelNameDtoJson = mapper.writeValueAsString(modelNameDto);
-        mockMvc.perform(post("/v1/model-names").contentType(MediaType.APPLICATION_JSON)
-                                          .content(modelNameDtoJson))
+        mockMvc.perform(post("/v1/model-names").contentType(APPLICATION_JSON).content(modelNameDtoJson))
                .andExpect(status().isBadRequest());
     }
     
@@ -56,8 +55,7 @@ class ModelNameControllerTest {
         doThrow(AlreadyExistsException.class).when(modelNameService).save(modelNameDto);
         modelNameDtoJson = mapper.writeValueAsString(modelNameDto);
         
-        mockMvc.perform(post("/v1/model-names").contentType(MediaType.APPLICATION_JSON)
-                                          .content(modelNameDtoJson))
+        mockMvc.perform(post("/v1/model-names").contentType(APPLICATION_JSON).content(modelNameDtoJson))
                .andExpect(status().isConflict());
     }
 

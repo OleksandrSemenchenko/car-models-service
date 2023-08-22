@@ -51,7 +51,7 @@ class ModelNameControllerIntegrationTest {
         modelNameDtoJson = mapper.writeValueAsString(modelNameDto);
         
         mockMvc.perform(post("/v1/model-names").contentType(MediaType.APPLICATION_JSON)
-                                          .content(modelNameDtoJson))
+                                               .content(modelNameDtoJson))
                .andExpect(status().isCreated())
                .andExpect(header().string("Location", containsString("/v1/model-names/" + newModelName)));
     }

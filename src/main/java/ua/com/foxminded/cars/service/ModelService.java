@@ -52,9 +52,9 @@ public class ModelService {
         return modelRepository.findOne(specification).map(modelMapper::map);
     }
     
-    public Page<ModelDto> search(SearchFilter searchFilter, Pageable pageable) {
+    public Page<ModelDto> search(SearchFilter searchFilter, Pageable pageRequest) {
         Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
-        return modelRepository.findAll(specification, pageable).map(modelMapper::map);
+        return modelRepository.findAll(specification, pageRequest).map(modelMapper::map);
     }
 
     public ModelDto save(ModelDto modelDto) {
@@ -80,8 +80,7 @@ public class ModelService {
                                                           .year(modelDto.getYear())
                                                           .build();
         Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
-        var vehicle = modelRepository.findOne(specification).orElseThrow(
-                () -> new NotFoundException(NO_SUCH_MODEL));
+        var vehicle = modelRepository.findOne(specification).orElseThrow(() -> new NotFoundException(NO_SUCH_MODEL));
         vehicle.setYear(modelDto.getYear());
         
         updateManufacturerRelation(modelDto, vehicle);
@@ -113,8 +112,7 @@ public class ModelService {
 
     private void updateCategoryRelations(ModelDto modelDto, Model model) {
         List<Category> unnecessaryCategories = model.getCategories().stream().filter(category -> {
-            return modelDto.getCategories().stream()
-                                           .noneMatch(categoryName -> category.getName().equals(categoryName));
+            return modelDto.getCategories().stream().noneMatch(categoryName -> category.getName().equals(categoryName));
         }).toList();
 
         for (Category category : unnecessaryCategories) {
@@ -122,8 +120,7 @@ public class ModelService {
         }
 
         Set<CategoryDto> necessaryCategories = modelDto.getCategories().stream().filter(categoryDto -> {
-            return model.getCategories().stream()
-                                        .noneMatch(category -> categoryDto.equals(category.getName()));
+            return model.getCategories().stream().noneMatch(category -> categoryDto.equals(category.getName()));
         }).map(categoryName -> CategoryDto.builder().name(categoryName).build())
           .collect(Collectors.toSet());
 

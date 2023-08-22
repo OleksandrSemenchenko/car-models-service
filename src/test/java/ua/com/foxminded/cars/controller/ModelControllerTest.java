@@ -38,14 +38,14 @@ class ModelControllerTest {
     private ObjectMapper mapper;
     
     @MockBean
-    private ModelService vehicleService;
+    private ModelService modelService;
     
-    private ModelDto vehicleDto;
-    private String vehicleDtoJson;
+    private ModelDto modelDto;
+    private String modelDtoJson;
     
     @BeforeEach
     void setUp() {
-        vehicleDto = ModelDto.builder().id(MODEL_ID)
+        modelDto = ModelDto.builder().id(MODEL_ID)
                                        .year(YEAR)
                                        .manufacturer(MANUFACTURER_NAME)
                                        .name(MODEL_NAME)
@@ -73,61 +73,61 @@ class ModelControllerTest {
     
     @Test
     void save_ShouldReturnStatus409_WhenAlreadyExistsException() throws Exception {
-        doThrow(AlreadyExistsException.class).when(vehicleService).save(vehicleDto);
-        vehicleDtoJson = mapper.writeValueAsString(vehicleDto);
+        doThrow(AlreadyExistsException.class).when(modelService).save(modelDto);
+        modelDtoJson = mapper.writeValueAsString(modelDto);
         
         mockMvc.perform(post("/v1/manufacturers/{manufacturers}/models/{modle}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, YEAR, MODEL_ID)
                     .contentType(APPLICATION_JSON)
-                    .content(vehicleDtoJson))
+                    .content(modelDtoJson))
                .andExpect(status().isConflict());
     }
     
     @Test
     void save_ShouldReturnStatus400_WhenConstrainViolationException() throws Exception {
-        vehicleDtoJson = mapper.writeValueAsString(vehicleDto);
+        modelDtoJson = mapper.writeValueAsString(modelDto);
         int notValidYear = -2023;
         
-        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{modle}/{year}", 
+        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, notValidYear, MODEL_ID)
                     .contentType(APPLICATION_JSON)
-                    .content(vehicleDtoJson))
+                    .content(modelDtoJson))
                .andExpect(status().isBadRequest());
     }
     
     @Test
     void save_ShouldReturnStatus400_WhenMethodArgumentNotValidException() throws Exception {
-        vehicleDto.setCategories(null);
-        vehicleDtoJson = mapper.writeValueAsString(vehicleDto);
+        modelDto.setCategories(null);
+        modelDtoJson = mapper.writeValueAsString(modelDto);
         
-        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{modle}/{year}", 
+        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, YEAR, MODEL_ID)
                     .contentType(APPLICATION_JSON)
-                    .content(vehicleDtoJson))
+                    .content(modelDtoJson))
                .andExpect(status().isBadRequest());
     }
     
     @Test
     void update_ShouldReturnStatus404_WhenNotFoundException() throws Exception {
-        doThrow(NotFoundException.class).when(vehicleService).update(vehicleDto);
-        vehicleDtoJson = mapper.writeValueAsString(vehicleDto);
+        doThrow(NotFoundException.class).when(modelService).update(modelDto);
+        modelDtoJson = mapper.writeValueAsString(modelDto);
         
-        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{modle}/{year}", 
+        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, YEAR)
                     .contentType(APPLICATION_JSON)
-                    .content(vehicleDtoJson))
+                    .content(modelDtoJson))
                .andExpect(status().isNotFound());
     }
     
     @Test
     void update_ShouldReturnStatus400_WhenMethodArgumenNotValidException() throws Exception {
-        vehicleDto.setCategories(null);
-        vehicleDtoJson = mapper.writeValueAsString(vehicleDto);
+        modelDto.setCategories(null);
+        modelDtoJson = mapper.writeValueAsString(modelDto);
 
-        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{modle}/{year}", 
+        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, YEAR)
                     .contentType(APPLICATION_JSON)
-                    .content(vehicleDtoJson))
+                    .content(modelDtoJson))
                .andExpect(status().isBadRequest());
     }
     
@@ -135,20 +135,20 @@ class ModelControllerTest {
     @Test
     void update_ShouldReturnStatus400_WhenConstraintViolationException() throws Exception {
         int notValidYear = -2023;
-        vehicleDtoJson = mapper.writeValueAsString(vehicleDto);
+        modelDtoJson = mapper.writeValueAsString(modelDto);
 
-        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{modle}/{year}", 
+        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, notValidYear)
                     .contentType(APPLICATION_JSON)
-                    .content(vehicleDtoJson))
+                    .content(modelDtoJson))
                .andExpect(status().isBadRequest());
     }
 
     @Test
     void deleteById_ShouldReturnStatus404_WhenNotFoundException() throws Exception {
-        doThrow(NotFoundException.class).when(vehicleService).deleteById(MODEL_ID);
+        doThrow(NotFoundException.class).when(modelService).deleteById(MODEL_ID);
         
-        mockMvc.perform(delete("/v1/vehicles/{id}", MODEL_ID))
+        mockMvc.perform(delete("/v1/models/{id}", MODEL_ID))
                .andExpect(status().isNotFound());
     }
 }

@@ -37,13 +37,11 @@ public class CategoryService {
     }
 
     public Page<CategoryDto> getAll(Pageable pageable) {
-        return categoryRepository.findAll(pageable)
-                                 .map(categoryMapper::map);
+        return categoryRepository.findAll(pageable).map(categoryMapper::map);
     }
 
     public void deleleteByName(String name) {
-        categoryRepository.findById(name).orElseThrow(
-                () -> new NotFoundException(String.format(NO_CATEGORY, name)));
+        categoryRepository.findById(name).orElseThrow(() -> new NotFoundException(String.format(NO_CATEGORY, name)));
         categoryRepository.deleteById(name);
     }
 

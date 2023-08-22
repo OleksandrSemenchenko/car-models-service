@@ -19,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -60,7 +61,7 @@ class ModelServiceTest {
     @Mock
     private CategoryRepository categoryRepository;
     
-    @Mock
+    @Spy
     private ModelMapper modelMapper;
     
     private Manufacturer manufacturer;
@@ -93,20 +94,19 @@ class ModelServiceTest {
     @Test
     void getByManufacturerAndNameAndYear_ShouldGetModels() {
         when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.of(model));
-        when(modelMapper.map(model)).thenReturn(modelDto);
         modelService.getByManufacturerAndNameAndYear(MANUFACTURER_NAME, MODEL_NAME, YEAR);
         
         verify(modelRepository).findOne(ArgumentMatchers.<Specification<Model>>any());
+        verify(modelMapper).map(isA(Model.class));
     }
     
     @Test
-    void search_SholdSeachModels() {
+    void search_ShouldSeachModels() {
         SearchFilter seachFilter = new SearchFilter();
         Pageable pageable = Pageable.unpaged();
         Page<Model> modelsPage = new PageImpl<Model>(Arrays.asList(model));
         when(modelRepository.findAll(ArgumentMatchers.<Specification<Model>>any(), isA(Pageable.class)))
                 .thenReturn(modelsPage);
-        when(modelMapper.map(model)).thenReturn(modelDto);
         modelService.search(seachFilter, pageable);
         
         verify(modelRepository).findAll(ArgumentMatchers.<Specification<Model>>any(), isA(Pageable.class));
@@ -123,7 +123,6 @@ class ModelServiceTest {
         when(manufacturerRepository.findById(modelDto.getManufacturer())).thenReturn(Optional.of(manufacturer));
         when(modelNameRepository.findById(modelDto.getName())).thenReturn(Optional.of(modelName));
         when(modelRepository.save(model)).thenReturn(model);
-        when(modelMapper.map(model)).thenReturn(modelDto);
         modelService.save(modelDto);
 
         verify(modelRepository).findOne(ArgumentMatchers.<Specification<Model>>any());
@@ -229,7 +228,6 @@ class ModelServiceTest {
                                               .categories(new HashSet<Category>(Arrays.asList(updatedCategory)))
                                               .build();
         when(modelRepository.save(updatedVehicle)).thenReturn(updatedVehicle);
-        when(modelMapper.map(updatedVehicle)).thenReturn(modelDto);
         modelService.update(modelDto);
         
         verify(modelRepository).findOne(ArgumentMatchers.<Specification<Model>>any());
@@ -257,9 +255,8 @@ class ModelServiceTest {
     }
 
     @Test
-    void getById_ShouldGetModelDto() {
+    void getById_ShouldGetModel() {
         when(modelRepository.findById(MODEL_ID)).thenReturn(Optional.of(model));
-        when(modelMapper.map(model)).thenReturn(modelDto);
         modelService.getById(MODEL_ID);
         
         verify(modelRepository).findById(MODEL_ID);
