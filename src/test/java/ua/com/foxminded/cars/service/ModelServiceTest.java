@@ -207,7 +207,6 @@ class ModelServiceTest {
         assertThrows(NotFoundException.class, () -> modelService.update(modelDto));
     }
     
-    
     @Test
     void update_ShouldUpdateModel() {
         String updatedCategoryName = "Pickup";
