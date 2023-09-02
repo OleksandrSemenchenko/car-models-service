@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -90,6 +92,7 @@ class ModelControllerIntegrationTest {
     }
     
     @Test
+    @WithMockUser
     void save_ShouldReturnStatus201() throws Exception {
         int notExistingProductionYear = 2023;
         String vehicleDtoJson = mapper.writeValueAsString(modelDto);
@@ -99,25 +102,29 @@ class ModelControllerIntegrationTest {
                              MODEL_NAME, 
                              notExistingProductionYear)
                     .contentType(APPLICATION_JSON)
-                    .content(vehicleDtoJson))
+                    .content(vehicleDtoJson)
+                    .with(csrf()))
                .andExpect(status().isCreated())
                .andExpect(header().string("Location", containsString("/v1/models/")));
     }
     
     @Test
+    @WithMockUser
     void update_ShouldReturnStatus200() throws Exception {
         modelDtoJson = mapper.writeValueAsString(modelDto);
         
         mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, YEAR)
                     .contentType(APPLICATION_JSON)
-                    .content(modelDtoJson))
+                    .content(modelDtoJson)
+                    .with(csrf()))
                .andExpect(status().isOk());
     }
     
     @Test
+    @WithMockUser
     void deleteById_ShouldReturnStatus204() throws Exception {
-        mockMvc.perform(delete("/v1/models/{id}", MODEL_ID))
+        mockMvc.perform(delete("/v1/models/{id}", MODEL_ID).with(csrf()))
                .andExpect(status().isNoContent());
     }
 }

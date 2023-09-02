@@ -18,6 +18,14 @@ spring:
     hibernate:
       ddl-auto: create-drop
     defer-datasource-initialization: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-ue0v8yhk6k3zai3e.us.auth0.com/
+          audiences:
+          - http://localhost:8080
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}.well-known/jwks.json
 logging:
   level:
     root: warn

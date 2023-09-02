@@ -1,6 +1,7 @@
 package ua.com.foxminded.cars.controller;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -19,6 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,9 +29,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ua.com.foxminded.cars.dto.ModelDto;
 import ua.com.foxminded.cars.exception.AlreadyExistsException;
 import ua.com.foxminded.cars.exception.NotFoundException;
+import ua.com.foxminded.cars.security.SecurityConfig;
 import ua.com.foxminded.cars.service.ModelService;
 
 @WebMvcTest(ModelController.class)
+@Import(SecurityConfig.class)
 class ModelControllerTest {
     
     @Autowired
@@ -72,6 +77,7 @@ class ModelControllerTest {
     }
     
     @Test
+    @WithMockUser
     void save_ShouldReturnStatus409_WhenAlreadyExistsException() throws Exception {
         doThrow(AlreadyExistsException.class).when(modelService).save(modelDto);
         modelDtoJson = mapper.writeValueAsString(modelDto);
@@ -79,11 +85,13 @@ class ModelControllerTest {
         mockMvc.perform(post("/v1/manufacturers/{manufacturers}/models/{modle}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, YEAR, MODEL_ID)
                     .contentType(APPLICATION_JSON)
-                    .content(modelDtoJson))
+                    .content(modelDtoJson)
+                    .with(csrf()))
                .andExpect(status().isConflict());
     }
     
     @Test
+    @WithMockUser
     void save_ShouldReturnStatus400_WhenConstrainViolationException() throws Exception {
         modelDtoJson = mapper.writeValueAsString(modelDto);
         int notValidYear = -2023;
@@ -91,11 +99,13 @@ class ModelControllerTest {
         mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, notValidYear, MODEL_ID)
                     .contentType(APPLICATION_JSON)
-                    .content(modelDtoJson))
+                    .content(modelDtoJson)
+                    .with(csrf()))
                .andExpect(status().isBadRequest());
     }
     
     @Test
+    @WithMockUser
     void save_ShouldReturnStatus400_WhenMethodArgumentNotValidException() throws Exception {
         modelDto.setCategories(null);
         modelDtoJson = mapper.writeValueAsString(modelDto);
@@ -103,11 +113,13 @@ class ModelControllerTest {
         mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, YEAR, MODEL_ID)
                     .contentType(APPLICATION_JSON)
-                    .content(modelDtoJson))
+                    .content(modelDtoJson)
+                    .with(csrf()))
                .andExpect(status().isBadRequest());
     }
     
     @Test
+    @WithMockUser
     void update_ShouldReturnStatus404_WhenNotFoundException() throws Exception {
         doThrow(NotFoundException.class).when(modelService).update(modelDto);
         modelDtoJson = mapper.writeValueAsString(modelDto);
@@ -115,11 +127,13 @@ class ModelControllerTest {
         mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, YEAR)
                     .contentType(APPLICATION_JSON)
-                    .content(modelDtoJson))
+                    .content(modelDtoJson)
+                    .with(csrf()))
                .andExpect(status().isNotFound());
     }
     
     @Test
+    @WithMockUser
     void update_ShouldReturnStatus400_WhenMethodArgumenNotValidException() throws Exception {
         modelDto.setCategories(null);
         modelDtoJson = mapper.writeValueAsString(modelDto);
@@ -127,12 +141,14 @@ class ModelControllerTest {
         mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, YEAR)
                     .contentType(APPLICATION_JSON)
-                    .content(modelDtoJson))
+                    .content(modelDtoJson)
+                    .with(csrf()))
                .andExpect(status().isBadRequest());
     }
     
     
     @Test
+    @WithMockUser
     void update_ShouldReturnStatus400_WhenConstraintViolationException() throws Exception {
         int notValidYear = -2023;
         modelDtoJson = mapper.writeValueAsString(modelDto);
@@ -140,15 +156,17 @@ class ModelControllerTest {
         mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, notValidYear)
                     .contentType(APPLICATION_JSON)
-                    .content(modelDtoJson))
+                    .content(modelDtoJson)
+                    .with(csrf()))
                .andExpect(status().isBadRequest());
     }
 
     @Test
+    @WithMockUser
     void deleteById_ShouldReturnStatus404_WhenNotFoundException() throws Exception {
         doThrow(NotFoundException.class).when(modelService).deleteById(MODEL_ID);
         
-        mockMvc.perform(delete("/v1/models/{id}", MODEL_ID))
+        mockMvc.perform(delete("/v1/models/{id}", MODEL_ID).with(csrf()))
                .andExpect(status().isNotFound());
     }
 }
