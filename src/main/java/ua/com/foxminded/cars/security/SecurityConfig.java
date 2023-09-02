@@ -1,6 +1,5 @@
 package ua.com.foxminded.cars.security;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,9 +11,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    
-    @Value("issuer-Url")
-    private String issuerUrl;
     
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
