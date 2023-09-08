@@ -48,7 +48,7 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(request -> request
-                .requestMatchers(HttpMethod.GET).anonymous()
+                .requestMatchers(HttpMethod.GET).permitAll()
                 .requestMatchers(HttpMethod.PUT).hasRole(EDITOR_ROLE)
                 .requestMatchers(HttpMethod.POST).hasRole(EDITOR_ROLE)
                 .requestMatchers(HttpMethod.DELETE).hasRole(ADMIN_ROLE)
