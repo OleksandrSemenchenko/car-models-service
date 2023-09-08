@@ -60,7 +60,6 @@ public class SecurityConfig {
     }
     
     private ServletPolicyEnforcerFilter createPolicyEnforcerFilter() {
-        
         return new ServletPolicyEnforcerFilter(new ConfigurationResolver() {
             
             @Override
