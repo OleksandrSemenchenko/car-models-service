@@ -35,19 +35,21 @@
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-spring-security-adapter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-spring-boot-starter</artifactId>
-        </dependency>
         <!--        <dependency>-->
         <!--            <groupId>org.keycloak</groupId>-->
-        <!--            <artifactId>keycloak-policy-enforcer</artifactId>-->
-        <!--            <version>${keycloak.version}</version>-->
+        <!--            <artifactId>keycloak-spring-security-adapter</artifactId>-->
         <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.keycloak</groupId>-->
+        <!--            <artifactId>keycloak-spring-boot-starter</artifactId>-->
+        <!--        </dependency>-->
+
+
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-policy-enforcer</artifactId>
+            <version>${keycloak.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-core</artifactId>

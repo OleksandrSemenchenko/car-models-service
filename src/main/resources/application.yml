@@ -23,6 +23,14 @@ spring:
           audiences:
           - http://localhost:8080
           jwk-set-uri: http://localhost:8090/realms/car-services/protocol/openid-connect/certs
+---
+keycloak:
+  realm: car-services
+  auth-server-url: http://localhost:8090
+  resource: car-models-service
+  credentials:
+    secret: qHWnbkhwlhQ7i1qs6K6y3mJMXS2II9dc
+---  
 server:
   error:
     include-message: always
