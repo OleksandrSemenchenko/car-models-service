@@ -1,0 +1,40 @@
+{
+  "realm": "car-services",
+  "auth-server-url": "http://localhost:8090",
+  "resource": "car-models-service",
+  "credentials": {
+    "secret": "VR9axYCKpl8Ihexiw3il2aKPuH5LHhj8"
+  },
+  "enforcement-mode": "ENFORCING",
+  "paths": [
+    {
+      "path": "/v1/*",
+      "methods": [
+        {
+          "method": "GET",
+          "scopes": [
+            "read"
+          ]
+        },
+        {
+          "method": "POST",
+          "scopes": [
+            "create"
+          ]
+        },
+        {
+          "method": "POST",
+          "scopes": [
+            "update"
+          ]
+        },
+        {
+          "method": "DELETE",
+          "scopes": [
+            "delete"
+          ]
+        }
+      ]
+    }
+  ]
+}
