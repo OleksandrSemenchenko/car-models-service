@@ -22,10 +22,14 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://dev-ue0v8yhk6k3zai3e.us.auth0.com/
+          issuer-uri: http://localhost:8080/auth/realms/car-services/protocol/openid-connect
           audiences:
-          - http://localhost:8080
-          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}.well-known/jwks.json
+          - http://localhost:8180
+          jwk-set-uri: http://localhost:8080/auth/realms/car-services/protocol/openid-connect/certs
+---
+server:
+  port: 8180
+---
 logging:
   level:
     root: warn

@@ -1,9 +1,9 @@
 {
   "realm": "car-services",
-  "auth-server-url": "http://localhost:8090",
+  "auth-server-url": "http://localhost:8080/auth",
   "resource": "car-models-service",
   "credentials": {
-    "secret": "VR9axYCKpl8Ihexiw3il2aKPuH5LHhj8"
+    "secret": "1093tvvCAW172tdZxQm7gvnA1MIHcsL0"
   },
   "enforcement-mode": "ENFORCING",
   "paths": [

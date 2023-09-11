@@ -19,10 +19,10 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8090/realms/car-services/protocol/openid-connect
+          issuer-uri: http://localhost:8080/auth/realms/car-services/protocol/openid-connect
           audiences:
-          - http://localhost:8080
-          jwk-set-uri: http://localhost:8090/realms/car-services/protocol/openid-connect/certs
+          - http://localhost:8180
+          jwk-set-uri: http://localhost:8080/auth/realms/car-services/protocol/openid-connect/certs
 ---
 #keycloak:
 #  realm: car-services
@@ -42,6 +42,7 @@ server:
     include-message: always
     include-exception: true
     include-binding-errors: always
+  port: 8180
 ---
 application:
   sort:
