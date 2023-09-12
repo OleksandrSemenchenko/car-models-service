@@ -4,7 +4,6 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -12,7 +11,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ua.com.foxminded.cars.controller.CategoryControllerIntegrationTest.CATEGORY_NAME;
 import static ua.com.foxminded.cars.controller.ManufacturerControllerIntegrationTest.MANUFACTURER_NAME;
 import static ua.com.foxminded.cars.controller.ModelNameControllerIntegrationTest.MODEL_NAME;
 
@@ -34,7 +32,7 @@ import ua.com.foxminded.cars.dto.ModelDto;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class ModelControllerIntegrationTest {
+class ModelControllerIntegrationTest extends ControllerIntegrationTest {
     
     public static final int YEAR = 2020;
     public static final String MODEL_ID = "1";
@@ -59,7 +57,7 @@ class ModelControllerIntegrationTest {
     @Test
     void searchByManufacturerAndModelAndYear_ShouldReturnStaus200() throws Exception {
         mockMvc.perform(get("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
-                            MANUFACTURER_NAME, MODEL_NAME, YEAR))
+                            MANUFACTURER_NAME, MODEL_NAME, YEAR).with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isOk());
     }
     
@@ -69,7 +67,8 @@ class ModelControllerIntegrationTest {
                                          .param("category", CATEGORY_NAME)
                                          .param("manufacturer", MANUFACTURER_NAME)
                                          .param("maxYear", String.valueOf(YEAR))
-                                         .param("minYear", String.valueOf(YEAR)))
+                                         .param("minYear", String.valueOf(YEAR))
+                                         .with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.content", hasSize(1)))
                .andExpect(jsonPath("$.content[0].year", is(YEAR)))
@@ -79,14 +78,14 @@ class ModelControllerIntegrationTest {
     
     @Test
     void search_ShouldReturnStatus200_WhenNoParameters() throws Exception {
-        mockMvc.perform(get("/v1/models"))
+        mockMvc.perform(get("/v1/models").with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.content", hasSize(1)));
     }
     
     @Test
     void getById_ShouldReturnStatus200() throws Exception {
-        mockMvc.perform(get("/v1/models/{id}", MODEL_ID))
+        mockMvc.perform(get("/v1/models/{id}", MODEL_ID).with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.id").value(MODEL_ID));
     }
@@ -103,13 +102,12 @@ class ModelControllerIntegrationTest {
                              notExistingProductionYear)
                     .contentType(APPLICATION_JSON)
                     .content(vehicleDtoJson)
-                    .with(csrf()))
+                    .with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isCreated())
                .andExpect(header().string("Location", containsString("/v1/models/")));
     }
     
     @Test
-    @WithMockUser
     void update_ShouldReturnStatus200() throws Exception {
         modelDtoJson = mapper.writeValueAsString(modelDto);
         
@@ -117,14 +115,13 @@ class ModelControllerIntegrationTest {
                             MANUFACTURER_NAME, MODEL_NAME, YEAR)
                     .contentType(APPLICATION_JSON)
                     .content(modelDtoJson)
-                    .with(csrf()))
+                    .with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isOk());
     }
     
     @Test
-    @WithMockUser
     void deleteById_ShouldReturnStatus204() throws Exception {
-        mockMvc.perform(delete("/v1/models/{id}", MODEL_ID).with(csrf()))
+        mockMvc.perform(delete("/v1/models/{id}", MODEL_ID).with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isNoContent());
     }
 }

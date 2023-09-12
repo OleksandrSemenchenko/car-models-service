@@ -2,7 +2,6 @@ package ua.com.foxminded.cars.controller;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -28,7 +27,7 @@ import ua.com.foxminded.cars.dto.ModelNameDto;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class ModelNameControllerIntegrationTest {
+class ModelNameControllerIntegrationTest extends ControllerIntegrationTest {
     
     public static final String MODEL_NAME = "A7";
 
@@ -55,21 +54,21 @@ class ModelNameControllerIntegrationTest {
         
         mockMvc.perform(post("/v1/model-names").contentType(MediaType.APPLICATION_JSON)
                                                .content(modelNameDtoJson)
-                                               .with(csrf()))
+                                               .with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isCreated())
                .andExpect(header().string("Location", containsString("/v1/model-names/" + newModelName)));
     }
     
     @Test
     void getByName_ShouldReturnStatus200() throws Exception {
-        mockMvc.perform(get("/v1/model-names/{name}", MODEL_NAME))
+        mockMvc.perform(get("/v1/model-names/{name}", MODEL_NAME).with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.name", is(MODEL_NAME)));
     }
     
     @Test
     void getAll_ShouldReturnStatus200() throws Exception {
-        mockMvc.perform(get("/v1/model-names"))
+        mockMvc.perform(get("/v1/model-names").with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.content", Matchers.hasSize(1)));
     }
@@ -77,7 +76,7 @@ class ModelNameControllerIntegrationTest {
     @Test
     @WithMockUser
     void deleteByName_ShouldReturnStatus204() throws Exception {
-        mockMvc.perform(delete("/v1/model-names/{name}", MODEL_NAME).with(csrf()))
+        mockMvc.perform(delete("/v1/model-names/{name}", MODEL_NAME).with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isNoContent());
     }
 }
