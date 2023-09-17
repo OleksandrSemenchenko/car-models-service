@@ -3,38 +3,8 @@
   "auth-server-url": "http://localhost:8080/auth",
   "resource": "car-models-service",
   "credentials": {
-    "secret": "1093tvvCAW172tdZxQm7gvnA1MIHcsL0"
+    "secret": "eGtdvx8kd5XZ2ThQ1YlqWS5y7kuTGJwk"
   },
   "enforcement-mode": "ENFORCING",
-  "paths": [
-    {
-      "path": "/v1/*",
-      "methods": [
-        {
-          "method": "GET",
-          "scopes": [
-            "read"
-          ]
-        },
-        {
-          "method": "POST",
-          "scopes": [
-            "create"
-          ]
-        },
-        {
-          "method": "POST",
-          "scopes": [
-            "update"
-          ]
-        },
-        {
-          "method": "DELETE",
-          "scopes": [
-            "delete"
-          ]
-        }
-      ]
-    }
-  ]
+  "http-method-as-scope": "true"
 }

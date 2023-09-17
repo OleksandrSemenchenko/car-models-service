@@ -38,11 +38,11 @@ spring:
 #      secret: qHWnbkhwlhQ7i1qs6K6y3mJMXS2II9dc
 ---  
 server:
+  port: 8180
   error:
     include-message: always
     include-exception: true
     include-binding-errors: always
-  port: 8180
 ---
 application:
   sort:

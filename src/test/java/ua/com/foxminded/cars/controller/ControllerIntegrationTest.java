@@ -17,7 +17,8 @@ class ControllerIntegrationTest {
     public static final String CAR_SERVICES_REALM = "car-services";
     public static final String CAR_MODELS_SERVICE_CLIENT = "car-models-service";
     public static final String USER_NAME_ADMIN = "admin";
-    public static final String CLIENT_SECRET = "1093tvvCAW172tdZxQm7gvnA1MIHcsL0";
+    public static final String CLIENT_SECRET = "eGtdvx8kd5XZ2ThQ1YlqWS5y7kuTGJwk";
+    public static final String REALM_CONFIG_FILE_PATH = "/realm-import.json";
     
     protected static FluentTestsHelper keycloak;
     
@@ -25,7 +26,7 @@ class ControllerIntegrationTest {
     @SuppressWarnings("resource")
     public static void onBeforeClass() throws IOException {
         try {
-            keycloak = new FluentTestsHelper().init().importTestRealm("/realm-export.json");
+            keycloak = new FluentTestsHelper().init().importTestRealm(REALM_CONFIG_FILE_PATH);
         } catch (Exception e) {
             e.printStackTrace();
         }

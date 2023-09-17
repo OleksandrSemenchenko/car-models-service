@@ -31,7 +31,6 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(request -> request
                 .anyRequest().authenticated())
-            .cors(Customizer.withDefaults())
             .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwkSetUri(jwkSetUri)))
             .addFilterAfter(createPolicyEnforcerFilter(), BearerTokenAuthenticationFilter.class);
         return http.build();
