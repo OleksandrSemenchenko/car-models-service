@@ -25,7 +25,7 @@ import ua.com.foxminded.cars.dto.ManufacturerDto;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class ManufacturerControllerIntegrationTest extends ControllerIntegrationTest {
+class ManufacturerControllerIntegrationTest extends KeycloakTestContainer {
     
     public static final String MANUFACTURER_NAME = "Audi";
     

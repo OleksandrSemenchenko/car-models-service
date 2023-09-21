@@ -22,9 +22,6 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/auth/realms/car-services/protocol/openid-connect
-          audiences:
-          - http://localhost:8180
           jwk-set-uri: http://localhost:8080/auth/realms/car-services/protocol/openid-connect/certs
 ---
 keycloak:

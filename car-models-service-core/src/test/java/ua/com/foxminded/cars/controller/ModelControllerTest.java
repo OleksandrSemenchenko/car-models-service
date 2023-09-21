@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ua.com.foxminded.cars.controller.ControllerIntegrationTest.CATEGORY_NAME;
+import static ua.com.foxminded.cars.controller.KeycloakTestContainer.CATEGORY_NAME;
 import static ua.com.foxminded.cars.controller.ManufacturerControllerIntegrationTest.MANUFACTURER_NAME;
 import static ua.com.foxminded.cars.controller.ModelControllerIntegrationTest.MODEL_ID;
 import static ua.com.foxminded.cars.controller.ModelControllerIntegrationTest.YEAR;

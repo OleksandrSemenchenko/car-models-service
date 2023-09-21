@@ -22,10 +22,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ua.com.foxminded.cars.dto.CategoryDto;
 
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class CategoryControllerIntegrationTest extends ControllerIntegrationTest {
+class CategoryControllerIntegrationTest extends KeycloakTestContainer {
     
     @Autowired
     private MockMvc mockMvc;

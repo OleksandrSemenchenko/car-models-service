@@ -18,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -26,10 +25,10 @@ import ua.com.foxminded.cars.dto.ModelNameDto;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
-class ModelNameControllerIntegrationTest extends ControllerIntegrationTest {
+class ModelNameControllerIntegrationTest extends KeycloakTestContainer {
     
     public static final String MODEL_NAME = "A7";
+    public static final String MODEL_NAME_WITHOUT_FOREIGN_KEY_CONSTRAINTS = "A8";
 
     @Autowired
     private MockMvc mockMvc;
@@ -70,13 +69,14 @@ class ModelNameControllerIntegrationTest extends ControllerIntegrationTest {
     void getAll_ShouldReturnStatus200() throws Exception {
         mockMvc.perform(get("/v1/model-names").with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$.content", Matchers.hasSize(1)));
+               .andExpect(jsonPath("$.content", Matchers.hasSize(2)));
     }
     
     @Test
     @WithMockUser
     void deleteByName_ShouldReturnStatus204() throws Exception {
-        mockMvc.perform(delete("/v1/model-names/{name}", MODEL_NAME).with(bearerTokenFor(USER_NAME_ADMIN)))
+        mockMvc.perform(delete("/v1/model-names/{name}", MODEL_NAME_WITHOUT_FOREIGN_KEY_CONSTRAINTS)
+                    .with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isNoContent());
     }
 }

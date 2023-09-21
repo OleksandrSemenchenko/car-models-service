@@ -32,7 +32,7 @@ import ua.com.foxminded.cars.dto.ModelDto;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class ModelControllerIntegrationTest extends ControllerIntegrationTest {
+class ModelControllerIntegrationTest extends KeycloakTestContainer {
     
     public static final int YEAR = 2020;
     public static final String MODEL_ID = "1";
