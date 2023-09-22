@@ -12,7 +12,6 @@ import dasniko.testcontainers.keycloak.KeycloakContainer;
 
 abstract class KeycloakTestContainer {
     
-    
     public static final String CAR_SERVICES_REALM = "car-services";
     public static final String CAR_MODELS_SERVICE_CLIENT = "car-models-service";
     public static final String USER_NAME_ADMIN = "admin";
