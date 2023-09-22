@@ -12,7 +12,7 @@ import dasniko.testcontainers.keycloak.KeycloakContainer;
 
 abstract class KeycloakTestContainer {
     
-    public static final String CATEGORY_NAME = "Sedan";
+    
     public static final String CAR_SERVICES_REALM = "car-services";
     public static final String CAR_MODELS_SERVICE_CLIENT = "car-models-service";
     public static final String USER_NAME_ADMIN = "admin";
@@ -39,6 +39,7 @@ abstract class KeycloakTestContainer {
         String token = getToken(username, username);
 
         return new RequestPostProcessor() {
+            
             @Override
             public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
                 request.addHeader("Authorization", "Bearer " + token);

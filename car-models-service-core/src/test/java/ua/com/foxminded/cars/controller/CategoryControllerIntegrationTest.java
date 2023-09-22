@@ -28,6 +28,8 @@ import ua.com.foxminded.cars.dto.CategoryDto;
 @Transactional
 class CategoryControllerIntegrationTest extends KeycloakTestContainer {
     
+    public static final String CATEGORY_NAME = "Sedan";
+    
     @Autowired
     private MockMvc mockMvc;
     
