@@ -2,6 +2,8 @@ package ua.com.foxminded.cars.controller;
 
 
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.representations.adapters.config.PolicyEnforcerConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -12,11 +14,15 @@ import dasniko.testcontainers.keycloak.KeycloakContainer;
 
 abstract class KeycloakTestContainer {
     
-    public static final String CAR_SERVICES_REALM = "car-services";
-    public static final String CAR_MODELS_SERVICE_CLIENT = "car-models-service";
     public static final String USER_NAME_ADMIN = "admin";
-    public static final String CLIENT_SECRET = "eGtdvx8kd5XZ2ThQ1YlqWS5y7kuTGJwk";
+    public static final String CLIENT_SECRET = "secret";
     public static final String REALM_CONFIG_FILE_PATH = "/realm-import.json";
+    public static final String JWK_SET_URI_PROPERTY = "spring.security.oauth2.resourceserver.jwt.jwk-set-uri";
+    public static final String AUTH_SERVER_URL_PROPERTY = "keycloak.policy-enforcer-config.auth-server-url";
+    
+    
+    @Autowired
+    private PolicyEnforcerConfig policyEnforcerConfig;
     
     @Container
     static KeycloakContainer keycloak;
@@ -28,9 +34,9 @@ abstract class KeycloakTestContainer {
     
     @DynamicPropertySource
     public static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.security.oauth2.resourceserver.jwt.jwk-set-uri", 
+        registry.add(JWK_SET_URI_PROPERTY, 
                      () -> keycloak.getAuthServerUrl() + "/realms/car-services/protocol/openid-connect/certs");
-        registry.add("keycloak.policy-enforcer-config.auth-server-url", keycloak::getAuthServerUrl);
+        registry.add(AUTH_SERVER_URL_PROPERTY, keycloak::getAuthServerUrl);
     }
     
     
@@ -49,11 +55,12 @@ abstract class KeycloakTestContainer {
     
     private String getToken(String username, String password) {
         Keycloak keycloakInstance = Keycloak.getInstance(keycloak.getAuthServerUrl(),
-                                                         CAR_SERVICES_REALM,
+                                                         policyEnforcerConfig.getRealm(),
                                                          username,
                                                          password,
-                                                         CAR_MODELS_SERVICE_CLIENT,
-                                                         CLIENT_SECRET);
+                                                         policyEnforcerConfig.getResource(),
+                                                         (String) policyEnforcerConfig.getCredentials()
+                                                                                      .get(CLIENT_SECRET));
         return keycloakInstance.tokenManager().getAccessTokenString();
     }
 }
