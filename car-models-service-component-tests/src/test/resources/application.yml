@@ -1,0 +1,9 @@
+keycloak:
+  policy-enforcer-config:
+    realm: car-services
+#    auth-server-url: http://localhost:8080/auth
+    resource: car-models-service
+    credentials:
+      secret: eGtdvx8kd5XZ2ThQ1YlqWS5y7kuTGJwk
+#    enforcement-mode: ENFORCING
+#    http-method-as-scope: true
