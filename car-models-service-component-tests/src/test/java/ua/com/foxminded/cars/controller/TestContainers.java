@@ -40,12 +40,12 @@ public class TestContainers {
 //    @Autowired
 //    private KeycloakConfig keycloakConfig;
     
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")
-//            .withNetwork(network)
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15")
+            .withNetwork(network)
             .withDatabaseName("cars")
             .withUsername("cars")
             .withPassword("1234")
-            .withExposedPorts(5432)
+//            .withExposedPorts(5432)
             .withLogConsumer(new Slf4jLogConsumer(log));
     
     
@@ -54,8 +54,8 @@ public class TestContainers {
     static {
         postgres.start();
         carModelsService = new GenericContainer<>("cars/car-models-service-core:latest")
-//                .withNetwork(network)
-//                .withEnv("POSTGRES_HOST", postgres.getHost() + ":" + postgres.getMappedPort(5432))
+                .withNetwork(network)
+//                .withEnv("spring.datasource.url", postgres.getJdbcUrl())
                 .withExposedPorts(8181)
                 .withLogConsumer(new Slf4jLogConsumer(log));
         carModelsService.start();
