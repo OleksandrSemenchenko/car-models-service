@@ -13,9 +13,12 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.Network;
+import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.images.PullPolicy;
 import org.testcontainers.junit.jupiter.Container;
+
 
 import dasniko.testcontainers.keycloak.KeycloakContainer;
 import lombok.extern.slf4j.Slf4j;
@@ -32,16 +35,29 @@ public class TestContainers {
     public static final String JWK_SET_URI_PROPERTY = "spring.security.oauth2.resourceserver.jwt.jwk-set-uri";
     public static final String AUTH_SERVER_URL_PROPERTY = "keycloak.policy-enforcer-config.auth-server-url";
     
+    
+    static Network network = Network.newNetwork();
 //    @Autowired
 //    private KeycloakConfig keycloakConfig;
     
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")
+//            .withNetwork(network)
+            .withDatabaseName("cars")
+            .withUsername("cars")
+            .withPassword("1234")
+            .withExposedPorts(5432)
+            .withLogConsumer(new Slf4jLogConsumer(log));
     
-    @Container
+    
     static GenericContainer<?> carModelsService;
     
     static {
-        carModelsService = new GenericContainer<>("sha256:cf96a").withExposedPorts(8181)
-                                                                 .withLogConsumer(new Slf4jLogConsumer(log));
+        postgres.start();
+        carModelsService = new GenericContainer<>("cars/car-models-service-core:latest")
+//                .withNetwork(network)
+//                .withEnv("POSTGRES_HOST", postgres.getHost() + ":" + postgres.getMappedPort(5432))
+                .withExposedPorts(8181)
+                .withLogConsumer(new Slf4jLogConsumer(log));
         carModelsService.start();
     }
     
