@@ -2,40 +2,36 @@ package ua.com.foxminded.cars.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.Network;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.ext.ScriptUtils;
+import org.testcontainers.jdbc.JdbcDatabaseDelegate;
 
-import ua.com.foxminded.cars.TestConfig;
-import ua.com.foxminded.cars.config.KeycloakConfig;
+import lombok.extern.slf4j.Slf4j;
+import ua.com.foxminded.cars.testcontainer.Testcontainers;
 
-//@ExtendWith(SpringExtension.class)
-//@SpringBootTest(classes = TestConfig.class)
-class ManufacturerControllerComponentTest extends TestContainers {
-
-    public static final String MANUFACTURER_NAME = "Mazda";
+@Slf4j
+class ManufacturerControllerComponentTest extends Testcontainers {
+    
+    public static final String MANUFACTURER_NAME = "Audi";
     
     private static WebTestClient client;
-    
-    @BeforeAll
-    public static void init() {
-        String baseUrl = "http://" + carModelSeviceAsdress;
-        client = WebTestClient.bindToServer().baseUrl(baseUrl).build();
-    }
-    
+
     @Test
     void getAll_ShouldReturnStatus200() throws Exception {
+        client = WebTestClient.bindToServer().baseUrl(carModelServiceBaseUrl).build();
         client.get().uri("/v1/manufacturers")
-//                    .header("Authorization", getAdminRoleBearerToken())
+                    .header("Authorization", getAdminRoleBearerToken())
                     .accept(APPLICATION_JSON)
                     .exchange()
                     .expectStatus().isOk()
-                    .expectBody().jsonPath("$.content[0].name").isEqualTo(MANUFACTURER_NAME);
+                    .expectBody().jsonPath("$.content[0].name")
+                    .isEqualTo(MANUFACTURER_NAME);
     }
-
 }

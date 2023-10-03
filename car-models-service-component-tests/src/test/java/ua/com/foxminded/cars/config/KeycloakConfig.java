@@ -10,18 +10,16 @@ import org.springframework.stereotype.Component;
 
 import lombok.Getter;
 
-//@Component
-//@Getter
+@Component
+@Getter
 public class KeycloakConfig {
-    /*
+    
     @Value("${keycloak.policy-enforcer-config.realm}")
     String realm; 
     
     @Value("${keycloak.policy-enforcer-config.resource}")
     String resource;
     
-    @Value("${keycloak.policy-enforcer-coonfig.credentials.secret}")
+    @Value("${keycloak.policy-enforcer-config.credentials.secret}")
     String secret;
-    */
-    
 }
