@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,7 +44,6 @@ class ModelNameControllerIntegrationTest extends KeycloakTestContainer {
     }
     
     @Test
-    @WithMockUser
     void save_ShouldReturnStatus201() throws Exception {
         String newModelName = "Fusion";
         modelNameDto.setName(newModelName);
@@ -73,7 +71,6 @@ class ModelNameControllerIntegrationTest extends KeycloakTestContainer {
     }
     
     @Test
-    @WithMockUser
     void deleteByName_ShouldReturnStatus204() throws Exception {
         mockMvc.perform(delete("/v1/model-names/{name}", MODEL_NAME_WITHOUT_FOREIGN_KEY_CONSTRAINTS)
                     .with(bearerTokenFor(USER_NAME_ADMIN)))

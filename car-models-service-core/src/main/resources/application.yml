@@ -19,13 +19,12 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-#          issuer-uri: http://${KEYCLOAK_HOST:localhost:8080/auth}/realms/car-services/protocol/openid-connect
-          jwk-set-uri: http://${KEYCLOAK_HOST:localhost:8080/auth}/realms/car-services/protocol/openid-connect/certs
+          jwk-set-uri: http://${KEYCLOAK_HOST:localhost}:8080/auth/realms/car-services/protocol/openid-connect/certs
 ---
 keycloak:
   policy-enforcer-config:
     realm: car-services
-    auth-server-url: http://${KEYCLOAK_HOST:localhost:8080/auth}
+    auth-server-url: http://${KEYCLOAK_HOST:localhost}:8080/auth
     resource: car-models-service
     credentials:
       secret: eGtdvx8kd5XZ2ThQ1YlqWS5y7kuTGJwk

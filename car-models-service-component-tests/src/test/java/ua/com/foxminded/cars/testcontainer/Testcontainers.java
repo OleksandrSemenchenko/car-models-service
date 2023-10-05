@@ -30,14 +30,15 @@ public abstract class Testcontainers {
     public static final String JWK_SET_URI_PROPERTY = "spring.security.oauth2.resourceserver.jwt.jwk-set-uri";
     public static final String AUTH_SERVER_URL_PROPERTY = "keycloak.policy-enforcer-config.auth-server-url";
     
-    public static final String DATABASE_ALIAS = "postgres_ip";
-    public static final String AUTHORIZATION_SERVER_ALIAS = "keycloak_ip";
+    public static final String DATABASE_ALIAS = "postgres";
+    public static final String AUTHORIZATION_SERVER_ALIAS = "keycloak";
     
     private static Network network = Network.newNetwork();
     
     public static KeycloakContainer keycloak = new KeycloakContainer()
             .withRealmImportFile(REALM_CONFIG_FILE_PATH)
-            .withExposedPorts(8080)
+            .withNetworkAliases(AUTHORIZATION_SERVER_ALIAS)
+            .withContextPath("/auth")
             .withNetwork(network)
             .withLogConsumer(new Slf4jLogConsumer(log));
     
@@ -46,25 +47,21 @@ public abstract class Testcontainers {
             .withUsername("cars")
             .withPassword("1234")
             .withNetwork(network)
+            .withNetworkAliases(DATABASE_ALIAS)
             .withLogConsumer(new Slf4jLogConsumer(log));
     
-    private  static GenericContainer<?> carsModelsService;
+    private  static GenericContainer<?> carsModelsService = new GenericContainer<>("cars/car-models-service-core:latest")
+            .withExposedPorts(8180)
+            .withNetwork(network)
+            .withEnv("KEYCLOAK_HOST", AUTHORIZATION_SERVER_ALIAS)
+            .withEnv("POSTGRES_HOST", DATABASE_ALIAS)
+            .dependsOn(postgres)
+            .dependsOn(keycloak)
+            .withLogConsumer(new Slf4jLogConsumer(log));;
     
     static {
       keycloak.start();
       postgres.start();
-      
-      Map<String, String> variables = Map.of("POSTGRES_HOST", postgres.getNetworkAliases().get(0), 
-                                             "KEYCLOAK_HOST", keycloak.getNetworkAliases().get(0));
-      
-      carsModelsService = new GenericContainer<>("kyberzz/car-models-service-core:latest")
-              .withExposedPorts(8180)
-              .withNetwork(network)
-              .withEnv(variables)
-              .dependsOn(postgres)
-              .dependsOn(keycloak)
-              .withLogConsumer(new Slf4jLogConsumer(log));
-
       carsModelsService.start();
     }
     
