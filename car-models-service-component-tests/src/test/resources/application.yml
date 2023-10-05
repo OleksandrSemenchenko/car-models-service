@@ -7,3 +7,6 @@ keycloak:
       secret: eGtdvx8kd5XZ2ThQ1YlqWS5y7kuTGJwk
 #    enforcement-mode: ENFORCING
 #    http-method-as-scope: true
+logging:
+  level:
+    root: INFO

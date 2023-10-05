@@ -25,7 +25,14 @@ class ManufacturerControllerComponentTest extends Testcontainers {
 
     @Test
     void getAll_ShouldReturnStatus200() throws Exception {
+//        System.out.println(keycloak.getAuthServerUrl());
+//        System.in.read();
         client = WebTestClient.bindToServer().baseUrl(carModelServiceBaseUrl).build();
+        System.out.println(keycloak.getAuthServerUrl());
+        System.out.println(getAdminRoleBearerToken());
+        System.out.println(getAdminRoleBearerToken());
+        
+//        System.in.read();
         client.get().uri("/v1/manufacturers")
                     .header("Authorization", getAdminRoleBearerToken())
                     .accept(APPLICATION_JSON)

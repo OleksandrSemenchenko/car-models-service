@@ -1,5 +1,6 @@
 package ua.com.foxminded.cars.testcontainer;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
@@ -34,11 +35,10 @@ public abstract class Testcontainers {
     
     private static Network network = Network.newNetwork();
     
-    private static KeycloakContainer keycloak = new KeycloakContainer()
+    public static KeycloakContainer keycloak = new KeycloakContainer()
             .withRealmImportFile(REALM_CONFIG_FILE_PATH)
             .withExposedPorts(8080)
             .withNetwork(network)
-            .withNetworkAliases(AUTHORIZATION_SERVER_ALIAS)
             .withLogConsumer(new Slf4jLogConsumer(log));
     
     private static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15")
@@ -46,7 +46,6 @@ public abstract class Testcontainers {
             .withUsername("cars")
             .withPassword("1234")
             .withNetwork(network)
-            .withNetworkAliases(DATABASE_ALIAS)
             .withLogConsumer(new Slf4jLogConsumer(log));
     
     private  static GenericContainer<?> carsModelsService;
@@ -55,10 +54,10 @@ public abstract class Testcontainers {
       keycloak.start();
       postgres.start();
       
-      Map<String, String> variables = Map.of("POSTGRES_HOST", DATABASE_ALIAS, 
-                                             "KEYCLOAK_HOST", AUTHORIZATION_SERVER_ALIAS);
+      Map<String, String> variables = Map.of("POSTGRES_HOST", postgres.getNetworkAliases().get(0), 
+                                             "KEYCLOAK_HOST", keycloak.getNetworkAliases().get(0));
       
-      carsModelsService = new GenericContainer<>("car-models-service-core:latest")
+      carsModelsService = new GenericContainer<>("kyberzz/car-models-service-core:latest")
               .withExposedPorts(8180)
               .withNetwork(network)
               .withEnv(variables)
@@ -69,8 +68,8 @@ public abstract class Testcontainers {
       carsModelsService.start();
     }
     
-    public String carModelsSeviceAsdress = carsModelsService.getHost() + ":" + carsModelsService.getMappedPort(8180);
-    public String carModelServiceBaseUrl = "http://" + carModelsSeviceAsdress;
+    public String carModelsSeviceAddress = carsModelsService.getHost() + ":" + carsModelsService.getMappedPort(8180);
+    public String carModelServiceBaseUrl = "http://" + carModelsSeviceAddress;
     
     @Autowired
     private KeycloakConfig keycloakConfig;
@@ -92,12 +91,6 @@ public abstract class Testcontainers {
     }
     
     private String getBearerToken(String username, String password) {
-        System.out.println(keycloak.getHost());
-        System.out.println(keycloak.getMappedPort(8080));
-        System.out.println(keycloak.getAuthServerUrl());
-        System.out.println(keycloakConfig.getRealm());
-        System.out.println(keycloakConfig.getResource());
-        System.out.println(keycloakConfig.getSecret());
         Keycloak keycloakInstance = Keycloak.getInstance(keycloak.getAuthServerUrl(),
                                                          keycloakConfig.getRealm(),
                                                          username,
@@ -108,7 +101,6 @@ public abstract class Testcontainers {
         
         try {
             accessToken = keycloakInstance.tokenManager().getAccessTokenString();
-            
         } catch (Exception e) {
             log.error("Access token error", e);
         }
