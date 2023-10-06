@@ -19,7 +19,12 @@ spring:
     oauth2:
       resourceserver:
         jwt:
+          issuer-uri: http://${KEYCLOAK_HOST:localhost}:8080/auth/realms/car-services
           jwk-set-uri: http://${KEYCLOAK_HOST:localhost}:8080/auth/realms/car-services/protocol/openid-connect/certs
+
+logging:
+  level:
+    root: debug
 ---
 keycloak:
   policy-enforcer-config:
@@ -30,6 +35,8 @@ keycloak:
       secret: eGtdvx8kd5XZ2ThQ1YlqWS5y7kuTGJwk
     enforcement-mode: ENFORCING
     http-method-as-scope: true
+    paths:
+      - /v1/*
 ---  
 server:
   port: 8180
