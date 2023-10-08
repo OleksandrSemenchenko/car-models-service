@@ -9,4 +9,4 @@ keycloak:
 #    http-method-as-scope: true
 logging:
   level:
-    root: INFO
+    root: debug

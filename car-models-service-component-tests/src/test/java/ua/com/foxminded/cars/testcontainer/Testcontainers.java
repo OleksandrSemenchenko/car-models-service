@@ -44,7 +44,8 @@ public abstract class Testcontainers {
                 .withRealmImportFile(REALM_CONFIG_FILE_PATH)
                 .withNetworkAliases(AUTHORIZATION_SERVER_ALIAS)
                 .withContextPath("/auth")
-                .withExposedPorts(8080, 8443)
+//                .withExposedPorts(8080, 8443)
+                .withExposedPorts(8080)
                 .withNetwork(network)
                 .withLogConsumer(new Slf4jLogConsumer(log));
         keycloak.start();
@@ -61,7 +62,7 @@ public abstract class Testcontainers {
         carsModelsService = new GenericContainer<>("cars/car-models-service-core:latest")
                 .withExposedPorts(8180)
                 .withNetwork(network)
-                .withEnv("KEYCLOAK_URL", "0.0.0.0:" + keycloak.getMappedPort(8080))
+                .withEnv("KEYCLOAK_URL", keycloak.getHost() + ":" + keycloak.getMappedPort(8080))
                 .withEnv("POSTGRES_URL", DATABASE_ALIAS + ":" + POSTGRESQL_PORT)
                 .dependsOn(postgres)
                 .dependsOn(keycloak)
