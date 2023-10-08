@@ -21,7 +21,7 @@
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <keycloak.version>22.0.1</keycloak.version>
         <jkube.version>1.14.0</jkube.version>
-        <testcontainers.version>1.19.0</testcontainers.version>
+        <testcontainers.version>1.18.3</testcontainers.version>
         <testcontainers-keycloak>3.0.0</testcontainers-keycloak>
 
     </properties>
@@ -77,6 +77,10 @@
 
     <build>
         <plugins>
+             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>org.eclipse.jkube</groupId>
                 <artifactId>kubernetes-maven-plugin</artifactId>

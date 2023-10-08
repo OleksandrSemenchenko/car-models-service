@@ -1,7 +1,6 @@
 package ua.com.foxminded.cars.testcontainer;
 
-import java.io.IOException;
-import java.util.Map;
+import static org.testcontainers.containers.PostgreSQLContainer.POSTGRESQL_PORT;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,40 +28,45 @@ public abstract class Testcontainers {
     public static final String CLIENT_SECRET = "secret";
     public static final String JWK_SET_URI_PROPERTY = "spring.security.oauth2.resourceserver.jwt.jwk-set-uri";
     public static final String AUTH_SERVER_URL_PROPERTY = "keycloak.policy-enforcer-config.auth-server-url";
+    public static final int KEYCLOAK_PORT_HTTP = 8080;
     
     public static final String DATABASE_ALIAS = "postgres";
     public static final String AUTHORIZATION_SERVER_ALIAS = "keycloak";
     
     private static Network network = Network.newNetwork();
     
-    public static KeycloakContainer keycloak = new KeycloakContainer()
-            .withRealmImportFile(REALM_CONFIG_FILE_PATH)
-            .withNetworkAliases(AUTHORIZATION_SERVER_ALIAS)
-            .withContextPath("/auth")
-            .withNetwork(network)
-            .withLogConsumer(new Slf4jLogConsumer(log));
-    
-    private static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15")
-            .withDatabaseName("cars")
-            .withUsername("cars")
-            .withPassword("1234")
-            .withNetwork(network)
-            .withNetworkAliases(DATABASE_ALIAS)
-            .withLogConsumer(new Slf4jLogConsumer(log));
-    
-    private  static GenericContainer<?> carsModelsService = new GenericContainer<>("cars/car-models-service-core:latest")
-            .withExposedPorts(8180)
-            .withNetwork(network)
-            .withEnv("KEYCLOAK_HOST", AUTHORIZATION_SERVER_ALIAS)
-            .withEnv("POSTGRES_HOST", DATABASE_ALIAS)
-            .dependsOn(postgres)
-            .dependsOn(keycloak)
-            .withLogConsumer(new Slf4jLogConsumer(log));;
+    public static KeycloakContainer keycloak;
+    public static PostgreSQLContainer<?> postgres;
+    public static GenericContainer<?> carsModelsService;
     
     static {
-      keycloak.start();
-      postgres.start();
-      carsModelsService.start();
+        keycloak = new KeycloakContainer()
+                .withRealmImportFile(REALM_CONFIG_FILE_PATH)
+                .withNetworkAliases(AUTHORIZATION_SERVER_ALIAS)
+                .withContextPath("/auth")
+                .withExposedPorts(880, 8443)
+                .withNetwork(network)
+                .withLogConsumer(new Slf4jLogConsumer(log));
+        keycloak.start();
+        
+        postgres = new PostgreSQLContainer<>("postgres:15")
+                .withDatabaseName("cars")
+                .withUsername("cars")
+                .withPassword("cars")
+                .withNetwork(network)
+                .withNetworkAliases(DATABASE_ALIAS)
+                .withLogConsumer(new Slf4jLogConsumer(log));
+        postgres.start();
+        
+        carsModelsService = new GenericContainer<>("cars/car-models-service-core:latest")
+                .withExposedPorts(8180)
+                .withNetwork(network)
+                .withEnv("KEYCLOAK_URL", AUTHORIZATION_SERVER_ALIAS + ":" + KEYCLOAK_PORT_HTTP)
+                .withEnv("POSTGRES_URL", DATABASE_ALIAS + ":" + POSTGRESQL_PORT)
+                .dependsOn(postgres)
+                .dependsOn(keycloak)
+                .withLogConsumer(new Slf4jLogConsumer(log));
+        carsModelsService.start();
     }
     
     public String carModelsSeviceAddress = carsModelsService.getHost() + ":" + carsModelsService.getMappedPort(8180);
