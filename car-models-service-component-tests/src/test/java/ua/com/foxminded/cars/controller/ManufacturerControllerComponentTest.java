@@ -15,8 +15,6 @@ class ManufacturerControllerComponentTest extends Testcontainers {
 
     @Test
     void getAll_ShouldReturnStatus200() throws Exception {
-//        System.in.read();
-        
         client = WebTestClient.bindToServer().baseUrl(carModelServiceBaseUrl).build();
         client.get().uri("/v1/manufacturers")
                     .header("Authorization", getAdminRoleBearerToken())

@@ -1,7 +1,5 @@
 package ua.com.foxminded.cars.testcontainer;
 
-import static org.testcontainers.containers.PostgreSQLContainer.POSTGRESQL_PORT;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.keycloak.admin.client.Keycloak;
@@ -14,12 +12,6 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.ext.ScriptUtils;
 import org.testcontainers.jdbc.JdbcDatabaseDelegate;
 
-import com.github.dockerjava.api.model.ExposedPort;
-import com.github.dockerjava.api.model.HostConfig;
-import com.github.dockerjava.api.model.PortBinding;
-import com.github.dockerjava.api.model.Ports;
-
-import dasniko.testcontainers.keycloak.KeycloakContainer;
 import lombok.extern.slf4j.Slf4j;
 import ua.com.foxminded.cars.config.KeycloakConfig;
 import ua.com.foxminded.cars.config.TestConfig;
@@ -40,21 +32,16 @@ public abstract class Testcontainers {
     
     private static Network network = Network.newNetwork();
     
-    public static KeycloakContainer keycloak;
+    public static KeycloakTestcontainer keycloak;
     public static PostgreSQLContainer<?> postgres;
     public static GenericContainer<?> carsModelsService;
     
     static {
-        keycloak = new KeycloakContainer()
+        keycloak = new KeycloakTestcontainer()
                 .withRealmImportFile(REALM_CONFIG_FILE_PATH)
                 .withNetworkAliases(AUTHORIZATION_SERVER_ALIAS)
                 .withContextPath("/auth")
-//                .withExposedPorts(8080, 8443)
-                .withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(
-                        new HostConfig().withPortBindings(
-                                new PortBinding(Ports.Binding.bindPort(8080), new ExposedPort(8080)), 
-                                new PortBinding(Ports.Binding.bindPort(8443), new ExposedPort(8443)))))
-//                .withExposedPorts(8080)
+                .withExposedPorts(8080)
                 .withNetwork(network)
                 .withLogConsumer(new Slf4jLogConsumer(log));
         keycloak.start();
@@ -71,8 +58,8 @@ public abstract class Testcontainers {
         carsModelsService = new GenericContainer<>("cars/car-models-service-core:latest")
                 .withExposedPorts(8180)
                 .withNetwork(network)
-//                .withEnv("KEYCLOAK_URL", keycloak.getHost() + ":" + keycloak.getMappedPort(8080))
-                .withEnv("POSTGRES_URL", DATABASE_ALIAS + ":" + POSTGRESQL_PORT)
+                .withEnv("KEYCLOAK_HOST", AUTHORIZATION_SERVER_ALIAS)
+                .withEnv("POSTGRES_HOST", DATABASE_ALIAS)
                 .dependsOn(postgres)
                 .dependsOn(keycloak)
                 .withLogConsumer(new Slf4jLogConsumer(log));
