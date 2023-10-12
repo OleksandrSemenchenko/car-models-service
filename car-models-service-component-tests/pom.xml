@@ -10,11 +10,15 @@
     <artifactId>car-models-service-component-tests</artifactId>
 
     <dependencies>
-         <dependency>
+        <dependency>
+            <groupId>ua.com.foxminded.cars</groupId>
+            <artifactId>car-models-service-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
@@ -30,42 +34,42 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-<!--            <scope>test</scope>-->
+            <!--            <scope>test</scope>-->
         </dependency>
         <dependency>
             <groupId>com.github.dasniko</groupId>
             <artifactId>testcontainers-keycloak</artifactId>
-<!--            <scope>test</scope>-->
+            <!--            <scope>test</scope>-->
         </dependency>
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-admin-client</artifactId>
-<!--            <scope>test</scope>-->
+            <!--            <scope>test</scope>-->
         </dependency>
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-test-helper</artifactId>
-<!--            <scope>test</scope>-->
+            <!--            <scope>test</scope>-->
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
-<!--            <scope>test</scope>-->
+            <!--            <scope>test</scope>-->
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-<!--            <scope>test</scope>-->
+            <!--            <scope>test</scope>-->
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-<!--            <scope>test</scope>-->
+            <!--            <scope>test</scope>-->
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-<!--            <scope>test</scope>-->
+            <!--            <scope>test</scope>-->
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>

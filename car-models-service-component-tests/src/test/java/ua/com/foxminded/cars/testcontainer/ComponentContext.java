@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.keycloak.admin.client.Keycloak;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -18,7 +19,7 @@ import ua.com.foxminded.cars.config.TestConfig;
 
 @Slf4j
 @SpringBootTest(classes = TestConfig.class)
-public abstract class Testcontainers {
+public abstract class ComponentContext {
     
     public static final String REALM_CONFIG_FILE_PATH = "/realm-import.json";
     public static final String ADMIN_USER = "admin";
@@ -30,11 +31,16 @@ public abstract class Testcontainers {
     public static final String DATABASE_ALIAS = "postgres";
     public static final String AUTHORIZATION_SERVER_ALIAS = "keycloak";
     
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+    
     private static Network network = Network.newNetwork();
     
     public static KeycloakTestcontainer keycloak;
     public static PostgreSQLContainer<?> postgres;
     public static GenericContainer<?> carsModelsService;
+    public static WebTestClient webTestClient;
+    public static String carModelsSeviceAddress;
+    public static String carModelServiceBaseUrl;
     
     static {
         keycloak = new KeycloakTestcontainer()
@@ -64,10 +70,11 @@ public abstract class Testcontainers {
                 .dependsOn(keycloak)
                 .withLogConsumer(new Slf4jLogConsumer(log));
         carsModelsService.start();
+        
+        carModelsSeviceAddress = carsModelsService.getHost() + ":" + carsModelsService.getMappedPort(8180);
+        carModelServiceBaseUrl = "http://" + carModelsSeviceAddress;
+        webTestClient = WebTestClient.bindToServer().baseUrl(carModelServiceBaseUrl).build();
     }
-    
-    public String carModelsSeviceAddress = carsModelsService.getHost() + ":" + carsModelsService.getMappedPort(8180);
-    public String carModelServiceBaseUrl = "http://" + carModelsSeviceAddress;
     
     @Autowired
     private KeycloakConfig keycloakConfig;

@@ -1,27 +1,94 @@
 package ua.com.foxminded.cars.controller;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.http.HttpStatus;
 
-import ua.com.foxminded.cars.testcontainer.Testcontainers;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
-class ManufacturerControllerComponentTest extends Testcontainers {
+import ua.com.foxminded.cars.dto.ManufacturerDto;
+import ua.com.foxminded.cars.testcontainer.ComponentContext;
+
+class ManufacturerControllerComponentTest extends ComponentContext {
     
-    public static final String MANUFACTURER_NAME = "Audi";
+    public static final String MANUFACTURER = "Audi";
+    public static final String MANUFACTURER_WITHOUT_RELATIONS = "Ford";
+    public static final String NOT_EXISTING_MANUFACTURER = "BMW";
     
-    private static WebTestClient client;
-
+    @Test
+    void getByName_ShouldReturnStatus200_WhenNoSuchManufacturer() {
+        webTestClient.get().uri("/v1/manufacturers/{manufacturer}", NOT_EXISTING_MANUFACTURER)
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .exchange()
+                     .expectStatus().isOk();
+    }
+    
+    @Test
+    void getByName_ShouldReturnStatus200() {
+        webTestClient.get().uri("/v1/manufacturers/{manufacturer}", MANUFACTURER)
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .exchange()
+                     .expectStatus().isOk()
+                     .expectBody().jsonPath("$['name']").isEqualTo(MANUFACTURER);
+    }
+    
     @Test
     void getAll_ShouldReturnStatus200() throws Exception {
-        client = WebTestClient.bindToServer().baseUrl(carModelServiceBaseUrl).build();
-        client.get().uri("/v1/manufacturers")
-                    .header("Authorization", getAdminRoleBearerToken())
-                    .accept(APPLICATION_JSON)
-                    .exchange()
-                    .expectStatus().isOk()
-                    .expectBody().jsonPath("$.content[0].name")
-                    .isEqualTo(MANUFACTURER_NAME);
+        webTestClient.get().uri("/v1/manufacturers")
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .exchange()
+                     .expectStatus().isOk()
+                     .expectBody().jsonPath("$.content", hasSize(2));
+    }
+    
+    @Test
+    void save_ShouldReturnStatus409_WhenManufacturerAlreadyExists() throws JsonProcessingException {
+        ManufacturerDto manufacturerDto = ManufacturerDto.builder().name(MANUFACTURER).build();
+        webTestClient.post().uri("/v1/manufacturers")
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .contentType(APPLICATION_JSON)
+                     .bodyValue(manufacturerDto)
+                     .exchange()
+                     .expectStatus().isEqualTo(HttpStatus.CONFLICT);
+    }
+    
+    @Test
+    void save_ShouldReturnStatus201() throws JsonProcessingException {
+        ManufacturerDto manufacturerDto = ManufacturerDto.builder().name("Chevrolet").build();
+        webTestClient.post().uri("/v1/manufacturers")
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .contentType(APPLICATION_JSON)
+                     .bodyValue(manufacturerDto)
+                     .exchange()
+                     .expectStatus().isCreated()
+                     .expectHeader().location(carModelServiceBaseUrl + "/v1/manufacturers/" + 
+                                              manufacturerDto.getName());
+    }
+    
+    @Test
+    void delete_ShouldReturnStatus405_WhenManufacturerHasDatabaseConstraints() {
+        webTestClient.delete().uri("/v1/manufacturers/{manufacturer}", MANUFACTURER)
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .exchange()
+                     .expectStatus().isEqualTo(HttpStatus.METHOD_NOT_ALLOWED);
+    }
+    
+    @Test
+    void delete_ShouldReturnStatus404_WhenNoManufacturer() {
+        webTestClient.delete().uri("/v1/manufacturers/{manufacturer}", NOT_EXISTING_MANUFACTURER)
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .exchange()
+                     .expectStatus().isNotFound();
+    }
+    
+    @Test
+    void delete_ShouldReturnStatus204_WhenManufacturerExists() {
+        webTestClient.delete().uri("/v1/manufacturers/{manufacturer}", MANUFACTURER_WITHOUT_RELATIONS)
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .exchange()
+                     .expectStatus().isNoContent()
+                     .expectBody().isEmpty();
     }
 }

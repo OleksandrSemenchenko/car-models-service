@@ -23,11 +23,16 @@
         <jkube.version>1.14.0</jkube.version>
         <testcontainers.version>1.18.3</testcontainers.version>
         <testcontainers-keycloak>3.0.0</testcontainers-keycloak>
-
+        <car-models-service-core.version>1.0.1-SNAPSHOT</car-models-service-core.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>ua.com.foxminded.cars</groupId>
+                <artifactId>car-models-service-core</artifactId>
+                <version>${car-models-service-core.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.keycloak.bom</groupId>
                 <artifactId>keycloak-adapter-bom</artifactId>
@@ -77,7 +82,7 @@
 
     <build>
         <plugins>
-             <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>

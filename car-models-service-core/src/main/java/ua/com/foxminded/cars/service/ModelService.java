@@ -62,15 +62,15 @@ public class ModelService {
                                                     modelDto.getName(), 
                                                     modelDto.getYear()); 
         
-        var vehicle = Model.builder().year(modelDto.getYear())
-                                     .categories(new HashSet<>())
-                                     .build();
+        var model = Model.builder().year(modelDto.getYear())
+                                   .categories(new HashSet<>())
+                                   .build();
         
-        updateCategoryRelations(modelDto, vehicle);
-        updateManufacturerRelation(modelDto, vehicle);
-        updateModelRelation(modelDto, vehicle);
+        updateCategoryRelations(modelDto, model);
+        updateManufacturerRelation(modelDto, model);
+        updateModelRelation(modelDto, model);
 
-        var persistedVehicle = modelRepository.save(vehicle);
+        var persistedVehicle = modelRepository.save(model);
         return modelMapper.map(persistedVehicle);
     }
 
@@ -80,14 +80,14 @@ public class ModelService {
                                                           .year(modelDto.getYear())
                                                           .build();
         Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
-        var vehicle = modelRepository.findOne(specification).orElseThrow(() -> new NotFoundException(NO_SUCH_MODEL));
-        vehicle.setYear(modelDto.getYear());
+        var model = modelRepository.findOne(specification).orElseThrow(() -> new NotFoundException(NO_SUCH_MODEL));
+        model.setYear(modelDto.getYear());
         
-        updateManufacturerRelation(modelDto, vehicle);
-        updateModelRelation(modelDto, vehicle);
-        updateCategoryRelations(modelDto, vehicle);
+        updateManufacturerRelation(modelDto, model);
+        updateModelRelation(modelDto, model);
+        updateCategoryRelations(modelDto, model);
 
-        var updatedVehicle = modelRepository.save(vehicle);
+        var updatedVehicle = modelRepository.save(model);
         return modelMapper.map(updatedVehicle);
     }
 
@@ -101,7 +101,9 @@ public class ModelService {
     }
     
     private void throwIfPresentByManufacturerAndModelAndYear(String manufacturer, String model, int year) {
-        SearchFilter searchFilter = SearchFilter.builder().manufacturer(manufacturer).model(model).year(year).build();
+        SearchFilter searchFilter = SearchFilter.builder().manufacturer(manufacturer)
+                                                          .model(model)
+                                                          .year(year).build();
         Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
         Optional<Model> vehicleOptional = modelRepository.findOne(specification);
         

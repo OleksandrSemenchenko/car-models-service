@@ -54,7 +54,7 @@ class ManufacturerControllerTest {
     }
     
     @Test
-    void save_ShouldReturnStatus409_WhenAlreadyExcistsException() throws Exception {
+    void save_ShouldReturnStatus409_WhenAlreadyExistsException() throws Exception {
         manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
         doThrow(AlreadyExistsException.class).when(manufacturerService).save(manufacturerDto);
         
