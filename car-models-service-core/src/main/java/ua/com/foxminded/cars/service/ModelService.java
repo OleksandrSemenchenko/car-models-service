@@ -47,7 +47,9 @@ public class ModelService {
     private final ModelMapper modelMapper;
     
     public Optional<ModelDto> getByManufacturerAndNameAndYear(String manufacturer, String name, int year) {
-        SearchFilter searchFilter = SearchFilter.builder().manufacturer(manufacturer).model(name).year(year).build();
+        SearchFilter searchFilter = SearchFilter.builder().manufacturer(manufacturer)
+                                                          .model(name)
+                                                          .year(year).build();
         Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
         return modelRepository.findOne(specification).map(modelMapper::map);
     }

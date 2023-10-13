@@ -6,4 +6,4 @@ keycloak:
       secret: eGtdvx8kd5XZ2ThQ1YlqWS5y7kuTGJwk
 logging:
   level:
-    root: debug
+    root: info

@@ -1,5 +1,6 @@
 package ua.com.foxminded.cars.controller;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.keycloak.admin.client.Keycloak;
@@ -24,14 +25,9 @@ public abstract class ComponentTestContext {
     
     public static final String REALM_CONFIG_FILE_PATH = "/realm-import.json";
     public static final String ADMIN_USER = "admin";
-    public static final String CLIENT_SECRET = "secret";
-    public static final String JWK_SET_URI_PROPERTY = "spring.security.oauth2.resourceserver.jwt.jwk-set-uri";
-    public static final String AUTH_SERVER_URL_PROPERTY = "keycloak.policy-enforcer-config.auth-server-url";
-    public static final int KEYCLOAK_PORT_HTTP = 8080;
-    
+    public static final String ADMIN_PASSWORD = "admin";
     public static final String DATABASE_ALIAS = "postgres";
     public static final String AUTHORIZATION_SERVER_ALIAS = "keycloak";
-    
     public static final String AUTHORIZATION_HEADER = "Authorization";
     
     private static Network network = Network.newNetwork();
@@ -40,7 +36,6 @@ public abstract class ComponentTestContext {
     public static PostgreSQLContainer<?> postgres;
     public static GenericContainer<?> carsModelsService;
     public static WebTestClient webTestClient;
-    public static String carModelsSeviceAddress;
     public static String carModelServiceBaseUrl;
     
     static {
@@ -72,8 +67,7 @@ public abstract class ComponentTestContext {
                 .withLogConsumer(new Slf4jLogConsumer(log));
         carsModelsService.start();
         
-        carModelsSeviceAddress = carsModelsService.getHost() + ":" + carsModelsService.getMappedPort(8180);
-        carModelServiceBaseUrl = "http://" + carModelsSeviceAddress;
+        carModelServiceBaseUrl = "http://" + carsModelsService.getHost() + ":" + carsModelsService.getMappedPort(8180);
         webTestClient = WebTestClient.bindToServer().baseUrl(carModelServiceBaseUrl).build();
     }
     
@@ -93,7 +87,7 @@ public abstract class ComponentTestContext {
     }
     
     public String getAdminRoleBearerToken() {
-        return getBearerToken(ADMIN_USER, ADMIN_USER);
+        return getBearerToken(ADMIN_USER, ADMIN_PASSWORD);
     }
     
     private String getBearerToken(String username, String password) {

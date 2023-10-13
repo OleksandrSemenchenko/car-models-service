@@ -64,7 +64,7 @@ class ManufacturerControllerIntegrationTest extends IntegrationTestContext {
     void save_ShouldReturnStatus201() throws Exception {
         String notExistingManufacturer = "Mercedes-Benz";
         manufacturerDto.setName(notExistingManufacturer);
-        String manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
+        manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
         
         mockMvc.perform(post("/v1/manufacturers")
                     .contentType(MediaType.APPLICATION_JSON)

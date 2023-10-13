@@ -17,6 +17,7 @@ class CategoryControllerComponentTest extends ComponentTestContext {
     @Test
     void save_ShouldReturnStatus409_WhenSuchCategoryAlreadyExists() {
         CategoryDto categoryDto = CategoryDto.builder().name(CATEGORY).build();
+        
         webTestClient.post().uri("/v1/categories")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(categoryDto)
@@ -27,6 +28,7 @@ class CategoryControllerComponentTest extends ComponentTestContext {
     @Test
     void save_ShouldReturnStatus201() {
         CategoryDto categoryDto = CategoryDto.builder().name(NOT_EXISTING_CATEGORY).build();
+        
         webTestClient.post().uri("/v1/categories")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(categoryDto)

@@ -21,7 +21,7 @@ import ua.com.foxminded.cars.repository.ManufacturerRepository;
 @RequiredArgsConstructor
 public class ManufacturerService {
     
-    public static final String MANUFACTURER_DATABASE_CONSTRANT = 
+    public static final String MANUFACTURER_DATABASE_CONSTRAINT = 
             "The manufacturer '%s' has relations to models and cannot be removed";
     public static final String NO_MANUFACTURER = "The manufacturer '%s' doesn't exist";
     public static final String MANUFACTURER_ALREADY_EXISTS = "The manufacturer '%s' already exists";
@@ -47,7 +47,7 @@ public class ManufacturerService {
         manufacturerRepository.findById(name).orElseThrow(
                 () -> new NotFoundException(String.format(NO_MANUFACTURER, name)));
         manufacturerRepository.findByModelsManufacturerName(name).ifPresent(manufacturer -> {
-            throw new DatabaseConstraintsException(String.format(MANUFACTURER_DATABASE_CONSTRANT, name));
+            throw new DatabaseConstraintsException(String.format(MANUFACTURER_DATABASE_CONSTRAINT, name));
         });
         manufacturerRepository.deleteById(name);
     }

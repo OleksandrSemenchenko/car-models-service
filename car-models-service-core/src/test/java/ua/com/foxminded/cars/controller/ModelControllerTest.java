@@ -48,11 +48,11 @@ class ModelControllerTest {
     @BeforeEach
     void setUp() {
         modelDto = ModelDto.builder().id(MODEL_ID)
-                                       .year(YEAR)
-                                       .manufacturer(MANUFACTURER)
-                                       .name(MODEL_NAME)
-                                       .categories(Set.of(CATEGORY_NAME))
-                                       .build();
+                                     .year(YEAR)
+                                     .manufacturer(MANUFACTURER)
+                                     .name(MODEL_NAME)
+                                     .categories(Set.of(CATEGORY_NAME))
+                                     .build();
     }
     
     @Test

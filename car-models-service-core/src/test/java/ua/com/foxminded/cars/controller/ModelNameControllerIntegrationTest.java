@@ -27,7 +27,7 @@ import ua.com.foxminded.cars.dto.ModelNameDto;
 class ModelNameControllerIntegrationTest extends IntegrationTestContext {
     
     public static final String MODEL_NAME = "A7";
-    public static final String MODEL_NAME_WITHOUT_FOREIGN_KEY_CONSTRAINTS = "A8";
+    public static final String MODEL_NAME_WITHOUT_RELATIONS = "A8";
 
     @Autowired
     private MockMvc mockMvc;
@@ -72,7 +72,7 @@ class ModelNameControllerIntegrationTest extends IntegrationTestContext {
     
     @Test
     void deleteByName_ShouldReturnStatus204() throws Exception {
-        mockMvc.perform(delete("/v1/model-names/{name}", MODEL_NAME_WITHOUT_FOREIGN_KEY_CONSTRAINTS)
+        mockMvc.perform(delete("/v1/model-names/{name}", MODEL_NAME_WITHOUT_RELATIONS)
                     .with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isNoContent());
     }

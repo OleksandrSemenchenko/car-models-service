@@ -13,10 +13,6 @@ public class KeycloakTestcontainer extends ExtendableKeycloakContainer<KeycloakT
         super();
     }
 
-    public KeycloakTestcontainer(String dockerImageName) {
-        super(dockerImageName);
-    }
-
     @Override
     protected void configure() {
         super.configure();

@@ -8,6 +8,7 @@
         <version>1.0.2-SNAPSHOT</version>
     </parent>
     <artifactId>car-models-service-component-tests</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>

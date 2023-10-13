@@ -23,7 +23,7 @@ spring:
 
 logging:
   level:
-    root: warn
+    root: info
 ---
 keycloak:
   policy-enforcer-config:

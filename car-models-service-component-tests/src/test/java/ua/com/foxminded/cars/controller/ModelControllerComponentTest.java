@@ -24,7 +24,6 @@ class ModelControllerComponentTest extends ComponentTestContext {
     public static final int NOT_EXISTING_MODEL_ID = 2;
     public static final int MODEL_YEAR = 2020;
     public static final int NOT_EXISTING_MODEL_YEAR = 2021;
-    public static final int CREATED_MODEL_ID = 2;
     
     @Test
     void getByManufacturerAndNameAndYear_ShouldReturnStatus200_WhenNoSuchModel() {
@@ -89,6 +88,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     @Test
     void save_ShouldReturnStatus409_WhenModelAlreadyExists() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY)).build();
+        
         webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
                                  MANUFACTURER, MODEL_NAME, MODEL_YEAR)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
@@ -100,6 +100,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     @Test
     void save_ShouldReturnStatus201() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY)).build();
+        
         webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
                                  MANUFACTURER_WITHOUT_RELATIONS, 
                                  MODEL_NAME_WITHOUT_REALTIONS, 
@@ -114,6 +115,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     @Test
     void update_ShouldReturnStatus404_WhenNoSuchModel() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY)).build();
+        
         webTestClient.put().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
                                 MANUFACTURER, NOT_EXISTING_MODEL_NAME, MODEL_YEAR)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
@@ -125,6 +127,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     @Test
     void update_ShouldReturnStatus200() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_WITHOUT_RELATIONS)).build();
+        
         webTestClient.put().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
                                 MANUFACTURER, MODEL_NAME, MODEL_YEAR)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())

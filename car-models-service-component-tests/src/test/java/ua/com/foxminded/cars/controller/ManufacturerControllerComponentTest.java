@@ -45,6 +45,7 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
     @Test
     void save_ShouldReturnStatus409_WhenManufacturerAlreadyExists() throws JsonProcessingException {
         ManufacturerDto manufacturerDto = ManufacturerDto.builder().name(MANUFACTURER).build();
+        
         webTestClient.post().uri("/v1/manufacturers")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .contentType(APPLICATION_JSON)
@@ -56,6 +57,7 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
     @Test
     void save_ShouldReturnStatus201() throws JsonProcessingException {
         ManufacturerDto manufacturerDto = ManufacturerDto.builder().name("Chevrolet").build();
+        
         webTestClient.post().uri("/v1/manufacturers")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .contentType(APPLICATION_JSON)
