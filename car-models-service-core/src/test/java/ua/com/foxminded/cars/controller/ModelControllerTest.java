@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ua.com.foxminded.cars.controller.CategoryControllerIntegrationTest.CATEGORY_NAME;
-import static ua.com.foxminded.cars.controller.ManufacturerControllerIntegrationTest.MANUFACTURER_NAME;
+import static ua.com.foxminded.cars.controller.ManufacturerControllerIntegrationTest.MANUFACTURER;
 import static ua.com.foxminded.cars.controller.ModelControllerIntegrationTest.MODEL_ID;
 import static ua.com.foxminded.cars.controller.ModelControllerIntegrationTest.YEAR;
 import static ua.com.foxminded.cars.controller.ModelNameControllerIntegrationTest.MODEL_NAME;
@@ -49,7 +49,7 @@ class ModelControllerTest {
     void setUp() {
         modelDto = ModelDto.builder().id(MODEL_ID)
                                        .year(YEAR)
-                                       .manufacturer(MANUFACTURER_NAME)
+                                       .manufacturer(MANUFACTURER)
                                        .name(MODEL_NAME)
                                        .categories(Set.of(CATEGORY_NAME))
                                        .build();
@@ -59,7 +59,7 @@ class ModelControllerTest {
     void getByManufacturerAndModelAndYear_ShouldReturnStatus400_WhenConstraintViolationException() throws Exception {
         String notValidYear = "-2023";
         mockMvc.perform(get("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
-                            MANUFACTURER_NAME, MODEL_NAME, notValidYear))
+                            MANUFACTURER, MODEL_NAME, notValidYear))
                .andExpect(status().isBadRequest());
     }
     
@@ -79,7 +79,7 @@ class ModelControllerTest {
         modelDtoJson = mapper.writeValueAsString(modelDto);
         
         mockMvc.perform(post("/v1/manufacturers/{manufacturers}/models/{modle}/{year}", 
-                             MANUFACTURER_NAME, MODEL_NAME, YEAR, MODEL_ID)
+                             MANUFACTURER, MODEL_NAME, YEAR, MODEL_ID)
                     .contentType(APPLICATION_JSON)
                     .content(modelDtoJson))
                .andExpect(status().isConflict());
@@ -91,7 +91,7 @@ class ModelControllerTest {
         int notValidYear = -2023;
         
         mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
-                            MANUFACTURER_NAME, MODEL_NAME, notValidYear, MODEL_ID)
+                            MANUFACTURER, MODEL_NAME, notValidYear, MODEL_ID)
                     .contentType(APPLICATION_JSON)
                     .content(modelDtoJson))
                .andExpect(status().isBadRequest());
@@ -103,7 +103,7 @@ class ModelControllerTest {
         modelDtoJson = mapper.writeValueAsString(modelDto);
         
         mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
-                            MANUFACTURER_NAME, MODEL_NAME, YEAR, MODEL_ID)
+                            MANUFACTURER, MODEL_NAME, YEAR, MODEL_ID)
                     .contentType(APPLICATION_JSON)
                     .content(modelDtoJson))
                .andExpect(status().isBadRequest());
@@ -115,7 +115,7 @@ class ModelControllerTest {
         modelDtoJson = mapper.writeValueAsString(modelDto);
         
         mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
-                            MANUFACTURER_NAME, MODEL_NAME, YEAR)
+                            MANUFACTURER, MODEL_NAME, YEAR)
                     .contentType(APPLICATION_JSON)
                     .content(modelDtoJson))
                .andExpect(status().isNotFound());
@@ -127,7 +127,7 @@ class ModelControllerTest {
         modelDtoJson = mapper.writeValueAsString(modelDto);
 
         mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
-                            MANUFACTURER_NAME, MODEL_NAME, YEAR)
+                            MANUFACTURER, MODEL_NAME, YEAR)
                     .contentType(APPLICATION_JSON)
                     .content(modelDtoJson))
                .andExpect(status().isBadRequest());
@@ -140,7 +140,7 @@ class ModelControllerTest {
         modelDtoJson = mapper.writeValueAsString(modelDto);
 
         mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
-                            MANUFACTURER_NAME, MODEL_NAME, notValidYear)
+                            MANUFACTURER, MODEL_NAME, notValidYear)
                     .contentType(APPLICATION_JSON)
                     .content(modelDtoJson))
                .andExpect(status().isBadRequest());

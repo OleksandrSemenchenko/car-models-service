@@ -11,7 +11,7 @@
     </parent>
     <groupId>ua.com.foxminded.cars</groupId>
     <artifactId>car-models-service</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Car models data microservice</name>
 
@@ -31,7 +31,7 @@
             <dependency>
                 <groupId>ua.com.foxminded.cars</groupId>
                 <artifactId>car-models-service-core</artifactId>
-                <version>${car-models-service-core.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.keycloak.bom</groupId>

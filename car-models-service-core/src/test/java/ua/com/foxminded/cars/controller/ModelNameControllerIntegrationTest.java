@@ -24,7 +24,7 @@ import ua.com.foxminded.cars.dto.ModelNameDto;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class ModelNameControllerIntegrationTest extends KeycloakTestContainer {
+class ModelNameControllerIntegrationTest extends IntegrationTestContext {
     
     public static final String MODEL_NAME = "A7";
     public static final String MODEL_NAME_WITHOUT_FOREIGN_KEY_CONSTRAINTS = "A8";

@@ -17,9 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import ua.com.foxminded.cars.dto.ModelDto;
-import ua.com.foxminded.cars.testcontainer.ComponentContext;
 
-class ModelControllerComponentTest extends ComponentContext {
+class ModelControllerComponentTest extends ComponentTestContext {
     
     public static final int MODEL_ID = 1;
     public static final int NOT_EXISTING_MODEL_ID = 2;

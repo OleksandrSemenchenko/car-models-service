@@ -2,6 +2,8 @@ package ua.com.foxminded.cars.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -14,12 +16,12 @@ class ManufacturerRepositoryTest {
     public static final String MANUFACTURER = "Audi";
     
     @Autowired
-    ManufacturerRepository manufacturerRepsotory;
+    private ManufacturerRepository manufacturerRepsotory;
 
     @Test
     void findByManufacturerModel_ShouldReturnManufacturer() {
-        Manufacturer manufacturer = manufacturerRepsotory.findByModelsManufacturerName(MANUFACTURER);
+        Optional<Manufacturer> manufacturerOptional = manufacturerRepsotory.findByModelsManufacturerName(MANUFACTURER);
         
-        assertEquals(MANUFACTURER, manufacturer.getName());
+        assertEquals(MANUFACTURER, manufacturerOptional.get().getName());
     }
 }

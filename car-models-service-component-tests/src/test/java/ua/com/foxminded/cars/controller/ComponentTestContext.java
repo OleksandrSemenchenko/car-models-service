@@ -1,4 +1,4 @@
-package ua.com.foxminded.cars.testcontainer;
+package ua.com.foxminded.cars.controller;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,10 +16,11 @@ import org.testcontainers.jdbc.JdbcDatabaseDelegate;
 import lombok.extern.slf4j.Slf4j;
 import ua.com.foxminded.cars.config.KeycloakConfig;
 import ua.com.foxminded.cars.config.TestConfig;
+import ua.com.foxminded.cars.testcontainer.KeycloakTestcontainer;
 
 @Slf4j
 @SpringBootTest(classes = TestConfig.class)
-public abstract class ComponentContext {
+public abstract class ComponentTestContext {
     
     public static final String REALM_CONFIG_FILE_PATH = "/realm-import.json";
     public static final String ADMIN_USER = "admin";

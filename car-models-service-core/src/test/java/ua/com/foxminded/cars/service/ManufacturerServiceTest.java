@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import ua.com.foxminded.cars.dto.ManufacturerDto;
 import ua.com.foxminded.cars.entity.Manufacturer;
 import ua.com.foxminded.cars.exception.AlreadyExistsException;
+import ua.com.foxminded.cars.exception.DatabaseConstraintsException;
 import ua.com.foxminded.cars.exception.NotFoundException;
 import ua.com.foxminded.cars.mapper.ManufacturerMapper;
 import ua.com.foxminded.cars.mapper.ManufacturerMapperImpl;
@@ -86,7 +87,17 @@ class ManufacturerServiceTest {
         manufacturerService.deleteByName(MANUFACTURER_NAME);
         
         verify(manufacturerRepository).findById(MANUFACTURER_NAME);
+        verify(manufacturerRepository).findByModelsManufacturerName(MANUFACTURER_NAME);
         verify(manufacturerRepository).deleteById(MANUFACTURER_NAME);
+    }
+    
+    @Test
+    void deleteByName_ShouldThrow_WhenManufacturerHasRelations() {
+        when(manufacturerRepository.findById(MANUFACTURER_NAME)).thenReturn(Optional.of(manufacturer));
+        when(manufacturerRepository.findByModelsManufacturerName(MANUFACTURER_NAME))
+                .thenReturn(Optional.of(manufacturer));
+        
+        assertThrows(DatabaseConstraintsException.class, () -> manufacturerService.deleteByName(MANUFACTURER_NAME));
     }
     
     @Test

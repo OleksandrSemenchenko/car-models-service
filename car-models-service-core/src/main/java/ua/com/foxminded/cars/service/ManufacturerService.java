@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.cars.dto.ManufacturerDto;
 import ua.com.foxminded.cars.entity.Manufacturer;
 import ua.com.foxminded.cars.exception.AlreadyExistsException;
+import ua.com.foxminded.cars.exception.DatabaseConstraintsException;
 import ua.com.foxminded.cars.exception.NotFoundException;
 import ua.com.foxminded.cars.mapper.ManufacturerMapper;
 import ua.com.foxminded.cars.repository.ManufacturerRepository;
@@ -20,6 +21,8 @@ import ua.com.foxminded.cars.repository.ManufacturerRepository;
 @RequiredArgsConstructor
 public class ManufacturerService {
     
+    public static final String MANUFACTURER_DATABASE_CONSTRANT = 
+            "The manufacturer '%s' has relations to models and cannot be removed";
     public static final String NO_MANUFACTURER = "The manufacturer '%s' doesn't exist";
     public static final String MANUFACTURER_ALREADY_EXISTS = "The manufacturer '%s' already exists";
 
@@ -43,6 +46,9 @@ public class ManufacturerService {
     public void deleteByName(String name) {
         manufacturerRepository.findById(name).orElseThrow(
                 () -> new NotFoundException(String.format(NO_MANUFACTURER, name)));
+        manufacturerRepository.findByModelsManufacturerName(name).ifPresent(manufacturer -> {
+            throw new DatabaseConstraintsException(String.format(MANUFACTURER_DATABASE_CONSTRANT, name));
+        });
         manufacturerRepository.deleteById(name);
     }
 

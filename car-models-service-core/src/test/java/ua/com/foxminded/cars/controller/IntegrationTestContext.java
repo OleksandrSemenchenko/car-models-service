@@ -12,7 +12,7 @@ import org.testcontainers.junit.jupiter.Container;
 
 import dasniko.testcontainers.keycloak.KeycloakContainer;
 
-abstract class KeycloakTestContainer {
+abstract class IntegrationTestContext {
     
     public static final String USER_NAME_ADMIN = "admin";
     public static final String CLIENT_SECRET = "secret";
@@ -38,7 +38,6 @@ abstract class KeycloakTestContainer {
                      () -> keycloak.getAuthServerUrl() + "/realms/car-services/protocol/openid-connect/certs");
         registry.add(AUTH_SERVER_URL_PROPERTY, keycloak::getAuthServerUrl);
     }
-    
     
     public RequestPostProcessor bearerTokenFor(String username) {
         String token = getToken(username, username);

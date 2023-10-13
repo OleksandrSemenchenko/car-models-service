@@ -4,9 +4,7 @@ import static org.hamcrest.Matchers.hasSize;
 
 import org.junit.jupiter.api.Test;
 
-import ua.com.foxminded.cars.testcontainer.ComponentContext;
-
-class ModelNameControllerComponentTest extends ComponentContext {
+class ModelNameControllerComponentTest extends ComponentTestContext {
     
     public static final String MODEL_NAME = "A7";
     public static final String MODEL_NAME_WITHOUT_REALTIONS = "A8";

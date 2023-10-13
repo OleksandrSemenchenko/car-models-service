@@ -26,7 +26,7 @@ import ua.com.foxminded.cars.dto.CategoryDto;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class CategoryControllerIntegrationTest extends KeycloakTestContainer {
+class CategoryControllerIntegrationTest extends IntegrationTestContext {
     
     public static final String CATEGORY_NAME = "Sedan";
     

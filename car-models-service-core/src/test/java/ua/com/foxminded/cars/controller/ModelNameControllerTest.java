@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ua.com.foxminded.cars.dto.ModelNameDto;
 import ua.com.foxminded.cars.exception.AlreadyExistsException;
+import ua.com.foxminded.cars.exception.DatabaseConstraintsException;
 import ua.com.foxminded.cars.exception.NotFoundException;
 import ua.com.foxminded.cars.service.ModelNameService;
 
@@ -61,6 +62,14 @@ class ModelNameControllerTest {
         mockMvc.perform(post("/v1/model-names").contentType(APPLICATION_JSON)
                                                .content(modelNameDtoJson))
                .andExpect(status().isConflict());
+    }
+    
+    @Test
+    void deleteByName_ShouldReturnStatus405_WhenDatabaseConstraintsException() throws Exception {
+        doThrow(DatabaseConstraintsException.class).when(modelNameService).deleteByName(MODEL_NAME);
+        
+        mockMvc.perform(delete("/v1/model-names/{name}", MODEL_NAME))
+               .andExpect(status().isMethodNotAllowed());
     }
 
     @Test

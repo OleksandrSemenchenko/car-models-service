@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ua.com.foxminded.cars.controller.CategoryControllerIntegrationTest.CATEGORY_NAME;
-import static ua.com.foxminded.cars.controller.ManufacturerControllerIntegrationTest.MANUFACTURER_NAME;
+import static ua.com.foxminded.cars.controller.ManufacturerControllerIntegrationTest.MANUFACTURER;
 import static ua.com.foxminded.cars.controller.ModelNameControllerIntegrationTest.MODEL_NAME;
 
 import java.util.Set;
@@ -32,7 +32,7 @@ import ua.com.foxminded.cars.dto.ModelDto;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class ModelControllerIntegrationTest extends KeycloakTestContainer {
+class ModelControllerIntegrationTest extends IntegrationTestContext {
     
     public static final int YEAR = 2020;
     public static final String MODEL_ID = "1";
@@ -57,7 +57,7 @@ class ModelControllerIntegrationTest extends KeycloakTestContainer {
     @Test
     void searchByManufacturerAndModelAndYear_ShouldReturnStaus200() throws Exception {
         mockMvc.perform(get("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
-                            MANUFACTURER_NAME, MODEL_NAME, YEAR).with(bearerTokenFor(USER_NAME_ADMIN)))
+                            MANUFACTURER, MODEL_NAME, YEAR).with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isOk());
     }
     
@@ -65,14 +65,14 @@ class ModelControllerIntegrationTest extends KeycloakTestContainer {
     void search_ShouldReturnStatus200_WhenParametersArePresent() throws Exception {
         mockMvc.perform(get("/v1/models").param("model", MODEL_NAME)
                                          .param("category", CATEGORY_NAME)
-                                         .param("manufacturer", MANUFACTURER_NAME)
+                                         .param("manufacturer", MANUFACTURER)
                                          .param("maxYear", String.valueOf(YEAR))
                                          .param("minYear", String.valueOf(YEAR))
                                          .with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.content", hasSize(1)))
                .andExpect(jsonPath("$.content[0].year", is(YEAR)))
-               .andExpect(jsonPath("$.content[0].manufacturer", is(MANUFACTURER_NAME)))
+               .andExpect(jsonPath("$.content[0].manufacturer", is(MANUFACTURER)))
                .andExpect(jsonPath("$.content[0].categories[0]", is(CATEGORY_NAME)));
     }
     
@@ -96,7 +96,7 @@ class ModelControllerIntegrationTest extends KeycloakTestContainer {
         String vehicleDtoJson = mapper.writeValueAsString(modelDto);
         
         mockMvc.perform(post("/v1/manufacturers/{manufacturer}/models/{name}/{year}", 
-                             MANUFACTURER_NAME, 
+                             MANUFACTURER, 
                              MODEL_NAME, 
                              notExistingProductionYear)
                     .contentType(APPLICATION_JSON)
@@ -111,7 +111,7 @@ class ModelControllerIntegrationTest extends KeycloakTestContainer {
         modelDtoJson = mapper.writeValueAsString(modelDto);
         
         mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
-                            MANUFACTURER_NAME, MODEL_NAME, YEAR)
+                            MANUFACTURER, MODEL_NAME, YEAR)
                     .contentType(APPLICATION_JSON)
                     .content(modelDtoJson)
                     .with(bearerTokenFor(USER_NAME_ADMIN)))

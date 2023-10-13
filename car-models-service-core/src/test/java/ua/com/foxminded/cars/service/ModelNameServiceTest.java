@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import ua.com.foxminded.cars.dto.ModelNameDto;
 import ua.com.foxminded.cars.entity.ModelName;
 import ua.com.foxminded.cars.exception.AlreadyExistsException;
+import ua.com.foxminded.cars.exception.DatabaseConstraintsException;
 import ua.com.foxminded.cars.exception.NotFoundException;
 import ua.com.foxminded.cars.mapper.ModelNameMapper;
 import ua.com.foxminded.cars.mapper.ModelNameMapperImpl;
@@ -91,12 +92,20 @@ class ModelNameServiceTest {
     }
     
     @Test
+    void deleteByName_ShouldThrow_WhenModelNameHasRelations() {
+        when(modelNameRepository.findById(MODEL_NAME)).thenReturn(Optional.of(modelName));
+        when(modelNameRepository.findByModelsModelNameName(MODEL_NAME)).thenReturn(Optional.of(modelName));
+        
+        assertThrows(DatabaseConstraintsException.class, () -> modelNameService.deleteByName(MODEL_NAME));
+    }
+    
+    @Test
     void deleteByName_ShouldThrow_WhenNoSuchModelName() {
         when(modelNameRepository.findById(MODEL_NAME)).thenReturn(Optional.empty());
         
         assertThrows(NotFoundException.class, () -> modelNameService.deleteByName(MODEL_NAME));
     }
-
+    
     @Test
     void getByName_ShouldGetModelName() {
         when(modelNameRepository.findById(MODEL_NAME)).thenReturn(Optional.of(modelName));

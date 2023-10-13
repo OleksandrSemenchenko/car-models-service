@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.cars.dto.ModelNameDto;
 import ua.com.foxminded.cars.entity.ModelName;
 import ua.com.foxminded.cars.exception.AlreadyExistsException;
+import ua.com.foxminded.cars.exception.DatabaseConstraintsException;
 import ua.com.foxminded.cars.exception.NotFoundException;
 import ua.com.foxminded.cars.mapper.ModelNameMapper;
 import ua.com.foxminded.cars.repository.ModelNameRepository;
@@ -19,7 +20,9 @@ import ua.com.foxminded.cars.repository.ModelNameRepository;
 @Transactional
 @RequiredArgsConstructor
 public class ModelNameService {
-
+    
+    public static final String MODEL_NAME_DATABASE_CONSTRAINT = 
+            "The model name '%s' has relations to models and cannot be removed";
     public static final String NO_MODEL_NAME = "The model name '%s' doesn't exist";
     public static final String MODEL_NAME_ALREADY_EXISTS = "The model name '%s' already exists";
 
@@ -42,6 +45,9 @@ public class ModelNameService {
 
     public void deleteByName(String name) {
         modelNameRepository.findById(name).orElseThrow(() -> new NotFoundException(String.format(NO_MODEL_NAME, name)));
+        modelNameRepository.findByModelsModelNameName(name).ifPresent(modelName -> {
+            throw new DatabaseConstraintsException(String.format(MODEL_NAME_DATABASE_CONSTRAINT, name));
+        });
         modelNameRepository.deleteById(name);
     }
 

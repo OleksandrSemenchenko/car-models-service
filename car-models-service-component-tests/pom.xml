@@ -5,7 +5,7 @@
     <parent>
         <groupId>ua.com.foxminded.cars</groupId>
         <artifactId>car-models-service</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.2-SNAPSHOT</version>
     </parent>
     <artifactId>car-models-service-component-tests</artifactId>
 
@@ -34,7 +34,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-            <!--            <scope>test</scope>-->
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.github.dasniko</groupId>

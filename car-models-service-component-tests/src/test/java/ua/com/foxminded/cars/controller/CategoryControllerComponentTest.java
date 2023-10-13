@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import ua.com.foxminded.cars.dto.CategoryDto;
-import ua.com.foxminded.cars.testcontainer.ComponentContext;
 
-class CategoryControllerComponentTest extends ComponentContext {
+
+class CategoryControllerComponentTest extends ComponentTestContext {
     
     public static final String CATEGORY_WITHOUT_RELATIONS = "Coupe";
     public static final String CATEGORY = "Sedan";
