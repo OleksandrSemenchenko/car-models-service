@@ -23,7 +23,6 @@
         <jkube.version>1.14.0</jkube.version>
         <testcontainers.version>1.18.3</testcontainers.version>
         <testcontainers-keycloak>3.0.0</testcontainers-keycloak>
-        <car-models-service-core.version>1.0.1-SNAPSHOT</car-models-service-core.version>
     </properties>
 
     <dependencyManagement>

@@ -3,6 +3,7 @@ package ua.com.foxminded.cars.controller;
 import static org.hamcrest.Matchers.hasSize;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 class ModelNameControllerComponentTest extends ComponentTestContext {
     
@@ -34,6 +35,14 @@ class ModelNameControllerComponentTest extends ComponentTestContext {
                      .exchange()
                      .expectStatus().isOk()
                      .expectBody().jsonPath("$.content", hasSize(2));
+    }
+    
+    @Test
+    void deleteByName_ShouldReturnStatus405_WhenModelNameHasDatabaseRelations() {
+        webTestClient.delete().uri("/v1/model-names/{name}", MODEL_NAME)
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .exchange()
+                     .expectStatus().isEqualTo(HttpStatus.METHOD_NOT_ALLOWED);
     }
     
     @Test
