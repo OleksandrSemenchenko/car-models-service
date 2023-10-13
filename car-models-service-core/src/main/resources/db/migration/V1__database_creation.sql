@@ -12,7 +12,7 @@ create table categories(
 
 create table models(
     id varchar primary key,
-    year integer not null,
+    model_year integer not null,
     manufacturer_name varchar references manufacturers(name) on update cascade not null,
     name varchar references model_names(name) on update cascade not null
 );

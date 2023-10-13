@@ -62,6 +62,14 @@ class ManufacturerControllerTest {
                                                  .content(manufacturerDtoJson))
                .andExpect(status().isConflict());
     }
+    
+    @Test
+    void deleteByName_ShouldReturnStatus405_WhenNotFoundException() throws Exception {
+        doThrow(NotFoundException.class).when(manufacturerService).deleteByName(MANUFACTURER_NAME);
+        
+        mockMvc.perform(delete("/v1/manufacturers/{name}", MANUFACTURER_NAME))
+               .andExpect(status().isNotFound());
+    }
 
     @Test
     void deleteByName_ShouldReturnStatus404_WhenNotFoundException() throws Exception {

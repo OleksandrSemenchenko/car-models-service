@@ -6,4 +6,5 @@ import ua.com.foxminded.cars.entity.Manufacturer;
 
 public interface ManufacturerRepository extends JpaRepository<Manufacturer, String> {
     
+    Manufacturer findByModelsManufacturerName(String name);
 }

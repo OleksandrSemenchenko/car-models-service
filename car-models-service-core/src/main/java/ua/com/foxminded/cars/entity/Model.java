@@ -2,6 +2,7 @@ package ua.com.foxminded.cars.entity;
 
 import java.util.Set;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,6 +38,8 @@ public class Model {
     private String id;
     
     @ToString.Include
+    @JoinColumn(name = "model_year")
+    @Column(name = "model_year")
     private Integer year;
     
     @ManyToOne
