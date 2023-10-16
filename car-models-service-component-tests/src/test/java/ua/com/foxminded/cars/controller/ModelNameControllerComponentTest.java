@@ -9,11 +9,11 @@ class ModelNameControllerComponentTest extends ComponentTestContext {
     
     public static final String MODEL_NAME = "A7";
     public static final String MODEL_NAME_WITHOUT_REALTIONS = "A8";
-    public static final String NOT_EXISTING_MODEL_NAME = "Mustang";
+    public static final String NEW_MODEL_NAME = "Mustang";
     
     @Test
     void getByName_ShouldReturnStatus200_WhenNoSuchModelName() {
-        webTestClient.get().uri("/v1/model-names/{name}",  NOT_EXISTING_MODEL_NAME)
+        webTestClient.get().uri("/v1/model-names/{name}",  NEW_MODEL_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isOk();
@@ -47,7 +47,7 @@ class ModelNameControllerComponentTest extends ComponentTestContext {
     
     @Test
     void deleteByName_ShouldReturnStatus404_WhenNoSuchModelName() {
-        webTestClient.delete().uri("/v1/model-names/{name}", NOT_EXISTING_MODEL_NAME)
+        webTestClient.delete().uri("/v1/model-names/{name}", NEW_MODEL_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isNotFound();

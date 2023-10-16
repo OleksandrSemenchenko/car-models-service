@@ -1,6 +1,6 @@
 package ua.com.foxminded.cars.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 
@@ -13,15 +13,16 @@ import ua.com.foxminded.cars.entity.Manufacturer;
 @DataJpaTest
 class ManufacturerRepositoryTest {
     
-    public static final String MANUFACTURER = "Audi";
+    public static final String MANUFACTURER_NAME_WITHOUT_RELATIONS = "Ford";
     
     @Autowired
     private ManufacturerRepository manufacturerRepsotory;
-
+    
     @Test
     void findByManufacturerModel_ShouldReturnManufacturer() {
-        Optional<Manufacturer> manufacturerOptional = manufacturerRepsotory.findByModelsManufacturerName(MANUFACTURER);
+        Optional<Manufacturer> manufacturerOptional = manufacturerRepsotory.findByModelsManufacturerName(
+                MANUFACTURER_NAME_WITHOUT_RELATIONS);
         
-        assertEquals(MANUFACTURER, manufacturerOptional.get().getName());
+        assertTrue(manufacturerOptional.isEmpty());
     }
 }

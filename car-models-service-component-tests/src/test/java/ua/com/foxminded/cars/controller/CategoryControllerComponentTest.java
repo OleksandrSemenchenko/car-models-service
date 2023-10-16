@@ -10,13 +10,13 @@ import ua.com.foxminded.cars.dto.CategoryDto;
 
 class CategoryControllerComponentTest extends ComponentTestContext {
     
-    public static final String CATEGORY_WITHOUT_RELATIONS = "Coupe";
-    public static final String CATEGORY = "Sedan";
-    public static final String NOT_EXISTING_CATEGORY = "Pickup";
+    public static final String CATEGORY_NAME_WITHOUT_RELATIONS = "Coupe";
+    public static final String CATEGORY_NAME = "Sedan";
+    public static final String NEW_CATEGORY_NAME = "Pickup";
     
     @Test
     void save_ShouldReturnStatus409_WhenSuchCategoryAlreadyExists() {
-        CategoryDto categoryDto = CategoryDto.builder().name(CATEGORY).build();
+        CategoryDto categoryDto = CategoryDto.builder().name(CATEGORY_NAME).build();
         
         webTestClient.post().uri("/v1/categories")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
@@ -27,19 +27,19 @@ class CategoryControllerComponentTest extends ComponentTestContext {
     
     @Test
     void save_ShouldReturnStatus201() {
-        CategoryDto categoryDto = CategoryDto.builder().name(NOT_EXISTING_CATEGORY).build();
+        CategoryDto categoryDto = CategoryDto.builder().name(NEW_CATEGORY_NAME).build();
         
         webTestClient.post().uri("/v1/categories")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(categoryDto)
                      .exchange()
                      .expectStatus().isCreated()
-                     .expectHeader().location(carModelServiceBaseUrl + "/v1/categories/" + NOT_EXISTING_CATEGORY);
+                     .expectHeader().location(carModelServiceBaseUrl + "/v1/categories/" + NEW_CATEGORY_NAME);
     }
     
     @Test
     void getByName_ShoudReturnStatus200_WhenNoSuchCategory() {
-        webTestClient.get().uri("/v1/categories/{category}", NOT_EXISTING_CATEGORY)
+        webTestClient.get().uri("/v1/categories/{category}", NEW_CATEGORY_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isOk();
@@ -47,11 +47,11 @@ class CategoryControllerComponentTest extends ComponentTestContext {
     
     @Test
     void getByName_ShouldReturnStatus200() {
-        webTestClient.get().uri("/v1/categories/{category}", CATEGORY)
+        webTestClient.get().uri("/v1/categories/{category}", CATEGORY_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isOk()
-                     .expectBody().jsonPath("$.name").isEqualTo(CATEGORY);
+                     .expectBody().jsonPath("$.name").isEqualTo(CATEGORY_NAME);
     }
     
     @Test
@@ -65,7 +65,7 @@ class CategoryControllerComponentTest extends ComponentTestContext {
     
     @Test
     void deleleteByName_ShouldReturnStatus404_WhenNoSuchCategory() {
-        webTestClient.delete().uri("/v1/categories/{category}", NOT_EXISTING_CATEGORY)
+        webTestClient.delete().uri("/v1/categories/{category}", NEW_CATEGORY_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isNotFound();
@@ -74,7 +74,7 @@ class CategoryControllerComponentTest extends ComponentTestContext {
 
     @Test
     void deleteByName_ShouldReturnStatus200() {
-        webTestClient.delete().uri("/v1/categories/{category}", CATEGORY)
+        webTestClient.delete().uri("/v1/categories/{category}", CATEGORY_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isNoContent()

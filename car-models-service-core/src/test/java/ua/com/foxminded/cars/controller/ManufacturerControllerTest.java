@@ -4,7 +4,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ua.com.foxminded.cars.controller.ManufacturerControllerIntegrationTest.MANUFACTURER;
+import static ua.com.foxminded.cars.controller.ManufacturerControllerIntegrationTest.MANUFACTURER_NAME;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ class ManufacturerControllerTest {
     
     @BeforeEach
     void setUp() {
-        manufacturerDto = ManufacturerDto.builder().name(MANUFACTURER).build();
+        manufacturerDto = ManufacturerDto.builder().name(MANUFACTURER_NAME).build();
     }
     
     @Test
@@ -67,17 +67,17 @@ class ManufacturerControllerTest {
     
     @Test
     void deleteByName_ShouldReturnStatus405_WhenDatabaseConstraintsException() throws Exception {
-        doThrow(DatabaseConstraintsException.class).when(manufacturerService).deleteByName(MANUFACTURER);
+        doThrow(DatabaseConstraintsException.class).when(manufacturerService).deleteByName(MANUFACTURER_NAME);
         
-        mockMvc.perform(delete("/v1/manufacturers/{name}", MANUFACTURER))
+        mockMvc.perform(delete("/v1/manufacturers/{name}", MANUFACTURER_NAME))
                .andExpect(status().isMethodNotAllowed());
     }
 
     @Test
     void deleteByName_ShouldReturnStatus404_WhenNotFoundException() throws Exception {
-        doThrow(NotFoundException.class).when(manufacturerService).deleteByName(MANUFACTURER);
+        doThrow(NotFoundException.class).when(manufacturerService).deleteByName(MANUFACTURER_NAME);
         
-        mockMvc.perform(delete("/v1/manufacturers/{name}", MANUFACTURER))
+        mockMvc.perform(delete("/v1/manufacturers/{name}", MANUFACTURER_NAME))
                .andExpect(status().isNotFound());
     }
 }

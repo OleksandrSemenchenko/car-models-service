@@ -27,8 +27,8 @@ import ua.com.foxminded.cars.dto.ManufacturerDto;
 @Transactional
 class ManufacturerControllerIntegrationTest extends IntegrationTestContext {
     
-    public static final String MANUFACTURER = "Audi";
-    public static final String MANUFACTURER_WITHOUT_RELATIONS = "Ford";
+    public static final String MANUFACTURER_NAME = "Audi";
+    public static final String MANUFACTURER_NAME_WITHOUT_RELATIONS = "Ford";
     
     @Autowired
     private MockMvc mockMvc;
@@ -41,14 +41,14 @@ class ManufacturerControllerIntegrationTest extends IntegrationTestContext {
     
     @BeforeEach
     void setUp() {
-        manufacturerDto = ManufacturerDto.builder().name(MANUFACTURER).build();
+        manufacturerDto = ManufacturerDto.builder().name(MANUFACTURER_NAME).build();
     }
     
     @Test
     void getByName_ShouldReturnStatus200() throws Exception {
         manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
         
-        mockMvc.perform(get("/v1/manufacturers/{name}", MANUFACTURER).with(bearerTokenFor(USER_NAME_ADMIN)))
+        mockMvc.perform(get("/v1/manufacturers/{name}", MANUFACTURER_NAME).with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isOk())
                .andExpect(content().json(manufacturerDtoJson));
     }
@@ -57,7 +57,7 @@ class ManufacturerControllerIntegrationTest extends IntegrationTestContext {
     void getAll_ShouldReturnStatus200() throws Exception {
         mockMvc.perform(get("/v1/manufacturers").with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$.content[0].name", MANUFACTURER).exists());
+               .andExpect(jsonPath("$.content[0].name", MANUFACTURER_NAME).exists());
     }
     
     @Test
@@ -76,7 +76,7 @@ class ManufacturerControllerIntegrationTest extends IntegrationTestContext {
     
     @Test
     void deleteByName_ShouldReturnStatus204() throws Exception {
-        mockMvc.perform(delete("/v1/manufacturers/{name}", MANUFACTURER_WITHOUT_RELATIONS)
+        mockMvc.perform(delete("/v1/manufacturers/{name}", MANUFACTURER_NAME_WITHOUT_RELATIONS)
                     .with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isNoContent());
     }

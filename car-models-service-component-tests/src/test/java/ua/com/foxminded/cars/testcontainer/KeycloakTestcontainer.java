@@ -9,10 +9,6 @@ import ua.com.foxminded.cars.controller.ComponentTestContext;
 
 public class KeycloakTestcontainer extends ExtendableKeycloakContainer<KeycloakTestcontainer> {
     
-    public KeycloakTestcontainer() {
-        super();
-    }
-
     @Override
     protected void configure() {
         super.configure();

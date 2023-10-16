@@ -12,13 +12,13 @@ import ua.com.foxminded.cars.dto.ManufacturerDto;
 
 class ManufacturerControllerComponentTest extends ComponentTestContext {
     
-    public static final String MANUFACTURER = "Audi";
-    public static final String MANUFACTURER_WITHOUT_RELATIONS = "Ford";
-    public static final String NOT_EXISTING_MANUFACTURER = "BMW";
+    public static final String MANUFACTURER_NAME = "Audi";
+    public static final String MANUFACTURER_NAME_WITHOUT_RELATIONS = "Ford";
+    public static final String NEW_MANUFACTURER_NAME = "BMW";
     
     @Test
     void getByName_ShouldReturnStatus200_WhenNoSuchManufacturer() {
-        webTestClient.get().uri("/v1/manufacturers/{manufacturer}", NOT_EXISTING_MANUFACTURER)
+        webTestClient.get().uri("/v1/manufacturers/{manufacturer}", NEW_MANUFACTURER_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isOk();
@@ -26,11 +26,11 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
     
     @Test
     void getByName_ShouldReturnStatus200() {
-        webTestClient.get().uri("/v1/manufacturers/{manufacturer}", MANUFACTURER)
+        webTestClient.get().uri("/v1/manufacturers/{manufacturer}", MANUFACTURER_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isOk()
-                     .expectBody().jsonPath("$['name']").isEqualTo(MANUFACTURER);
+                     .expectBody().jsonPath("$['name']").isEqualTo(MANUFACTURER_NAME);
     }
     
     @Test
@@ -44,7 +44,7 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
     
     @Test
     void save_ShouldReturnStatus409_WhenManufacturerAlreadyExists() throws JsonProcessingException {
-        ManufacturerDto manufacturerDto = ManufacturerDto.builder().name(MANUFACTURER).build();
+        ManufacturerDto manufacturerDto = ManufacturerDto.builder().name(MANUFACTURER_NAME).build();
         
         webTestClient.post().uri("/v1/manufacturers")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
@@ -70,7 +70,7 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
     
     @Test
     void delete_ShouldReturnStatus405_WhenManufacturerHasDatabaseConstraints() {
-        webTestClient.delete().uri("/v1/manufacturers/{manufacturer}", MANUFACTURER)
+        webTestClient.delete().uri("/v1/manufacturers/{manufacturer}", MANUFACTURER_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isEqualTo(HttpStatus.METHOD_NOT_ALLOWED);
@@ -78,7 +78,7 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
     
     @Test
     void delete_ShouldReturnStatus404_WhenNoManufacturer() {
-        webTestClient.delete().uri("/v1/manufacturers/{manufacturer}", NOT_EXISTING_MANUFACTURER)
+        webTestClient.delete().uri("/v1/manufacturers/{manufacturer}", NEW_MANUFACTURER_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isNotFound();
@@ -86,7 +86,7 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
     
     @Test
     void delete_ShouldReturnStatus204_WhenManufacturerExists() {
-        webTestClient.delete().uri("/v1/manufacturers/{manufacturer}", MANUFACTURER_WITHOUT_RELATIONS)
+        webTestClient.delete().uri("/v1/manufacturers/{manufacturer}", MANUFACTURER_NAME_WITHOUT_RELATIONS)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isNoContent()

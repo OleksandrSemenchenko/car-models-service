@@ -13,15 +13,16 @@ import ua.com.foxminded.cars.entity.ModelName;
 @DataJpaTest
 class ModelNameTest {
     
-    public static final String MODEL_NAME = "A7";
+    public static final String MODEL_NAME_WITHOUT_RELATIONS = "A8";
     
     @Autowired
     private ModelNameRepository modelNameRepository;
 
     @Test
     void findByModelsModelNameName_ShouldReturnModelName() {
-        Optional<ModelName> modelNameOptional = modelNameRepository.findByModelsModelNameName(MODEL_NAME);
+        Optional<ModelName> modelNameOptional = modelNameRepository.findByModelsModelNameName(
+                MODEL_NAME_WITHOUT_RELATIONS);
         
-        assertEquals(MODEL_NAME, modelNameOptional.get().getName());
+        assertTrue(modelNameOptional.isEmpty());
     }
 }
