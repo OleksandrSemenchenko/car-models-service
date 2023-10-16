@@ -3,6 +3,7 @@ package ua.com.foxminded.cars.controller;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.representations.adapters.config.PolicyEnforcerConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -14,7 +15,6 @@ import org.testcontainers.ext.ScriptUtils;
 import org.testcontainers.jdbc.JdbcDatabaseDelegate;
 
 import lombok.extern.slf4j.Slf4j;
-import ua.com.foxminded.cars.config.KeycloakConfig;
 import ua.com.foxminded.cars.config.TestConfig;
 import ua.com.foxminded.cars.testcontainer.KeycloakTestcontainer;
 
@@ -28,6 +28,7 @@ public abstract class ComponentTestContext {
     public static final String DATABASE_ALIAS = "postgres";
     public static final String AUTHORIZATION_SERVER_ALIAS = "keycloak";
     public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String CLIENT_SECRET = "secret";
     
     private static Network network = Network.newNetwork();
     
@@ -71,7 +72,7 @@ public abstract class ComponentTestContext {
     }
     
     @Autowired
-    private KeycloakConfig keycloakConfig;
+    private PolicyEnforcerConfig policyEnforcerConfig;
     
     @BeforeEach
     void setUp() {
@@ -91,18 +92,14 @@ public abstract class ComponentTestContext {
     
     private String getBearerToken(String username, String password) {
         Keycloak keycloakInstance = Keycloak.getInstance(keycloak.getAuthServerUrl(),
-                                                         keycloakConfig.getRealm(),
+                                                         policyEnforcerConfig.getRealm(),
                                                          username,
                                                          password,
-                                                         keycloakConfig.getResource(),
-                                                         keycloakConfig.getSecret());
-        String accessToken = "";
+                                                         policyEnforcerConfig.getResource(),
+                                                         policyEnforcerConfig.getCredentials()
+                                                                             .get(CLIENT_SECRET).toString());
         
-        try {
-            accessToken = keycloakInstance.tokenManager().getAccessTokenString();
-        } catch (Exception e) {
-            log.error("Access token error", e);
-        }
+        String accessToken = keycloakInstance.tokenManager().getAccessTokenString();
         return "Bearer " + accessToken;
     }
 }

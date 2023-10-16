@@ -1,14 +1,22 @@
 package ua.com.foxminded.cars.config;
 
+import org.keycloak.representations.adapters.config.PolicyEnforcerConfig;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Configuration
-@ComponentScan("ua.com.foxminded.cars.config")
+@ConfigurationPropertiesScan("ua.com.foxminded.cars.config")
 public class TestConfig {
+    
+    @Bean
+    @ConfigurationProperties("keycloak.policy-enforcer-config")
+    PolicyEnforcerConfig policyEnforcerConfigy() {
+        return new PolicyEnforcerConfig();
+    }
     
     @Bean
     ObjectMapper objectMapper() {
