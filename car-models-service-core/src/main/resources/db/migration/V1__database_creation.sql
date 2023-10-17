@@ -18,6 +18,6 @@ create table models(
 );
 
 create table model_category(
-    model_id varchar references models(id) on update cascade on delete cascade,
-    category_name varchar references categories(name) on update cascade on delete cascade
+    model_id varchar references models(id) on update cascade not null,
+    category_name varchar references categories(name) on update cascade not null
 );
