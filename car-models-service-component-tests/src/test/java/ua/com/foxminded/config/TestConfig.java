@@ -1,4 +1,4 @@
-package ua.com.foxminded.cars.config;
+package ua.com.foxminded.config;
 
 import org.keycloak.representations.adapters.config.PolicyEnforcerConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Configuration
-@ConfigurationPropertiesScan("ua.com.foxminded.cars.config")
+@ConfigurationPropertiesScan("ua.com.foxminded.config")
 public class TestConfig {
     
     @Bean

@@ -27,6 +27,7 @@ import ua.com.foxminded.dto.ManufacturerDto;
 @Transactional
 class ManufacturerControllerIntegrationTest extends IntegrationTestContext {
     
+    public static final String NEW_MANUFACTURER_NAME = "Mercedes-Benz";
     public static final String MANUFACTURER_NAME = "Audi";
     public static final String MANUFACTURER_NAME_WITHOUT_RELATIONS = "Ford";
     
@@ -62,8 +63,7 @@ class ManufacturerControllerIntegrationTest extends IntegrationTestContext {
     
     @Test
     void save_ShouldReturnStatus201() throws Exception {
-        String notExistingManufacturer = "Mercedes-Benz";
-        manufacturerDto.setName(notExistingManufacturer);
+        manufacturerDto.setName(NEW_MANUFACTURER_NAME);
         manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
         
         mockMvc.perform(post("/v1/manufacturers")
@@ -71,7 +71,7 @@ class ManufacturerControllerIntegrationTest extends IntegrationTestContext {
                     .content(manufacturerDtoJson)
                     .with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isCreated())
-               .andExpect(header().string("Location", containsString("/v1/manufacturers/" + notExistingManufacturer)));
+               .andExpect(header().string("Location", containsString("/v1/manufacturers/" + NEW_MANUFACTURER_NAME)));
     }
     
     @Test

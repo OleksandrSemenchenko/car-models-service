@@ -1,16 +1,16 @@
-package ua.com.foxminded.cars.controller;
+package ua.com.foxminded.controller;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
-import static ua.com.foxminded.cars.controller.CategoryControllerComponentTest.CATEGORY_NAME;
-import static ua.com.foxminded.cars.controller.CategoryControllerComponentTest.CATEGORY_NAME_WITHOUT_RELATIONS;
-import static ua.com.foxminded.cars.controller.CategoryControllerComponentTest.NEW_CATEGORY_NAME;
-import static ua.com.foxminded.cars.controller.ManufacturerControllerComponentTest.MANUFACTURER_NAME;
-import static ua.com.foxminded.cars.controller.ManufacturerControllerComponentTest.MANUFACTURER_NAME_WITHOUT_RELATIONS;
-import static ua.com.foxminded.cars.controller.ManufacturerControllerComponentTest.NEW_MANUFACTURER_NAME;
-import static ua.com.foxminded.cars.controller.ModelNameControllerComponentTest.MODEL_NAME;
-import static ua.com.foxminded.cars.controller.ModelNameControllerComponentTest.MODEL_NAME_WITHOUT_RELATIONS;
-import static ua.com.foxminded.cars.controller.ModelNameControllerComponentTest.NEW_MODEL_NAME;
+import static ua.com.foxminded.controller.CategoryControllerComponentTest.CATEGORY_NAME;
+import static ua.com.foxminded.controller.CategoryControllerComponentTest.CATEGORY_NAME_WITHOUT_RELATIONS;
+import static ua.com.foxminded.controller.CategoryControllerComponentTest.NEW_CATEGORY_NAME;
+import static ua.com.foxminded.controller.ManufacturerControllerComponentTest.MANUFACTURER_NAME;
+import static ua.com.foxminded.controller.ManufacturerControllerComponentTest.MANUFACTURER_NAME_WITHOUT_RELATIONS;
+import static ua.com.foxminded.controller.ManufacturerControllerComponentTest.NEW_MANUFACTURER_NAME;
+import static ua.com.foxminded.controller.ModelNameControllerComponentTest.MODEL_NAME;
+import static ua.com.foxminded.controller.ModelNameControllerComponentTest.MODEL_NAME_WITHOUT_RELATIONS;
+import static ua.com.foxminded.controller.ModelNameControllerComponentTest.NEW_MODEL_NAME;
 import static ua.com.foxminded.service.CategoryService.NO_CATEGORY;
 import static ua.com.foxminded.service.ManufacturerService.NO_MANUFACTURER;
 import static ua.com.foxminded.service.ModelNameService.NO_MODEL_NAME;

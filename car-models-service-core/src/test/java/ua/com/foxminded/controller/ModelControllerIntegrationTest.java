@@ -34,7 +34,8 @@ import ua.com.foxminded.dto.ModelDto;
 @Transactional
 class ModelControllerIntegrationTest extends IntegrationTestContext {
     
-    public static final int YEAR = 2020;
+    public static final int NEW_MODEL_YEAR = 2023;
+    public static final int MODEL_YEAR = 2020;
     public static final String MODEL_ID = "1";
     
     @Autowired
@@ -49,7 +50,7 @@ class ModelControllerIntegrationTest extends IntegrationTestContext {
     @BeforeEach
     void SetUp() {
         modelDto = ModelDto.builder().id(MODEL_ID)
-                                     .year(YEAR)
+                                     .year(MODEL_YEAR)
                                      .categories(Set.of(CATEGORY_NAME))
                                      .build();
     }
@@ -57,7 +58,7 @@ class ModelControllerIntegrationTest extends IntegrationTestContext {
     @Test
     void searchByManufacturerAndModelAndYear_ShouldReturnStaus200() throws Exception {
         mockMvc.perform(get("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
-                            MANUFACTURER_NAME, MODEL_NAME, YEAR).with(bearerTokenFor(USER_NAME_ADMIN)))
+                            MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR).with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isOk());
     }
     
@@ -66,12 +67,12 @@ class ModelControllerIntegrationTest extends IntegrationTestContext {
         mockMvc.perform(get("/v1/models").param("model", MODEL_NAME)
                                          .param("category", CATEGORY_NAME)
                                          .param("manufacturer", MANUFACTURER_NAME)
-                                         .param("maxYear", String.valueOf(YEAR))
-                                         .param("minYear", String.valueOf(YEAR))
+                                         .param("maxYear", String.valueOf(MODEL_YEAR))
+                                         .param("minYear", String.valueOf(MODEL_YEAR))
                                          .with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.content", hasSize(1)))
-               .andExpect(jsonPath("$.content[0].year", is(YEAR)))
+               .andExpect(jsonPath("$.content[0].year", is(MODEL_YEAR)))
                .andExpect(jsonPath("$.content[0].manufacturer", is(MANUFACTURER_NAME)))
                .andExpect(jsonPath("$.content[0].categories[0]", is(CATEGORY_NAME)));
     }
@@ -92,13 +93,12 @@ class ModelControllerIntegrationTest extends IntegrationTestContext {
     
     @Test
     void save_ShouldReturnStatus201() throws Exception {
-        int notExistingProductionYear = 2023;
         String vehicleDtoJson = mapper.writeValueAsString(modelDto);
         
         mockMvc.perform(post("/v1/manufacturers/{manufacturer}/models/{name}/{year}", 
                              MANUFACTURER_NAME, 
                              MODEL_NAME, 
-                             notExistingProductionYear)
+                             NEW_MODEL_YEAR)
                     .contentType(APPLICATION_JSON)
                     .content(vehicleDtoJson)
                     .with(bearerTokenFor(USER_NAME_ADMIN)))
@@ -111,7 +111,7 @@ class ModelControllerIntegrationTest extends IntegrationTestContext {
         modelDtoJson = mapper.writeValueAsString(modelDto);
         
         mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
-                            MANUFACTURER_NAME, MODEL_NAME, YEAR)
+                            MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR)
                     .contentType(APPLICATION_JSON)
                     .content(modelDtoJson)
                     .with(bearerTokenFor(USER_NAME_ADMIN)))

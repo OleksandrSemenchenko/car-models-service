@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ua.com.foxminded.controller.CategoryControllerIntegrationTest.CATEGORY_NAME;
 import static ua.com.foxminded.controller.ManufacturerControllerIntegrationTest.MANUFACTURER_NAME;
 import static ua.com.foxminded.controller.ModelControllerIntegrationTest.MODEL_ID;
-import static ua.com.foxminded.controller.ModelControllerIntegrationTest.YEAR;
+import static ua.com.foxminded.controller.ModelControllerIntegrationTest.MODEL_YEAR;
 import static ua.com.foxminded.controller.ModelNameControllerIntegrationTest.MODEL_NAME;
 
 import java.util.Set;
@@ -48,7 +48,7 @@ class ModelControllerTest {
     @BeforeEach
     void setUp() {
         modelDto = ModelDto.builder().id(MODEL_ID)
-                                     .year(YEAR)
+                                     .year(MODEL_YEAR)
                                      .manufacturer(MANUFACTURER_NAME)
                                      .name(MODEL_NAME)
                                      .categories(Set.of(CATEGORY_NAME))
@@ -79,7 +79,7 @@ class ModelControllerTest {
         modelDtoJson = mapper.writeValueAsString(modelDto);
         
         mockMvc.perform(post("/v1/manufacturers/{manufacturers}/models/{modle}/{year}", 
-                             MANUFACTURER_NAME, MODEL_NAME, YEAR, MODEL_ID)
+                             MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR, MODEL_ID)
                     .contentType(APPLICATION_JSON)
                     .content(modelDtoJson))
                .andExpect(status().isConflict());
@@ -103,7 +103,7 @@ class ModelControllerTest {
         modelDtoJson = mapper.writeValueAsString(modelDto);
         
         mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
-                            MANUFACTURER_NAME, MODEL_NAME, YEAR, MODEL_ID)
+                            MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR, MODEL_ID)
                     .contentType(APPLICATION_JSON)
                     .content(modelDtoJson))
                .andExpect(status().isBadRequest());
@@ -115,7 +115,7 @@ class ModelControllerTest {
         modelDtoJson = mapper.writeValueAsString(modelDto);
         
         mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
-                            MANUFACTURER_NAME, MODEL_NAME, YEAR)
+                            MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR)
                     .contentType(APPLICATION_JSON)
                     .content(modelDtoJson))
                .andExpect(status().isNotFound());
@@ -127,7 +127,7 @@ class ModelControllerTest {
         modelDtoJson = mapper.writeValueAsString(modelDto);
 
         mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
-                            MANUFACTURER_NAME, MODEL_NAME, YEAR)
+                            MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR)
                     .contentType(APPLICATION_JSON)
                     .content(modelDtoJson))
                .andExpect(status().isBadRequest());

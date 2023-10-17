@@ -1,4 +1,4 @@
-package ua.com.foxminded.cars.controller;
+package ua.com.foxminded.controller;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_JSON;

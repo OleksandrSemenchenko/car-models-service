@@ -68,7 +68,7 @@ class CategoryServiceTest {
     }
     
     @Test
-    void save_ShouldThrow_WhenSuchCategoryAlreadyExists() {
+    void save_ShouldThrowAlreadyExistsException_WhenSuchCategoryAlreadyExists() {
         when(categoryRepository.existsById(categoryDto.getName())).thenReturn(true);
         
         assertThrows(AlreadyExistsException.class, () -> categoryService.save(categoryDto));
@@ -96,7 +96,7 @@ class CategoryServiceTest {
     }
     
     @Test
-    void deleteByName_ShouldThrow_WhenCategoryHasRelations() {
+    void deleteByName_ShouldThrowDatabaseConstraintException_WhenCategoryHasRelations() {
         Model model = Model.builder().id(ModelServiceTest.MODEL_ID).build();
         category.setModels(Set.of(model));
         when(categoryRepository.findById(CATEGORY_NAME)).thenReturn(Optional.of(category));
@@ -105,14 +105,14 @@ class CategoryServiceTest {
     }
     
     @Test
-    void deleteByName_ShouldThrow_WhenNoSuchCategory() {
+    void deleteByName_ShouldThrowNotFoundException_WhenNoSuchCategory() {
         when(categoryRepository.findById(CATEGORY_NAME)).thenReturn(Optional.empty());
         
         assertThrows(NotFoundException.class, () -> categoryService.deleleteByName(CATEGORY_NAME));
     }
     
     @Test
-    void getByName_ShouldThrow_WhenNoSuchCategory() {
+    void getByName_ShouldThrowNotFountException_WhenNoSuchCategory() {
         when(categoryRepository.findById(NEW_CATEGORY_NAME)).thenReturn(Optional.empty());
         
         assertThrows(NotFoundException.class, () -> categoryService.getByName(NEW_CATEGORY_NAME));

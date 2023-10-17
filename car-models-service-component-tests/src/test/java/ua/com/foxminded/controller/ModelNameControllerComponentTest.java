@@ -1,4 +1,4 @@
-package ua.com.foxminded.cars.controller;
+package ua.com.foxminded.controller;
 
 import static org.hamcrest.Matchers.hasSize;
 import static ua.com.foxminded.service.ModelNameService.MODEL_NAME_ALREADY_EXISTS;

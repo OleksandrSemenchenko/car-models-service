@@ -1,4 +1,4 @@
-package ua.com.foxminded.cars.controller;
+package ua.com.foxminded.controller;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,8 +15,8 @@ import org.testcontainers.ext.ScriptUtils;
 import org.testcontainers.jdbc.JdbcDatabaseDelegate;
 
 import lombok.extern.slf4j.Slf4j;
-import ua.com.foxminded.cars.config.TestConfig;
-import ua.com.foxminded.cars.testcontainer.KeycloakTestcontainer;
+import ua.com.foxminded.config.TestConfig;
+import ua.com.foxminded.testcontainer.KeycloakTestcontainer;
 
 @Slf4j
 @SpringBootTest(classes = TestConfig.class)

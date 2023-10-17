@@ -69,7 +69,7 @@ class ModelNameServiceTest {
     }
     
     @Test
-    void save_ShouldThrow_WhenNoSuchModelName() {
+    void save_ShouldThrowAlreadyExistsException_WhenNoSuchModelName() {
         when(modelNameRepository.existsById(modelNameDto.getName())).thenReturn(true);
         
         assertThrows(AlreadyExistsException.class, () -> modelNameService.save(modelNameDto));
@@ -98,7 +98,7 @@ class ModelNameServiceTest {
     }
     
     @Test
-    void deleteByName_ShouldThrow_WhenModelNameHasRelations() {
+    void deleteByName_ShouldThrowDatabaseConstraintException_WhenModelNameHasRelations() {
         Model model = Model.builder().id(MODEL_ID).build();
         modelName.setModels(Set.of(model));
         when(modelNameRepository.findById(MODEL_NAME)).thenReturn(Optional.of(modelName));
@@ -107,14 +107,14 @@ class ModelNameServiceTest {
     }
     
     @Test
-    void deleteByName_ShouldThrow_WhenNoSuchModelName() {
+    void deleteByName_ShouldThrowNotFoundException_WhenNoSuchModelName() {
         when(modelNameRepository.findById(NEW_MODEL_NAME)).thenReturn(Optional.empty());
         
         assertThrows(NotFoundException.class, () -> modelNameService.deleteByName(NEW_MODEL_NAME));
     }
     
     @Test
-    void getByName_ShouldThrow_WhenNoSuchModelName() {
+    void getByName_ShouldThrowNotFoundException_WhenNoSuchModelName() {
         when(modelNameRepository.findById(NEW_MODEL_NAME)).thenReturn(Optional.empty());
         
         assertThrows(NotFoundException.class, () -> modelNameService.getByName(NEW_MODEL_NAME));

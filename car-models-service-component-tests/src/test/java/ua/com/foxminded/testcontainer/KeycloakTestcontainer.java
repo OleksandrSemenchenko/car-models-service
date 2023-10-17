@@ -1,11 +1,11 @@
-package ua.com.foxminded.cars.testcontainer;
+package ua.com.foxminded.testcontainer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import dasniko.testcontainers.keycloak.ExtendableKeycloakContainer;
-import ua.com.foxminded.cars.controller.ComponentTestContext;
+import ua.com.foxminded.controller.ComponentTestContext;
 
 public class KeycloakTestcontainer extends ExtendableKeycloakContainer<KeycloakTestcontainer> {
     

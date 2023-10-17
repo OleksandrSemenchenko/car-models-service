@@ -67,7 +67,7 @@ class ManufacturerServiceTest {
     }
     
     @Test
-    void save_ShouldThrow_WhenNoSuchManufacturer() {
+    void save_ShouldThrowAlreadyExistsExcepion_WhenNoSuchManufacturer() {
         when(manufacturerRepository.existsById(manufacturerDto.getName())).thenReturn(true);
         
         assertThrows(AlreadyExistsException.class, () -> manufacturerService.save(manufacturerDto));
@@ -96,7 +96,7 @@ class ManufacturerServiceTest {
     }
     
     @Test
-    void deleteByName_ShouldThrow_WhenManufacturerHasRelations() {
+    void deleteByName_ShouldThrowDatabaseConstraintException_WhenManufacturerHasRelations() {
         Model model = Model.builder().id(MODEL_ID).build();
         manufacturer.setModels(Set.of(model));
         when(manufacturerRepository.findById(MANUFACTURER_NAME)).thenReturn(Optional.of(manufacturer));
@@ -105,7 +105,7 @@ class ManufacturerServiceTest {
     }
     
     @Test
-    void deleteByName_ShouldThrow_WhenNoSuchManufacturer() {
+    void deleteByName_ShouldThrowNotFoundException_WhenNoSuchManufacturer() {
         when(manufacturerRepository.findById(MANUFACTURER_NAME)).thenReturn(Optional.empty());
         
         assertThrows(NotFoundException.class, () -> manufacturerService.deleteByName(MANUFACTURER_NAME));

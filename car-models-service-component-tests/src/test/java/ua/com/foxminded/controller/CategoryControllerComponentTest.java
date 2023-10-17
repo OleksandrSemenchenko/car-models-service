@@ -1,4 +1,4 @@
-package ua.com.foxminded.cars.controller;
+package ua.com.foxminded.controller;
 
 import static org.hamcrest.Matchers.hasSize;
 import static ua.com.foxminded.service.CategoryService.CATEGORY_ALREADY_EXISTS;
@@ -89,7 +89,7 @@ class CategoryControllerComponentTest extends ComponentTestContext {
     }
 
     @Test
-    void deleteByName_ShouldReturnStatus200() {
+    void deleteByName_ShouldReturnStatus204() {
         webTestClient.delete().uri("/v1/categories/{category}", CATEGORY_NAME_WITHOUT_RELATIONS)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()

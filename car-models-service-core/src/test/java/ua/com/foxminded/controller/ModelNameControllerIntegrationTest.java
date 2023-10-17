@@ -26,6 +26,7 @@ import ua.com.foxminded.dto.ModelNameDto;
 @AutoConfigureMockMvc
 class ModelNameControllerIntegrationTest extends IntegrationTestContext {
     
+    public static final String NEW_MODEL_NAME = "Fusion";
     public static final String MODEL_NAME = "A7";
     public static final String MODEL_NAME_WITHOUT_RELATIONS = "A8";
 
@@ -45,15 +46,14 @@ class ModelNameControllerIntegrationTest extends IntegrationTestContext {
     
     @Test
     void save_ShouldReturnStatus201() throws Exception {
-        String newModelName = "Fusion";
-        modelNameDto.setName(newModelName);
+        modelNameDto.setName(NEW_MODEL_NAME);
         modelNameDtoJson = mapper.writeValueAsString(modelNameDto);
         
         mockMvc.perform(post("/v1/model-names").contentType(MediaType.APPLICATION_JSON)
                                                .content(modelNameDtoJson)
                                                .with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isCreated())
-               .andExpect(header().string("Location", containsString("/v1/model-names/" + newModelName)));
+               .andExpect(header().string("Location", containsString("/v1/model-names/" + NEW_MODEL_NAME)));
     }
     
     @Test
