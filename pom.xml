@@ -9,7 +9,7 @@
         <version>3.1.4</version>
         <relativePath />
     </parent>
-    <groupId>ua.com.foxminded.cars</groupId>
+    <groupId>ua.com.foxminded</groupId>
     <artifactId>car-models-service</artifactId>
     <version>1.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -28,7 +28,7 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>ua.com.foxminded.cars</groupId>
+                <groupId>ua.com.foxminded</groupId>
                 <artifactId>car-models-service-core</artifactId>
                 <version>${project.version}</version>
             </dependency>

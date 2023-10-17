@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.hasSize;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-import ua.com.foxminded.cars.dto.CategoryDto;
+import ua.com.foxminded.dto.CategoryDto;
 
 
 class CategoryControllerComponentTest extends ComponentTestContext {

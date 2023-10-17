@@ -3,7 +3,6 @@ package ua.com.foxminded.service;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static ua.com.foxminded.service.ModelServiceTest.MODEL_ID;
 
 import java.util.Arrays;
 import java.util.HashSet;

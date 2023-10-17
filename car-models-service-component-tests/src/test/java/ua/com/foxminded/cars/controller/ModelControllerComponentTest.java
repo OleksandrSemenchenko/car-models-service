@@ -16,7 +16,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-import ua.com.foxminded.cars.dto.ModelDto;
+import ua.com.foxminded.dto.ModelDto;
 
 class ModelControllerComponentTest extends ComponentTestContext {
     

@@ -30,20 +30,19 @@ public abstract class ComponentTestContext {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String CLIENT_SECRET = "secret";
     
-    private static Network network = Network.newNetwork();
-    
-    public static KeycloakTestcontainer keycloak;
-    public static PostgreSQLContainer<?> postgres;
-    public static GenericContainer<?> carsModelsService;
     public static WebTestClient webTestClient;
     public static String carModelServiceBaseUrl;
+    
+    private static Network network = Network.newNetwork();
+    private static KeycloakTestcontainer keycloak;
+    private static PostgreSQLContainer<?> postgres;
+    private static GenericContainer<?> carsModelsService;
     
     static {
         keycloak = new KeycloakTestcontainer()
                 .withRealmImportFile(REALM_CONFIG_FILE_PATH)
                 .withNetworkAliases(AUTHORIZATION_SERVER_ALIAS)
                 .withContextPath("/auth")
-                .withExposedPorts(8080)
                 .withNetwork(network)
                 .withLogConsumer(new Slf4jLogConsumer(log));
         keycloak.start();
@@ -57,7 +56,7 @@ public abstract class ComponentTestContext {
                 .withLogConsumer(new Slf4jLogConsumer(log));
         postgres.start();
         
-        carsModelsService = new GenericContainer<>("cars/car-models-service-core:latest")
+        carsModelsService = new GenericContainer<>("foxminded/car-models-service-core:latest")
                 .withExposedPorts(8180)
                 .withNetwork(network)
                 .withEnv("KEYCLOAK_HOST", AUTHORIZATION_SERVER_ALIAS)

@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import ua.com.foxminded.cars.dto.ManufacturerDto;
+import ua.com.foxminded.dto.ManufacturerDto;
 
 class ManufacturerControllerComponentTest extends ComponentTestContext {
     
