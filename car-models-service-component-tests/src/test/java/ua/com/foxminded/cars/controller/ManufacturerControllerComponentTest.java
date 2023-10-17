@@ -2,6 +2,9 @@ package ua.com.foxminded.cars.controller;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static ua.com.foxminded.service.ManufacturerService.MANUFACTURER_ALREADY_EXISTS;
+import static ua.com.foxminded.service.ManufacturerService.MANUFACTURER_DATABASE_CONSTRAINT;
+import static ua.com.foxminded.service.ManufacturerService.NO_MANUFACTURER;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -17,11 +20,13 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
     public static final String NEW_MANUFACTURER_NAME = "BMW";
     
     @Test
-    void getByName_ShouldReturnStatus200_WhenNoSuchManufacturer() {
+    void getByName_ShouldReturnStatus404_WhenNoSuchManufacturer() {
         webTestClient.get().uri("/v1/manufacturers/{manufacturer}", NEW_MANUFACTURER_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
-                     .expectStatus().isOk();
+                     .expectStatus().isNotFound()
+                     .expectBody().jsonPath("$.message").isEqualTo(
+                             String.format(NO_MANUFACTURER, NEW_MANUFACTURER_NAME));
     }
     
     @Test
@@ -39,7 +44,7 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isOk()
-                     .expectBody().jsonPath("$.content", hasSize(2));
+                     .expectBody().jsonPath("$.content").value(hasSize(2));
     }
     
     @Test
@@ -51,12 +56,14 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
                      .contentType(APPLICATION_JSON)
                      .bodyValue(manufacturerDto)
                      .exchange()
-                     .expectStatus().isEqualTo(HttpStatus.CONFLICT);
+                     .expectStatus().isEqualTo(HttpStatus.CONFLICT)
+                     .expectBody().jsonPath("$.message").isEqualTo(
+                             String.format(MANUFACTURER_ALREADY_EXISTS, MANUFACTURER_NAME));
     }
     
     @Test
     void save_ShouldReturnStatus201() throws JsonProcessingException {
-        ManufacturerDto manufacturerDto = ManufacturerDto.builder().name("Chevrolet").build();
+        ManufacturerDto manufacturerDto = ManufacturerDto.builder().name(NEW_MANUFACTURER_NAME).build();
         
         webTestClient.post().uri("/v1/manufacturers")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
@@ -64,8 +71,7 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
                      .bodyValue(manufacturerDto)
                      .exchange()
                      .expectStatus().isCreated()
-                     .expectHeader().location(carModelServiceBaseUrl + "/v1/manufacturers/" + 
-                                              manufacturerDto.getName());
+                     .expectHeader().location(carModelServiceBaseUrl + "/v1/manufacturers/" + NEW_MANUFACTURER_NAME);
     }
     
     @Test
@@ -73,7 +79,9 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
         webTestClient.delete().uri("/v1/manufacturers/{manufacturer}", MANUFACTURER_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
-                     .expectStatus().isEqualTo(HttpStatus.METHOD_NOT_ALLOWED);
+                     .expectStatus().isEqualTo(HttpStatus.METHOD_NOT_ALLOWED)
+                     .expectBody().jsonPath("$.message").isEqualTo(
+                             String.format(MANUFACTURER_DATABASE_CONSTRAINT, MANUFACTURER_NAME));
     }
     
     @Test
@@ -81,7 +89,9 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
         webTestClient.delete().uri("/v1/manufacturers/{manufacturer}", NEW_MANUFACTURER_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
-                     .expectStatus().isNotFound();
+                     .expectStatus().isNotFound()
+                     .expectBody().jsonPath("$.message").isEqualTo(String.format(NO_MANUFACTURER, 
+                                                                                 NEW_MANUFACTURER_NAME));
     }
     
     @Test

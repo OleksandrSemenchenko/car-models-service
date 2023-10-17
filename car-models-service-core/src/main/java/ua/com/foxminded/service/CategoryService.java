@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.dto.CategoryDto;
 import ua.com.foxminded.entity.Category;
 import ua.com.foxminded.exception.AlreadyExistsException;
+import ua.com.foxminded.exception.DatabaseConstraintException;
 import ua.com.foxminded.exception.NotFoundException;
 import ua.com.foxminded.mapper.CategoryMapper;
 import ua.com.foxminded.repository.CategoryRepository;
@@ -19,7 +20,9 @@ import ua.com.foxminded.repository.CategoryRepository;
 @Transactional
 @RequiredArgsConstructor
 public class CategoryService {
-
+    
+    public static final String CATEGORY_DATABASE_CONSTRAINT = 
+            "The category '%s' has relations to models and cannot be removed";
     public static final String NO_CATEGORY = "The category '%s' doesn't exist";
     public static final String CATEGORY_ALREADY_EXISTS = "The category '%s' already exists";
 
@@ -41,11 +44,17 @@ public class CategoryService {
     }
 
     public void deleleteByName(String name) {
-        categoryRepository.findById(name).orElseThrow(() -> new NotFoundException(String.format(NO_CATEGORY, name)));
+        categoryRepository.findById(name)
+                          .orElseThrow(() -> new NotFoundException(String.format(NO_CATEGORY, name)))
+                          .getModels().forEach(model -> {
+                              throw new DatabaseConstraintException(String.format(CATEGORY_DATABASE_CONSTRAINT, name));
+                          });
         categoryRepository.deleteById(name);
     }
 
     public Optional<CategoryDto> getByName(String name) {
-        return categoryRepository.findById(name).map(categoryMapper::map);
+        return categoryRepository.findById(name).or(() -> {
+            throw new NotFoundException(String.format(NO_CATEGORY, name));
+        }).map(categoryMapper::map);
     }
 }

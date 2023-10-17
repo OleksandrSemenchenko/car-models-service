@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ua.com.foxminded.controller.CategoryControllerIntegrationTest.CATEGORY_NAME;
+import static ua.com.foxminded.controller.CategoryControllerIntegrationTest.NEW_CATEGORY_NAME;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ua.com.foxminded.dto.CategoryDto;
 import ua.com.foxminded.exception.AlreadyExistsException;
+import ua.com.foxminded.exception.DatabaseConstraintException;
 import ua.com.foxminded.exception.NotFoundException;
 import ua.com.foxminded.service.CategoryService;
 
@@ -62,12 +64,20 @@ class CategoryControllerTest {
                                               .content(categoryDtoJson))
                .andExpect(status().isConflict());
     }
+    
+    @Test
+    void deleteByName_ShouldReturnStatus405_WhenDatabaseConstraintException() throws Exception {
+        doThrow(DatabaseConstraintException.class).when(categoryService).deleleteByName(CATEGORY_NAME);
+        
+        mockMvc.perform(delete("/v1/categories/{name}", CATEGORY_NAME))
+               .andExpect(status().isMethodNotAllowed());
+    }
 
     @Test
     void deleteByName_ShouldReturnStatus404_WhenNotFoundException() throws Exception {
-        doThrow(NotFoundException.class).when(categoryService).deleleteByName(CATEGORY_NAME);
+        doThrow(NotFoundException.class).when(categoryService).deleleteByName(NEW_CATEGORY_NAME);
         
-        mockMvc.perform(delete("/v1/categorires/{name}", CATEGORY_NAME))
+        mockMvc.perform(delete("/v1/categorires/{name}", NEW_CATEGORY_NAME))
                .andExpect(status().isNotFound());
     }
 }

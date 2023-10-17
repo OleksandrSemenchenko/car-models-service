@@ -1,4 +1,5 @@
 insert into categories(name) values('Sedan');
+insert into categories(name) values('Coupe');
 insert into model_names(name) values('A7');
 insert into model_names(name) values('A8');
 insert into manufacturers(name) values('Audi');

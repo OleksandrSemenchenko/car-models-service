@@ -5,8 +5,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +23,9 @@ import org.springframework.data.domain.Pageable;
 
 import ua.com.foxminded.dto.CategoryDto;
 import ua.com.foxminded.entity.Category;
+import ua.com.foxminded.entity.Model;
 import ua.com.foxminded.exception.AlreadyExistsException;
+import ua.com.foxminded.exception.DatabaseConstraintException;
 import ua.com.foxminded.exception.NotFoundException;
 import ua.com.foxminded.mapper.CategoryMapper;
 import ua.com.foxminded.mapper.CategoryMapperImpl;
@@ -31,6 +35,7 @@ import ua.com.foxminded.repository.CategoryRepository;
 class CategoryServiceTest {
     
     public static final String CATEGORY_NAME = "Sedan";
+    public static final String NEW_CATEGORY_NAME = "SUV";
     
     @InjectMocks
     private CategoryService categoryService;
@@ -46,7 +51,7 @@ class CategoryServiceTest {
     
     @BeforeEach
     void SetUp() {
-        category = Category.builder().name(CATEGORY_NAME).build();
+        category = Category.builder().name(CATEGORY_NAME).models(new HashSet<>()).build();
         categoryDto = CategoryDto.builder().name(CATEGORY_NAME).build();
     }
     
@@ -91,10 +96,26 @@ class CategoryServiceTest {
     }
     
     @Test
+    void deleteByName_ShouldThrow_WhenCategoryHasRelations() {
+        Model model = Model.builder().id(ModelServiceTest.MODEL_ID).build();
+        category.setModels(Set.of(model));
+        when(categoryRepository.findById(CATEGORY_NAME)).thenReturn(Optional.of(category));
+        
+        assertThrows(DatabaseConstraintException.class, () -> categoryService.deleleteByName(CATEGORY_NAME));
+    }
+    
+    @Test
     void deleteByName_ShouldThrow_WhenNoSuchCategory() {
         when(categoryRepository.findById(CATEGORY_NAME)).thenReturn(Optional.empty());
         
         assertThrows(NotFoundException.class, () -> categoryService.deleleteByName(CATEGORY_NAME));
+    }
+    
+    @Test
+    void getByName_ShouldThrow_WhenNoSuchCategory() {
+        when(categoryRepository.findById(NEW_CATEGORY_NAME)).thenReturn(Optional.empty());
+        
+        assertThrows(NotFoundException.class, () -> categoryService.getByName(NEW_CATEGORY_NAME));
     }
 
     @Test

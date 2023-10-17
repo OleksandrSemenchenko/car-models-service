@@ -48,7 +48,8 @@ public class ManufacturerService {
                               .orElseThrow(() -> new NotFoundException(String.format(NO_MANUFACTURER, name)))
                               .getModels().forEach(model -> {
                                   if (model != null) {
-                                      throw new DatabaseConstraintException(String.format(NO_MANUFACTURER, name));
+                                      throw new DatabaseConstraintException(
+                                              String.format(MANUFACTURER_DATABASE_CONSTRAINT, name));
                                   }
                               });
         manufacturerRepository.deleteById(name);

@@ -34,6 +34,7 @@ import ua.com.foxminded.repository.ModelNameRepository;
 @ExtendWith(MockitoExtension.class)
 class ModelNameServiceTest {
     
+    public static final String NEW_MODEL_NAME = "Edge";
     public static final String MODEL_NAME = "A7";
     public static final String MODEL_ID = "1";
     
@@ -107,9 +108,16 @@ class ModelNameServiceTest {
     
     @Test
     void deleteByName_ShouldThrow_WhenNoSuchModelName() {
-        when(modelNameRepository.findById(MODEL_NAME)).thenReturn(Optional.empty());
+        when(modelNameRepository.findById(NEW_MODEL_NAME)).thenReturn(Optional.empty());
         
-        assertThrows(NotFoundException.class, () -> modelNameService.deleteByName(MODEL_NAME));
+        assertThrows(NotFoundException.class, () -> modelNameService.deleteByName(NEW_MODEL_NAME));
+    }
+    
+    @Test
+    void getByName_ShouldThrow_WhenNoSuchModelName() {
+        when(modelNameRepository.findById(NEW_MODEL_NAME)).thenReturn(Optional.empty());
+        
+        assertThrows(NotFoundException.class, () -> modelNameService.getByName(NEW_MODEL_NAME));
     }
     
     @Test

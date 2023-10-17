@@ -55,6 +55,8 @@ public class ModelNameService {
     }
 
     public Optional<ModelNameDto> getByName(String name) {
-        return modelNameRepository.findById(name).map(modeNamelMapper::map);
+        return modelNameRepository.findById(name).or(() -> {
+            throw new NotFoundException(String.format(NO_MODEL_NAME, name));
+        }).map(modeNamelMapper::map);
     }
 }

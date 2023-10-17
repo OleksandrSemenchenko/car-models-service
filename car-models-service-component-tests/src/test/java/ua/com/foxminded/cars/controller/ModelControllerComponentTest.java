@@ -4,15 +4,22 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static ua.com.foxminded.cars.controller.CategoryControllerComponentTest.CATEGORY_NAME;
 import static ua.com.foxminded.cars.controller.CategoryControllerComponentTest.CATEGORY_NAME_WITHOUT_RELATIONS;
+import static ua.com.foxminded.cars.controller.CategoryControllerComponentTest.NEW_CATEGORY_NAME;
 import static ua.com.foxminded.cars.controller.ManufacturerControllerComponentTest.MANUFACTURER_NAME;
 import static ua.com.foxminded.cars.controller.ManufacturerControllerComponentTest.MANUFACTURER_NAME_WITHOUT_RELATIONS;
+import static ua.com.foxminded.cars.controller.ManufacturerControllerComponentTest.NEW_MANUFACTURER_NAME;
 import static ua.com.foxminded.cars.controller.ModelNameControllerComponentTest.MODEL_NAME;
-import static ua.com.foxminded.cars.controller.ModelNameControllerComponentTest.MODEL_NAME_WITHOUT_REALTIONS;
+import static ua.com.foxminded.cars.controller.ModelNameControllerComponentTest.MODEL_NAME_WITHOUT_RELATIONS;
 import static ua.com.foxminded.cars.controller.ModelNameControllerComponentTest.NEW_MODEL_NAME;
+import static ua.com.foxminded.service.CategoryService.NO_CATEGORY;
+import static ua.com.foxminded.service.ManufacturerService.NO_MANUFACTURER;
+import static ua.com.foxminded.service.ModelNameService.NO_MODEL_NAME;
+import static ua.com.foxminded.service.ModelService.MODEL_ALREADY_EXISTS;
+import static ua.com.foxminded.service.ModelService.NO_MODEL_WITH_SUCH_ID;
+import static ua.com.foxminded.service.ModelService.NO_SUCH_MODEL;
 
 import java.util.Set;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
@@ -26,12 +33,14 @@ class ModelControllerComponentTest extends ComponentTestContext {
     public static final int NEW_MODEL_YEAR = 2021;
     
     @Test
-    void getByManufacturerAndNameAndYear_ShouldReturnStatus200_WhenNoSuchModel() {
+    void getByManufacturerAndNameAndYear_ShouldReturnStatus404_WhenNoSuchModel() {
         webTestClient.get().uri("/v1/manufacturers/{manufacturer}/models/{name}/{year}", 
                                 MANUFACTURER_NAME, MODEL_NAME, NEW_MODEL_YEAR)
                            .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                            .exchange()
-                           .expectStatus().isOk();
+                           .expectStatus().isNotFound()
+                           .expectBody().jsonPath("$.message").isEqualTo(
+                                   String.format(NO_SUCH_MODEL, MANUFACTURER_NAME, MODEL_NAME, NEW_MODEL_YEAR));
     }
     
     @Test
@@ -41,7 +50,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isOk()
-                     .expectBody().jsonPath("$.content", hasSize(1));
+                     .expectBody().jsonPath("$.id").isEqualTo(String.valueOf(MODEL_ID));
     }
     
     @Test
@@ -55,7 +64,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isOk()
-                     .expectBody().jsonPath("$.content", Matchers.hasSize(1));
+                     .expectBody().jsonPath("$.content").value(hasSize(1));
     }
     
     @Test
@@ -64,16 +73,17 @@ class ModelControllerComponentTest extends ComponentTestContext {
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isOk()
-                     .expectBody().jsonPath("$.content", Matchers.hasSize(1));
+                     .expectBody().jsonPath("$.content").value(hasSize(1));
     }
     
     @Test
-    void getById_ShouldReturnStatus409_WhenNoSuchModel() {
-        webTestClient.get().uri("/v1/models/{id}", MODEL_ID)
+    void getById_ShouldReturnStatus404_WhenNoSuchModel() {
+        webTestClient.get().uri("/v1/models/{id}", NEW_MODEL_ID)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
-                     .expectStatus().isOk()
-                     .expectBody().jsonPath("$.name").isEqualTo(MODEL_NAME);
+                     .expectStatus().isNotFound()
+                     .expectBody().jsonPath("$.message").isEqualTo(
+                             String.format(NO_MODEL_WITH_SUCH_ID, NEW_MODEL_ID));
     }
     
     @Test
@@ -86,7 +96,47 @@ class ModelControllerComponentTest extends ComponentTestContext {
     }
     
     @Test
-    void save_ShouldReturnStatus409_WhenModelAlreadyExists() {
+    void save_ShouldReturnStatus404_WhenNoRequiredCategory() {
+        ModelDto modelDto = ModelDto.builder().categories(Set.of(NEW_CATEGORY_NAME)).build();
+        
+        webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
+                                 MANUFACTURER_NAME, MODEL_NAME, NEW_MODEL_YEAR)
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .bodyValue(modelDto)
+                     .exchange()
+                     .expectStatus().isNotFound()
+                     .expectBody().jsonPath("$.message").isEqualTo(String.format(NO_CATEGORY, NEW_CATEGORY_NAME));
+    }
+    
+    @Test
+    void save_ShouldReturnStatus404_WhenNoRequiredModelName() {
+        ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME)).build();
+        
+        webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
+                                 MANUFACTURER_NAME, NEW_MODEL_NAME, MODEL_YEAR)
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .bodyValue(modelDto)
+                     .exchange()
+                     .expectStatus().isNotFound()
+                     .expectBody().jsonPath("$.message").isEqualTo(String.format(NO_MODEL_NAME, NEW_MODEL_NAME));
+    }
+    
+    @Test
+    void save_ShouldReturnStatus404_WhenNoRequiredManufacturer() {
+        ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME)).build();
+        
+        webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
+                                 NEW_MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR)
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .bodyValue(modelDto)
+                     .exchange()
+                     .expectStatus().isNotFound()
+                     .expectBody().jsonPath("$.message").isEqualTo(
+                             String.format(NO_MANUFACTURER, NEW_MANUFACTURER_NAME));
+    }
+    
+    @Test
+    void save_ShouldReturnStatus409_WhenSuchModelAlreadyExists() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME)).build();
         
         webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
@@ -94,7 +144,9 @@ class ModelControllerComponentTest extends ComponentTestContext {
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(modelDto)
                      .exchange()
-                     .expectStatus().isEqualTo(HttpStatus.CONFLICT);
+                     .expectStatus().isEqualTo(HttpStatus.CONFLICT)
+                     .expectBody().jsonPath("$.message").isEqualTo(
+                             String.format(MODEL_ALREADY_EXISTS, MODEL_ID));
     }
     
     @Test
@@ -103,13 +155,26 @@ class ModelControllerComponentTest extends ComponentTestContext {
         
         webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
                                  MANUFACTURER_NAME_WITHOUT_RELATIONS, 
-                                 MODEL_NAME_WITHOUT_REALTIONS, 
+                                 MODEL_NAME_WITHOUT_RELATIONS, 
                                  NEW_MODEL_YEAR)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(modelDto)
                      .exchange()
                      .expectStatus().isCreated()
                      .expectHeader().value("Location", containsString(carModelServiceBaseUrl + "/v1/models/"));
+    }
+    
+    @Test
+    void update_ShouldReturnStatus404_WhenNoRequiredCategory() {
+        ModelDto modelDto = ModelDto.builder().categories(Set.of(NEW_CATEGORY_NAME)).build();
+
+        webTestClient.put().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
+                                MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR)
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .bodyValue(modelDto)
+                     .exchange()
+                     .expectStatus().isNotFound()
+                     .expectBody().jsonPath("$.message").isEqualTo(String.format(NO_CATEGORY, NEW_CATEGORY_NAME));
     }
     
     @Test
@@ -121,7 +186,9 @@ class ModelControllerComponentTest extends ComponentTestContext {
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(modelDto)
                      .exchange()
-                     .expectStatus().isNotFound();
+                     .expectStatus().isNotFound()
+                     .expectBody().jsonPath("$.message").isEqualTo(
+                             String.format(NO_SUCH_MODEL, MANUFACTURER_NAME, NEW_MODEL_NAME, MODEL_YEAR));
     }
     
     @Test
@@ -141,7 +208,9 @@ class ModelControllerComponentTest extends ComponentTestContext {
         webTestClient.delete().uri("/v1/models/{id}", NEW_MODEL_ID)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
-                     .expectStatus().isNotFound();
+                     .expectStatus().isNotFound()
+                     .expectBody().jsonPath("$.message").isEqualTo(
+                             String.format(NO_MODEL_WITH_SUCH_ID, NEW_MODEL_ID));
     }
 
     @Test

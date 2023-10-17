@@ -36,8 +36,9 @@ import ua.com.foxminded.specification.SearchFilter;
 @RequiredArgsConstructor
 public class ModelService {
 
-    public static final String NO_SUCH_MODEL = "Such model doesn't exist";
-    public static final String NO_MODEL_ID = "The model with id=%s doesn't exist";
+    public static final String NO_SUCH_MODEL = 
+            "The model with manufacturer '%s', name '%s' and year '%s' doesn't exist";
+    public static final String NO_MODEL_WITH_SUCH_ID = "The model with id=%s doesn't exist";
     public static final String MODEL_ALREADY_EXISTS = "Such model with id='%s' already exists";
 
     private final ModelRepository modelRepository;
@@ -51,7 +52,10 @@ public class ModelService {
                                                           .model(name)
                                                           .year(year).build();
         Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
-        return modelRepository.findOne(specification).map(modelMapper::map);
+        
+        return modelRepository.findOne(specification).or(() -> {
+            throw new NotFoundException(String.format(NO_SUCH_MODEL, manufacturer, name, year));
+        }).map(modelMapper::map);
     }
     
     public Page<ModelDto> search(SearchFilter searchFilter, Pageable pageRequest) {
@@ -82,24 +86,25 @@ public class ModelService {
                                                           .year(modelDto.getYear())
                                                           .build();
         Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
-        var model = modelRepository.findOne(specification).orElseThrow(() -> new NotFoundException(NO_SUCH_MODEL));
-        model.setYear(modelDto.getYear());
-        
-        updateManufacturerRelation(modelDto, model);
-        updateModelRelation(modelDto, model);
+        var model = modelRepository.findOne(specification).orElseThrow(
+                () -> new NotFoundException(String.format(
+                        NO_SUCH_MODEL, modelDto.getManufacturer(), modelDto.getName(), modelDto.getYear())));
+
         updateCategoryRelations(modelDto, model);
 
-        var updatedVehicle = modelRepository.save(model);
-        return modelMapper.map(updatedVehicle);
+        var updatedModel = modelRepository.save(model);
+        return modelMapper.map(updatedModel);
     }
 
     public void deleteById(String id) {
-        modelRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format(NO_MODEL_ID, id)));
+        modelRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format(NO_MODEL_WITH_SUCH_ID, id)));
         modelRepository.deleteById(id);
     }
 
     public Optional<ModelDto> getById(String id) {
-        return modelRepository.findById(id).map(modelMapper::map);
+        return modelRepository.findById(id).or(() -> {
+            throw new NotFoundException(String.format(NO_MODEL_WITH_SUCH_ID, id));
+        }).map(modelMapper::map);
     }
     
     private void throwIfPresentByManufacturerAndModelAndYear(String manufacturer, String model, int year) {

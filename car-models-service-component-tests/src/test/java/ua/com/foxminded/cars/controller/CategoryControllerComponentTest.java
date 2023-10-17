@@ -1,6 +1,9 @@
 package ua.com.foxminded.cars.controller;
 
 import static org.hamcrest.Matchers.hasSize;
+import static ua.com.foxminded.service.CategoryService.CATEGORY_ALREADY_EXISTS;
+import static ua.com.foxminded.service.CategoryService.CATEGORY_DATABASE_CONSTRAINT;
+import static ua.com.foxminded.service.CategoryService.NO_CATEGORY;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -22,7 +25,9 @@ class CategoryControllerComponentTest extends ComponentTestContext {
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(categoryDto)
                      .exchange()
-                     .expectStatus().isEqualTo(HttpStatus.CONFLICT);
+                     .expectStatus().isEqualTo(HttpStatus.CONFLICT)
+                     .expectBody().jsonPath("$.message").isEqualTo(
+                             String.format(CATEGORY_ALREADY_EXISTS, CATEGORY_NAME));
     }
     
     @Test
@@ -38,11 +43,12 @@ class CategoryControllerComponentTest extends ComponentTestContext {
     }
     
     @Test
-    void getByName_ShoudReturnStatus200_WhenNoSuchCategory() {
+    void getByName_ShoudReturnStatus404_WhenNoSuchCategory() {
         webTestClient.get().uri("/v1/categories/{category}", NEW_CATEGORY_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
-                     .expectStatus().isOk();
+                     .expectStatus().isNotFound()
+                     .expectBody().jsonPath("$.message").isEqualTo(String.format(NO_CATEGORY, NEW_CATEGORY_NAME));
     }
     
     @Test
@@ -60,7 +66,17 @@ class CategoryControllerComponentTest extends ComponentTestContext {
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isOk()
-                     .expectBody().jsonPath("$.content", hasSize(2));
+                     .expectBody().jsonPath("$.content").value(hasSize(2));
+    }
+    
+    @Test
+    void deleteByName_ShouldReturnStatus405_WhenCategoryHasRelations() {
+        webTestClient.delete().uri("/v1/categories/{category}", CATEGORY_NAME)
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .exchange()
+                     .expectStatus().isEqualTo(HttpStatus.METHOD_NOT_ALLOWED)
+                     .expectBody().jsonPath("$.message").isEqualTo(String.format(CATEGORY_DATABASE_CONSTRAINT, 
+                                                                                 CATEGORY_NAME));
     }
     
     @Test
@@ -68,13 +84,13 @@ class CategoryControllerComponentTest extends ComponentTestContext {
         webTestClient.delete().uri("/v1/categories/{category}", NEW_CATEGORY_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
-                     .expectStatus().isNotFound();
+                     .expectStatus().isNotFound()
+                     .expectBody().jsonPath("$.message").isEqualTo(String.format(NO_CATEGORY, NEW_CATEGORY_NAME));
     }
-    
 
     @Test
     void deleteByName_ShouldReturnStatus200() {
-        webTestClient.delete().uri("/v1/categories/{category}", CATEGORY_NAME)
+        webTestClient.delete().uri("/v1/categories/{category}", CATEGORY_NAME_WITHOUT_RELATIONS)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isNoContent()

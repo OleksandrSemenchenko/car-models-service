@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ import ua.com.foxminded.dto.CategoryDto;
 @Transactional
 class CategoryControllerIntegrationTest extends IntegrationTestContext {
     
+    public static final String CATEGORY_NAME_WITHOUT_RELATIONS = "Coupe";
+    public static final String NEW_CATEGORY_NAME = "SUV";
     public static final String CATEGORY_NAME = "Sedan";
     
     @Autowired
@@ -45,15 +48,14 @@ class CategoryControllerIntegrationTest extends IntegrationTestContext {
     
     @Test
     void save_ShouldReturnStatus201() throws Exception {
-        String newCategoryName = "SUV";
-        categoryDto.setName(newCategoryName);
+        categoryDto.setName(NEW_CATEGORY_NAME);
         String categoryDtoJson = mapper.writeValueAsString(categoryDto);
         
         mockMvc.perform(post("/v1/categories").contentType(APPLICATION_JSON)
                                               .content(categoryDtoJson)
                                               .with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isCreated())
-               .andExpect(header().string("Location", containsString("/v1/categories/" + newCategoryName)));
+               .andExpect(header().string("Location", containsString("/v1/categories/" + NEW_CATEGORY_NAME)));
     }
     
     @Test
@@ -67,12 +69,13 @@ class CategoryControllerIntegrationTest extends IntegrationTestContext {
     void getAll_ShouldReturnStatus200() throws Exception {
         mockMvc.perform(get("/v1/categories").with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isOk())
-               .andExpect(jsonPath("$.content[0].['name']", is(CATEGORY_NAME)));
+               .andExpect(jsonPath("$.content", Matchers.hasSize(2)));
     }
     
     @Test
     void deleteByName_ShouldReturnStatus204() throws Exception {
-        mockMvc.perform(delete("/v1/categories/{name}", CATEGORY_NAME).with(bearerTokenFor(USER_NAME_ADMIN)))
+        mockMvc.perform(delete("/v1/categories/{name}", CATEGORY_NAME_WITHOUT_RELATIONS)
+                    .with(bearerTokenFor(USER_NAME_ADMIN)))
                .andExpect(status().isNoContent());
     }
 }

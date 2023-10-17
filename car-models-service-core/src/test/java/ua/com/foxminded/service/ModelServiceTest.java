@@ -2,6 +2,7 @@ package ua.com.foxminded.service;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static ua.com.foxminded.service.CategoryServiceTest.CATEGORY_NAME;
@@ -43,8 +44,10 @@ import ua.com.foxminded.specification.SearchFilter;
 @ExtendWith(MockitoExtension.class)
 class ModelServiceTest {
     
+    public static final String NEW_MODEL_ID = "2";
     public static final String MODEL_ID = "1";
     public static final int YEAR = 2020;
+    public static final int NEW_YEAR = 2010;
     
     @InjectMocks
     private ModelService modelService;
@@ -92,7 +95,15 @@ class ModelServiceTest {
     }
     
     @Test
-    void getByManufacturerAndNameAndYear_ShouldGetModels() {
+    void getByManufacturerAndNameAndYear_ShouldThrowNotFoundException_WhenNoSuchModel() {
+        when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.empty());
+        
+        assertThrows(NotFoundException.class, () -> modelService.getByManufacturerAndNameAndYear(
+                MANUFACTURER_NAME, MODEL_NAME, NEW_YEAR));
+    }
+    
+    @Test
+    void getByManufacturerAndNameAndYear_ShouldReturnModel() {
         when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.of(model));
         modelService.getByManufacturerAndNameAndYear(MANUFACTURER_NAME, MODEL_NAME, YEAR);
         
@@ -133,7 +144,7 @@ class ModelServiceTest {
     }
     
     @Test
-    void save_ShouldThrow_WhenNoSuchModelName() {
+    void save_ShouldThrowNotFoundException_WhenNoSuchModelName() {
         when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.empty());
         when(categoryRepository.findById(modelDto.getCategories()
                                                    .iterator()
@@ -145,7 +156,7 @@ class ModelServiceTest {
     }
     
     @Test
-    void save_ShouldThrow_WhenNoSuchManufacturer() {
+    void save_ShouldThrowNotFoundException_WhenNoSuchManufacturer() {
         when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.empty());
         when(categoryRepository.findById(modelDto.getCategories()
                                                    .iterator()
@@ -156,7 +167,7 @@ class ModelServiceTest {
     }
     
     @Test
-    void save_ShouldThrow_WhenNoSuchCategory() {
+    void save_ShouldThrowNotFoundException_WhenNoSuchCategory() {
         when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.empty());
         when(categoryRepository.findById(modelDto.getCategories().iterator().next())).thenReturn(Optional.empty());
         
@@ -164,44 +175,24 @@ class ModelServiceTest {
     }
     
     @Test
-    void save_ShouldThrow_WhenModelAlreadyExists() {
+    void save_ShouldThrowAlreadyExistsException_WhenModelAlreadyExists() {
         when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.of(model));
         
         assertThrows(AlreadyExistsException.class, () -> modelService.save(modelDto));
     }
     
     @Test
-    void update_ShouldThrow_WhenNoCategory() {
+    void update_ShouldThrowNotFoundException_WhenNoRequiredCategory() {
         String updatedCategoryName = "Pickup";
         modelDto.setCategories(Set.of(updatedCategoryName));
         when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.of(model));
-        when(manufacturerRepository.findById(modelDto.getManufacturer())).thenReturn(Optional.of(manufacturer));
-        when(modelNameRepository.findById(modelDto.getName())).thenReturn(Optional.of(modelName));
         when(categoryRepository.findById(modelDto.getCategories().iterator().next())).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> modelService.update(modelDto));
     }
     
     @Test
-    void update_ShouldThrow_WhenNoModelName() {
-        when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.of(model));
-        when(manufacturerRepository.findById(modelDto.getManufacturer())).thenReturn(Optional.of(manufacturer));
-        when(modelNameRepository.findById(modelDto.getName())).thenReturn(Optional.empty());
-    
-        assertThrows(NotFoundException.class, () -> modelService.update(modelDto));
-    }
-    
-    @Test
-    void update_ShouldThrow_WhenNoManufacturer() {
-        when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any()))
-                .thenReturn(Optional.of(model));
-        when(manufacturerRepository.findById(modelDto.getManufacturer())).thenReturn(Optional.empty());
-        
-        assertThrows(NotFoundException.class, () -> modelService.update(modelDto));
-    }
-    
-    @Test
-    void update_ShouldThrow_WhenNoSuchModel() {
+    void update_ShouldThrowNotFoundException_WhenNoSuchModel() {
         when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.empty());
         
         assertThrows(NotFoundException.class, () -> modelService.update(modelDto));
@@ -215,8 +206,6 @@ class ModelServiceTest {
                                                      .build();
         modelDto.setCategories(Set.of(updatedCategoryName));
         when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.of(model));
-        when(manufacturerRepository.findById(modelDto.getManufacturer())).thenReturn(Optional.of(manufacturer));
-        when(modelNameRepository.findById(modelDto.getName())).thenReturn(Optional.of(modelName));
         when(categoryRepository.findById(modelDto.getCategories()
                                                  .iterator()
                                                  .next())).thenReturn(Optional.of(updatedCategory));
@@ -230,15 +219,13 @@ class ModelServiceTest {
         modelService.update(modelDto);
         
         verify(modelRepository).findOne(ArgumentMatchers.<Specification<Model>>any());
-        verify(manufacturerRepository).findById(modelDto.getManufacturer());
-        verify(modelNameRepository).findById(modelDto.getName());
         verify(categoryRepository).findById(modelDto.getCategories().iterator().next());
         verify(modelRepository).save(updatedVehicle);
         verify(modelMapper).map(updatedVehicle);
     }
     
     @Test
-    void deleteById_ShouldThrow_WhenNoModel() {
+    void deleteById_ShouldThrowNotFoundException_WhenNoModel() {
         when(modelRepository.findById(MODEL_ID)).thenReturn(Optional.empty());
         
         assertThrows(NotFoundException.class, () -> modelService.deleteById(MODEL_ID));
@@ -252,9 +239,16 @@ class ModelServiceTest {
         verify(modelRepository).findById(MODEL_ID);
         verify(modelRepository).deleteById(MODEL_ID);
     }
+    
+    @Test
+    void getById_ShouldThrowNotFoundException_WhenNoModelWithSuchId() {
+        when(modelRepository.findById(NEW_MODEL_ID)).thenReturn(Optional.empty());
+        
+        assertThrows(NotFoundException.class, () -> modelService.getById(NEW_MODEL_ID));
+    }
 
     @Test
-    void getById_ShouldGetModel() {
+    void getById_ShouldReturnModel() {
         when(modelRepository.findById(MODEL_ID)).thenReturn(Optional.of(model));
         modelService.getById(MODEL_ID);
         
