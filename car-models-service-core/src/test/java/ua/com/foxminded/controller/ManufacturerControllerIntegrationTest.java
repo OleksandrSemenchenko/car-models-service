@@ -1,6 +1,7 @@
 package ua.com.foxminded.controller;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,9 +23,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ua.com.foxminded.dto.ManufacturerDto;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @Transactional
-class ManufacturerControllerIntegrationTest extends IntegrationTestContext {
+class ManufacturerControllerIntegrationTest {
     
     public static final String NEW_MANUFACTURER_NAME = "Mercedes-Benz";
     public static final String MANUFACTURER_NAME = "Audi";
@@ -49,14 +49,14 @@ class ManufacturerControllerIntegrationTest extends IntegrationTestContext {
     void getByName_ShouldReturnStatus200() throws Exception {
         manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
         
-        mockMvc.perform(get("/v1/manufacturers/{name}", MANUFACTURER_NAME).with(bearerTokenFor(USER_NAME_ADMIN)))
+        mockMvc.perform(get("/v1/manufacturers/{name}", MANUFACTURER_NAME))
                .andExpect(status().isOk())
                .andExpect(content().json(manufacturerDtoJson));
     }
     
     @Test
     void getAll_ShouldReturnStatus200() throws Exception {
-        mockMvc.perform(get("/v1/manufacturers").with(bearerTokenFor(USER_NAME_ADMIN)))
+        mockMvc.perform(get("/v1/manufacturers"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.content[0].name", MANUFACTURER_NAME).exists());
     }
@@ -67,17 +67,15 @@ class ManufacturerControllerIntegrationTest extends IntegrationTestContext {
         manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
         
         mockMvc.perform(post("/v1/manufacturers")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(manufacturerDtoJson)
-                    .with(bearerTokenFor(USER_NAME_ADMIN)))
+                    .contentType(APPLICATION_JSON)
+                    .content(manufacturerDtoJson))
                .andExpect(status().isCreated())
                .andExpect(header().string("Location", containsString("/v1/manufacturers/" + NEW_MANUFACTURER_NAME)));
     }
     
     @Test
     void deleteByName_ShouldReturnStatus204() throws Exception {
-        mockMvc.perform(delete("/v1/manufacturers/{name}", MANUFACTURER_NAME_WITHOUT_RELATIONS)
-                    .with(bearerTokenFor(USER_NAME_ADMIN)))
+        mockMvc.perform(delete("/v1/manufacturers/{name}", MANUFACTURER_NAME_WITHOUT_RELATIONS))
                .andExpect(status().isNoContent());
     }
 }

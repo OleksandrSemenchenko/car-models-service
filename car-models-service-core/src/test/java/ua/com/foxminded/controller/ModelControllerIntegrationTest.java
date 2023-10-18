@@ -30,9 +30,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ua.com.foxminded.dto.ModelDto;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @Transactional
-class ModelControllerIntegrationTest extends IntegrationTestContext {
+class ModelControllerIntegrationTest {
     
     public static final int NEW_MODEL_YEAR = 2023;
     public static final int MODEL_YEAR = 2020;
@@ -58,7 +58,7 @@ class ModelControllerIntegrationTest extends IntegrationTestContext {
     @Test
     void searchByManufacturerAndModelAndYear_ShouldReturnStaus200() throws Exception {
         mockMvc.perform(get("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
-                            MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR).with(bearerTokenFor(USER_NAME_ADMIN)))
+                            MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR))
                .andExpect(status().isOk());
     }
     
@@ -68,8 +68,7 @@ class ModelControllerIntegrationTest extends IntegrationTestContext {
                                          .param("category", CATEGORY_NAME)
                                          .param("manufacturer", MANUFACTURER_NAME)
                                          .param("maxYear", String.valueOf(MODEL_YEAR))
-                                         .param("minYear", String.valueOf(MODEL_YEAR))
-                                         .with(bearerTokenFor(USER_NAME_ADMIN)))
+                                         .param("minYear", String.valueOf(MODEL_YEAR)))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.content", hasSize(1)))
                .andExpect(jsonPath("$.content[0].year", is(MODEL_YEAR)))
@@ -79,14 +78,14 @@ class ModelControllerIntegrationTest extends IntegrationTestContext {
     
     @Test
     void search_ShouldReturnStatus200_WhenNoParameters() throws Exception {
-        mockMvc.perform(get("/v1/models").with(bearerTokenFor(USER_NAME_ADMIN)))
+        mockMvc.perform(get("/v1/models"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.content", hasSize(1)));
     }
     
     @Test
     void getById_ShouldReturnStatus200() throws Exception {
-        mockMvc.perform(get("/v1/models/{id}", MODEL_ID).with(bearerTokenFor(USER_NAME_ADMIN)))
+        mockMvc.perform(get("/v1/models/{id}", MODEL_ID))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.id").value(MODEL_ID));
     }
@@ -100,8 +99,7 @@ class ModelControllerIntegrationTest extends IntegrationTestContext {
                              MODEL_NAME, 
                              NEW_MODEL_YEAR)
                     .contentType(APPLICATION_JSON)
-                    .content(vehicleDtoJson)
-                    .with(bearerTokenFor(USER_NAME_ADMIN)))
+                    .content(vehicleDtoJson))
                .andExpect(status().isCreated())
                .andExpect(header().string("Location", containsString("/v1/models/")));
     }
@@ -113,14 +111,13 @@ class ModelControllerIntegrationTest extends IntegrationTestContext {
         mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR)
                     .contentType(APPLICATION_JSON)
-                    .content(modelDtoJson)
-                    .with(bearerTokenFor(USER_NAME_ADMIN)))
+                    .content(modelDtoJson))
                .andExpect(status().isOk());
     }
     
     @Test
     void deleteById_ShouldReturnStatus204() throws Exception {
-        mockMvc.perform(delete("/v1/models/{id}", MODEL_ID).with(bearerTokenFor(USER_NAME_ADMIN)))
+        mockMvc.perform(delete("/v1/models/{id}", MODEL_ID))
                .andExpect(status().isNoContent());
     }
 }

@@ -58,6 +58,7 @@ class ModelControllerTest {
     @Test
     void getByManufacturerAndModelAndYear_ShouldReturnStatus400_WhenConstraintViolationException() throws Exception {
         String notValidYear = "-2023";
+        
         mockMvc.perform(get("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, notValidYear))
                .andExpect(status().isBadRequest());

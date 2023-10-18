@@ -25,9 +25,9 @@ import ua.com.foxminded.dto.CategoryDto;
 
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @Transactional
-class CategoryControllerIntegrationTest extends IntegrationTestContext {
+class CategoryControllerIntegrationTest {
     
     public static final String CATEGORY_NAME_WITHOUT_RELATIONS = "Coupe";
     public static final String NEW_CATEGORY_NAME = "SUV";
@@ -52,30 +52,28 @@ class CategoryControllerIntegrationTest extends IntegrationTestContext {
         String categoryDtoJson = mapper.writeValueAsString(categoryDto);
         
         mockMvc.perform(post("/v1/categories").contentType(APPLICATION_JSON)
-                                              .content(categoryDtoJson)
-                                              .with(bearerTokenFor(USER_NAME_ADMIN)))
+                                              .content(categoryDtoJson))
                .andExpect(status().isCreated())
                .andExpect(header().string("Location", containsString("/v1/categories/" + NEW_CATEGORY_NAME)));
     }
     
     @Test
     void getByName_ShouldReturnStatus200() throws Exception {
-        mockMvc.perform(get("/v1/categories/{name}", CATEGORY_NAME).with(bearerTokenFor(USER_NAME_ADMIN)))
+        mockMvc.perform(get("/v1/categories/{name}", CATEGORY_NAME))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$['name']", is(CATEGORY_NAME)));
     }
     
     @Test
     void getAll_ShouldReturnStatus200() throws Exception {
-        mockMvc.perform(get("/v1/categories").with(bearerTokenFor(USER_NAME_ADMIN)))
+        mockMvc.perform(get("/v1/categories"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.content", Matchers.hasSize(2)));
     }
     
     @Test
     void deleteByName_ShouldReturnStatus204() throws Exception {
-        mockMvc.perform(delete("/v1/categories/{name}", CATEGORY_NAME_WITHOUT_RELATIONS)
-                    .with(bearerTokenFor(USER_NAME_ADMIN)))
+        mockMvc.perform(delete("/v1/categories/{name}", CATEGORY_NAME_WITHOUT_RELATIONS))
                .andExpect(status().isNoContent());
     }
 }
