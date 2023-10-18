@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Configuration
-@ConfigurationPropertiesScan("ua.com.foxminded.config")
+@ConfigurationPropertiesScan
 public class TestConfig {
     
     @Bean

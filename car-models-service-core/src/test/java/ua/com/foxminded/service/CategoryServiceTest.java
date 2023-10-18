@@ -3,6 +3,7 @@ package ua.com.foxminded.service;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static ua.com.foxminded.service.ModelServiceTest.MODEL_ID;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -97,7 +98,7 @@ class CategoryServiceTest {
     
     @Test
     void deleteByName_ShouldThrowDatabaseConstraintException_WhenCategoryHasRelations() {
-        Model model = Model.builder().id(ModelServiceTest.MODEL_ID).build();
+        Model model = Model.builder().id(MODEL_ID).build();
         category.setModels(Set.of(model));
         when(categoryRepository.findById(CATEGORY_NAME)).thenReturn(Optional.of(category));
         
