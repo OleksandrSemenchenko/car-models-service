@@ -15,13 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ua.com.foxminded.dto.CategoryDto;
 import ua.com.foxminded.exception.AlreadyExistsException;
-import ua.com.foxminded.exception.DatabaseConstraintException;
 import ua.com.foxminded.exception.NotFoundException;
 import ua.com.foxminded.service.CategoryService;
 
@@ -66,8 +66,8 @@ class CategoryControllerTest {
     }
     
     @Test
-    void deleteByName_ShouldReturnStatus405_WhenDatabaseConstraintException() throws Exception {
-        doThrow(DatabaseConstraintException.class).when(categoryService).deleleteByName(CATEGORY_NAME);
+    void deleteByName_ShouldReturnStatus405_WhenDataIntegrityViolationException() throws Exception {
+        doThrow(DataIntegrityViolationException.class).when(categoryService).deleleteByName(CATEGORY_NAME);
         
         mockMvc.perform(delete("/v1/categories/{name}", CATEGORY_NAME))
                .andExpect(status().isMethodNotAllowed());

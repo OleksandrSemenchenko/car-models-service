@@ -3,13 +3,11 @@ package ua.com.foxminded.service;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static ua.com.foxminded.service.ModelServiceTest.MODEL_ID;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,9 +22,7 @@ import org.springframework.data.domain.Pageable;
 
 import ua.com.foxminded.dto.CategoryDto;
 import ua.com.foxminded.entity.Category;
-import ua.com.foxminded.entity.Model;
 import ua.com.foxminded.exception.AlreadyExistsException;
-import ua.com.foxminded.exception.DatabaseConstraintException;
 import ua.com.foxminded.exception.NotFoundException;
 import ua.com.foxminded.mapper.CategoryMapper;
 import ua.com.foxminded.mapper.CategoryMapperImpl;
@@ -94,15 +90,6 @@ class CategoryServiceTest {
         
         verify(categoryRepository).findById(CATEGORY_NAME);
         verify(categoryRepository).deleteById(CATEGORY_NAME);
-    }
-    
-    @Test
-    void deleteByName_ShouldThrowDatabaseConstraintException_WhenCategoryHasRelations() {
-        Model model = Model.builder().id(MODEL_ID).build();
-        category.setModels(Set.of(model));
-        when(categoryRepository.findById(CATEGORY_NAME)).thenReturn(Optional.of(category));
-        
-        assertThrows(DatabaseConstraintException.class, () -> categoryService.deleleteByName(CATEGORY_NAME));
     }
     
     @Test

@@ -13,16 +13,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ua.com.foxminded.dto.ModelNameDto;
 import ua.com.foxminded.exception.AlreadyExistsException;
-import ua.com.foxminded.exception.DatabaseConstraintException;
 import ua.com.foxminded.exception.NotFoundException;
 import ua.com.foxminded.service.ModelNameService;
-
 
 @WebMvcTest(ModelNameController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -65,8 +64,8 @@ class ModelNameControllerTest {
     }
     
     @Test
-    void deleteByName_ShouldReturnStatus405_WhenDatabaseConstraintsException() throws Exception {
-        doThrow(DatabaseConstraintException.class).when(modelNameService).deleteByName(MODEL_NAME);
+    void deleteByName_ShouldReturnStatus405_WhenDataIntegrityViolationException() throws Exception {
+        doThrow(DataIntegrityViolationException.class).when(modelNameService).deleteByName(MODEL_NAME);
         
         mockMvc.perform(delete("/v1/model-names/{name}", MODEL_NAME))
                .andExpect(status().isMethodNotAllowed());

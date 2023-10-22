@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,10 +21,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import ua.com.foxminded.dto.ModelNameDto;
-import ua.com.foxminded.entity.Model;
 import ua.com.foxminded.entity.ModelName;
 import ua.com.foxminded.exception.AlreadyExistsException;
-import ua.com.foxminded.exception.DatabaseConstraintException;
 import ua.com.foxminded.exception.NotFoundException;
 import ua.com.foxminded.mapper.ModelNameMapper;
 import ua.com.foxminded.mapper.ModelNameMapperImpl;
@@ -95,15 +92,6 @@ class ModelNameServiceTest {
         
         verify(modelNameRepository).findById(MODEL_NAME);
         verify(modelNameRepository).deleteById(MODEL_NAME);
-    }
-    
-    @Test
-    void deleteByName_ShouldThrowDatabaseConstraintException_WhenModelNameHasRelations() {
-        Model model = Model.builder().id(MODEL_ID).build();
-        modelName.setModels(Set.of(model));
-        when(modelNameRepository.findById(MODEL_NAME)).thenReturn(Optional.of(modelName));
-        
-        assertThrows(DatabaseConstraintException.class, () -> modelNameService.deleteByName(MODEL_NAME));
     }
     
     @Test
