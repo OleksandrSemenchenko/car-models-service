@@ -1,8 +1,8 @@
 package ua.com.foxminded.controller;
 
 import static org.hamcrest.Matchers.hasSize;
+import static ua.com.foxminded.controller.ExceptionHandlerController.DATA_INTEGRITY_VIOLATION_MESSAGE;
 import static ua.com.foxminded.service.CategoryService.CATEGORY_ALREADY_EXISTS;
-import static ua.com.foxminded.service.CategoryService.CATEGORY_DATABASE_CONSTRAINT;
 import static ua.com.foxminded.service.CategoryService.NO_CATEGORY;
 
 import org.junit.jupiter.api.Test;
@@ -75,7 +75,7 @@ class CategoryControllerComponentTest extends ComponentTestContext {
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isEqualTo(HttpStatus.METHOD_NOT_ALLOWED)
-                     .expectBody().jsonPath("$.message").isEqualTo(String.format(CATEGORY_DATABASE_CONSTRAINT, 
+                     .expectBody().jsonPath("$.message").isEqualTo(String.format(DATA_INTEGRITY_VIOLATION_MESSAGE, 
                                                                                  CATEGORY_NAME));
     }
     
