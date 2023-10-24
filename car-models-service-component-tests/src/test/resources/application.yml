@@ -1,0 +1,9 @@
+keycloak:
+  policy-enforcer-config:
+    realm: car-services
+    resource: car-models-service
+    credentials:
+      secret: eGtdvx8kd5XZ2ThQ1YlqWS5y7kuTGJwk
+logging:
+  level:
+    root: info
