@@ -23,10 +23,16 @@
         <jkube.version>1.14.0</jkube.version>
         <testcontainers.version>1.18.3</testcontainers.version>
         <testcontainers-keycloak>3.0.0</testcontainers-keycloak>
+        <springdoc-openapi.version>2.2.0</springdoc-openapi.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc-openapi.version}</version>
+            </dependency>
             <dependency>
                 <groupId>ua.com.foxminded</groupId>
                 <artifactId>car-models-service-core</artifactId>
