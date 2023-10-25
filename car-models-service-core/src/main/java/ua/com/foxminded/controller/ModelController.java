@@ -5,6 +5,7 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 import java.net.URI;
 import java.util.Optional;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,10 +25,17 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.dto.ModelDto;
+import ua.com.foxminded.exception.ErrorDetails;
 import ua.com.foxminded.service.ModelService;
 import ua.com.foxminded.specification.SearchFilter;
 
@@ -35,6 +43,7 @@ import ua.com.foxminded.specification.SearchFilter;
 @RequiredArgsConstructor
 @RequestMapping("/v1")
 @Validated
+@SecurityRequirement(name = "Authentication")
 public class ModelController {
     
     @Value("${application.sort.model.by}")
@@ -46,6 +55,11 @@ public class ModelController {
     private final ModelService modelService;
     
     @GetMapping("/manufacturers/{manufacturer}/models/{name}/{year}")
+    @Operation(summary = "getByManufacturerAndNameAndYear")
+    @ApiResponse(responseCode = "200", description = "Ok", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "404", description = "Not Found", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+    })
     public Optional<ModelDto> getByManufacturerAndNameAndYear(@PathVariable String manufacturer, 
                                                               @PathVariable String name, 
                                                               @PathVariable @Positive int year) {
@@ -53,17 +67,33 @@ public class ModelController {
     }
     
     @GetMapping("/models")
-    public Page<ModelDto> search(@Valid SearchFilter searchFilter, Pageable pageRequest) {
+    @Operation(summary = "search")
+    public Page<ModelDto> search(@Valid SearchFilter searchFilter, @ParameterObject Pageable pageRequest) {
         pageRequest = setDefaultSortIfNeeded(pageRequest);
         return modelService.search(searchFilter, pageRequest);
     }
     
     @GetMapping("/models/{id}")
+    @Operation(summary = "getById")
+    @ApiResponse(responseCode = "200", description = "Ok", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "404", description = "Not Found", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+    })
     public Optional<ModelDto> getById(@PathVariable String id) {
         return modelService.getById(id);
     }
     
     @PostMapping("/manufacturers/{manufacturer}/models/{name}/{year}")
+    @Operation(summary = "save")
+    @ApiResponse(responseCode = "201", description = "Created", headers = {
+            @Header(name = "Location", description = "/v1/models/{id}")
+    })
+    @ApiResponse(responseCode = "404", description = "Not Found", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+    })
+    @ApiResponse(responseCode = "409", description = "Conflict", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+    })
     public ResponseEntity<Void> save(@PathVariable String manufacturer, 
                                      @PathVariable String name, 
                                      @PathVariable @Positive int year, 
@@ -81,6 +111,11 @@ public class ModelController {
     }
     
     @PutMapping("/manufacturers/{manufacturer}/models/{name}/{year}")
+    @Operation(summary = "update")
+    @ApiResponse(responseCode = "200", description = "Ok")
+    @ApiResponse(responseCode = "404", description = "Not Found", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+    })
     public void update(@PathVariable String manufacturer, 
                        @PathVariable String name, 
                        @PathVariable @Positive int year,  
@@ -93,6 +128,13 @@ public class ModelController {
     
     @DeleteMapping("/models/{id}")
     @ResponseStatus(NO_CONTENT)
+    @Operation(summary = "deleteById")
+    @ApiResponse(responseCode = "404", description = "Not Found", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+    })
+    @ApiResponse(responseCode = "405", description = "Method Not Allowed", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+    })
     public void deleteById(@PathVariable String id) {
         modelService.deleteById(id);
     }

@@ -20,7 +20,7 @@ spring:
       resourceserver:
         jwt:
           jwk-set-uri: http://${KEYCLOAK_HOST:localhost}:8080/auth/realms/car-services/protocol/openid-connect/certs
-
+---
 logging:
   level:
     root: info
@@ -41,6 +41,10 @@ server:
     include-message: always
     include-exception: true
     include-binding-errors: always
+---
+springdoc:
+  api-docs:
+    path: /api-docs
 ---
 application:
   sort:

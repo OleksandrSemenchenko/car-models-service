@@ -5,6 +5,7 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 import java.net.URI;
 import java.util.Optional;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,14 +23,22 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.dto.ModelNameDto;
+import ua.com.foxminded.exception.ErrorDetails;
 import ua.com.foxminded.service.ModelNameService;
 
 @RestController
 @RequestMapping("/v1/model-names")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Authentication")
 public class ModelNameController {
     
     @Value("${application.sort.model-name.by}")
@@ -41,6 +50,13 @@ public class ModelNameController {
     private final ModelNameService modelNameService;
     
     @PostMapping
+    @Operation(summary = "save")
+    @ApiResponse(responseCode = "201", description = "Created", headers = {
+            @Header(name = "Location", description = "/v1/names/{name}")
+    })
+    @ApiResponse(responseCode = "409", description = "Conflict", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+    })
     public ResponseEntity<Void> save(@RequestBody @Valid ModelNameDto modelNameDto) {
         modelNameService.save(modelNameDto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -51,18 +67,31 @@ public class ModelNameController {
     }
     
     @GetMapping("/{name}")
+    @Operation(summary = "getByName")
+    @ApiResponse(responseCode = "200", description = "Ok", useReturnTypeSchema = true)
+    @ApiResponse(responseCode = "404", description = "Not Found", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+    })
     public Optional<ModelNameDto> getByName(@PathVariable String name) {
         return modelNameService.getByName(name);
     }
     
     @GetMapping
-    public Page<ModelNameDto> getAll(Pageable pageRequest) {
+    @Operation(summary = "getAll")
+    public Page<ModelNameDto> getAll(@ParameterObject Pageable pageRequest) {
         pageRequest = setDefaultSortIfNeeded(pageRequest);
         return modelNameService.getAll(pageRequest);
     }
     
     @DeleteMapping("/{name}")
     @ResponseStatus(NO_CONTENT)
+    @Operation(summary = "deleteByName")
+    @ApiResponse(responseCode = "404", description = "Not Found", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+    }) 
+    @ApiResponse(responseCode = "405", description = "Method Not Allowed", content = {
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+    })
     public void deleteByName(@PathVariable String name) {
         modelNameService.deleteByName(name);
     }

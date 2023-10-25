@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.4</version>
+        <version>3.1.5</version>
         <relativePath />
     </parent>
     <groupId>ua.com.foxminded</groupId>
@@ -24,10 +24,16 @@
         <testcontainers.version>1.18.3</testcontainers.version>
         <testcontainers-keycloak>3.0.0</testcontainers-keycloak>
         <springdoc-openapi.version>2.2.0</springdoc-openapi.version>
+        <swagger-annotations.version>2.2.15</swagger-annotations.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${swagger-annotations.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
