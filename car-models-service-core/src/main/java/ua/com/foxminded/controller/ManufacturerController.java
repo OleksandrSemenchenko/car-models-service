@@ -38,7 +38,7 @@ import ua.com.foxminded.service.ManufacturerService;
 @RestController
 @RequestMapping("/v1/manufacturers")
 @RequiredArgsConstructor
-@SecurityRequirement(name = "Authentication")
+@SecurityRequirement(name = "bearerAuth")
 public class ManufacturerController {
     
     @Value("${application.sort.manufacturer.by}")

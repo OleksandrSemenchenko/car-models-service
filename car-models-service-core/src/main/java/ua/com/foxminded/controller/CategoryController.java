@@ -38,7 +38,7 @@ import ua.com.foxminded.service.CategoryService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/categories")
-@SecurityRequirement(name = "Authentication")
+@SecurityRequirement(name = "bearerAuth")
 public class CategoryController {
     
     @Value("${application.sort.category.by}")
