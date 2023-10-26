@@ -38,7 +38,7 @@ import ua.com.foxminded.service.ModelNameService;
 @RestController
 @RequestMapping("/v1/model-names")
 @RequiredArgsConstructor
-@SecurityRequirement(name = "bearerAuth")
+@SecurityRequirement(name = "OAuth2")
 public class ModelNameController {
     
     @Value("${application.sort.model-name.by}")

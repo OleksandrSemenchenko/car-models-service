@@ -43,7 +43,7 @@ import ua.com.foxminded.specification.SearchFilter;
 @RequiredArgsConstructor
 @RequestMapping("/v1")
 @Validated
-@SecurityRequirement(name = "bearerAuth")
+@SecurityRequirement(name = "OAuth2")
 public class ModelController {
     
     @Value("${application.sort.model.by}")
