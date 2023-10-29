@@ -32,7 +32,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.dto.ManufacturerDto;
-import ua.com.foxminded.exception.ErrorDetails;
+import ua.com.foxminded.exception.ErrorResponse;
 import ua.com.foxminded.service.ManufacturerService;
 
 @RestController
@@ -53,7 +53,7 @@ public class ManufacturerController {
     @Operation(summary = "getByName")
     @ApiResponse(responseCode = "200", description = "Ok", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Not Found", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))})
     public Optional<ManufacturerDto> getByName(@PathVariable String name) {
         return manufacturerService.getByName(name);
     }
@@ -71,7 +71,7 @@ public class ManufacturerController {
             @Header(name = "Location", description = "/v1/manufacturers/{name}")
     })
     @ApiResponse(responseCode = "409", description = "Conflict", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))}) 
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}) 
     public ResponseEntity<Void> save(@RequestBody @Valid ManufacturerDto manufacturer) {
         manufacturerService.save(manufacturer);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -85,9 +85,7 @@ public class ManufacturerController {
     @ResponseStatus(NO_CONTENT)
     @Operation(summary = "deleteByName")
     @ApiResponse(responseCode = "404", description = "Not Found", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))}) 
-    @ApiResponse(responseCode = "405", description = "Method Not Allowed", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))})
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}) 
     public void deleteByName(@PathVariable String name) {
         manufacturerService.deleteByName(name);
     }

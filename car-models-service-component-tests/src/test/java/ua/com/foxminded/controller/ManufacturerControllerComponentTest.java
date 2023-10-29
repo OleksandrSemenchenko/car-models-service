@@ -2,7 +2,8 @@ package ua.com.foxminded.controller;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static ua.com.foxminded.controller.ExceptionHandlerController.DATA_INTEGRITY_VIOLATION_MESSAGE;
+import static ua.com.foxminded.controller.ExceptionHandlerController.DATA_INTEGRRITY_VIOLATION_EXCEPTION_MESSAGE;
+import static ua.com.foxminded.controller.ExceptionHandlerController.NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE;
 import static ua.com.foxminded.service.ManufacturerService.MANUFACTURER_ALREADY_EXISTS;
 import static ua.com.foxminded.service.ManufacturerService.NO_MANUFACTURER;
 
@@ -48,6 +49,19 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
     }
     
     @Test
+    void save_ShouldReturnStatus400_WhenManufacturerDtoNameIsNull() {
+        ManufacturerDto manufacturerDto = new ManufacturerDto();
+        
+        webTestClient.post().uri("/v1/manufacturers")
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .contentType(APPLICATION_JSON)
+                     .bodyValue(manufacturerDto)
+                     .exchange()
+                     .expectStatus().isBadRequest()
+                     .expectBody().jsonPath("$.message").isEqualTo(NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE);
+    }
+    
+    @Test
     void save_ShouldReturnStatus409_WhenManufacturerAlreadyExists() throws JsonProcessingException {
         ManufacturerDto manufacturerDto = ManufacturerDto.builder().name(MANUFACTURER_NAME).build();
         
@@ -81,7 +95,7 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
                      .exchange()
                      .expectStatus().isEqualTo(HttpStatus.METHOD_NOT_ALLOWED)
                      .expectBody().jsonPath("$.message").isEqualTo(
-                             String.format(DATA_INTEGRITY_VIOLATION_MESSAGE, MANUFACTURER_NAME));
+                             String.format(DATA_INTEGRRITY_VIOLATION_EXCEPTION_MESSAGE, MANUFACTURER_NAME));
     }
     
     @Test

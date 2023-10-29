@@ -32,7 +32,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.dto.CategoryDto;
-import ua.com.foxminded.exception.ErrorDetails;
+import ua.com.foxminded.exception.ErrorResponse;
 import ua.com.foxminded.service.CategoryService;
 
 @RestController
@@ -55,7 +55,7 @@ public class CategoryController {
             @Header(name = "Location", description = "/v1/categories/{name}")
     })
     @ApiResponse(responseCode = "409", description = "Conflict", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
     })
     public ResponseEntity<Void> save(@RequestBody @Valid CategoryDto category) {
         categoryService.save(category);
@@ -70,7 +70,7 @@ public class CategoryController {
     @Operation(summary = "getByName")
     @ApiResponse(responseCode = "200", description = "Ok", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Not Found", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
     })
     public Optional<CategoryDto> getByName(@PathVariable String name) {
         return categoryService.getByName(name);
@@ -87,11 +87,7 @@ public class CategoryController {
     @ResponseStatus(NO_CONTENT)
     @Operation(summary = "deleteByName")
     @ApiResponse(responseCode = "404", description = "Not Found", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
-    })
-    @ApiResponse(responseCode = "405", description = "Method Not Allowed", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
-                
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
     })
     public void deleteByName(@PathVariable String name) {
         categoryService.deleleteByName(name);

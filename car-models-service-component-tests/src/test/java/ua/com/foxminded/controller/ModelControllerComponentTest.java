@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static ua.com.foxminded.controller.CategoryControllerComponentTest.CATEGORY_NAME;
 import static ua.com.foxminded.controller.CategoryControllerComponentTest.CATEGORY_NAME_WITHOUT_RELATIONS;
 import static ua.com.foxminded.controller.CategoryControllerComponentTest.NEW_CATEGORY_NAME;
+import static ua.com.foxminded.controller.ExceptionHandlerController.NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE;
 import static ua.com.foxminded.controller.ManufacturerControllerComponentTest.MANUFACTURER_NAME;
 import static ua.com.foxminded.controller.ManufacturerControllerComponentTest.MANUFACTURER_NAME_WITHOUT_RELATIONS;
 import static ua.com.foxminded.controller.ManufacturerControllerComponentTest.NEW_MANUFACTURER_NAME;
@@ -33,6 +34,16 @@ class ModelControllerComponentTest extends ComponentTestContext {
     public static final int NEW_MODEL_YEAR = 2021;
     
     @Test
+    void getByManufacturerAndNameAndYear_ShouldReturnStatus400_WhenYearIsNegative() {
+        webTestClient.get().uri("/v1/manufacturers/{manufacturer}/models/{name}/{year}", 
+                        MANUFACTURER_NAME, MODEL_NAME, -2023)
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .exchange()
+                     .expectStatus().isBadRequest()
+                     .expectBody().jsonPath("$.message").isEqualTo(NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE);
+    }
+    
+    @Test
     void getByManufacturerAndNameAndYear_ShouldReturnStatus404_WhenNoSuchModel() {
         webTestClient.get().uri("/v1/manufacturers/{manufacturer}/models/{name}/{year}", 
                                 MANUFACTURER_NAME, MODEL_NAME, NEW_MODEL_YEAR)
@@ -51,6 +62,20 @@ class ModelControllerComponentTest extends ComponentTestContext {
                      .exchange()
                      .expectStatus().isOk()
                      .expectBody().jsonPath("$.id").isEqualTo(String.valueOf(MODEL_ID));
+    }
+    
+    @Test
+    void search_ShouldReturnStatus400_WhenMaxAndMinYearParametersAreNegative() {
+        webTestClient.get().uri(uriBuilder -> uriBuilder.path("/v1/models")
+                                                        .queryParam("model", MODEL_NAME)
+                                                        .queryParam("category", CATEGORY_NAME)
+                                                        .queryParam("manufacturer", MANUFACTURER_NAME)
+                                                        .queryParam("maxYear", -2025)
+                                                        .queryParam("minYear", -2023).build())
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .exchange()
+                     .expectStatus().isBadRequest()
+                     .expectBody().jsonPath("$.message").isEqualTo(NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE);
     }
     
     @Test
@@ -93,6 +118,32 @@ class ModelControllerComponentTest extends ComponentTestContext {
                      .exchange()
                      .expectStatus().isOk()
                      .expectBody().jsonPath("$.name").isEqualTo(MODEL_NAME);
+    }
+    
+    @Test
+    void save_ShouldReturnStatus400_WhenModelDtoCategoriesIsNull() {
+        ModelDto modelDto = new ModelDto();
+        
+        webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
+                                 MANUFACTURER_NAME, MODEL_NAME, NEW_MODEL_YEAR)
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .bodyValue(modelDto)
+                     .exchange()
+                     .expectStatus().isBadRequest()
+                     .expectBody().jsonPath("$.message").isEqualTo(NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE);
+    }
+    
+    @Test
+    void save_ShouldReturnStatus400_WhenYearIsNegative() {
+        ModelDto modelDto = ModelDto.builder().categories(Set.of(NEW_CATEGORY_NAME)).build();
+        
+        webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
+                                 MANUFACTURER_NAME, MODEL_NAME, -2021)
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .bodyValue(modelDto)
+                     .exchange()
+                     .expectStatus().isBadRequest()
+                     .expectBody().jsonPath("$.message").isEqualTo(NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE);
     }
     
     @Test
@@ -162,6 +213,32 @@ class ModelControllerComponentTest extends ComponentTestContext {
                      .exchange()
                      .expectStatus().isCreated()
                      .expectHeader().value("Location", containsString(carModelServiceBaseUrl + "/v1/models/"));
+    }
+    
+    @Test
+    void update_ShouldReturnStatus400_WhenYearIsNegative() {
+        ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME)).build();
+
+        webTestClient.put().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
+                                MANUFACTURER_NAME, MODEL_NAME, -2024)
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .bodyValue(modelDto)
+                     .exchange()
+                     .expectStatus().isBadRequest()
+                     .expectBody().jsonPath("$.message").isEqualTo(NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE);
+    }
+    
+    @Test
+    void update_ShouldReturnStatus400_WhenModelDtoCategoriesIsNull() {
+        ModelDto modelDto = new ModelDto();
+
+        webTestClient.put().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
+                                MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR)
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .bodyValue(modelDto)
+                     .exchange()
+                     .expectStatus().isBadRequest()
+                     .expectBody().jsonPath("$.message").isEqualTo(NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE);
     }
     
     @Test

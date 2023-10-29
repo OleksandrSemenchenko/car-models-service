@@ -35,7 +35,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.dto.ModelDto;
-import ua.com.foxminded.exception.ErrorDetails;
+import ua.com.foxminded.exception.ErrorResponse;
 import ua.com.foxminded.service.ModelService;
 import ua.com.foxminded.specification.SearchFilter;
 
@@ -58,7 +58,7 @@ public class ModelController {
     @Operation(summary = "getByManufacturerAndNameAndYear")
     @ApiResponse(responseCode = "200", description = "Ok", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Not Found", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
     })
     public Optional<ModelDto> getByManufacturerAndNameAndYear(@PathVariable String manufacturer, 
                                                               @PathVariable String name, 
@@ -77,7 +77,7 @@ public class ModelController {
     @Operation(summary = "getById")
     @ApiResponse(responseCode = "200", description = "Ok", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Not Found", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
     })
     public Optional<ModelDto> getById(@PathVariable String id) {
         return modelService.getById(id);
@@ -89,10 +89,10 @@ public class ModelController {
             @Header(name = "Location", description = "/v1/models/{id}")
     })
     @ApiResponse(responseCode = "404", description = "Not Found", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
     })
     @ApiResponse(responseCode = "409", description = "Conflict", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
     })
     public ResponseEntity<Void> save(@PathVariable String manufacturer, 
                                      @PathVariable String name, 
@@ -114,7 +114,7 @@ public class ModelController {
     @Operation(summary = "update")
     @ApiResponse(responseCode = "200", description = "Ok")
     @ApiResponse(responseCode = "404", description = "Not Found", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
     })
     public void update(@PathVariable String manufacturer, 
                        @PathVariable String name, 
@@ -130,10 +130,7 @@ public class ModelController {
     @ResponseStatus(NO_CONTENT)
     @Operation(summary = "deleteById")
     @ApiResponse(responseCode = "404", description = "Not Found", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
-    })
-    @ApiResponse(responseCode = "405", description = "Method Not Allowed", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
     })
     public void deleteById(@PathVariable String id) {
         modelService.deleteById(id);

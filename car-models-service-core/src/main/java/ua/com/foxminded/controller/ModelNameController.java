@@ -32,7 +32,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.dto.ModelNameDto;
-import ua.com.foxminded.exception.ErrorDetails;
+import ua.com.foxminded.exception.ErrorResponse;
 import ua.com.foxminded.service.ModelNameService;
 
 @RestController
@@ -55,7 +55,7 @@ public class ModelNameController {
             @Header(name = "Location", description = "/v1/names/{name}")
     })
     @ApiResponse(responseCode = "409", description = "Conflict", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
     })
     public ResponseEntity<Void> save(@RequestBody @Valid ModelNameDto modelNameDto) {
         modelNameService.save(modelNameDto);
@@ -70,7 +70,7 @@ public class ModelNameController {
     @Operation(summary = "getByName")
     @ApiResponse(responseCode = "200", description = "Ok", useReturnTypeSchema = true)
     @ApiResponse(responseCode = "404", description = "Not Found", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
     })
     public Optional<ModelNameDto> getByName(@PathVariable String name) {
         return modelNameService.getByName(name);
@@ -87,11 +87,8 @@ public class ModelNameController {
     @ResponseStatus(NO_CONTENT)
     @Operation(summary = "deleteByName")
     @ApiResponse(responseCode = "404", description = "Not Found", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
+            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
     }) 
-    @ApiResponse(responseCode = "405", description = "Method Not Allowed", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDetails.class))
-    })
     public void deleteByName(@PathVariable String name) {
         modelNameService.deleteByName(name);
     }
