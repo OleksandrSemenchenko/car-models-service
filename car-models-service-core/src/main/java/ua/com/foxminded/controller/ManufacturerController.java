@@ -25,7 +25,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -38,7 +40,7 @@ import ua.com.foxminded.service.ManufacturerService;
 @RestController
 @RequestMapping("/v1/manufacturers")
 @RequiredArgsConstructor
-@SecurityRequirement(name = "OAuth2")
+@SecurityRequirement(name = "bearerAuth")
 public class ManufacturerController {
     
     @Value("${application.sort.manufacturer.by}")
@@ -50,28 +52,40 @@ public class ManufacturerController {
     private final ManufacturerService manufacturerService;
     
     @GetMapping("/{name}")
-    @Operation(summary = "getByName")
-    @ApiResponse(responseCode = "200", description = "Ok", useReturnTypeSchema = true)
-    @ApiResponse(responseCode = "404", description = "Not Found", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))})
+    @Operation(summary = "Get a manufacturer by its name", operationId = "getManufacturerByName",
+               responses = {
+                       @ApiResponse(responseCode = "200", description = "Ok", content = @Content(
+                               mediaType = "application/json", 
+                               array = @ArraySchema(schema = @Schema(implementation = ManufacturerDto.class)),
+                               examples = @ExampleObject(name = "manufacturer", value = "[{\"name\": \"Audi\"}]"))),
+                       @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(
+                               mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+               })
     public Optional<ManufacturerDto> getByName(@PathVariable String name) {
         return manufacturerService.getByName(name);
     }
     
     @GetMapping
-    @Operation(summary = "getAll")
+    @Operation(summary = "Get all manufacturers", operationId = "getAllManufacturers", 
+               responses = @ApiResponse(responseCode = "200", description = "Ok", useReturnTypeSchema = true))
     public Page<ManufacturerDto> getAll(@ParameterObject Pageable pageRequest) {
         pageRequest = setDefaultSortIfNeeded(pageRequest);
         return manufacturerService.getAll(pageRequest);
     }
     
     @PostMapping
-    @Operation(summary = "save")
-    @ApiResponse(responseCode = "201", description = "Created", headers = {
-            @Header(name = "Location", description = "/v1/manufacturers/{name}")
-    })
-    @ApiResponse(responseCode = "409", description = "Conflict", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}) 
+    @Operation(summary = "Save a manufacturer", operationId = "saveManufacturer",
+               requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
+                       mediaType = "application/json", 
+                       schema = @Schema(implementation = ManufacturerDto.class), 
+                       examples = @ExampleObject(name = "manufacturer", value = "{\"name\": \"Audi\"}"))),
+               responses = {
+                       @ApiResponse(responseCode = "201", description = "Created", 
+                                    headers = @Header(name = "Location", description = "/v1/manufacturers/{name}")),
+                       @ApiResponse(responseCode = "409", description = "Conflict", 
+                                    content = @Content(mediaType = "application/json", 
+                                                       schema = @Schema(implementation = ErrorResponse.class))) 
+                })
     public ResponseEntity<Void> save(@RequestBody @Valid ManufacturerDto manufacturer) {
         manufacturerService.save(manufacturer);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -83,9 +97,15 @@ public class ManufacturerController {
     
     @DeleteMapping("/{name}")
     @ResponseStatus(NO_CONTENT)
-    @Operation(summary = "deleteByName")
-    @ApiResponse(responseCode = "404", description = "Not Found", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}) 
+    @Operation(summary = "Delete a manufacturer by its name", operationId = "deleteManufacturerByName",
+               responses = {
+                       @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(
+                               mediaType = "application/json", 
+                               schema = @Schema(implementation = ErrorResponse.class))), 
+                       @ApiResponse(responseCode = "405", description = "Method Not Allowed", content = @Content(
+                               mediaType = "application/json", 
+                               schema = @Schema(implementation = ErrorResponse.class)))
+               })
     public void deleteByName(@PathVariable String name) {
         manufacturerService.deleteByName(name);
     }

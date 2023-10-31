@@ -25,7 +25,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -38,7 +40,7 @@ import ua.com.foxminded.service.ModelNameService;
 @RestController
 @RequestMapping("/v1/model-names")
 @RequiredArgsConstructor
-@SecurityRequirement(name = "OAuth2")
+@SecurityRequirement(name = "bearerAuth")
 public class ModelNameController {
     
     @Value("${application.sort.model-name.by}")
@@ -50,13 +52,19 @@ public class ModelNameController {
     private final ModelNameService modelNameService;
     
     @PostMapping
-    @Operation(summary = "save")
-    @ApiResponse(responseCode = "201", description = "Created", headers = {
-            @Header(name = "Location", description = "/v1/names/{name}")
-    })
-    @ApiResponse(responseCode = "409", description = "Conflict", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
-    })
+    @Operation(summary = "Save a name of the models", operationId = "saveModelName",
+               requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                       content = @Content(mediaType = "application/json", 
+                                          schema = @Schema(implementation = ModelNameDto.class),
+                                          examples = @ExampleObject(name = "modelName" , 
+                                                                    value = "{\"name\": \"A7\"}"))),
+               responses = {
+                       @ApiResponse(responseCode = "201", description = "Created", 
+                                    headers = @Header(name = "Location", description = "/v1/names/{name}")), 
+                       @ApiResponse(responseCode = "409", description = "Conflict", 
+                                    content = @Content(mediaType = "application/json", 
+                                                       schema = @Schema(implementation = ErrorResponse.class)))
+               })
     public ResponseEntity<Void> save(@RequestBody @Valid ModelNameDto modelNameDto) {
         modelNameService.save(modelNameDto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -67,17 +75,23 @@ public class ModelNameController {
     }
     
     @GetMapping("/{name}")
-    @Operation(summary = "getByName")
-    @ApiResponse(responseCode = "200", description = "Ok", useReturnTypeSchema = true)
-    @ApiResponse(responseCode = "404", description = "Not Found", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
-    })
+    @Operation(summary = "Get a name of the models by the name", operationId = "getModelNameByName",
+               responses = {
+                       @ApiResponse(responseCode = "200", description = "Ok", content = @Content(
+                               mediaType = "application/json", 
+                               array = @ArraySchema(schema = @Schema(implementation = ModelNameDto.class)), 
+                               examples = @ExampleObject(name = "modelName", value = "[{\"name\": \"A7\"}]"))),
+                       @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(
+                               mediaType = "application/json", 
+                               schema = @Schema(implementation = ErrorResponse.class)))
+               })
     public Optional<ModelNameDto> getByName(@PathVariable String name) {
         return modelNameService.getByName(name);
     }
     
     @GetMapping
-    @Operation(summary = "getAll")
+    @Operation(summary = "Get all names of the models", operationId = "getAllModelNames", 
+               responses = @ApiResponse(responseCode = "200", useReturnTypeSchema = true))
     public Page<ModelNameDto> getAll(@ParameterObject Pageable pageRequest) {
         pageRequest = setDefaultSortIfNeeded(pageRequest);
         return modelNameService.getAll(pageRequest);
@@ -85,10 +99,15 @@ public class ModelNameController {
     
     @DeleteMapping("/{name}")
     @ResponseStatus(NO_CONTENT)
-    @Operation(summary = "deleteByName")
-    @ApiResponse(responseCode = "404", description = "Not Found", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
-    }) 
+    @Operation(summary = "Delete a name of the models by the name", operationId = "deleteModelNameByName", 
+               responses = {
+                       @ApiResponse(responseCode = "404", description = "Not Found", 
+                                    content = @Content(mediaType = "application/json", 
+                                                       schema = @Schema(implementation = ErrorResponse.class))),
+                       @ApiResponse(responseCode = "405", description = "Method Not Allowed", 
+                                    content = @Content(mediaType = "application/json", 
+                                                       schema = @Schema(implementation = ErrorResponse.class)))
+               })
     public void deleteByName(@PathVariable String name) {
         modelNameService.deleteByName(name);
     }

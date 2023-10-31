@@ -43,8 +43,7 @@ server:
     
 springdoc:
   api-docs:
-    path: ${springdoc.path}
-  
+    path: /api-docs
 
 application:
   sort:
