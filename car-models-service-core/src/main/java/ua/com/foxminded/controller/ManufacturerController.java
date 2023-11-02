@@ -3,7 +3,6 @@ package ua.com.foxminded.controller;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 import java.net.URI;
-import java.util.Optional;
 
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,21 +51,25 @@ public class ManufacturerController {
     private final ManufacturerService manufacturerService;
     
     @GetMapping("/{name}")
-    @Operation(summary = "Get a manufacturer by its name", operationId = "getManufacturerByName",
+    @Operation(summary = "Get a manufacturer by its name", operationId = "getManufacturerByName", 
+               description = "Search for and retrieve a manufacturer from the database",
+               tags = "manufacturer",
                responses = {
                        @ApiResponse(responseCode = "200", description = "Ok", content = @Content(
                                mediaType = "application/json", 
                                array = @ArraySchema(schema = @Schema(implementation = ManufacturerDto.class)),
-                               examples = @ExampleObject(name = "manufacturer", value = "[{\"name\": \"Audi\"}]"))),
+                               examples = @ExampleObject(name = "manufacturer", value = "{\"name\": \"Audi\"}"))),
                        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(
                                mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
                })
-    public Optional<ManufacturerDto> getByName(@PathVariable String name) {
+    public ManufacturerDto getByName(@PathVariable String name) {
         return manufacturerService.getByName(name);
     }
     
     @GetMapping
     @Operation(summary = "Get all manufacturers", operationId = "getAllManufacturers", 
+               description = "Retrieve all manufacturers from the database",
+               tags = "manufacturer",
                responses = @ApiResponse(responseCode = "200", description = "Ok", useReturnTypeSchema = true))
     public Page<ManufacturerDto> getAll(@ParameterObject Pageable pageRequest) {
         pageRequest = setDefaultSortIfNeeded(pageRequest);
@@ -74,7 +77,9 @@ public class ManufacturerController {
     }
     
     @PostMapping
-    @Operation(summary = "Save a manufacturer", operationId = "saveManufacturer",
+    @Operation(summary = "Save a manufacturer", operationId = "saveManufacturer", 
+               description = "Search for such manufacturer in the database if it is missing then persist it",
+               tags = "manufacturer",
                requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
                        mediaType = "application/json", 
                        schema = @Schema(implementation = ManufacturerDto.class), 
@@ -97,7 +102,9 @@ public class ManufacturerController {
     
     @DeleteMapping("/{name}")
     @ResponseStatus(NO_CONTENT)
-    @Operation(summary = "Delete a manufacturer by its name", operationId = "deleteManufacturerByName",
+    @Operation(summary = "Delete a manufacturer by its name", operationId = "deleteManufacturerByName", 
+               description = "Seach for and delete a manufacturer from the database by its name",
+               tags = "manufacturer",
                responses = {
                        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(
                                mediaType = "application/json", 

@@ -3,7 +3,6 @@ package ua.com.foxminded.controller;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 import java.net.URI;
-import java.util.Optional;
 
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,7 +51,9 @@ public class ModelNameController {
     private final ModelNameService modelNameService;
     
     @PostMapping
-    @Operation(summary = "Save a name of the models", operationId = "saveModelName",
+    @Operation(summary = "Save a name of the models", operationId = "saveModelName", 
+               description = "Seach a specified name of the models in the database if it is missing, persist it",
+               tags = "model-name",
                requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                        content = @Content(mediaType = "application/json", 
                                           schema = @Schema(implementation = ModelNameDto.class),
@@ -75,22 +76,26 @@ public class ModelNameController {
     }
     
     @GetMapping("/{name}")
-    @Operation(summary = "Get a name of the models by the name", operationId = "getModelNameByName",
+    @Operation(summary = "Get a name of the models by the name", operationId = "getModelNameByName", 
+               description = "Seach for a name of the models in the database if it exists, retrieve it",
+               tags = "model-name",
                responses = {
                        @ApiResponse(responseCode = "200", description = "Ok", content = @Content(
                                mediaType = "application/json", 
                                array = @ArraySchema(schema = @Schema(implementation = ModelNameDto.class)), 
-                               examples = @ExampleObject(name = "modelName", value = "[{\"name\": \"A7\"}]"))),
+                               examples = @ExampleObject(name = "modelName", value = "{\"name\": \"A7\"}"))),
                        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(
                                mediaType = "application/json", 
                                schema = @Schema(implementation = ErrorResponse.class)))
                })
-    public Optional<ModelNameDto> getByName(@PathVariable String name) {
+    public ModelNameDto getByName(@PathVariable String name) {
         return modelNameService.getByName(name);
     }
     
     @GetMapping
     @Operation(summary = "Get all names of the models", operationId = "getAllModelNames", 
+               description = "Retrieve all names of the models from the database",
+               tags = "model-name",
                responses = @ApiResponse(responseCode = "200", useReturnTypeSchema = true))
     public Page<ModelNameDto> getAll(@ParameterObject Pageable pageRequest) {
         pageRequest = setDefaultSortIfNeeded(pageRequest);
@@ -100,6 +105,8 @@ public class ModelNameController {
     @DeleteMapping("/{name}")
     @ResponseStatus(NO_CONTENT)
     @Operation(summary = "Delete a name of the models by the name", operationId = "deleteModelNameByName", 
+               description = "Search for and delete a name of the models from the database",
+               tags = "model-name",
                responses = {
                        @ApiResponse(responseCode = "404", description = "Not Found", 
                                     content = @Content(mediaType = "application/json", 

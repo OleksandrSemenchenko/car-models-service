@@ -1,7 +1,6 @@
 package ua.com.foxminded.exception;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -20,7 +19,5 @@ public class ErrorResponse {
     private String error;
     private String message;
     private String path;
-    
-    @Builder.Default
-    private List<Violation> violations = new ArrayList<>();
+    private List<Violation> violations;
 }

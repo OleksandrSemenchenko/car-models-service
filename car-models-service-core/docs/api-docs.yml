@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
-  title: Car models service
-  description: The microservice to manage car models
+  title: Car models service API
+  description: The API to persist and search car models in a database
   version: "1.0"
 servers:
 - url: http://localhost:8180
@@ -10,8 +10,10 @@ paths:
   /v1/manufacturers/{manufacturer}/models/{name}/{year}:
     get:
       tags:
-      - model-controller
+      - model
       summary: "Get a model by its manufacturer, name and year"
+      description: "Seach for and retrieve a model by its manufacturer, name and year\
+        \ from the database"
       operationId: getModelByManufacturerAndNameAndYear
       parameters:
       - name: manufacturer
@@ -55,7 +57,7 @@ paths:
                 model:
                   description: model
                   value:
-                  - id: "1"
+                    id: "1"
                     name: A7
                     year: "2023"
                     manufacturer: Audi
@@ -71,8 +73,10 @@ paths:
       - bearerAuth: []
     put:
       tags:
-      - model-controller
+      - model
       summary: Update a model
+      description: "Seach for a model by its manufacturer, name and year in the database\
+        \ if it exists, update it"
       operationId: updateModel
       parameters:
       - name: manufacturer
@@ -132,8 +136,10 @@ paths:
       - bearerAuth: []
     post:
       tags:
-      - model-controller
+      - model
       summary: Save a model
+      description: "Seach for a model by its manufacturer, name and year in the database\
+        \ if it is missing, persist it"
       operationId: saveModel
       parameters:
       - name: manufacturer
@@ -206,8 +212,9 @@ paths:
   /v1/model-names:
     get:
       tags:
-      - model-name-controller
+      - model-name
       summary: Get all names of the models
+      description: Retrieve all names of the models from the database
       operationId: getAllModelNames
       parameters:
       - name: page
@@ -258,8 +265,10 @@ paths:
       - bearerAuth: []
     post:
       tags:
-      - model-name-controller
+      - model-name
       summary: Save a name of the models
+      description: "Seach a specified name of the models in the database if it is\
+        \ missing, persist it"
       operationId: saveModelName
       requestBody:
         content:
@@ -304,8 +313,9 @@ paths:
   /v1/manufacturers:
     get:
       tags:
-      - manufacturer-controller
+      - manufacturer
       summary: Get all manufacturers
+      description: Retrieve all manufacturers from the database
       operationId: getAllManufacturers
       parameters:
       - name: page
@@ -356,8 +366,10 @@ paths:
       - bearerAuth: []
     post:
       tags:
-      - manufacturer-controller
+      - manufacturer
       summary: Save a manufacturer
+      description: Search for such manufacturer in the database if it is missing then
+        persist it
       operationId: saveManufacturer
       requestBody:
         content:
@@ -402,8 +414,9 @@ paths:
   /v1/categories:
     get:
       tags:
-      - category-controller
+      - category
       summary: Get all categories
+      description: Retrieve all model categories from the database
       operationId: getAllCategories
       parameters:
       - name: page
@@ -445,7 +458,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "200":
-          description: OK
+          description: Ok
           content:
             '*/*':
               schema:
@@ -454,8 +467,9 @@ paths:
       - bearerAuth: []
     post:
       tags:
-      - category-controller
+      - category
       summary: Save a category
+      description: Persist a model category in the database
       operationId: saveCategory
       requestBody:
         content:
@@ -500,8 +514,10 @@ paths:
   /v1/models:
     get:
       tags:
-      - model-controller
+      - model
       summary: Search models
+      description: "Seach for models in the database by optional parameters if no\
+        \ one is specified, retrieve all models"
       operationId: searchModels
       parameters:
       - name: model
@@ -586,8 +602,9 @@ paths:
   /v1/models/{id}:
     get:
       tags:
-      - model-controller
+      - model
       summary: Get a model by its id
+      description: Seach for and revrieve a model from the database by its name
       operationId: getModelById
       parameters:
       - name: id
@@ -620,7 +637,7 @@ paths:
                 model:
                   description: model
                   value:
-                  - id: "1"
+                    id: "1"
                     name: A7
                     year: "2023"
                     manufacturer: Audi
@@ -636,8 +653,9 @@ paths:
       - bearerAuth: []
     delete:
       tags:
-      - model-controller
+      - model
       summary: Delete a model by its id
+      description: Search for and delete from the database a model by its id
       operationId: deleteModelById
       parameters:
       - name: id
@@ -671,8 +689,10 @@ paths:
   /v1/model-names/{name}:
     get:
       tags:
-      - model-name-controller
+      - model-name
       summary: Get a name of the models by the name
+      description: "Seach for a name of the models in the database if it exists, retrieve\
+        \ it"
       operationId: getModelNameByName
       parameters:
       - name: name
@@ -705,7 +725,7 @@ paths:
                 modelName:
                   description: modelName
                   value:
-                  - name: A7
+                    name: A7
         "404":
           description: Not Found
           content:
@@ -716,8 +736,9 @@ paths:
       - bearerAuth: []
     delete:
       tags:
-      - model-name-controller
+      - model-name
       summary: Delete a name of the models by the name
+      description: Search for and delete a name of the models from the database
       operationId: deleteModelNameByName
       parameters:
       - name: name
@@ -751,8 +772,9 @@ paths:
   /v1/manufacturers/{name}:
     get:
       tags:
-      - manufacturer-controller
+      - manufacturer
       summary: Get a manufacturer by its name
+      description: Search for and retrieve a manufacturer from the database
       operationId: getManufacturerByName
       parameters:
       - name: name
@@ -785,7 +807,7 @@ paths:
                 manufacturer:
                   description: manufacturer
                   value:
-                  - name: Audi
+                    name: Audi
         "404":
           description: Not Found
           content:
@@ -796,8 +818,9 @@ paths:
       - bearerAuth: []
     delete:
       tags:
-      - manufacturer-controller
+      - manufacturer
       summary: Delete a manufacturer by its name
+      description: Seach for and delete a manufacturer from the database by its name
       operationId: deleteManufacturerByName
       parameters:
       - name: name
@@ -831,8 +854,9 @@ paths:
   /v1/categories/{name}:
     get:
       tags:
-      - category-controller
+      - category
       summary: Get a category by its name
+      description: Search for and retrieve a model category by its name from the database
       operationId: getCategoryByName
       parameters:
       - name: name
@@ -865,7 +889,7 @@ paths:
                 category:
                   description: category
                   value:
-                  - name: SUV
+                    name: SUV
         "404":
           description: Not Found
           content:
@@ -876,8 +900,10 @@ paths:
       - bearerAuth: []
     delete:
       tags:
-      - category-controller
+      - category
       summary: Delete a category by its name
+      description: Search for and delete a model category from the database by its
+        name
       operationId: deleteCategoryByName
       parameters:
       - name: name
@@ -983,16 +1009,11 @@ components:
           format: int64
         pageable:
           $ref: '#/components/schemas/PageableObject'
-        number:
-          type: integer
-          format: int32
-        sort:
-          $ref: '#/components/schemas/SortObject'
         first:
           type: boolean
         last:
           type: boolean
-        numberOfElements:
+        number:
           type: integer
           format: int32
         size:
@@ -1002,6 +1023,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ModelDto'
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        numberOfElements:
+          type: integer
+          format: int32
         empty:
           type: boolean
     PageableObject:
@@ -1013,23 +1039,23 @@ components:
         pageSize:
           type: integer
           format: int32
+        offset:
+          type: integer
+          format: int64
         sort:
           $ref: '#/components/schemas/SortObject'
         paged:
           type: boolean
         unpaged:
           type: boolean
-        offset:
-          type: integer
-          format: int64
     SortObject:
       type: object
       properties:
         sorted:
           type: boolean
-        unsorted:
-          type: boolean
         empty:
+          type: boolean
+        unsorted:
           type: boolean
     PageModelNameDto:
       type: object
@@ -1042,16 +1068,11 @@ components:
           format: int64
         pageable:
           $ref: '#/components/schemas/PageableObject'
-        number:
-          type: integer
-          format: int32
-        sort:
-          $ref: '#/components/schemas/SortObject'
         first:
           type: boolean
         last:
           type: boolean
-        numberOfElements:
+        number:
           type: integer
           format: int32
         size:
@@ -1061,6 +1082,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ModelNameDto'
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        numberOfElements:
+          type: integer
+          format: int32
         empty:
           type: boolean
     PageManufacturerDto:
@@ -1074,16 +1100,11 @@ components:
           format: int64
         pageable:
           $ref: '#/components/schemas/PageableObject'
-        number:
-          type: integer
-          format: int32
-        sort:
-          $ref: '#/components/schemas/SortObject'
         first:
           type: boolean
         last:
           type: boolean
-        numberOfElements:
+        number:
           type: integer
           format: int32
         size:
@@ -1093,6 +1114,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ManufacturerDto'
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        numberOfElements:
+          type: integer
+          format: int32
         empty:
           type: boolean
     PageCategoryDto:
@@ -1106,16 +1132,11 @@ components:
           format: int64
         pageable:
           $ref: '#/components/schemas/PageableObject'
-        number:
-          type: integer
-          format: int32
-        sort:
-          $ref: '#/components/schemas/SortObject'
         first:
           type: boolean
         last:
           type: boolean
-        numberOfElements:
+        number:
           type: integer
           format: int32
         size:
@@ -1125,6 +1146,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CategoryDto'
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        numberOfElements:
+          type: integer
+          format: int32
         empty:
           type: boolean
   securitySchemes:

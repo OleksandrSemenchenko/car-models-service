@@ -47,15 +47,14 @@ public class ModelService {
     private final ManufacturerRepository manufacturerRepository;
     private final ModelMapper modelMapper;
     
-    public Optional<ModelDto> getByManufacturerAndNameAndYear(String manufacturer, String name, int year) {
+    public ModelDto getByManufacturerAndNameAndYear(String manufacturer, String name, int year) {
         SearchFilter searchFilter = SearchFilter.builder().manufacturer(manufacturer)
                                                           .model(name)
                                                           .year(year).build();
         Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
         
-        return modelRepository.findOne(specification).or(() -> {
-            throw new NotFoundException(String.format(NO_SUCH_MODEL, manufacturer, name, year));
-        }).map(modelMapper::map);
+        return modelRepository.findOne(specification).map(modelMapper::map).orElseThrow(
+                () -> new NotFoundException(String.format(NO_SUCH_MODEL, manufacturer, name, year)));
     }
     
     public Page<ModelDto> search(SearchFilter searchFilter, Pageable pageRequest) {
@@ -101,10 +100,9 @@ public class ModelService {
         modelRepository.deleteById(id);
     }
 
-    public Optional<ModelDto> getById(String id) {
-        return modelRepository.findById(id).or(() -> {
-            throw new NotFoundException(String.format(NO_MODEL_WITH_SUCH_ID, id));
-        }).map(modelMapper::map);
+    public ModelDto getById(String id) {
+        return modelRepository.findById(id).map(modelMapper::map).orElseThrow(
+                () -> new NotFoundException(String.format(NO_MODEL_WITH_SUCH_ID, id)));
     }
     
     private void throwIfPresentByManufacturerAndModelAndYear(String manufacturer, String model, int year) {

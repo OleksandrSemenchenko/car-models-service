@@ -104,6 +104,7 @@ class ModelServiceTest {
     @Test
     void getByManufacturerAndNameAndYear_ShouldReturnModel() {
         when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.of(model));
+        when(modelMapper.map(model)).thenReturn(modelDto);
         modelService.getByManufacturerAndNameAndYear(MANUFACTURER_NAME, MODEL_NAME, YEAR);
         
         verify(modelRepository).findOne(ArgumentMatchers.<Specification<Model>>any());
@@ -249,6 +250,7 @@ class ModelServiceTest {
     @Test
     void getById_ShouldReturnModel() {
         when(modelRepository.findById(MODEL_ID)).thenReturn(Optional.of(model));
+        when(modelMapper.map(model)).thenReturn(modelDto);
         modelService.getById(MODEL_ID);
         
         verify(modelRepository).findById(MODEL_ID);

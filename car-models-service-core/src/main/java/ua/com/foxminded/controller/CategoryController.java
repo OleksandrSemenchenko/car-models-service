@@ -3,7 +3,6 @@ package ua.com.foxminded.controller;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 import java.net.URI;
-import java.util.Optional;
 
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,6 +52,8 @@ public class CategoryController {
     
     @PostMapping
     @Operation(summary = "Save a category", operationId = "saveCategory", 
+               description = "Persist a model category in the database",
+               tags = "category",
                requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                        content = @Content(mediaType = "application/json", 
                                           examples = @ExampleObject(name = "category", 
@@ -75,24 +76,29 @@ public class CategoryController {
     
     
     @GetMapping("/{name}")
-    @Operation(summary = "Get a category by its name", operationId = "getCategoryByName",
+    @Operation(summary = "Get a category by its name", operationId = "getCategoryByName", 
+               description = "Search for and retrieve a model category by its name from the database",
+               tags = "category",
                responses = {
                        @ApiResponse(responseCode = "200", description = "Ok", 
                                     content = @Content(mediaType = "application/json",
                                                        array = @ArraySchema(schema = @Schema(
                                                                implementation = CategoryDto.class)),
                                                        examples = @ExampleObject(name = "category" , 
-                                                                                 value = "[{\"name\": \"SUV\"}]"))),
+                                                                                 value = "{\"name\": \"SUV\"}"))),
                        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(
                                mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
                 })
-    public Optional<CategoryDto> getByName(@PathVariable String name) {
+    public CategoryDto getByName(@PathVariable String name) {
         return categoryService.getByName(name);
     }
     
     @GetMapping
     @Operation(summary = "Get all categories", operationId = "getAllCategories", 
-               responses = @ApiResponse(responseCode = "200", useReturnTypeSchema = true))
+               description = "Retrieve all model categories from the database", 
+               tags = "category",
+               responses = @ApiResponse(responseCode = "200", description = "Ok", useReturnTypeSchema = true)
+    )
     public Page<CategoryDto> getAll(@ParameterObject Pageable pageRequest) {
         pageRequest = setDefaultSortIfNeeded(pageRequest);
         return categoryService.getAll(pageRequest);
@@ -100,7 +106,9 @@ public class CategoryController {
     
     @DeleteMapping("/{name}")
     @ResponseStatus(NO_CONTENT)
-    @Operation(summary = "Delete a category by its name", operationId = "deleteCategoryByName",
+    @Operation(summary = "Delete a category by its name", operationId = "deleteCategoryByName", 
+               description = "Search for and delete a model category from the database by its name",
+               tags = "category",
                responses = {
                        @ApiResponse(responseCode = "404", description = "Not Found", 
                                     content = @Content(mediaType = "application/json", 

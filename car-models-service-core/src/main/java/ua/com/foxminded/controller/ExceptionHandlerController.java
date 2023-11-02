@@ -4,6 +4,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 
 import java.time.Instant;
+import java.util.ArrayList;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -32,17 +33,19 @@ public class ExceptionHandlerController {
     
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(METHOD_NOT_ALLOWED)
-    public ErrorResponse handleDataIntegrityViolation(HttpServletRequest request) {
-        return buildErrorResponse(
-                HttpStatus.METHOD_NOT_ALLOWED, DATA_INTEGRRITY_VIOLATION_EXCEPTION_MESSAGE, request);
+    public ErrorResponse handleDataIntegrityViolation(DataIntegrityViolationException e, HttpServletRequest request) {
+        log.error("Data integrity violation exception", e);
+        return buildErrorResponse(HttpStatus.METHOD_NOT_ALLOWED, DATA_INTEGRRITY_VIOLATION_EXCEPTION_MESSAGE, request);
     }
     
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(BAD_REQUEST)
     public ErrorResponse handleConstraintViolation(ConstraintViolationException e, HttpServletRequest request) {
         log.error("Constraint violation exception");
-        ErrorResponse errorResponse = buildErrorResponse(
-                HttpStatus.BAD_REQUEST, NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE, request);
+        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST, 
+                                                         NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE, 
+                                                         request);
+        errorResponse.setViolations(new ArrayList<>());
         
         for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
             errorResponse.getViolations().add((new Violation(violation.getPropertyPath().toString(), 
@@ -55,8 +58,10 @@ public class ExceptionHandlerController {
     @ResponseStatus(BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValid(MethodArgumentNotValidException e, HttpServletRequest request) {
         log.error("Method argument not valid exception");
-        ErrorResponse errorResponse = buildErrorResponse(
-                HttpStatus.BAD_REQUEST, NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE, request);
+        ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST, 
+                                                         NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE, 
+                                                         request);
+        errorResponse.setViolations(new ArrayList<>());
         
         for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
             errorResponse.getViolations().add(new Violation(fieldError.getField(), 

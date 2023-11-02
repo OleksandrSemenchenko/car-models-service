@@ -3,7 +3,6 @@ package ua.com.foxminded.controller;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 import java.net.URI;
-import java.util.Optional;
 
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,22 +58,24 @@ public class ModelController {
     @GetMapping("/manufacturers/{manufacturer}/models/{name}/{year}")
     @Operation(summary = "Get a model by its manufacturer, name and year", 
                operationId = "getModelByManufacturerAndNameAndYear",
+               description = "Seach for and retrieve a model by its manufacturer, name and year from the database",
+               tags = "model",
                responses = {
                        @ApiResponse(responseCode = "200", description = "Ok", content = @Content(
                                mediaType = "application/json", 
                                array = @ArraySchema(schema = @Schema(implementation = ModelDto.class)), 
                                examples = @ExampleObject(name = "model", 
-                                                         value = "[{\"id\": \"1\", "
-                                                                  + "\"name\": \"A7\", " 
-                                                                  + "\"year\": \"2023\", " 
-                                                                  + "\"manufacturer\": \"Audi\", "
-                                                                  + "\"categories\": [\"SUV\"]}]"))),
+                                                         value = "{\"id\": \"1\", " +
+                                                                  "\"name\": \"A7\", " +
+                                                                  "\"year\": \"2023\", " +
+                                                                  "\"manufacturer\": \"Audi\", " +
+                                                                  "\"categories\": [\"SUV\"]}"))),
                        @ApiResponse(responseCode = "404", description = "Not Found", content = {
                                @Content(mediaType = "application/json", 
                                         schema = @Schema(implementation = ErrorResponse.class))
                        })
                })
-    public Optional<ModelDto> getByManufacturerAndNameAndYear(@PathVariable String manufacturer, 
+    public ModelDto getByManufacturerAndNameAndYear(@PathVariable String manufacturer, 
                                                               @PathVariable String name, 
                                                               @PathVariable @Positive int year) {
         return modelService.getByManufacturerAndNameAndYear(manufacturer, name, year);
@@ -82,6 +83,9 @@ public class ModelController {
     
     @GetMapping("/models")
     @Operation(summary = "Search models", operationId = "searchModels", 
+               description = "Seach for models in the database by optional parameters if no one is specified, " +
+                             "retrieve all models",
+               tags = "model",
                responses = @ApiResponse(responseCode = "200", useReturnTypeSchema = true))
     public Page<ModelDto> search(@Valid @ParameterObject SearchFilter searchFilter, 
                                  @ParameterObject Pageable pageRequest) {
@@ -90,34 +94,39 @@ public class ModelController {
     }
     
     @GetMapping("/models/{id}")
-    @Operation(summary = "Get a model by its id", operationId = "getModelById",
+    @Operation(summary = "Get a model by its id", operationId = "getModelById", 
+               description = "Seach for and revrieve a model from the database by its name",
+               tags = "model",
                responses = {
                        @ApiResponse(responseCode = "200", description = "Ok", content = @Content(
                                mediaType = "application/json", 
                                array = @ArraySchema(schema = @Schema(implementation = ModelDto.class)), 
-                               examples = @ExampleObject(name = "model", value = "[{\"id\": \"1\", "
-                                                                                  + "\"name\": \"A7\", " 
-                                                                                  + "\"year\": \"2023\", " 
-                                                                                  + "\"manufacturer\": \"Audi\", "
-                                                                                  + "\"categories\": [\"Sedan\"]}]"))),
+                               examples = @ExampleObject(name = "model", value = "{\"id\": \"1\", " +
+                                                                                  "\"name\": \"A7\", " +
+                                                                                  "\"year\": \"2023\", " +
+                                                                                  "\"manufacturer\": \"Audi\", " +
+                                                                                  "\"categories\": [\"Sedan\"]}"))),
                        @ApiResponse(responseCode = "404", description = "Not Found", 
                              content = @Content(mediaType = "application/json", 
                              schema = @Schema(implementation = ErrorResponse.class)))
                })
-    public Optional<ModelDto> getById(@PathVariable String id) {
+    public ModelDto getById(@PathVariable String id) {
         return modelService.getById(id);
     }
     
     @PostMapping("/manufacturers/{manufacturer}/models/{name}/{year}")
-    @Operation(summary = "Save a model", operationId = "saveModel",
+    @Operation(summary = "Save a model", operationId = "saveModel", 
+               description = "Seach for a model by its manufacturer, name and year in the database if it is missing, " +
+                              "persist it",
+               tags = "model",
                requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
                        mediaType = "application/json", 
                        schema = @Schema(implementation = ModelDto.class), 
-                       examples = @ExampleObject(name = "model", value = "{\"id\": null, "
-                                                                        + "\"name\": null, " 
-                                                                        + "\"year\": null, " 
-                                                                        + "\"manufacturer\": null, "
-                                                                        + "\"categories\": [\"Sedan\"]}"))),
+                       examples = @ExampleObject(name = "model", value = "{\"id\": null, " +
+                                                                          "\"name\": null, " +
+                                                                          "\"year\": null, " +
+                                                                          "\"manufacturer\": null, " +
+                                                                          "\"categories\": [\"Sedan\"]}"))),
                responses = {
                        @ApiResponse(responseCode = "201", description = "Created", 
                                     headers = @Header(name = "Location", description = "/v1/models/{id}")), 
@@ -145,7 +154,10 @@ public class ModelController {
     }
     
     @PutMapping("/manufacturers/{manufacturer}/models/{name}/{year}")
-    @Operation(summary = "Update a model", operationId = "updateModel",
+    @Operation(summary = "Update a model", operationId = "updateModel", 
+               description = "Seach for a model by its manufacturer, name and year in the database if it exists, " +
+                             "update it",
+               tags = "model",
                requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
                        schema = @Schema(implementation = ModelDto.class), 
                        examples = @ExampleObject(name = "model", 
@@ -173,6 +185,8 @@ public class ModelController {
     @DeleteMapping("/models/{id}")
     @ResponseStatus(NO_CONTENT)
     @Operation(summary = "Delete a model by its id", operationId = "deleteModelById", 
+               description = "Search for and delete from the database a model by its id",
+               tags = "model",
                responses = @ApiResponse(responseCode = "404", description = "Not Found", 
                                         content = @Content(mediaType = "application/json", 
                                                            schema = @Schema(implementation = ErrorResponse.class))))

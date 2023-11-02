@@ -8,9 +8,9 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 
 @Configuration
-@OpenAPIDefinition(info = @Info(title = "Car models service", 
+@OpenAPIDefinition(info = @Info(title = "Car models service API", 
                                 version = "1.0", 
-                                description = "The microservice to manage car models"))
+                                description = "The API to persist and search car models in a database"))
 @SecurityScheme(
 name = "bearerAuth",
 type = SecuritySchemeType.HTTP,
