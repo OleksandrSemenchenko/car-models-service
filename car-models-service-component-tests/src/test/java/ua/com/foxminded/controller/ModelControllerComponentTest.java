@@ -121,7 +121,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     }
     
     @Test
-    void save_ShouldReturnStatus400_WhenModelDtoCategoriesIsNull() {
+    void create_ShouldReturnStatus400_WhenModelDtoCategoriesIsNull() {
         ModelDto modelDto = new ModelDto();
         
         webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
@@ -134,7 +134,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     }
     
     @Test
-    void save_ShouldReturnStatus400_WhenYearIsNegative() {
+    void create_ShouldReturnStatus400_WhenYearIsNegative() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(NEW_CATEGORY_NAME)).build();
         
         webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
@@ -147,7 +147,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     }
     
     @Test
-    void save_ShouldReturnStatus404_WhenNoRequiredCategory() {
+    void create_ShouldReturnStatus404_WhenNoRequiredCategory() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(NEW_CATEGORY_NAME)).build();
         
         webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
@@ -160,7 +160,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     }
     
     @Test
-    void save_ShouldReturnStatus404_WhenNoRequiredModelName() {
+    void create_ShouldReturnStatus404_WhenNoRequiredModelName() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME)).build();
         
         webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
@@ -173,7 +173,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     }
     
     @Test
-    void save_ShouldReturnStatus404_WhenNoRequiredManufacturer() {
+    void create_ShouldReturnStatus404_WhenNoRequiredManufacturer() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME)).build();
         
         webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
@@ -187,7 +187,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     }
     
     @Test
-    void save_ShouldReturnStatus409_WhenSuchModelAlreadyExists() {
+    void create_ShouldReturnStatus409_WhenSuchModelAlreadyExists() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME)).build();
         
         webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
@@ -201,7 +201,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     }
     
     @Test
-    void save_ShouldReturnStatus201() {
+    void create_ShouldReturnStatus201() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME)).build();
         
         webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 

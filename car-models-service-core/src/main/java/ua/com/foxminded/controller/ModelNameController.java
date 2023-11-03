@@ -51,7 +51,7 @@ public class ModelNameController {
     private final ModelNameService modelNameService;
     
     @PostMapping
-    @Operation(summary = "Save a name of the models", operationId = "saveModelName", 
+    @Operation(summary = "Create a name of the models", operationId = "createModelName", 
                description = "Seach a specified name of the models in the database if it is missing, persist it",
                tags = "model-name",
                requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -60,14 +60,18 @@ public class ModelNameController {
                                           examples = @ExampleObject(name = "modelName" , 
                                                                     value = "{\"name\": \"A7\"}"))),
                responses = {
-                       @ApiResponse(responseCode = "201", description = "Created", 
-                                    headers = @Header(name = "Location", description = "/v1/names/{name}")), 
-                       @ApiResponse(responseCode = "409", description = "Conflict", 
+                       @ApiResponse(responseCode = "201", description = "The name of models has been created", 
+                                    headers = @Header(name = "Location", description = "/v1/names/{name}")),
+                       @ApiResponse(responseCode = "400", 
+                                    description = "The name of models must be non-empty and non-null",
+                                    content = @Content(mediaType = "application/json", 
+                                    schema = @Schema(implementation = ErrorResponse.class))),
+                       @ApiResponse(responseCode = "409", description = "Such name of models already exists", 
                                     content = @Content(mediaType = "application/json", 
                                                        schema = @Schema(implementation = ErrorResponse.class)))
                })
-    public ResponseEntity<Void> save(@RequestBody @Valid ModelNameDto modelNameDto) {
-        modelNameService.save(modelNameDto);
+    public ResponseEntity<Void> create(@RequestBody @Valid ModelNameDto modelNameDto) {
+        modelNameService.create(modelNameDto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                                                   .path("/{name}")
                                                   .buildAndExpand(modelNameDto.getName())
@@ -80,13 +84,13 @@ public class ModelNameController {
                description = "Seach for a name of the models in the database if it exists, retrieve it",
                tags = "model-name",
                responses = {
-                       @ApiResponse(responseCode = "200", description = "Ok", content = @Content(
+                       @ApiResponse(responseCode = "200", description = "The name of models", content = @Content(
                                mediaType = "application/json", 
                                array = @ArraySchema(schema = @Schema(implementation = ModelNameDto.class)), 
                                examples = @ExampleObject(name = "modelName", value = "{\"name\": \"A7\"}"))),
-                       @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(
-                               mediaType = "application/json", 
-                               schema = @Schema(implementation = ErrorResponse.class)))
+                       @ApiResponse(responseCode = "404", description = "The name of models has not been found", 
+                                    content = @Content(mediaType = "application/json", 
+                                                       schema = @Schema(implementation = ErrorResponse.class)))
                })
     public ModelNameDto getByName(@PathVariable String name) {
         return modelNameService.getByName(name);
@@ -96,7 +100,8 @@ public class ModelNameController {
     @Operation(summary = "Get all names of the models", operationId = "getAllModelNames", 
                description = "Retrieve all names of the models from the database",
                tags = "model-name",
-               responses = @ApiResponse(responseCode = "200", useReturnTypeSchema = true))
+               responses = @ApiResponse(responseCode = "200", description = "The sorted page of model names", 
+                                        useReturnTypeSchema = true))
     public Page<ModelNameDto> getAll(@ParameterObject Pageable pageRequest) {
         pageRequest = setDefaultSortIfNeeded(pageRequest);
         return modelNameService.getAll(pageRequest);
@@ -108,10 +113,12 @@ public class ModelNameController {
                description = "Search for and delete a name of the models from the database",
                tags = "model-name",
                responses = {
-                       @ApiResponse(responseCode = "404", description = "Not Found", 
+                       @ApiResponse(responseCode = "204", description = "The name of models has been deleted"),
+                       @ApiResponse(responseCode = "404", description = "The name of models has not been found", 
                                     content = @Content(mediaType = "application/json", 
                                                        schema = @Schema(implementation = ErrorResponse.class))),
-                       @ApiResponse(responseCode = "405", description = "Method Not Allowed", 
+                       @ApiResponse(responseCode = "405", 
+                                    description = "The name of models has relations and cannot be removed", 
                                     content = @Content(mediaType = "application/json", 
                                                        schema = @Schema(implementation = ErrorResponse.class)))
                })

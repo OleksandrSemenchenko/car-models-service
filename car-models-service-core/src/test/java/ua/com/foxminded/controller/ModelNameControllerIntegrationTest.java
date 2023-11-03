@@ -45,7 +45,7 @@ class ModelNameControllerIntegrationTest {
     }
     
     @Test
-    void save_ShouldReturnStatus201() throws Exception {
+    void create_ShouldReturnStatus201() throws Exception {
         modelNameDto.setName(NEW_MODEL_NAME);
         modelNameDtoJson = mapper.writeValueAsString(modelNameDto);
         

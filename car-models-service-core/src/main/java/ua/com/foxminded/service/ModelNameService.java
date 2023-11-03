@@ -24,7 +24,7 @@ public class ModelNameService {
     private final ModelNameRepository modelNameRepository;
     private final ModelNameMapper modeNamelMapper;
     
-    public ModelNameDto save(ModelNameDto modelNameDto) {
+    public ModelNameDto create(ModelNameDto modelNameDto) {
         if (modelNameRepository.existsById(modelNameDto.getName())) {
             throw new AlreadyExistsException(String.format(MODEL_NAME_ALREADY_EXISTS, modelNameDto.getName()));
         }

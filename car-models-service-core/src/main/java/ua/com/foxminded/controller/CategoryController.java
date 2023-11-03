@@ -51,22 +51,26 @@ public class CategoryController {
     private final CategoryService categoryService;
     
     @PostMapping
-    @Operation(summary = "Save a category", operationId = "saveCategory", 
-               description = "Persist a model category in the database",
+    @Operation(summary = "Create a category", operationId = "createCategory", 
+               description = "Persist a model category data in the database",
                tags = "category",
                requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                        content = @Content(mediaType = "application/json", 
                                           examples = @ExampleObject(name = "category", 
                                                                     value = "{\"name\": \"SUV\"}"))), 
                responses = {
-                       @ApiResponse(responseCode = "201", description = "Created", 
+                       @ApiResponse(responseCode = "201", description = "The category has been created", 
                                     headers = @Header(name = "Location", description = "/v1/categories/{name}")),
-                       @ApiResponse(responseCode = "409", description = "Conflict", 
+                       @ApiResponse(responseCode = "400", 
+                                    description = "The name of category must be non-null or non-empty",
+                                    content = @Content(mediaType = "application/json", 
+                                                       schema = @Schema(implementation = ErrorResponse.class))),
+                       @ApiResponse(responseCode = "409", description = "Such category already exists", 
                                     content = @Content(mediaType = "application/json", 
                                                        schema = @Schema(implementation = ErrorResponse.class)))
                 })
-    public ResponseEntity<Void> save(@RequestBody @Valid CategoryDto category) {
-        categoryService.save(category);
+    public ResponseEntity<Void> create(@RequestBody @Valid CategoryDto category) {
+        categoryService.create(category);
         URI location = ServletUriComponentsBuilder.fromCurrentRequestUri()
                                                   .path("/{name}")
                                                   .buildAndExpand(category.getName())
@@ -80,14 +84,15 @@ public class CategoryController {
                description = "Search for and retrieve a model category by its name from the database",
                tags = "category",
                responses = {
-                       @ApiResponse(responseCode = "200", description = "Ok", 
+                       @ApiResponse(responseCode = "200", description = "The category", 
                                     content = @Content(mediaType = "application/json",
                                                        array = @ArraySchema(schema = @Schema(
                                                                implementation = CategoryDto.class)),
                                                        examples = @ExampleObject(name = "category" , 
                                                                                  value = "{\"name\": \"SUV\"}"))),
-                       @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(
-                               mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+                       @ApiResponse(responseCode = "404", description = "The category has not been found", 
+                                    content = @Content(mediaType = "application/json", 
+                                                       schema = @Schema(implementation = ErrorResponse.class)))
                 })
     public CategoryDto getByName(@PathVariable String name) {
         return categoryService.getByName(name);
@@ -97,8 +102,8 @@ public class CategoryController {
     @Operation(summary = "Get all categories", operationId = "getAllCategories", 
                description = "Retrieve all model categories from the database", 
                tags = "category",
-               responses = @ApiResponse(responseCode = "200", description = "Ok", useReturnTypeSchema = true)
-    )
+               responses = @ApiResponse(responseCode = "200", description = "The sorted page of categories", 
+                                        useReturnTypeSchema = true))
     public Page<CategoryDto> getAll(@ParameterObject Pageable pageRequest) {
         pageRequest = setDefaultSortIfNeeded(pageRequest);
         return categoryService.getAll(pageRequest);
@@ -110,10 +115,12 @@ public class CategoryController {
                description = "Search for and delete a model category from the database by its name",
                tags = "category",
                responses = {
-                       @ApiResponse(responseCode = "404", description = "Not Found", 
+                       @ApiResponse(responseCode = "204", description = "The category has been deleted"),
+                       @ApiResponse(responseCode = "404", description = "The category has not been found", 
                                     content = @Content(mediaType = "application/json", 
                                                        schema = @Schema(implementation = ErrorResponse.class))), 
-                       @ApiResponse(responseCode = "405", description = "Method Not Allowed")
+                       @ApiResponse(responseCode = "405", 
+                                    description = "The category has relations and cannot be removed")
                })
     public void deleteByName(@PathVariable String name) {
         categoryService.deleleteByName(name);

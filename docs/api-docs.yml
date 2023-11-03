@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   title: Car models service API
   description: The API to persist and search car models in a database
-  version: "1.0"
+  version: 1.0.0
 servers:
 - url: http://localhost:8180
   description: Generated server url
@@ -40,13 +40,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "400":
-          description: Bad Request
+          description: The model year must be positive
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "200":
-          description: Ok
+          description: The model
           content:
             application/json:
               schema:
@@ -64,7 +64,7 @@ paths:
                     categories:
                     - SUV
         "404":
-          description: Not Found
+          description: The model has not been found
           content:
             application/json:
               schema:
@@ -104,10 +104,6 @@ paths:
               model:
                 description: model
                 value:
-                  id: null
-                  name: null
-                  year: null
-                  manufacturer: null
                   categories:
                   - Sedan
         required: true
@@ -119,15 +115,16 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "400":
-          description: Bad Request
+          description: The model must have a non-empty and non-null category and a
+            model year must be positive
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "200":
-          description: Ok
+          description: The model data has been updated
         "404":
-          description: Not Found
+          description: The model or model component has not been found
           content:
             application/json:
               schema:
@@ -137,10 +134,10 @@ paths:
     post:
       tags:
       - model
-      summary: Save a model
+      summary: Create a model
       description: "Seach for a model by its manufacturer, name and year in the database\
         \ if it is missing, persist it"
-      operationId: saveModel
+      operationId: createModel
       parameters:
       - name: manufacturer
         in: path
@@ -167,10 +164,6 @@ paths:
               model:
                 description: model
                 value:
-                  id: null
-                  name: null
-                  year: null
-                  manufacturer: null
                   categories:
                   - Sedan
         required: true
@@ -182,13 +175,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "400":
-          description: Bad Request
+          description: The model must have a non-empty and non-null category and a
+            model year must be positive
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "201":
-          description: Created
+          description: The model has been created
           headers:
             Location:
               description: "/v1/models/{id}"
@@ -196,13 +190,13 @@ paths:
               schema:
                 type: string
         "404":
-          description: Not Found
+          description: The model component has not been found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "409":
-          description: Conflict
+          description: Such model already exists
           content:
             application/json:
               schema:
@@ -256,7 +250,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "200":
-          description: OK
+          description: The sorted page of model names
           content:
             '*/*':
               schema:
@@ -266,10 +260,10 @@ paths:
     post:
       tags:
       - model-name
-      summary: Save a name of the models
+      summary: Create a name of the models
       description: "Seach a specified name of the models in the database if it is\
         \ missing, persist it"
-      operationId: saveModelName
+      operationId: createModelName
       requestBody:
         content:
           application/json:
@@ -289,13 +283,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "400":
-          description: Bad Request
+          description: The name of models must be non-empty and non-null
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "201":
-          description: Created
+          description: The name of models has been created
           headers:
             Location:
               description: "/v1/names/{name}"
@@ -303,7 +297,7 @@ paths:
               schema:
                 type: string
         "409":
-          description: Conflict
+          description: Such name of models already exists
           content:
             application/json:
               schema:
@@ -357,7 +351,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "200":
-          description: Ok
+          description: The sorted page of manufacturers
           content:
             '*/*':
               schema:
@@ -367,10 +361,10 @@ paths:
     post:
       tags:
       - manufacturer
-      summary: Save a manufacturer
+      summary: Create a manufacturer
       description: Search for such manufacturer in the database if it is missing then
         persist it
-      operationId: saveManufacturer
+      operationId: createManufacturer
       requestBody:
         content:
           application/json:
@@ -390,13 +384,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "400":
-          description: Bad Request
+          description: The name of manufacturer must be non-null or non-empty
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "201":
-          description: Created
+          description: The category has been created
           headers:
             Location:
               description: "/v1/manufacturers/{name}"
@@ -404,7 +398,7 @@ paths:
               schema:
                 type: string
         "409":
-          description: Conflict
+          description: Such manufacturer already exists
           content:
             application/json:
               schema:
@@ -458,7 +452,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "200":
-          description: Ok
+          description: The sorted page of categories
           content:
             '*/*':
               schema:
@@ -468,9 +462,9 @@ paths:
     post:
       tags:
       - category
-      summary: Save a category
-      description: Persist a model category in the database
-      operationId: saveCategory
+      summary: Create a category
+      description: Persist a model category data in the database
+      operationId: createCategory
       requestBody:
         content:
           application/json:
@@ -490,13 +484,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "400":
-          description: Bad Request
+          description: The name of category must be non-null or non-empty
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "201":
-          description: Created
+          description: The category has been created
           headers:
             Location:
               description: "/v1/categories/{name}"
@@ -504,7 +498,7 @@ paths:
               schema:
                 type: string
         "409":
-          description: Conflict
+          description: Such category already exists
           content:
             application/json:
               schema:
@@ -586,13 +580,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "400":
-          description: Bad Request
+          description: "The maxYear, minYear, year parameters must be positive"
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "200":
-          description: OK
+          description: The sorted page of models
           content:
             '*/*':
               schema:
@@ -626,7 +620,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "200":
-          description: Ok
+          description: The model
           content:
             application/json:
               schema:
@@ -644,7 +638,7 @@ paths:
                     categories:
                     - Sedan
         "404":
-          description: Not Found
+          description: The model has not been found
           content:
             application/json:
               schema:
@@ -676,14 +670,14 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        "204":
+          description: The model has been deleted
         "404":
-          description: Not Found
+          description: The model has not been found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-        "204":
-          description: No Content
       security:
       - bearerAuth: []
   /v1/model-names/{name}:
@@ -714,7 +708,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "200":
-          description: Ok
+          description: The name of models
           content:
             application/json:
               schema:
@@ -727,7 +721,7 @@ paths:
                   value:
                     name: A7
         "404":
-          description: Not Found
+          description: The name of models has not been found
           content:
             application/json:
               schema:
@@ -748,7 +742,7 @@ paths:
           type: string
       responses:
         "405":
-          description: Method Not Allowed
+          description: The name of models has relations and cannot be removed
           content:
             application/json:
               schema:
@@ -759,14 +753,14 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        "204":
+          description: The name of models has been deleted
         "404":
-          description: Not Found
+          description: The name of models has not been found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-        "204":
-          description: No Content
       security:
       - bearerAuth: []
   /v1/manufacturers/{name}:
@@ -796,7 +790,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "200":
-          description: Ok
+          description: The manufacturer
           content:
             application/json:
               schema:
@@ -809,7 +803,7 @@ paths:
                   value:
                     name: Audi
         "404":
-          description: Not Found
+          description: The manufacturer has not been found
           content:
             application/json:
               schema:
@@ -830,7 +824,7 @@ paths:
           type: string
       responses:
         "405":
-          description: Method Not Allowed
+          description: The manufacturer has relations and cannot be removed
           content:
             application/json:
               schema:
@@ -841,14 +835,14 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        "204":
+          description: The manufacturer has been deleted
         "404":
-          description: Not Found
+          description: The manufacturer has not been found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-        "204":
-          description: No Content
       security:
       - bearerAuth: []
   /v1/categories/{name}:
@@ -878,7 +872,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         "200":
-          description: Ok
+          description: The category
           content:
             application/json:
               schema:
@@ -891,7 +885,7 @@ paths:
                   value:
                     name: SUV
         "404":
-          description: Not Found
+          description: The category has not been found
           content:
             application/json:
               schema:
@@ -913,21 +907,21 @@ paths:
           type: string
       responses:
         "405":
-          description: Method Not Allowed
+          description: The category has relations and cannot be removed
         "400":
           description: Bad Request
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        "204":
+          description: The category has been deleted
         "404":
-          description: Not Found
+          description: The category has not been found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-        "204":
-          description: No Content
       security:
       - bearerAuth: []
 components:
@@ -1013,9 +1007,6 @@ components:
           type: boolean
         last:
           type: boolean
-        number:
-          type: integer
-          format: int32
         size:
           type: integer
           format: int32
@@ -1023,6 +1014,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ModelDto'
+        number:
+          type: integer
+          format: int32
         sort:
           $ref: '#/components/schemas/SortObject'
         numberOfElements:
@@ -1072,9 +1066,6 @@ components:
           type: boolean
         last:
           type: boolean
-        number:
-          type: integer
-          format: int32
         size:
           type: integer
           format: int32
@@ -1082,6 +1073,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ModelNameDto'
+        number:
+          type: integer
+          format: int32
         sort:
           $ref: '#/components/schemas/SortObject'
         numberOfElements:
@@ -1104,9 +1098,6 @@ components:
           type: boolean
         last:
           type: boolean
-        number:
-          type: integer
-          format: int32
         size:
           type: integer
           format: int32
@@ -1114,6 +1105,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ManufacturerDto'
+        number:
+          type: integer
+          format: int32
         sort:
           $ref: '#/components/schemas/SortObject'
         numberOfElements:
@@ -1136,9 +1130,6 @@ components:
           type: boolean
         last:
           type: boolean
-        number:
-          type: integer
-          format: int32
         size:
           type: integer
           format: int32
@@ -1146,6 +1137,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CategoryDto'
+        number:
+          type: integer
+          format: int32
         sort:
           $ref: '#/components/schemas/SortObject'
         numberOfElements:

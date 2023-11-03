@@ -62,7 +62,7 @@ public class ModelService {
         return modelRepository.findAll(specification, pageRequest).map(modelMapper::map);
     }
 
-    public ModelDto save(ModelDto modelDto) {
+    public ModelDto create(ModelDto modelDto) {
         throwIfPresentByManufacturerAndModelAndYear(modelDto.getManufacturer(), 
                                                     modelDto.getName(), 
                                                     modelDto.getYear()); 

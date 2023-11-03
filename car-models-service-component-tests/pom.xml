@@ -5,7 +5,7 @@
     <parent>
         <groupId>ua.com.foxminded</groupId>
         <artifactId>car-models-service</artifactId>
-        <version>1.0.2-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
     <artifactId>car-models-service-component-tests</artifactId>
     <packaging>jar</packaging>

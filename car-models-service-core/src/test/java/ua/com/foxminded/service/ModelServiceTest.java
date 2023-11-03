@@ -125,7 +125,7 @@ class ModelServiceTest {
     }
     
     @Test
-    void save_ShouldSaveModel() {
+    void create_ShouldSaveModel() {
         model.setId(null);
         when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.empty());
         when(categoryRepository.findById(modelDto.getCategories()
@@ -134,7 +134,7 @@ class ModelServiceTest {
         when(manufacturerRepository.findById(modelDto.getManufacturer())).thenReturn(Optional.of(manufacturer));
         when(modelNameRepository.findById(modelDto.getName())).thenReturn(Optional.of(modelName));
         when(modelRepository.save(model)).thenReturn(model);
-        modelService.save(modelDto);
+        modelService.create(modelDto);
 
         verify(modelRepository).findOne(ArgumentMatchers.<Specification<Model>>any());
         verify(categoryRepository).findById(modelDto.getCategories().iterator().next());
@@ -144,7 +144,7 @@ class ModelServiceTest {
     }
     
     @Test
-    void save_ShouldThrowNotFoundException_WhenNoSuchModelName() {
+    void create_ShouldThrowNotFoundException_WhenNoSuchModelName() {
         when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.empty());
         when(categoryRepository.findById(modelDto.getCategories()
                                                    .iterator()
@@ -152,33 +152,33 @@ class ModelServiceTest {
         when(manufacturerRepository.findById(modelDto.getManufacturer())).thenReturn(Optional.of(manufacturer));
         when(modelNameRepository.findById(modelDto.getName())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> modelService.save(modelDto));
+        assertThrows(NotFoundException.class, () -> modelService.create(modelDto));
     }
     
     @Test
-    void save_ShouldThrowNotFoundException_WhenNoSuchManufacturer() {
+    void create_ShouldThrowNotFoundException_WhenNoSuchManufacturer() {
         when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.empty());
         when(categoryRepository.findById(modelDto.getCategories()
                                                    .iterator()
                                                    .next())).thenReturn(Optional.of(category));
         when(manufacturerRepository.findById(modelDto.getManufacturer())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> modelService.save(modelDto));
+        assertThrows(NotFoundException.class, () -> modelService.create(modelDto));
     }
     
     @Test
-    void save_ShouldThrowNotFoundException_WhenNoSuchCategory() {
+    void create_ShouldThrowNotFoundException_WhenNoSuchCategory() {
         when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.empty());
         when(categoryRepository.findById(modelDto.getCategories().iterator().next())).thenReturn(Optional.empty());
         
-        assertThrows(NotFoundException.class, () -> modelService.save(modelDto));
+        assertThrows(NotFoundException.class, () -> modelService.create(modelDto));
     }
     
     @Test
-    void save_ShouldThrowAlreadyExistsException_WhenModelAlreadyExists() {
+    void create_ShouldThrowAlreadyExistsException_WhenModelAlreadyExists() {
         when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.of(model));
         
-        assertThrows(AlreadyExistsException.class, () -> modelService.save(modelDto));
+        assertThrows(AlreadyExistsException.class, () -> modelService.create(modelDto));
     }
     
     @Test

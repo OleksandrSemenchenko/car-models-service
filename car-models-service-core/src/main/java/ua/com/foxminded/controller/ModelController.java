@@ -61,7 +61,7 @@ public class ModelController {
                description = "Seach for and retrieve a model by its manufacturer, name and year from the database",
                tags = "model",
                responses = {
-                       @ApiResponse(responseCode = "200", description = "Ok", content = @Content(
+                       @ApiResponse(responseCode = "200", description = "The model", content = @Content(
                                mediaType = "application/json", 
                                array = @ArraySchema(schema = @Schema(implementation = ModelDto.class)), 
                                examples = @ExampleObject(name = "model", 
@@ -70,14 +70,17 @@ public class ModelController {
                                                                   "\"year\": \"2023\", " +
                                                                   "\"manufacturer\": \"Audi\", " +
                                                                   "\"categories\": [\"SUV\"]}"))),
-                       @ApiResponse(responseCode = "404", description = "Not Found", content = {
-                               @Content(mediaType = "application/json", 
-                                        schema = @Schema(implementation = ErrorResponse.class))
+                       @ApiResponse(responseCode = "400", description = "The model year must be positive", 
+                                    content = @Content(mediaType = "application/json", 
+                                                       schema = @Schema(implementation = ErrorResponse.class))),
+                       @ApiResponse(responseCode = "404", description = "The model has not been found", 
+                                    content = {@Content(mediaType = "application/json", 
+                                                        schema = @Schema(implementation = ErrorResponse.class))
                        })
                })
     public ModelDto getByManufacturerAndNameAndYear(@PathVariable String manufacturer, 
-                                                              @PathVariable String name, 
-                                                              @PathVariable @Positive int year) {
+                                                    @PathVariable String name, 
+                                                    @PathVariable @Positive int year) {
         return modelService.getByManufacturerAndNameAndYear(manufacturer, name, year);
     }
     
@@ -86,7 +89,14 @@ public class ModelController {
                description = "Seach for models in the database by optional parameters if no one is specified, " +
                              "retrieve all models",
                tags = "model",
-               responses = @ApiResponse(responseCode = "200", useReturnTypeSchema = true))
+               responses = {
+                       @ApiResponse(responseCode = "200", description = "The sorted page of models", 
+                                    useReturnTypeSchema = true),
+                       @ApiResponse(responseCode = "400", 
+                                    description = "The maxYear, minYear, year parameters must be positive",
+                                    content = @Content(mediaType = "application/json", 
+                                                       schema = @Schema(implementation = ErrorResponse.class)))
+               })
     public Page<ModelDto> search(@Valid @ParameterObject SearchFilter searchFilter, 
                                  @ParameterObject Pageable pageRequest) {
         pageRequest = setDefaultSortIfNeeded(pageRequest);
@@ -98,7 +108,7 @@ public class ModelController {
                description = "Seach for and revrieve a model from the database by its name",
                tags = "model",
                responses = {
-                       @ApiResponse(responseCode = "200", description = "Ok", content = @Content(
+                       @ApiResponse(responseCode = "200", description = "The model", content = @Content(
                                mediaType = "application/json", 
                                array = @ArraySchema(schema = @Schema(implementation = ModelDto.class)), 
                                examples = @ExampleObject(name = "model", value = "{\"id\": \"1\", " +
@@ -106,46 +116,47 @@ public class ModelController {
                                                                                   "\"year\": \"2023\", " +
                                                                                   "\"manufacturer\": \"Audi\", " +
                                                                                   "\"categories\": [\"Sedan\"]}"))),
-                       @ApiResponse(responseCode = "404", description = "Not Found", 
-                             content = @Content(mediaType = "application/json", 
-                             schema = @Schema(implementation = ErrorResponse.class)))
+                       @ApiResponse(responseCode = "404", description = "The model has not been found", 
+                                    content = @Content(mediaType = "application/json", 
+                                    schema = @Schema(implementation = ErrorResponse.class)))
                })
     public ModelDto getById(@PathVariable String id) {
         return modelService.getById(id);
     }
     
     @PostMapping("/manufacturers/{manufacturer}/models/{name}/{year}")
-    @Operation(summary = "Save a model", operationId = "saveModel", 
+    @Operation(summary = "Create a model", operationId = "createModel", 
                description = "Seach for a model by its manufacturer, name and year in the database if it is missing, " +
-                              "persist it",
+                             "persist it",
                tags = "model",
                requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
                        mediaType = "application/json", 
                        schema = @Schema(implementation = ModelDto.class), 
-                       examples = @ExampleObject(name = "model", value = "{\"id\": null, " +
-                                                                          "\"name\": null, " +
-                                                                          "\"year\": null, " +
-                                                                          "\"manufacturer\": null, " +
-                                                                          "\"categories\": [\"Sedan\"]}"))),
+                       examples = @ExampleObject(name = "model", value = "{\"categories\": [\"Sedan\"]}"))),
                responses = {
-                       @ApiResponse(responseCode = "201", description = "Created", 
-                                    headers = @Header(name = "Location", description = "/v1/models/{id}")), 
-                       @ApiResponse(responseCode = "404", description = "Not Found", 
+                       @ApiResponse(responseCode = "201", description = "The model has been created", 
+                                    headers = @Header(name = "Location", description = "/v1/models/{id}")),
+                       @ApiResponse(responseCode = "400", 
+                                    description = "The model must have a non-empty and non-null category and " +
+                                                   "a model year must be positive",
+                                    content = @Content(mediaType = "application/json", 
+                                                       schema = @Schema(implementation = ErrorResponse.class))),
+                       @ApiResponse(responseCode = "404", description = "The model component has not been found", 
                                     content = @Content(mediaType = "application/json", 
                                                        schema = @Schema(implementation = ErrorResponse.class))), 
-                       @ApiResponse(responseCode = "409", description = "Conflict", 
+                       @ApiResponse(responseCode = "409", description = "Such model already exists", 
                                     content = @Content(mediaType = "application/json", 
                                                        schema = @Schema(implementation = ErrorResponse.class)))
                })
-    public ResponseEntity<Void> save(@PathVariable String manufacturer, 
-                                     @PathVariable String name, 
-                                     @PathVariable @Positive int year, 
-                                     @RequestBody @Valid ModelDto modelDto) {
+    public ResponseEntity<Void> create(@PathVariable String manufacturer, 
+                                       @PathVariable String name, 
+                                       @PathVariable @Positive int year, 
+                                       @RequestBody @Valid ModelDto modelDto) {
         modelDto.setManufacturer(manufacturer);
         modelDto.setName(name);
         modelDto.setYear(year);
         
-        ModelDto persistedModel = modelService.save(modelDto);
+        ModelDto persistedModel = modelService.create(modelDto);
         URI location = ServletUriComponentsBuilder.fromCurrentServletMapping()
                                                   .path("/v1/models/{id}")
                                                   .buildAndExpand(persistedModel.getId())
@@ -161,16 +172,18 @@ public class ModelController {
                requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
                        schema = @Schema(implementation = ModelDto.class), 
                        examples = @ExampleObject(name = "model", 
-                                                 value = "{\"id\": null, "
-                                                        + "\"name\": null, " 
-                                                        + "\"year\": null, " 
-                                                        + "\"manufacturer\": null, "
-                                                        + "\"categories\": [\"Sedan\"]}"))),
+                                                 value = "{\"categories\": [\"Sedan\"]}"))),
                responses = {
-                       @ApiResponse(responseCode = "200", description = "Ok"), 
-                       @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(
-                               mediaType = "application/json", 
-                               schema = @Schema(implementation = ErrorResponse.class)))
+                       @ApiResponse(responseCode = "200", description = "The model data has been updated"),
+                       @ApiResponse(responseCode = "400", 
+                                    description = "The model must have a non-empty and non-null category and " +
+                                                  "a model year must be positive",
+                                    content = @Content(mediaType = "application/json", 
+                                                       schema = @Schema(implementation = ErrorResponse.class))),
+                       @ApiResponse(responseCode = "404", 
+                                    description = "The model or model component has not been found", 
+                                    content = @Content(mediaType = "application/json", 
+                                                       schema = @Schema(implementation = ErrorResponse.class)))
                })
     public void update(@PathVariable String manufacturer, 
                        @PathVariable String name, 
@@ -187,9 +200,12 @@ public class ModelController {
     @Operation(summary = "Delete a model by its id", operationId = "deleteModelById", 
                description = "Search for and delete from the database a model by its id",
                tags = "model",
-               responses = @ApiResponse(responseCode = "404", description = "Not Found", 
-                                        content = @Content(mediaType = "application/json", 
-                                                           schema = @Schema(implementation = ErrorResponse.class))))
+               responses = {
+                       @ApiResponse(responseCode = "204", description = "The model has been deleted"),
+                       @ApiResponse(responseCode = "404", description = "The model has not been found", 
+                                    content = @Content(mediaType = "application/json", 
+                                                       schema = @Schema(implementation = ErrorResponse.class)))
+               })
     public void deleteById(@PathVariable String id) {
         modelService.deleteById(id);
     }

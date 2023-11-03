@@ -4,18 +4,16 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 
 import java.time.Instant;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,32 +39,29 @@ public class ExceptionHandlerController {
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(BAD_REQUEST)
     public ErrorResponse handleConstraintViolation(ConstraintViolationException e, HttpServletRequest request) {
-        log.error("Constraint violation exception");
+        log.error("Constraint violation exception", e);
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST, 
                                                          NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE, 
                                                          request);
-        errorResponse.setViolations(new ArrayList<>());
-        
-        for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
-            errorResponse.getViolations().add((new Violation(violation.getPropertyPath().toString(), 
-                                                             violation.getMessage())));
-        }
+        List<Violation> violations = e.getConstraintViolations().stream()
+                .map(violation -> new Violation(violation.getPropertyPath().toString(), violation.getMessage()))
+                .toList();
+        errorResponse.setViolations(violations);
         return errorResponse;
     }
     
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValid(MethodArgumentNotValidException e, HttpServletRequest request) {
-        log.error("Method argument not valid exception");
+        log.error("Method argument not valid exception", e);
         ErrorResponse errorResponse = buildErrorResponse(HttpStatus.BAD_REQUEST, 
                                                          NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE, 
                                                          request);
-        errorResponse.setViolations(new ArrayList<>());
         
-        for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
-            errorResponse.getViolations().add(new Violation(fieldError.getField(), 
-                                                            fieldError.getDefaultMessage()));
-        }
+        List<Violation> violations = e.getBindingResult().getFieldErrors().stream()
+                .map(fieldError -> new Violation(fieldError.getField(), fieldError.getDefaultMessage()))
+                .toList();
+        errorResponse.setViolations(violations);
         return errorResponse;
     }
     

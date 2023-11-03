@@ -24,7 +24,7 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     
-    public CategoryDto save(CategoryDto categoryDto) {
+    public CategoryDto create(CategoryDto categoryDto) {
         if (categoryRepository.existsById(categoryDto.getName())) {
             throw new AlreadyExistsException(String.format(CATEGORY_ALREADY_EXISTS, categoryDto.getName()));
         }

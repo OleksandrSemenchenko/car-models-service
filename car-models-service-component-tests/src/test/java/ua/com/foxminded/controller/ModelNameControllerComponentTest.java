@@ -18,7 +18,7 @@ class ModelNameControllerComponentTest extends ComponentTestContext {
     public static final String NEW_MODEL_NAME = "Mustang";
     
     @Test
-    void save_ShouldReturn400_WhenModelNameDtoNameIsNull() {
+    void create_ShouldReturn400_WhenModelNameDtoNameIsNull() {
         ModelNameDto modelNameDto = new ModelNameDto();
         webTestClient.post().uri("/v1/model-names")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
@@ -29,7 +29,7 @@ class ModelNameControllerComponentTest extends ComponentTestContext {
     }
     
     @Test
-    void save_ShouldReturn409_WhenSuchModelNameAlreadyExists() {
+    void create_ShouldReturn409_WhenSuchModelNameAlreadyExists() {
         ModelNameDto modelNameDto = ModelNameDto.builder().name(MODEL_NAME).build();
         webTestClient.post().uri("/v1/model-names")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
@@ -41,7 +41,7 @@ class ModelNameControllerComponentTest extends ComponentTestContext {
     }
     
     @Test
-    void save_ShouldReturn201() {
+    void create_ShouldReturn201() {
         ModelNameDto modelNameDto = ModelNameDto.builder().name(NEW_MODEL_NAME).build();
         webTestClient.post().uri("/v1/model-names")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())

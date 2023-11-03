@@ -19,7 +19,7 @@ class CategoryControllerComponentTest extends ComponentTestContext {
     public static final String NEW_CATEGORY_NAME = "Pickup";
     
     @Test
-    void save_ShouldReturnStatus400_WhenCategoryDtoNameIsNull() {
+    void create_ShouldReturnStatus400_WhenCategoryDtoNameIsNull() {
         CategoryDto categoryDto = new CategoryDto();
         
         webTestClient.post().uri("/v1/categories")
@@ -31,7 +31,7 @@ class CategoryControllerComponentTest extends ComponentTestContext {
     }
     
     @Test
-    void save_ShouldReturnStatus409_WhenSuchCategoryAlreadyExists() {
+    void create_ShouldReturnStatus409_WhenSuchCategoryAlreadyExists() {
         CategoryDto categoryDto = CategoryDto.builder().name(CATEGORY_NAME).build();
         
         webTestClient.post().uri("/v1/categories")
@@ -44,7 +44,7 @@ class CategoryControllerComponentTest extends ComponentTestContext {
     }
     
     @Test
-    void save_ShouldReturnStatus201() {
+    void create_ShouldReturnStatus201() {
         CategoryDto categoryDto = CategoryDto.builder().name(NEW_CATEGORY_NAME).build();
         
         webTestClient.post().uri("/v1/categories")

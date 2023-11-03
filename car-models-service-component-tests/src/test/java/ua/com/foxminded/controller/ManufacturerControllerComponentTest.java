@@ -49,7 +49,7 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
     }
     
     @Test
-    void save_ShouldReturnStatus400_WhenManufacturerDtoNameIsNull() {
+    void create_ShouldReturnStatus400_WhenManufacturerDtoNameIsNull() {
         ManufacturerDto manufacturerDto = new ManufacturerDto();
         
         webTestClient.post().uri("/v1/manufacturers")
@@ -62,7 +62,7 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
     }
     
     @Test
-    void save_ShouldReturnStatus409_WhenManufacturerAlreadyExists() throws JsonProcessingException {
+    void create_ShouldReturnStatus409_WhenManufacturerAlreadyExists() throws JsonProcessingException {
         ManufacturerDto manufacturerDto = ManufacturerDto.builder().name(MANUFACTURER_NAME).build();
         
         webTestClient.post().uri("/v1/manufacturers")
@@ -76,7 +76,7 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
     }
     
     @Test
-    void save_ShouldReturnStatus201() throws JsonProcessingException {
+    void create_ShouldReturnStatus201() throws JsonProcessingException {
         ManufacturerDto manufacturerDto = ManufacturerDto.builder().name(NEW_MANUFACTURER_NAME).build();
         
         webTestClient.post().uri("/v1/manufacturers")

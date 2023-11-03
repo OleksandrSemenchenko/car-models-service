@@ -45,7 +45,7 @@ class ModelNameControllerTest {
     }
     
     @Test
-    void save_ShouldReturnStatus400_WhenMethodArgumentNotValidException() throws Exception {
+    void create_ShouldReturnStatus400_WhenMethodArgumentNotValidException() throws Exception {
         modelNameDto.setName(null);
         modelNameDtoJson = mapper.writeValueAsString(modelNameDto);
         mockMvc.perform(post("/v1/model-names").contentType(APPLICATION_JSON)
@@ -54,8 +54,8 @@ class ModelNameControllerTest {
     }
     
     @Test
-    void save_ShouldReturnStatus409_WhenAlreadyExistsException() throws Exception {
-        doThrow(AlreadyExistsException.class).when(modelNameService).save(modelNameDto);
+    void create_ShouldReturnStatus409_WhenAlreadyExistsException() throws Exception {
+        doThrow(AlreadyExistsException.class).when(modelNameService).create(modelNameDto);
         modelNameDtoJson = mapper.writeValueAsString(modelNameDto);
         
         mockMvc.perform(post("/v1/model-names").contentType(APPLICATION_JSON)

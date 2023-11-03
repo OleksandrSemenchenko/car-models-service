@@ -55,12 +55,13 @@ public class ManufacturerController {
                description = "Search for and retrieve a manufacturer from the database",
                tags = "manufacturer",
                responses = {
-                       @ApiResponse(responseCode = "200", description = "Ok", content = @Content(
-                               mediaType = "application/json", 
-                               array = @ArraySchema(schema = @Schema(implementation = ManufacturerDto.class)),
-                               examples = @ExampleObject(name = "manufacturer", value = "{\"name\": \"Audi\"}"))),
-                       @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(
-                               mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+                       @ApiResponse(responseCode = "200", description = "The manufacturer", 
+                                    content = @Content(mediaType = "application/json", array = @ArraySchema(
+                                            schema = @Schema(implementation = ManufacturerDto.class)),
+                                    examples = @ExampleObject(name = "manufacturer", value = "{\"name\": \"Audi\"}"))),
+                       @ApiResponse(responseCode = "404", description = "The manufacturer has not been found", 
+                                    content = @Content(mediaType = "application/json", 
+                                                       schema = @Schema(implementation = ErrorResponse.class)))
                })
     public ManufacturerDto getByName(@PathVariable String name) {
         return manufacturerService.getByName(name);
@@ -70,14 +71,15 @@ public class ManufacturerController {
     @Operation(summary = "Get all manufacturers", operationId = "getAllManufacturers", 
                description = "Retrieve all manufacturers from the database",
                tags = "manufacturer",
-               responses = @ApiResponse(responseCode = "200", description = "Ok", useReturnTypeSchema = true))
+               responses = @ApiResponse(responseCode = "200", description = "The sorted page of manufacturers", 
+                                        useReturnTypeSchema = true))
     public Page<ManufacturerDto> getAll(@ParameterObject Pageable pageRequest) {
         pageRequest = setDefaultSortIfNeeded(pageRequest);
         return manufacturerService.getAll(pageRequest);
     }
     
     @PostMapping
-    @Operation(summary = "Save a manufacturer", operationId = "saveManufacturer", 
+    @Operation(summary = "Create a manufacturer", operationId = "createManufacturer", 
                description = "Search for such manufacturer in the database if it is missing then persist it",
                tags = "manufacturer",
                requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
@@ -85,14 +87,18 @@ public class ManufacturerController {
                        schema = @Schema(implementation = ManufacturerDto.class), 
                        examples = @ExampleObject(name = "manufacturer", value = "{\"name\": \"Audi\"}"))),
                responses = {
-                       @ApiResponse(responseCode = "201", description = "Created", 
+                       @ApiResponse(responseCode = "201", description = "The category has been created", 
                                     headers = @Header(name = "Location", description = "/v1/manufacturers/{name}")),
-                       @ApiResponse(responseCode = "409", description = "Conflict", 
+                       @ApiResponse(responseCode = "400", 
+                                    description = "The name of manufacturer must be non-null or non-empty", 
+                                    content = @Content(mediaType = "application/json", 
+                                                       schema = @Schema(implementation = ErrorResponse.class))),
+                       @ApiResponse(responseCode = "409", description = "Such manufacturer already exists", 
                                     content = @Content(mediaType = "application/json", 
                                                        schema = @Schema(implementation = ErrorResponse.class))) 
                 })
-    public ResponseEntity<Void> save(@RequestBody @Valid ManufacturerDto manufacturer) {
-        manufacturerService.save(manufacturer);
+    public ResponseEntity<Void> create(@RequestBody @Valid ManufacturerDto manufacturer) {
+        manufacturerService.create(manufacturer);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                                                   .path("/{name}")
                                                   .buildAndExpand(manufacturer.getName())
@@ -106,12 +112,14 @@ public class ManufacturerController {
                description = "Seach for and delete a manufacturer from the database by its name",
                tags = "manufacturer",
                responses = {
-                       @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(
-                               mediaType = "application/json", 
-                               schema = @Schema(implementation = ErrorResponse.class))), 
-                       @ApiResponse(responseCode = "405", description = "Method Not Allowed", content = @Content(
-                               mediaType = "application/json", 
-                               schema = @Schema(implementation = ErrorResponse.class)))
+                       @ApiResponse(responseCode = "204", description = "The manufacturer has been deleted"),
+                       @ApiResponse(responseCode = "404", description = "The manufacturer has not been found", 
+                                    content = @Content(mediaType = "application/json", 
+                                                       schema = @Schema(implementation = ErrorResponse.class))), 
+                       @ApiResponse(responseCode = "405", 
+                                    description = "The manufacturer has relations and cannot be removed", 
+                                    content = @Content(mediaType = "application/json", 
+                                                       schema = @Schema(implementation = ErrorResponse.class)))
                })
     public void deleteByName(@PathVariable String name) {
         manufacturerService.deleteByName(name);

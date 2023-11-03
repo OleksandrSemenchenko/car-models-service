@@ -75,8 +75,8 @@ class ModelControllerTest {
     }
     
     @Test
-    void save_ShouldReturnStatus409_WhenAlreadyExistsException() throws Exception {
-        doThrow(AlreadyExistsException.class).when(modelService).save(modelDto);
+    void create_ShouldReturnStatus409_WhenAlreadyExistsException() throws Exception {
+        doThrow(AlreadyExistsException.class).when(modelService).create(modelDto);
         modelDtoJson = mapper.writeValueAsString(modelDto);
         
         mockMvc.perform(post("/v1/manufacturers/{manufacturers}/models/{modle}/{year}", 
@@ -87,7 +87,7 @@ class ModelControllerTest {
     }
     
     @Test
-    void save_ShouldReturnStatus400_WhenConstrainViolationException() throws Exception {
+    void create_ShouldReturnStatus400_WhenConstrainViolationException() throws Exception {
         modelDtoJson = mapper.writeValueAsString(modelDto);
         int notValidYear = -2023;
         
@@ -99,7 +99,7 @@ class ModelControllerTest {
     }
     
     @Test
-    void save_ShouldReturnStatus400_WhenMethodArgumentNotValidException() throws Exception {
+    void create_ShouldReturnStatus400_WhenMethodArgumentNotValidException() throws Exception {
         modelDto.setCategories(null);
         modelDtoJson = mapper.writeValueAsString(modelDto);
         

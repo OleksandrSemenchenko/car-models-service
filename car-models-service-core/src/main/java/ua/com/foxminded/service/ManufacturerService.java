@@ -24,7 +24,7 @@ public class ManufacturerService {
     private final ManufacturerRepository manufacturerRepository;
     private final ManufacturerMapper manufacturerMapper;
     
-    public ManufacturerDto save(ManufacturerDto manufacturerDto) {
+    public ManufacturerDto create(ManufacturerDto manufacturerDto) {
         if (manufacturerRepository.existsById(manufacturerDto.getName())) {
             throw new AlreadyExistsException(String.format(MANUFACTURER_ALREADY_EXISTS, manufacturerDto.getName())); 
         }
