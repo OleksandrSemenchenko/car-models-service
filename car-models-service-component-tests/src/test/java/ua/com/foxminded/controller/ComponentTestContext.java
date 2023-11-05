@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.adapters.config.PolicyEnforcerConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.testcontainers.containers.GenericContainer;
@@ -29,9 +30,6 @@ public abstract class ComponentTestContext {
     public static final String AUTHORIZATION_SERVER_ALIAS = "keycloak";
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String CLIENT_SECRET = "secret";
-    
-    public static WebTestClient webTestClient;
-    public static String carModelServiceBaseUrl;
     
     private static Network network = Network.newNetwork();
     private static KeycloakTestcontainer keycloak;
@@ -65,16 +63,22 @@ public abstract class ComponentTestContext {
                 .dependsOn(keycloak)
                 .withLogConsumer(new Slf4jLogConsumer(log));
         carsModelsService.start();
-        
-        carModelServiceBaseUrl = "http://" + carsModelsService.getHost() + ":" + carsModelsService.getMappedPort(8180);
-        webTestClient = WebTestClient.bindToServer().baseUrl(carModelServiceBaseUrl).build();
     }
+    
+    public WebTestClient webTestClient;
+    public String carModelServiceBaseUrl;
     
     @Autowired
     private PolicyEnforcerConfig policyEnforcerConfig;
     
+    @Value("${build.majorVersion}")
+    private String projectMajorVersion;
+    
     @BeforeEach
     void setUp() {
+        carModelServiceBaseUrl = "http://" + carsModelsService.getHost() + ":" + 
+                carsModelsService.getMappedPort(8180) + "/v" + projectMajorVersion;
+        webTestClient = WebTestClient.bindToServer().baseUrl(carModelServiceBaseUrl).build();
         var databaseDelegate = new JdbcDatabaseDelegate(postgres, "");
         ScriptUtils.runInitScript(databaseDelegate, "data.sql");
     }

@@ -2,7 +2,7 @@ package ua.com.foxminded.controller;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static ua.com.foxminded.controller.ExceptionHandlerController.DATA_INTEGRRITY_VIOLATION_EXCEPTION_MESSAGE;
+import static ua.com.foxminded.controller.ExceptionHandlerController.DATA_INTEGRITY_VIOLATION_EXCEPTION_MESSAGE;
 import static ua.com.foxminded.controller.ExceptionHandlerController.NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE;
 import static ua.com.foxminded.service.ManufacturerService.MANUFACTURER_ALREADY_EXISTS;
 import static ua.com.foxminded.service.ManufacturerService.NO_MANUFACTURER;
@@ -22,7 +22,7 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
     
     @Test
     void getByName_ShouldReturnStatus404_WhenNoSuchManufacturer() {
-        webTestClient.get().uri("/v1/manufacturers/{manufacturer}", NEW_MANUFACTURER_NAME)
+        webTestClient.get().uri("/manufacturers/{manufacturer}", NEW_MANUFACTURER_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isNotFound()
@@ -32,7 +32,7 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
     
     @Test
     void getByName_ShouldReturnStatus200() {
-        webTestClient.get().uri("/v1/manufacturers/{manufacturer}", MANUFACTURER_NAME)
+        webTestClient.get().uri("/manufacturers/{manufacturer}", MANUFACTURER_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isOk()
@@ -41,7 +41,7 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
     
     @Test
     void getAll_ShouldReturnStatus200() throws Exception {
-        webTestClient.get().uri("/v1/manufacturers")
+        webTestClient.get().uri("/manufacturers")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isOk()
@@ -52,7 +52,7 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
     void create_ShouldReturnStatus400_WhenManufacturerDtoNameIsNull() {
         ManufacturerDto manufacturerDto = new ManufacturerDto();
         
-        webTestClient.post().uri("/v1/manufacturers")
+        webTestClient.post().uri("/manufacturers")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .contentType(APPLICATION_JSON)
                      .bodyValue(manufacturerDto)
@@ -65,7 +65,7 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
     void create_ShouldReturnStatus409_WhenManufacturerAlreadyExists() throws JsonProcessingException {
         ManufacturerDto manufacturerDto = ManufacturerDto.builder().name(MANUFACTURER_NAME).build();
         
-        webTestClient.post().uri("/v1/manufacturers")
+        webTestClient.post().uri("/manufacturers")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .contentType(APPLICATION_JSON)
                      .bodyValue(manufacturerDto)
@@ -79,28 +79,28 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
     void create_ShouldReturnStatus201() throws JsonProcessingException {
         ManufacturerDto manufacturerDto = ManufacturerDto.builder().name(NEW_MANUFACTURER_NAME).build();
         
-        webTestClient.post().uri("/v1/manufacturers")
+        webTestClient.post().uri("/manufacturers")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .contentType(APPLICATION_JSON)
                      .bodyValue(manufacturerDto)
                      .exchange()
                      .expectStatus().isCreated()
-                     .expectHeader().location(carModelServiceBaseUrl + "/v1/manufacturers/" + NEW_MANUFACTURER_NAME);
+                     .expectHeader().location(carModelServiceBaseUrl + "/manufacturers/" + NEW_MANUFACTURER_NAME);
     }
     
     @Test
     void delete_ShouldReturnStatus405_WhenManufacturerHasRelations() {
-        webTestClient.delete().uri("/v1/manufacturers/{manufacturer}", MANUFACTURER_NAME)
+        webTestClient.delete().uri("/manufacturers/{manufacturer}", MANUFACTURER_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isEqualTo(HttpStatus.METHOD_NOT_ALLOWED)
                      .expectBody().jsonPath("$.message").isEqualTo(
-                             String.format(DATA_INTEGRRITY_VIOLATION_EXCEPTION_MESSAGE, MANUFACTURER_NAME));
+                             String.format(DATA_INTEGRITY_VIOLATION_EXCEPTION_MESSAGE, MANUFACTURER_NAME));
     }
     
     @Test
     void delete_ShouldReturnStatus404_WhenNoManufacturer() {
-        webTestClient.delete().uri("/v1/manufacturers/{manufacturer}", NEW_MANUFACTURER_NAME)
+        webTestClient.delete().uri("/manufacturers/{manufacturer}", NEW_MANUFACTURER_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isNotFound()
@@ -110,7 +110,7 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
     
     @Test
     void delete_ShouldReturnStatus204_WhenManufacturerExists() {
-        webTestClient.delete().uri("/v1/manufacturers/{manufacturer}", MANUFACTURER_NAME_WITHOUT_RELATIONS)
+        webTestClient.delete().uri("/manufacturers/{manufacturer}", MANUFACTURER_NAME_WITHOUT_RELATIONS)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isNoContent()

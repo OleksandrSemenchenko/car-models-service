@@ -37,7 +37,7 @@ import ua.com.foxminded.exception.ErrorResponse;
 import ua.com.foxminded.service.ManufacturerService;
 
 @RestController
-@RequestMapping("/v1/manufacturers")
+@RequestMapping("/manufacturers")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
 public class ManufacturerController {
@@ -56,12 +56,11 @@ public class ManufacturerController {
                tags = "manufacturer",
                responses = {
                        @ApiResponse(responseCode = "200", description = "The manufacturer", 
-                                    content = @Content(mediaType = "application/json", array = @ArraySchema(
-                                            schema = @Schema(implementation = ManufacturerDto.class)),
+                                    content = @Content(array = @ArraySchema(schema = @Schema(
+                                            implementation = ManufacturerDto.class)),
                                     examples = @ExampleObject(name = "manufacturer", value = "{\"name\": \"Audi\"}"))),
                        @ApiResponse(responseCode = "404", description = "The manufacturer has not been found", 
-                                    content = @Content(mediaType = "application/json", 
-                                                       schema = @Schema(implementation = ErrorResponse.class)))
+                                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
                })
     public ManufacturerDto getByName(@PathVariable String name) {
         return manufacturerService.getByName(name);
@@ -83,19 +82,16 @@ public class ManufacturerController {
                description = "Search for such manufacturer in the database if it is missing then persist it",
                tags = "manufacturer",
                requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
-                       mediaType = "application/json", 
                        schema = @Schema(implementation = ManufacturerDto.class), 
                        examples = @ExampleObject(name = "manufacturer", value = "{\"name\": \"Audi\"}"))),
                responses = {
                        @ApiResponse(responseCode = "201", description = "The category has been created", 
-                                    headers = @Header(name = "Location", description = "/v1/manufacturers/{name}")),
+                                    headers = @Header(name = "Location", description = "/manufacturers/{name}")),
                        @ApiResponse(responseCode = "400", 
                                     description = "The name of manufacturer must be non-null or non-empty", 
-                                    content = @Content(mediaType = "application/json", 
-                                                       schema = @Schema(implementation = ErrorResponse.class))),
+                                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                        @ApiResponse(responseCode = "409", description = "Such manufacturer already exists", 
-                                    content = @Content(mediaType = "application/json", 
-                                                       schema = @Schema(implementation = ErrorResponse.class))) 
+                                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))) 
                 })
     public ResponseEntity<Void> create(@RequestBody @Valid ManufacturerDto manufacturer) {
         manufacturerService.create(manufacturer);
@@ -114,12 +110,10 @@ public class ManufacturerController {
                responses = {
                        @ApiResponse(responseCode = "204", description = "The manufacturer has been deleted"),
                        @ApiResponse(responseCode = "404", description = "The manufacturer has not been found", 
-                                    content = @Content(mediaType = "application/json", 
-                                                       schema = @Schema(implementation = ErrorResponse.class))), 
+                                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))), 
                        @ApiResponse(responseCode = "405", 
                                     description = "The manufacturer has relations and cannot be removed", 
-                                    content = @Content(mediaType = "application/json", 
-                                                       schema = @Schema(implementation = ErrorResponse.class)))
+                                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
                })
     public void deleteByName(@PathVariable String name) {
         manufacturerService.deleteByName(name);

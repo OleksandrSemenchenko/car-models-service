@@ -1,16 +1,16 @@
 package ua.com.foxminded.openapi;
 
-import org.springframework.context.annotation.Configuration;
-
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.servers.Server;
 
-@Configuration
 @OpenAPIDefinition(info = @Info(title = "Car models service API", 
-                                version = "1.0.1", 
-                                description = "The API to persist and search car models in a database"))
+                                version = "${build.version}", 
+                                description = "The API to manage car models"), 
+                   servers = @Server(url = "http://localhost:${server.port}/v${build.majorVersion}", 
+                                     description = "Development server"))
 @SecurityScheme(
 name = "bearerAuth",
 type = SecuritySchemeType.HTTP,

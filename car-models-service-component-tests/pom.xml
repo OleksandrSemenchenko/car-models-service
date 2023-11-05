@@ -5,7 +5,7 @@
     <parent>
         <groupId>ua.com.foxminded</groupId>
         <artifactId>car-models-service</artifactId>
-        <version>1.0.0</version>
+        <version>1.${revision}</version>
     </parent>
     <artifactId>car-models-service-component-tests</artifactId>
     <packaging>jar</packaging>
@@ -82,8 +82,15 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-   
+
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+        
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -96,6 +103,16 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <delimiters>
+                        <delimiter>${*}</delimiter>
+                    </delimiters>
+                    <useDefaultDelimiters>false</useDefaultDelimiters>
+                </configuration>
             </plugin>
         </plugins>
     </build>

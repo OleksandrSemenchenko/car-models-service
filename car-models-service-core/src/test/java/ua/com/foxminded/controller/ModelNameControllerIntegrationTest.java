@@ -49,29 +49,29 @@ class ModelNameControllerIntegrationTest {
         modelNameDto.setName(NEW_MODEL_NAME);
         modelNameDtoJson = mapper.writeValueAsString(modelNameDto);
         
-        mockMvc.perform(post("/v1/model-names").contentType(APPLICATION_JSON)
+        mockMvc.perform(post("/model-names").contentType(APPLICATION_JSON)
                                                .content(modelNameDtoJson))
                .andExpect(status().isCreated())
-               .andExpect(header().string("Location", containsString("/v1/model-names/" + NEW_MODEL_NAME)));
+               .andExpect(header().string("Location", containsString("/model-names/" + NEW_MODEL_NAME)));
     }
     
     @Test
     void getByName_ShouldReturnStatus200() throws Exception {
-        mockMvc.perform(get("/v1/model-names/{name}", MODEL_NAME))
+        mockMvc.perform(get("/model-names/{name}", MODEL_NAME))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.name", is(MODEL_NAME)));
     }
     
     @Test
     void getAll_ShouldReturnStatus200() throws Exception {
-        mockMvc.perform(get("/v1/model-names"))
+        mockMvc.perform(get("/model-names"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.content", hasSize(2)));
     }
     
     @Test
     void deleteByName_ShouldReturnStatus204() throws Exception {
-        mockMvc.perform(delete("/v1/model-names/{name}", MODEL_NAME_WITHOUT_RELATIONS))
+        mockMvc.perform(delete("/model-names/{name}", MODEL_NAME_WITHOUT_RELATIONS))
                .andExpect(status().isNoContent());
     }
 }

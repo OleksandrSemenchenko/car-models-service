@@ -59,7 +59,7 @@ class ModelControllerTest {
     void getByManufacturerAndModelAndYear_ShouldReturnStatus400_WhenConstraintViolationException() throws Exception {
         String notValidYear = "-2023";
         
-        mockMvc.perform(get("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
+        mockMvc.perform(get("/manufacturers/{manufacturer}/models/{model}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, notValidYear))
                .andExpect(status().isBadRequest());
     }
@@ -68,9 +68,9 @@ class ModelControllerTest {
     void search_ShouldReturnStatus400_WhenMethodArgumentNotValidException() throws Exception {
         String notValidYear = "-2023";
         
-        mockMvc.perform(get("/v1/models").param("maxYear", notValidYear)
-                                         .param("minYear", notValidYear)
-                                         .param("year", notValidYear))
+        mockMvc.perform(get("/models").param("maxYear", notValidYear)
+                                      .param("minYear", notValidYear)
+                                      .param("year", notValidYear))
                .andExpect(status().isBadRequest());
     }
     
@@ -79,7 +79,7 @@ class ModelControllerTest {
         doThrow(AlreadyExistsException.class).when(modelService).create(modelDto);
         modelDtoJson = mapper.writeValueAsString(modelDto);
         
-        mockMvc.perform(post("/v1/manufacturers/{manufacturers}/models/{modle}/{year}", 
+        mockMvc.perform(post("/manufacturers/{manufacturers}/models/{modle}/{year}", 
                              MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR, MODEL_ID)
                     .contentType(APPLICATION_JSON)
                     .content(modelDtoJson))
@@ -91,7 +91,7 @@ class ModelControllerTest {
         modelDtoJson = mapper.writeValueAsString(modelDto);
         int notValidYear = -2023;
         
-        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
+        mockMvc.perform(put("/manufacturers/{manufacturers}/models/{name}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, notValidYear, MODEL_ID)
                     .contentType(APPLICATION_JSON)
                     .content(modelDtoJson))
@@ -103,7 +103,7 @@ class ModelControllerTest {
         modelDto.setCategories(null);
         modelDtoJson = mapper.writeValueAsString(modelDto);
         
-        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
+        mockMvc.perform(put("/manufacturers/{manufacturers}/models/{name}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR, MODEL_ID)
                     .contentType(APPLICATION_JSON)
                     .content(modelDtoJson))
@@ -115,7 +115,7 @@ class ModelControllerTest {
         doThrow(NotFoundException.class).when(modelService).update(modelDto);
         modelDtoJson = mapper.writeValueAsString(modelDto);
         
-        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
+        mockMvc.perform(put("/manufacturers/{manufacturers}/models/{name}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR)
                     .contentType(APPLICATION_JSON)
                     .content(modelDtoJson))
@@ -127,7 +127,7 @@ class ModelControllerTest {
         modelDto.setCategories(null);
         modelDtoJson = mapper.writeValueAsString(modelDto);
 
-        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
+        mockMvc.perform(put("/manufacturers/{manufacturers}/models/{name}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR)
                     .contentType(APPLICATION_JSON)
                     .content(modelDtoJson))
@@ -140,7 +140,7 @@ class ModelControllerTest {
         int notValidYear = -2023;
         modelDtoJson = mapper.writeValueAsString(modelDto);
 
-        mockMvc.perform(put("/v1/manufacturers/{manufacturers}/models/{name}/{year}", 
+        mockMvc.perform(put("/manufacturers/{manufacturers}/models/{name}/{year}", 
                             MANUFACTURER_NAME, MODEL_NAME, notValidYear)
                     .contentType(APPLICATION_JSON)
                     .content(modelDtoJson))
@@ -151,7 +151,7 @@ class ModelControllerTest {
     void deleteById_ShouldReturnStatus404_WhenNotFoundException() throws Exception {
         doThrow(NotFoundException.class).when(modelService).deleteById(MODEL_ID);
         
-        mockMvc.perform(delete("/v1/models/{id}", MODEL_ID))
+        mockMvc.perform(delete("/models/{id}", MODEL_ID))
                .andExpect(status().isNotFound());
     }
 }

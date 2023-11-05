@@ -37,7 +37,7 @@ import ua.com.foxminded.exception.ErrorResponse;
 import ua.com.foxminded.service.ModelNameService;
 
 @RestController
-@RequestMapping("/v1/model-names")
+@RequestMapping("/model-names")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
 public class ModelNameController {
@@ -55,20 +55,17 @@ public class ModelNameController {
                description = "Seach a specified name of the models in the database if it is missing, persist it",
                tags = "model-name",
                requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                       content = @Content(mediaType = "application/json", 
-                                          schema = @Schema(implementation = ModelNameDto.class),
+                       content = @Content(schema = @Schema(implementation = ModelNameDto.class),
                                           examples = @ExampleObject(name = "modelName" , 
                                                                     value = "{\"name\": \"A7\"}"))),
                responses = {
                        @ApiResponse(responseCode = "201", description = "The name of models has been created", 
-                                    headers = @Header(name = "Location", description = "/v1/names/{name}")),
+                                    headers = @Header(name = "Location", description = "/names/{name}")),
                        @ApiResponse(responseCode = "400", 
                                     description = "The name of models must be non-empty and non-null",
-                                    content = @Content(mediaType = "application/json", 
-                                    schema = @Schema(implementation = ErrorResponse.class))),
+                                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                        @ApiResponse(responseCode = "409", description = "Such name of models already exists", 
-                                    content = @Content(mediaType = "application/json", 
-                                                       schema = @Schema(implementation = ErrorResponse.class)))
+                                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
                })
     public ResponseEntity<Void> create(@RequestBody @Valid ModelNameDto modelNameDto) {
         modelNameService.create(modelNameDto);
@@ -85,12 +82,10 @@ public class ModelNameController {
                tags = "model-name",
                responses = {
                        @ApiResponse(responseCode = "200", description = "The name of models", content = @Content(
-                               mediaType = "application/json", 
                                array = @ArraySchema(schema = @Schema(implementation = ModelNameDto.class)), 
                                examples = @ExampleObject(name = "modelName", value = "{\"name\": \"A7\"}"))),
                        @ApiResponse(responseCode = "404", description = "The name of models has not been found", 
-                                    content = @Content(mediaType = "application/json", 
-                                                       schema = @Schema(implementation = ErrorResponse.class)))
+                                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
                })
     public ModelNameDto getByName(@PathVariable String name) {
         return modelNameService.getByName(name);
@@ -115,12 +110,10 @@ public class ModelNameController {
                responses = {
                        @ApiResponse(responseCode = "204", description = "The name of models has been deleted"),
                        @ApiResponse(responseCode = "404", description = "The name of models has not been found", 
-                                    content = @Content(mediaType = "application/json", 
-                                                       schema = @Schema(implementation = ErrorResponse.class))),
+                                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                        @ApiResponse(responseCode = "405", 
                                     description = "The name of models has relations and cannot be removed", 
-                                    content = @Content(mediaType = "application/json", 
-                                                       schema = @Schema(implementation = ErrorResponse.class)))
+                                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
                })
     public void deleteByName(@PathVariable String name) {
         modelNameService.deleteByName(name);

@@ -25,7 +25,7 @@ import ua.com.foxminded.exception.Violation;
 @RequiredArgsConstructor
 public class ExceptionHandlerController {
     
-    public static final String  DATA_INTEGRRITY_VIOLATION_EXCEPTION_MESSAGE = 
+    public static final String  DATA_INTEGRITY_VIOLATION_EXCEPTION_MESSAGE = 
             "The requested resource has relations to other resources";
     public static final String NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE = "The request has the not valid agrument(s)";
     
@@ -33,7 +33,7 @@ public class ExceptionHandlerController {
     @ResponseStatus(METHOD_NOT_ALLOWED)
     public ErrorResponse handleDataIntegrityViolation(DataIntegrityViolationException e, HttpServletRequest request) {
         log.error("Data integrity violation exception", e);
-        return buildErrorResponse(HttpStatus.METHOD_NOT_ALLOWED, DATA_INTEGRRITY_VIOLATION_EXCEPTION_MESSAGE, request);
+        return buildErrorResponse(HttpStatus.METHOD_NOT_ALLOWED, DATA_INTEGRITY_VIOLATION_EXCEPTION_MESSAGE, request);
     }
     
     @ExceptionHandler(ConstraintViolationException.class)

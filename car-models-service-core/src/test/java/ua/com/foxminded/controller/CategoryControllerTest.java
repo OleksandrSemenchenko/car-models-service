@@ -50,7 +50,7 @@ class CategoryControllerTest {
     void create_ShouldReturnStatus400_WhenMethodArgumentNotValidException() throws Exception {
         categoryDto.setName(null);
         categoryDtoJson = mapper.writeValueAsString(categoryDto);
-        mockMvc.perform(post("/v1/categories").contentType(APPLICATION_JSON)
+        mockMvc.perform(post("/categories").contentType(APPLICATION_JSON)
                                               .content(categoryDtoJson))
                .andExpect(status().isBadRequest());
     }
@@ -60,7 +60,7 @@ class CategoryControllerTest {
         when(categoryService.create(categoryDto)).thenThrow(AlreadyExistsException.class);
         categoryDtoJson = mapper.writeValueAsString(categoryDto);
         
-        mockMvc.perform(post("/v1/categories").contentType(APPLICATION_JSON)
+        mockMvc.perform(post("/categories").contentType(APPLICATION_JSON)
                                               .content(categoryDtoJson))
                .andExpect(status().isConflict());
     }
@@ -69,7 +69,7 @@ class CategoryControllerTest {
     void deleteByName_ShouldReturnStatus405_WhenDataIntegrityViolationException() throws Exception {
         doThrow(DataIntegrityViolationException.class).when(categoryService).deleleteByName(CATEGORY_NAME);
         
-        mockMvc.perform(delete("/v1/categories/{name}", CATEGORY_NAME))
+        mockMvc.perform(delete("/categories/{name}", CATEGORY_NAME))
                .andExpect(status().isMethodNotAllowed());
     }
 
@@ -77,7 +77,7 @@ class CategoryControllerTest {
     void deleteByName_ShouldReturnStatus404_WhenNotFoundException() throws Exception {
         doThrow(NotFoundException.class).when(categoryService).deleleteByName(NEW_CATEGORY_NAME);
         
-        mockMvc.perform(delete("/v1/categorires/{name}", NEW_CATEGORY_NAME))
+        mockMvc.perform(delete("/categorires/{name}", NEW_CATEGORY_NAME))
                .andExpect(status().isNotFound());
     }
 }

@@ -11,7 +11,7 @@
     </parent>
     <groupId>ua.com.foxminded</groupId>
     <artifactId>car-models-service</artifactId>
-    <version>1.0.0</version>
+    <version>1.${revision}</version>
     <packaging>pom</packaging>
     <name>Car models data microservice</name>
 
@@ -21,6 +21,7 @@
     </modules>
 
     <properties>
+        <revision>1-SNAPSHOT</revision>
         <java.version>17</java.version>
         <maven-surefire-plugin.version>3.2.1</maven-surefire-plugin.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>

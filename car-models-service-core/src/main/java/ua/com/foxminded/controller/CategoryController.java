@@ -38,7 +38,7 @@ import ua.com.foxminded.service.CategoryService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/categories")
+@RequestMapping("/categories")
 @SecurityRequirement(name = "bearerAuth")
 public class CategoryController {
     
@@ -55,20 +55,17 @@ public class CategoryController {
                description = "Persist a model category data in the database",
                tags = "category",
                requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                       content = @Content(mediaType = "application/json", 
-                                          examples = @ExampleObject(name = "category", 
+                       content = @Content(examples = @ExampleObject(name = "category", 
                                                                     value = "{\"name\": \"SUV\"}"))), 
                responses = {
                        @ApiResponse(responseCode = "201", description = "The category has been created", 
-                                    headers = @Header(name = "Location", description = "/v1/categories/{name}")),
+                                    headers = @Header(name = "Location", description = "/categories/{name}")),
                        @ApiResponse(responseCode = "400", 
                                     description = "The name of category must be non-null or non-empty",
-                                    content = @Content(mediaType = "application/json", 
-                                                       schema = @Schema(implementation = ErrorResponse.class))),
+                                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
                        @ApiResponse(responseCode = "409", description = "Such category already exists", 
-                                    content = @Content(mediaType = "application/json", 
-                                                       schema = @Schema(implementation = ErrorResponse.class)))
-                })
+                                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+               })
     public ResponseEntity<Void> create(@RequestBody @Valid CategoryDto category) {
         categoryService.create(category);
         URI location = ServletUriComponentsBuilder.fromCurrentRequestUri()
@@ -85,14 +82,12 @@ public class CategoryController {
                tags = "category",
                responses = {
                        @ApiResponse(responseCode = "200", description = "The category", 
-                                    content = @Content(mediaType = "application/json",
-                                                       array = @ArraySchema(schema = @Schema(
+                                    content = @Content(array = @ArraySchema(schema = @Schema(
                                                                implementation = CategoryDto.class)),
                                                        examples = @ExampleObject(name = "category" , 
                                                                                  value = "{\"name\": \"SUV\"}"))),
                        @ApiResponse(responseCode = "404", description = "The category has not been found", 
-                                    content = @Content(mediaType = "application/json", 
-                                                       schema = @Schema(implementation = ErrorResponse.class)))
+                                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
                 })
     public CategoryDto getByName(@PathVariable String name) {
         return categoryService.getByName(name);
@@ -117,8 +112,7 @@ public class CategoryController {
                responses = {
                        @ApiResponse(responseCode = "204", description = "The category has been deleted"),
                        @ApiResponse(responseCode = "404", description = "The category has not been found", 
-                                    content = @Content(mediaType = "application/json", 
-                                                       schema = @Schema(implementation = ErrorResponse.class))), 
+                                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))), 
                        @ApiResponse(responseCode = "405", 
                                     description = "The category has relations and cannot be removed")
                })
