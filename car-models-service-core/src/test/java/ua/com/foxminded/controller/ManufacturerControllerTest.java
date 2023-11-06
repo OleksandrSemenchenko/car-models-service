@@ -49,7 +49,7 @@ class ManufacturerControllerTest {
         manufacturerDto.setName(null);
         manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
         
-        mockMvc.perform(post("/manufacturers").contentType(APPLICATION_JSON)
+        mockMvc.perform(post("/v1/manufacturers").contentType(APPLICATION_JSON)
                                                  .content(manufacturerDtoJson))
                .andExpect(status().isBadRequest());
     }
@@ -59,7 +59,7 @@ class ManufacturerControllerTest {
         manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
         doThrow(AlreadyExistsException.class).when(manufacturerService).create(manufacturerDto);
         
-        mockMvc.perform(post("/manufacturers").contentType(APPLICATION_JSON)
+        mockMvc.perform(post("/v1/manufacturers").contentType(APPLICATION_JSON)
                                                  .content(manufacturerDtoJson))
                .andExpect(status().isConflict());
     }
@@ -69,7 +69,7 @@ class ManufacturerControllerTest {
     void deleteByName_ShouldReturnStatus405_WhenDataIntegrityViolationException() throws Exception {
         doThrow(DataIntegrityViolationException.class).when(manufacturerService).deleteByName(MANUFACTURER_NAME);
         
-        mockMvc.perform(delete("/manufacturers/{name}", MANUFACTURER_NAME))
+        mockMvc.perform(delete("/v1/manufacturers/{name}", MANUFACTURER_NAME))
                .andExpect(status().isMethodNotAllowed());
     }
 
@@ -77,7 +77,7 @@ class ManufacturerControllerTest {
     void deleteByName_ShouldReturnStatus404_WhenNotFoundException() throws Exception {
         doThrow(NotFoundException.class).when(manufacturerService).deleteByName(MANUFACTURER_NAME);
         
-        mockMvc.perform(delete("/manufacturers/{name}", MANUFACTURER_NAME))
+        mockMvc.perform(delete("/v1/manufacturers/{name}", MANUFACTURER_NAME))
                .andExpect(status().isNotFound());
     }
 }

@@ -51,29 +51,29 @@ class CategoryControllerIntegrationTest {
         categoryDto.setName(NEW_CATEGORY_NAME);
         String categoryDtoJson = mapper.writeValueAsString(categoryDto);
         
-        mockMvc.perform(post("/categories").contentType(APPLICATION_JSON)
+        mockMvc.perform(post("/v1/categories").contentType(APPLICATION_JSON)
                                               .content(categoryDtoJson))
                .andExpect(status().isCreated())
-               .andExpect(header().string("Location", containsString("/categories/" + NEW_CATEGORY_NAME)));
+               .andExpect(header().string("Location", containsString("/v1/categories/" + NEW_CATEGORY_NAME)));
     }
     
     @Test
     void getByName_ShouldReturnStatus200() throws Exception {
-        mockMvc.perform(get("/categories/{name}", CATEGORY_NAME))
+        mockMvc.perform(get("/v1/categories/{name}", CATEGORY_NAME))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$['name']", is(CATEGORY_NAME)));
     }
     
     @Test
     void getAll_ShouldReturnStatus200() throws Exception {
-        mockMvc.perform(get("/categories"))
+        mockMvc.perform(get("/v1/categories"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.content", Matchers.hasSize(2)));
     }
     
     @Test
     void deleteByName_ShouldReturnStatus204() throws Exception {
-        mockMvc.perform(delete("/categories/{name}", CATEGORY_NAME_WITHOUT_RELATIONS))
+        mockMvc.perform(delete("/v1/categories/{name}", CATEGORY_NAME_WITHOUT_RELATIONS))
                .andExpect(status().isNoContent());
     }
 }

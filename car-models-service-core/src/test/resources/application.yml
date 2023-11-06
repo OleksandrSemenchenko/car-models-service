@@ -35,8 +35,6 @@ keycloak:
 
 server:
   port: 8180
-  servlet:
-    context-path: /v${project.artifact.selectedVersion.majorVersion}
 
 logging:
   level:

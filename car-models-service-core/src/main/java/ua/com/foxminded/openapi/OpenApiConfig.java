@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
 @OpenAPIDefinition(info = @Info(title = "Car models service API", 
                                 version = "${build.version}", 
                                 description = "The API to manage car models"), 
-                   servers = @Server(url = "http://localhost:${server.port}/v${build.majorVersion}", 
+                   servers = @Server(url = "http://localhost:${server.port}", 
                                      description = "Development server"))
 @SecurityScheme(
 name = "bearerAuth",

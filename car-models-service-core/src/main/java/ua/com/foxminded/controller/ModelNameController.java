@@ -37,7 +37,7 @@ import ua.com.foxminded.exception.ErrorResponse;
 import ua.com.foxminded.service.ModelNameService;
 
 @RestController
-@RequestMapping("/model-names")
+@RequestMapping("/v1/model-names")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
 public class ModelNameController {

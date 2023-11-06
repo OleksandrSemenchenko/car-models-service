@@ -1,6 +1,5 @@
 build:
   version: ${project.version}
-  majorVersion: ${project.artifact.selectedVersion.majorVersion}
 
 spring:
   datasource:
@@ -40,8 +39,7 @@ keycloak:
   
 server:
   port: 8180
-  servlet:
-    context-path: /v${project.artifact.selectedVersion.majorVersion}
+  
   error:
     include-message: always
     include-exception: true

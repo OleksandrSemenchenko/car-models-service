@@ -1,6 +1,3 @@
-build:
-  majorVersion: ${project.artifact.selectedVersion.majorVersion}
-
 keycloak:
   policy-enforcer-config:
     realm: car-services

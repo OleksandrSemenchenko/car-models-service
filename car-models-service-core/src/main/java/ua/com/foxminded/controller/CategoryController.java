@@ -37,8 +37,8 @@ import ua.com.foxminded.exception.ErrorResponse;
 import ua.com.foxminded.service.CategoryService;
 
 @RestController
+@RequestMapping("/v1/categories")
 @RequiredArgsConstructor
-@RequestMapping("/categories")
 @SecurityRequirement(name = "bearerAuth")
 public class CategoryController {
     

@@ -48,7 +48,7 @@ class ModelNameControllerTest {
     void create_ShouldReturnStatus400_WhenMethodArgumentNotValidException() throws Exception {
         modelNameDto.setName(null);
         modelNameDtoJson = mapper.writeValueAsString(modelNameDto);
-        mockMvc.perform(post("/model-names").contentType(APPLICATION_JSON)
+        mockMvc.perform(post("/v1/model-names").contentType(APPLICATION_JSON)
                                                .content(modelNameDtoJson))
                .andExpect(status().isBadRequest());
     }
@@ -58,7 +58,7 @@ class ModelNameControllerTest {
         doThrow(AlreadyExistsException.class).when(modelNameService).create(modelNameDto);
         modelNameDtoJson = mapper.writeValueAsString(modelNameDto);
         
-        mockMvc.perform(post("/model-names").contentType(APPLICATION_JSON)
+        mockMvc.perform(post("/v1/model-names").contentType(APPLICATION_JSON)
                                                .content(modelNameDtoJson))
                .andExpect(status().isConflict());
     }
@@ -67,7 +67,7 @@ class ModelNameControllerTest {
     void deleteByName_ShouldReturnStatus405_WhenDataIntegrityViolationException() throws Exception {
         doThrow(DataIntegrityViolationException.class).when(modelNameService).deleteByName(MODEL_NAME);
         
-        mockMvc.perform(delete("/model-names/{name}", MODEL_NAME))
+        mockMvc.perform(delete("/v1/model-names/{name}", MODEL_NAME))
                .andExpect(status().isMethodNotAllowed());
     }
 
@@ -75,7 +75,7 @@ class ModelNameControllerTest {
     void deleteByName_ShouldReturnStatus404_WhenNotFoundException() throws Exception {
         doThrow(NotFoundException.class).when(modelNameService).deleteByName(MODEL_NAME);
         
-        mockMvc.perform(delete("/model-names/{name}", MODEL_NAME))
+        mockMvc.perform(delete("/v1/model-names/{name}", MODEL_NAME))
                .andExpect(status().isNotFound());
     }
 }

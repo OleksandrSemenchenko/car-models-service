@@ -35,7 +35,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     
     @Test
     void getByManufacturerAndNameAndYear_ShouldReturnStatus400_WhenYearIsNegative() {
-        webTestClient.get().uri("/manufacturers/{manufacturer}/models/{name}/{year}", 
+        webTestClient.get().uri("/v1/manufacturers/{manufacturer}/models/{name}/{year}", 
                         MANUFACTURER_NAME, MODEL_NAME, -2023)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
@@ -45,7 +45,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     
     @Test
     void getByManufacturerAndNameAndYear_ShouldReturnStatus404_WhenNoSuchModel() {
-        webTestClient.get().uri("/manufacturers/{manufacturer}/models/{name}/{year}", 
+        webTestClient.get().uri("/v1/manufacturers/{manufacturer}/models/{name}/{year}", 
                                 MANUFACTURER_NAME, MODEL_NAME, NEW_MODEL_YEAR)
                            .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                            .exchange()
@@ -56,7 +56,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     
     @Test
     void getByManufacturerAndNameAndYear_ShouldReturnStatus200() {
-        webTestClient.get().uri("/manufacturers/{manufacturer}/models/{name}/{year}", 
+        webTestClient.get().uri("/v1/manufacturers/{manufacturer}/models/{name}/{year}", 
                                 MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
@@ -66,7 +66,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     
     @Test
     void search_ShouldReturnStatus400_WhenMaxAndMinYearParametersAreNegative() {
-        webTestClient.get().uri(uriBuilder -> uriBuilder.path("/models")
+        webTestClient.get().uri(uriBuilder -> uriBuilder.path("/v1/models")
                                                         .queryParam("model", MODEL_NAME)
                                                         .queryParam("category", CATEGORY_NAME)
                                                         .queryParam("manufacturer", MANUFACTURER_NAME)
@@ -80,7 +80,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     
     @Test
     void search_ShouldReturnStatus200_WhenParametersExist() {
-        webTestClient.get().uri(uriBuilder -> uriBuilder.path("/models")
+        webTestClient.get().uri(uriBuilder -> uriBuilder.path("/v1/models")
                                                         .queryParam("model", MODEL_NAME)
                                                         .queryParam("category", CATEGORY_NAME)
                                                         .queryParam("manufacturer", MANUFACTURER_NAME)
@@ -94,7 +94,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     
     @Test
     void search_ShouldReturnStatus200_WhenNoParameters() {
-        webTestClient.get().uri("/models")
+        webTestClient.get().uri("/v1/models")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isOk()
@@ -103,7 +103,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     
     @Test
     void getById_ShouldReturnStatus404_WhenNoSuchModel() {
-        webTestClient.get().uri("/models/{id}", NEW_MODEL_ID)
+        webTestClient.get().uri("/v1/models/{id}", NEW_MODEL_ID)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isNotFound()
@@ -113,7 +113,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     
     @Test
     void getById_ShouldReturnStatus200() {
-        webTestClient.get().uri("/models/{id}", MODEL_ID)
+        webTestClient.get().uri("/v1/models/{id}", MODEL_ID)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isOk()
@@ -124,7 +124,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     void create_ShouldReturnStatus400_WhenModelDtoCategoriesIsNull() {
         ModelDto modelDto = new ModelDto();
         
-        webTestClient.post().uri("/manufacturers/{manufacturer}/models/{model}/{year}", 
+        webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
                                  MANUFACTURER_NAME, MODEL_NAME, NEW_MODEL_YEAR)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(modelDto)
@@ -137,7 +137,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     void create_ShouldReturnStatus400_WhenYearIsNegative() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(NEW_CATEGORY_NAME)).build();
         
-        webTestClient.post().uri("/manufacturers/{manufacturer}/models/{model}/{year}", 
+        webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
                                  MANUFACTURER_NAME, MODEL_NAME, -2021)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(modelDto)
@@ -150,7 +150,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     void create_ShouldReturnStatus404_WhenNoRequiredCategory() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(NEW_CATEGORY_NAME)).build();
         
-        webTestClient.post().uri("/manufacturers/{manufacturer}/models/{model}/{year}", 
+        webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
                                  MANUFACTURER_NAME, MODEL_NAME, NEW_MODEL_YEAR)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(modelDto)
@@ -163,7 +163,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     void create_ShouldReturnStatus404_WhenNoRequiredModelName() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME)).build();
         
-        webTestClient.post().uri("/manufacturers/{manufacturer}/models/{model}/{year}", 
+        webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
                                  MANUFACTURER_NAME, NEW_MODEL_NAME, MODEL_YEAR)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(modelDto)
@@ -176,7 +176,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     void create_ShouldReturnStatus404_WhenNoRequiredManufacturer() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME)).build();
         
-        webTestClient.post().uri("/manufacturers/{manufacturer}/models/{model}/{year}", 
+        webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
                                  NEW_MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(modelDto)
@@ -190,7 +190,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     void create_ShouldReturnStatus409_WhenSuchModelAlreadyExists() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME)).build();
         
-        webTestClient.post().uri("/manufacturers/{manufacturer}/models/{model}/{year}", 
+        webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
                                  MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(modelDto)
@@ -204,7 +204,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     void create_ShouldReturnStatus201() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME)).build();
         
-        webTestClient.post().uri("/manufacturers/{manufacturer}/models/{model}/{year}", 
+        webTestClient.post().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
                                  MANUFACTURER_NAME_WITHOUT_RELATIONS, 
                                  MODEL_NAME_WITHOUT_RELATIONS, 
                                  NEW_MODEL_YEAR)
@@ -212,14 +212,14 @@ class ModelControllerComponentTest extends ComponentTestContext {
                      .bodyValue(modelDto)
                      .exchange()
                      .expectStatus().isCreated()
-                     .expectHeader().value("Location", containsString(carModelServiceBaseUrl + "/models/"));
+                     .expectHeader().value("Location", containsString(carModelServiceBaseUrl + "/v1/models/"));
     }
     
     @Test
     void update_ShouldReturnStatus400_WhenYearIsNegative() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME)).build();
 
-        webTestClient.put().uri("/manufacturers/{manufacturer}/models/{model}/{year}", 
+        webTestClient.put().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
                                 MANUFACTURER_NAME, MODEL_NAME, -2024)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(modelDto)
@@ -232,7 +232,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     void update_ShouldReturnStatus400_WhenModelDtoCategoriesIsNull() {
         ModelDto modelDto = new ModelDto();
 
-        webTestClient.put().uri("/manufacturers/{manufacturer}/models/{model}/{year}", 
+        webTestClient.put().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
                                 MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(modelDto)
@@ -245,7 +245,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     void update_ShouldReturnStatus404_WhenNoRequiredCategory() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(NEW_CATEGORY_NAME)).build();
 
-        webTestClient.put().uri("/manufacturers/{manufacturer}/models/{model}/{year}", 
+        webTestClient.put().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
                                 MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(modelDto)
@@ -258,7 +258,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     void update_ShouldReturnStatus404_WhenNoSuchModel() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME)).build();
         
-        webTestClient.put().uri("/manufacturers/{manufacturer}/models/{model}/{year}", 
+        webTestClient.put().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
                                 MANUFACTURER_NAME, NEW_MODEL_NAME, MODEL_YEAR)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(modelDto)
@@ -272,7 +272,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     void update_ShouldReturnStatus200() {
         ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME_WITHOUT_RELATIONS)).build();
         
-        webTestClient.put().uri("/manufacturers/{manufacturer}/models/{model}/{year}", 
+        webTestClient.put().uri("/v1/manufacturers/{manufacturer}/models/{model}/{year}", 
                                 MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(modelDto)
@@ -282,7 +282,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
     
     @Test
     void deleleteById_ShouldReturnStatus404_WhenNoSuchModel() {
-        webTestClient.delete().uri("/models/{id}", NEW_MODEL_ID)
+        webTestClient.delete().uri("/v1/models/{id}", NEW_MODEL_ID)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isNotFound()
@@ -292,7 +292,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
 
     @Test
     void deleteById_ShouldReturnStatus204() {
-        webTestClient.delete().uri("/models/{id}", MODEL_ID)
+        webTestClient.delete().uri("/v1/models/{id}", MODEL_ID)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isNoContent()

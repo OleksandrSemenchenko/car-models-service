@@ -37,7 +37,7 @@ import ua.com.foxminded.exception.ErrorResponse;
 import ua.com.foxminded.service.ManufacturerService;
 
 @RestController
-@RequestMapping("/manufacturers")
+@RequestMapping("/v1/manufacturers")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
 public class ManufacturerController {

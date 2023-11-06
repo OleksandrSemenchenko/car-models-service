@@ -49,14 +49,14 @@ class ManufacturerControllerIntegrationTest {
     void getByName_ShouldReturnStatus200() throws Exception {
         manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
         
-        mockMvc.perform(get("/manufacturers/{name}", MANUFACTURER_NAME))
+        mockMvc.perform(get("/v1/manufacturers/{name}", MANUFACTURER_NAME))
                .andExpect(status().isOk())
                .andExpect(content().json(manufacturerDtoJson));
     }
     
     @Test
     void getAll_ShouldReturnStatus200() throws Exception {
-        mockMvc.perform(get("/manufacturers"))
+        mockMvc.perform(get("/v1/manufacturers"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.content[0].name", MANUFACTURER_NAME).exists());
     }
@@ -66,16 +66,16 @@ class ManufacturerControllerIntegrationTest {
         manufacturerDto.setName(NEW_MANUFACTURER_NAME);
         manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
         
-        mockMvc.perform(post("/manufacturers")
+        mockMvc.perform(post("/v1/manufacturers")
                     .contentType(APPLICATION_JSON)
                     .content(manufacturerDtoJson))
                .andExpect(status().isCreated())
-               .andExpect(header().string("Location", containsString("/manufacturers/" + NEW_MANUFACTURER_NAME)));
+               .andExpect(header().string("Location", containsString("/v1/manufacturers/" + NEW_MANUFACTURER_NAME)));
     }
     
     @Test
     void deleteByName_ShouldReturnStatus204() throws Exception {
-        mockMvc.perform(delete("/manufacturers/{name}", MANUFACTURER_NAME_WITHOUT_RELATIONS))
+        mockMvc.perform(delete("/v1/manufacturers/{name}", MANUFACTURER_NAME_WITHOUT_RELATIONS))
                .andExpect(status().isNoContent());
     }
 }

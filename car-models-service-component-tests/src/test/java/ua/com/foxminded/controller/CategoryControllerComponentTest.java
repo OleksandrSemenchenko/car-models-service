@@ -21,7 +21,7 @@ class CategoryControllerComponentTest extends ComponentTestContext {
     void create_ShouldReturnStatus400_WhenCategoryDtoNameIsNull() {
         CategoryDto categoryDto = new CategoryDto();
         
-        webTestClient.post().uri("/categories")
+        webTestClient.post().uri("/v1/categories")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(categoryDto)
                      .exchange()
@@ -33,7 +33,7 @@ class CategoryControllerComponentTest extends ComponentTestContext {
     void create_ShouldReturnStatus409_WhenSuchCategoryAlreadyExists() {
         CategoryDto categoryDto = CategoryDto.builder().name(CATEGORY_NAME).build();
         
-        webTestClient.post().uri("/categories")
+        webTestClient.post().uri("/v1/categories")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(categoryDto)
                      .exchange()
@@ -46,17 +46,17 @@ class CategoryControllerComponentTest extends ComponentTestContext {
     void create_ShouldReturnStatus201() {
         CategoryDto categoryDto = CategoryDto.builder().name(NEW_CATEGORY_NAME).build();
         
-        webTestClient.post().uri("/categories")
+        webTestClient.post().uri("/v1/categories")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .bodyValue(categoryDto)
                      .exchange()
                      .expectStatus().isCreated()
-                     .expectHeader().location(carModelServiceBaseUrl + "/categories/" + NEW_CATEGORY_NAME);
+                     .expectHeader().location(carModelServiceBaseUrl + "/v1/categories/" + NEW_CATEGORY_NAME);
     }
     
     @Test
     void getByName_ShoudReturnStatus404_WhenNoSuchCategory() {
-        webTestClient.get().uri("/categories/{category}", NEW_CATEGORY_NAME)
+        webTestClient.get().uri("/v1/categories/{category}", NEW_CATEGORY_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isNotFound()
@@ -65,7 +65,7 @@ class CategoryControllerComponentTest extends ComponentTestContext {
     
     @Test
     void getByName_ShouldReturnStatus200() {
-        webTestClient.get().uri("/categories/{category}", CATEGORY_NAME)
+        webTestClient.get().uri("/v1/categories/{category}", CATEGORY_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isOk()
@@ -74,7 +74,7 @@ class CategoryControllerComponentTest extends ComponentTestContext {
     
     @Test
     void getAll_ShouldReturnStatus200() {
-        webTestClient.get().uri("/categories")
+        webTestClient.get().uri("/v1/categories")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isOk()
@@ -83,7 +83,7 @@ class CategoryControllerComponentTest extends ComponentTestContext {
     
     @Test
     void deleteByName_ShouldReturnStatus405_WhenCategoryHasRelations() {
-        webTestClient.delete().uri("/categories/{category}", CATEGORY_NAME)
+        webTestClient.delete().uri("/v1/categories/{category}", CATEGORY_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isEqualTo(HttpStatus.METHOD_NOT_ALLOWED)
@@ -93,7 +93,7 @@ class CategoryControllerComponentTest extends ComponentTestContext {
     
     @Test
     void deleleteByName_ShouldReturnStatus404_WhenNoSuchCategory() {
-        webTestClient.delete().uri("/categories/{category}", NEW_CATEGORY_NAME)
+        webTestClient.delete().uri("/v1/categories/{category}", NEW_CATEGORY_NAME)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isNotFound()
@@ -102,7 +102,7 @@ class CategoryControllerComponentTest extends ComponentTestContext {
 
     @Test
     void deleteByName_ShouldReturnStatus204() {
-        webTestClient.delete().uri("/categories/{category}", CATEGORY_NAME_WITHOUT_RELATIONS)
+        webTestClient.delete().uri("/v1/categories/{category}", CATEGORY_NAME_WITHOUT_RELATIONS)
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isNoContent()
