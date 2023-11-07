@@ -54,10 +54,10 @@ class ModelNameServiceTest {
     }
     
     @Test
-    void save_ShouldSaveModelName() {
+    void create_ShouldSaveModelName() {
         when(modelNameRepository.existsById(modelNameDto.getName())).thenReturn(false);
         when(modelNameRepository.save(modelName)).thenReturn(modelName);
-        modelNameService.save(modelNameDto);
+        modelNameService.create(modelNameDto);
         
         verify(modelNameRepository).existsById(modelNameDto.getName());
         verify(modelNameMapper).map(modelNameDto);
@@ -66,10 +66,10 @@ class ModelNameServiceTest {
     }
     
     @Test
-    void save_ShouldThrowAlreadyExistsException_WhenNoSuchModelName() {
+    void create_ShouldThrowAlreadyExistsException_WhenNoSuchModelName() {
         when(modelNameRepository.existsById(modelNameDto.getName())).thenReturn(true);
         
-        assertThrows(AlreadyExistsException.class, () -> modelNameService.save(modelNameDto));
+        assertThrows(AlreadyExistsException.class, () -> modelNameService.create(modelNameDto));
     }
     
     @Test

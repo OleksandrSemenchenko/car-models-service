@@ -1,0 +1,974 @@
+openapi: 3.1.0
+info:
+  title: Car models service API
+  description: The API to manage car models
+  version: 1.1-SNAPSHOT
+servers:
+- url: http://localhost:8180
+  description: Development server
+paths:
+  /v1/manufacturers/{manufacturer}/models/{name}/{year}:
+    get:
+      tags:
+      - model
+      summary: "Get a model by its manufacturer, name and year"
+      description: "Seach for and retrieve a model by its manufacturer, name and year\
+        \ from the database"
+      operationId: getModelByManufacturerAndNameAndYear
+      parameters:
+      - name: manufacturer
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: year
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: The model
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ModelDto'
+              examples:
+                model:
+                  description: model
+                  value:
+                    id: "1"
+                    name: A7
+                    year: "2023"
+                    manufacturer: Audi
+                    categories:
+                    - SUV
+        "400":
+          description: The model year must be positive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "404":
+          description: The model has not been found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+    put:
+      tags:
+      - model
+      summary: Update a model
+      description: "Seach for a model by its manufacturer, name and year in the database\
+        \ if it exists, update it"
+      operationId: updateModel
+      parameters:
+      - name: manufacturer
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: year
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModelDto'
+            examples:
+              model:
+                description: model
+                value:
+                  categories:
+                  - Sedan
+        required: true
+      responses:
+        "200":
+          description: The model data has been updated
+        "400":
+          description: The model must have a non-empty and non-null category and a
+            model year must be positive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "404":
+          description: The model or model component has not been found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - model
+      summary: Create a model
+      description: "Seach for a model by its manufacturer, name and year in the database\
+        \ if it is missing, persist it"
+      operationId: createModel
+      parameters:
+      - name: manufacturer
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: year
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModelDto'
+            examples:
+              model:
+                description: model
+                value:
+                  categories:
+                  - Sedan
+        required: true
+      responses:
+        "201":
+          description: The model has been created
+          headers:
+            Location:
+              description: "/models/{id}"
+              style: simple
+              schema:
+                type: string
+        "400":
+          description: The model must have a non-empty and non-null category and a
+            model year must be positive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "404":
+          description: The model component has not been found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "409":
+          description: Such model already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+  /v1/model-names:
+    get:
+      tags:
+      - model-name
+      summary: Get all names of the models
+      description: Retrieve all names of the models from the database
+      operationId: getAllModelNames
+      parameters:
+      - name: page
+        in: query
+        description: Zero-based page index (0..N)
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+      - name: size
+        in: query
+        description: The size of the page to be returned
+        required: false
+        schema:
+          default: 100
+          minimum: 1
+      - name: sort
+        in: query
+        description: "Sorting criteria in the format: property,(asc|desc). Default\
+          \ sort order is ascending. Multiple sort criteria are supported."
+        required: false
+        schema:
+          type: array
+          items: {}
+      responses:
+        "200":
+          description: The sorted page of model names
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageModelNameDto'
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - model-name
+      summary: Create a name of the models
+      description: "Seach a specified name of the models in the database if it is\
+        \ missing, persist it"
+      operationId: createModelName
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModelNameDto'
+            examples:
+              modelName:
+                description: modelName
+                value:
+                  name: A7
+        required: true
+      responses:
+        "201":
+          description: The name of models has been created
+          headers:
+            Location:
+              description: "/names/{name}"
+              style: simple
+              schema:
+                type: string
+        "400":
+          description: The name of models must be non-empty and non-null
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "409":
+          description: Such name of models already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+  /v1/manufacturers:
+    get:
+      tags:
+      - manufacturer
+      summary: Get all manufacturers
+      description: Retrieve all manufacturers from the database
+      operationId: getAllManufacturers
+      parameters:
+      - name: page
+        in: query
+        description: Zero-based page index (0..N)
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+      - name: size
+        in: query
+        description: The size of the page to be returned
+        required: false
+        schema:
+          default: 100
+          minimum: 1
+      - name: sort
+        in: query
+        description: "Sorting criteria in the format: property,(asc|desc). Default\
+          \ sort order is ascending. Multiple sort criteria are supported."
+        required: false
+        schema:
+          type: array
+          items: {}
+      responses:
+        "200":
+          description: The sorted page of manufacturers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageManufacturerDto'
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - manufacturer
+      summary: Create a manufacturer
+      description: Search for such manufacturer in the database if it is missing then
+        persist it
+      operationId: createManufacturer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManufacturerDto'
+            examples:
+              manufacturer:
+                description: manufacturer
+                value:
+                  name: Audi
+        required: true
+      responses:
+        "201":
+          description: The category has been created
+          headers:
+            Location:
+              description: "/manufacturers/{name}"
+              style: simple
+              schema:
+                type: string
+        "400":
+          description: The name of manufacturer must be non-null or non-empty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "409":
+          description: Such manufacturer already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+  /v1/categories:
+    get:
+      tags:
+      - category
+      summary: Get all categories
+      description: Retrieve all model categories from the database
+      operationId: getAllCategories
+      parameters:
+      - name: page
+        in: query
+        description: Zero-based page index (0..N)
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+      - name: size
+        in: query
+        description: The size of the page to be returned
+        required: false
+        schema:
+          default: 100
+          minimum: 1
+      - name: sort
+        in: query
+        description: "Sorting criteria in the format: property,(asc|desc). Default\
+          \ sort order is ascending. Multiple sort criteria are supported."
+        required: false
+        schema:
+          type: array
+          items: {}
+      responses:
+        "200":
+          description: The sorted page of categories
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageCategoryDto'
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - category
+      summary: Create a category
+      description: Persist a model category data in the database
+      operationId: createCategory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryDto'
+            examples:
+              category:
+                description: category
+                value:
+                  name: SUV
+        required: true
+      responses:
+        "201":
+          description: The category has been created
+          headers:
+            Location:
+              description: "/categories/{name}"
+              style: simple
+              schema:
+                type: string
+        "400":
+          description: The name of category must be non-null or non-empty
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "409":
+          description: Such category already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+  /v1/models:
+    get:
+      tags:
+      - model
+      summary: Search models
+      description: "Seach for models in the database by optional parameters if no\
+        \ one is specified, retrieve all models"
+      operationId: searchModels
+      parameters:
+      - name: model
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: category
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: manufacturer
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: maxYear
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: minYear
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: year
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: page
+        in: query
+        description: Zero-based page index (0..N)
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+      - name: size
+        in: query
+        description: The size of the page to be returned
+        required: false
+        schema:
+          default: 100
+          minimum: 1
+      - name: sort
+        in: query
+        description: "Sorting criteria in the format: property,(asc|desc). Default\
+          \ sort order is ascending. Multiple sort criteria are supported."
+        required: false
+        schema:
+          type: array
+          items: {}
+      responses:
+        "200":
+          description: The sorted page of models
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageModelDto'
+        "400":
+          description: "The maxYear, minYear, year parameters must be positive"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+  /v1/models/{id}:
+    get:
+      tags:
+      - model
+      summary: Get a model by its id
+      description: Seach for and revrieve a model from the database by its name
+      operationId: getModelById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: The model
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ModelDto'
+              examples:
+                model:
+                  description: model
+                  value:
+                    id: "1"
+                    name: A7
+                    year: "2023"
+                    manufacturer: Audi
+                    categories:
+                    - Sedan
+        "404":
+          description: The model has not been found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+    delete:
+      tags:
+      - model
+      summary: Delete a model by its id
+      description: Search for and delete from the database a model by its id
+      operationId: deleteModelById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: The model has been deleted
+        "404":
+          description: The model has not been found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+  /v1/model-names/{name}:
+    get:
+      tags:
+      - model-name
+      summary: Get a name of the models by the name
+      description: "Seach for a name of the models in the database if it exists, retrieve\
+        \ it"
+      operationId: getModelNameByName
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: The name of models
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ModelNameDto'
+              examples:
+                modelName:
+                  description: modelName
+                  value:
+                    name: A7
+        "404":
+          description: The name of models has not been found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+    delete:
+      tags:
+      - model-name
+      summary: Delete a name of the models by the name
+      description: Search for and delete a name of the models from the database
+      operationId: deleteModelNameByName
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: The name of models has been deleted
+        "404":
+          description: The name of models has not been found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "405":
+          description: The name of models has relations and cannot be removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+  /v1/manufacturers/{name}:
+    get:
+      tags:
+      - manufacturer
+      summary: Get a manufacturer by its name
+      description: Search for and retrieve a manufacturer from the database
+      operationId: getManufacturerByName
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: The manufacturer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ManufacturerDto'
+              examples:
+                manufacturer:
+                  description: manufacturer
+                  value:
+                    name: Audi
+        "404":
+          description: The manufacturer has not been found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+    delete:
+      tags:
+      - manufacturer
+      summary: Delete a manufacturer by its name
+      description: Seach for and delete a manufacturer from the database by its name
+      operationId: deleteManufacturerByName
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: The manufacturer has been deleted
+        "404":
+          description: The manufacturer has not been found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "405":
+          description: The manufacturer has relations and cannot be removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+  /v1/categories/{name}:
+    get:
+      tags:
+      - category
+      summary: Get a category by its name
+      description: Search for and retrieve a model category by its name from the database
+      operationId: getCategoryByName
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: The category
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryDto'
+              examples:
+                category:
+                  description: category
+                  value:
+                    name: SUV
+        "404":
+          description: The category has not been found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+    delete:
+      tags:
+      - category
+      summary: Delete a category by its name
+      description: Search for and delete a model category from the database by its
+        name
+      operationId: deleteCategoryByName
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: The category has been deleted
+        "404":
+          description: The category has not been found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "405":
+          description: The category has relations and cannot be removed
+      security:
+      - bearerAuth: []
+components:
+  schemas:
+    ModelDto:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        year:
+          type: integer
+          format: int32
+        manufacturer:
+          type: string
+        categories:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+      required:
+      - categories
+    ErrorResponse:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+          format: int32
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Violation'
+    Violation:
+      properties:
+        attribute:
+          type: string
+        message:
+          type: string
+    ModelNameDto:
+      properties:
+        name:
+          type: string
+      required:
+      - name
+    ManufacturerDto:
+      properties:
+        name:
+          type: string
+      required:
+      - name
+    CategoryDto:
+      properties:
+        name:
+          type: string
+      required:
+      - name
+    PageModelDto:
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        numberOfElements:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModelDto'
+        empty:
+          type: boolean
+    PageableObject:
+      properties:
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+        offset:
+          type: integer
+          format: int64
+    SortObject:
+      properties:
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+        empty:
+          type: boolean
+    PageModelNameDto:
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        numberOfElements:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModelNameDto'
+        empty:
+          type: boolean
+    PageManufacturerDto:
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        numberOfElements:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/ManufacturerDto'
+        empty:
+          type: boolean
+    PageCategoryDto:
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        numberOfElements:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryDto'
+        empty:
+          type: boolean
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

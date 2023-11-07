@@ -1,7 +1,5 @@
 package ua.com.foxminded.service;
 
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,7 +24,7 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     
-    public CategoryDto save(CategoryDto categoryDto) {
+    public CategoryDto create(CategoryDto categoryDto) {
         if (categoryRepository.existsById(categoryDto.getName())) {
             throw new AlreadyExistsException(String.format(CATEGORY_ALREADY_EXISTS, categoryDto.getName()));
         }
@@ -46,9 +44,8 @@ public class CategoryService {
         categoryRepository.deleteById(name);
     }
 
-    public Optional<CategoryDto> getByName(String name) {
-        return categoryRepository.findById(name).or(() -> {
-            throw new NotFoundException(String.format(NO_CATEGORY, name));
-        }).map(categoryMapper::map);
+    public CategoryDto getByName(String name) {
+        return categoryRepository.findById(name).map(categoryMapper::map).orElseThrow(
+                () -> new NotFoundException(String.format(NO_CATEGORY, name)));
     }
 }

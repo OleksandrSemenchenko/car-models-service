@@ -6,16 +6,22 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.4</version>
+        <version>3.1.5</version>
         <relativePath />
     </parent>
     <groupId>ua.com.foxminded</groupId>
     <artifactId>car-models-service</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.${revision}</version>
     <packaging>pom</packaging>
     <name>Car models data microservice</name>
 
+    <modules>
+        <module>car-models-service-core</module>
+        <module>car-models-service-component-tests</module>
+    </modules>
+
     <properties>
+        <revision>1-SNAPSHOT</revision>
         <java.version>17</java.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
@@ -23,6 +29,9 @@
         <jkube.version>1.14.0</jkube.version>
         <testcontainers.version>1.18.3</testcontainers.version>
         <testcontainers-keycloak>3.0.0</testcontainers-keycloak>
+        <springdoc-openapi-starter-webmvc-ui.version>2.2.0</springdoc-openapi-starter-webmvc-ui.version>
+        <swagger-annotations.version>2.2.15</swagger-annotations.version>
+        <springdoc-openapi-maven-plugin.version>1.4</springdoc-openapi-maven-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -32,6 +41,26 @@
                 <artifactId>car-models-service-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${org.mapstruct.version}</version>
+            </dependency>
+            
+            <!-- Document generation dependencies-->
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${swagger-annotations.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc-openapi-starter-webmvc-ui.version}</version>
+            </dependency>
+            
+             <!-- Security dependencies-->
             <dependency>
                 <groupId>org.keycloak.bom</groupId>
                 <artifactId>keycloak-adapter-bom</artifactId>
@@ -43,11 +72,6 @@
                 <groupId>org.keycloak</groupId>
                 <artifactId>keycloak-policy-enforcer</artifactId>
                 <version>${keycloak.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mapstruct</groupId>
-                <artifactId>mapstruct</artifactId>
-                <version>${org.mapstruct.version}</version>
             </dependency>
 
             <!-- Test dependencies -->
@@ -80,58 +104,52 @@
     </dependencyManagement>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.eclipse.jkube</groupId>
-                <artifactId>kubernetes-maven-plugin</artifactId>
-                <version>${jkube.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
-                        </path>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok-mapstruct-binding</artifactId>
-                            <version>${lombok-mapstruct-binding.version}</version>
-                        </path>
-                        <path>
-                            <groupId>org.mapstruct</groupId>
-                            <artifactId>mapstruct-processor</artifactId>
-                            <version>${org.mapstruct.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.eclipse.jkube</groupId>
+                    <artifactId>kubernetes-maven-plugin</artifactId>
+                    <version>${jkube.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok-mapstruct-binding</artifactId>
+                                <version>${lombok-mapstruct-binding.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.mapstruct</groupId>
+                                <artifactId>mapstruct-processor</artifactId>
+                                <version>${org.mapstruct.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <configuration>
+                        <excludes>
+                            <exclude>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
-    <modules>
-        <module>car-models-service-core</module>
-        <module>car-models-service-component-tests</module>
-    </modules>
 </project>

@@ -1,7 +1,5 @@
 package ua.com.foxminded.service;
 
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,7 +24,7 @@ public class ModelNameService {
     private final ModelNameRepository modelNameRepository;
     private final ModelNameMapper modeNamelMapper;
     
-    public ModelNameDto save(ModelNameDto modelNameDto) {
+    public ModelNameDto create(ModelNameDto modelNameDto) {
         if (modelNameRepository.existsById(modelNameDto.getName())) {
             throw new AlreadyExistsException(String.format(MODEL_NAME_ALREADY_EXISTS, modelNameDto.getName()));
         }
@@ -46,9 +44,8 @@ public class ModelNameService {
         modelNameRepository.deleteById(name);
     }
 
-    public Optional<ModelNameDto> getByName(String name) {
-        return modelNameRepository.findById(name).or(() -> {
-            throw new NotFoundException(String.format(NO_MODEL_NAME, name));
-        }).map(modeNamelMapper::map);
+    public ModelNameDto getByName(String name) {
+        return modelNameRepository.findById(name).map(modeNamelMapper::map)
+                .orElseThrow(() -> new NotFoundException(String.format(NO_MODEL_NAME, name)));
     }
 }

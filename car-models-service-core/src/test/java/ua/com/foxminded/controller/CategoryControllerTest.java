@@ -47,7 +47,7 @@ class CategoryControllerTest {
     }
     
     @Test
-    void save_ShouldReturnStatus400_WhenMethodArgumentNotValidException() throws Exception {
+    void create_ShouldReturnStatus400_WhenMethodArgumentNotValidException() throws Exception {
         categoryDto.setName(null);
         categoryDtoJson = mapper.writeValueAsString(categoryDto);
         mockMvc.perform(post("/v1/categories").contentType(APPLICATION_JSON)
@@ -56,8 +56,8 @@ class CategoryControllerTest {
     }
     
     @Test
-    void save_ShouldReturnStatus409_WhenAlreadyExistsException() throws Exception {
-        when(categoryService.save(categoryDto)).thenThrow(AlreadyExistsException.class);
+    void create_ShouldReturnStatus409_WhenAlreadyExistsException() throws Exception {
+        when(categoryService.create(categoryDto)).thenThrow(AlreadyExistsException.class);
         categoryDtoJson = mapper.writeValueAsString(categoryDto);
         
         mockMvc.perform(post("/v1/categories").contentType(APPLICATION_JSON)

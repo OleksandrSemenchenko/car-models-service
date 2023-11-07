@@ -53,10 +53,10 @@ class CategoryServiceTest {
     }
     
     @Test
-    void save_ShouldSaveCategory() {
+    void create_ShouldSaveCategory() {
         when(categoryRepository.existsById(CATEGORY_NAME)).thenReturn(false);
         when(categoryRepository.save(category)).thenReturn(category);
-        categoryService.save(categoryDto);
+        categoryService.create(categoryDto);
         
         verify(categoryRepository).existsById(CATEGORY_NAME);
         verify(categoryMapper).map(categoryDto);
@@ -65,10 +65,10 @@ class CategoryServiceTest {
     }
     
     @Test
-    void save_ShouldThrowAlreadyExistsException_WhenSuchCategoryAlreadyExists() {
+    void create_ShouldThrowAlreadyExistsException_WhenSuchCategoryAlreadyExists() {
         when(categoryRepository.existsById(categoryDto.getName())).thenReturn(true);
         
-        assertThrows(AlreadyExistsException.class, () -> categoryService.save(categoryDto));
+        assertThrows(AlreadyExistsException.class, () -> categoryService.create(categoryDto));
     }
     
     @Test

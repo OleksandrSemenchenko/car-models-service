@@ -1,7 +1,8 @@
 package ua.com.foxminded.controller;
 
 import static org.hamcrest.Matchers.hasSize;
-import static ua.com.foxminded.controller.ExceptionHandlerController.DATA_INTEGRITY_VIOLATION_MESSAGE;
+import static ua.com.foxminded.controller.ExceptionHandlerController.DATA_INTEGRITY_VIOLATION_EXCEPTION_MESSAGE;
+import static ua.com.foxminded.controller.ExceptionHandlerController.NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE;
 import static ua.com.foxminded.service.CategoryService.CATEGORY_ALREADY_EXISTS;
 import static ua.com.foxminded.service.CategoryService.NO_CATEGORY;
 
@@ -10,7 +11,6 @@ import org.springframework.http.HttpStatus;
 
 import ua.com.foxminded.dto.CategoryDto;
 
-
 class CategoryControllerComponentTest extends ComponentTestContext {
     
     public static final String CATEGORY_NAME_WITHOUT_RELATIONS = "Coupe";
@@ -18,7 +18,19 @@ class CategoryControllerComponentTest extends ComponentTestContext {
     public static final String NEW_CATEGORY_NAME = "Pickup";
     
     @Test
-    void save_ShouldReturnStatus409_WhenSuchCategoryAlreadyExists() {
+    void create_ShouldReturnStatus400_WhenCategoryDtoNameIsNull() {
+        CategoryDto categoryDto = new CategoryDto();
+        
+        webTestClient.post().uri("/v1/categories")
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .bodyValue(categoryDto)
+                     .exchange()
+                     .expectStatus().isBadRequest()
+                     .expectBody().jsonPath("$.message").isEqualTo(NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE);
+    }
+    
+    @Test
+    void create_ShouldReturnStatus409_WhenSuchCategoryAlreadyExists() {
         CategoryDto categoryDto = CategoryDto.builder().name(CATEGORY_NAME).build();
         
         webTestClient.post().uri("/v1/categories")
@@ -31,7 +43,7 @@ class CategoryControllerComponentTest extends ComponentTestContext {
     }
     
     @Test
-    void save_ShouldReturnStatus201() {
+    void create_ShouldReturnStatus201() {
         CategoryDto categoryDto = CategoryDto.builder().name(NEW_CATEGORY_NAME).build();
         
         webTestClient.post().uri("/v1/categories")
@@ -75,8 +87,8 @@ class CategoryControllerComponentTest extends ComponentTestContext {
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
                      .exchange()
                      .expectStatus().isEqualTo(HttpStatus.METHOD_NOT_ALLOWED)
-                     .expectBody().jsonPath("$.message").isEqualTo(String.format(DATA_INTEGRITY_VIOLATION_MESSAGE, 
-                                                                                 CATEGORY_NAME));
+                     .expectBody().jsonPath("$.message").isEqualTo(
+                             String.format(DATA_INTEGRITY_VIOLATION_EXCEPTION_MESSAGE, CATEGORY_NAME));
     }
     
     @Test

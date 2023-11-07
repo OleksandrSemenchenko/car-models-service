@@ -1,7 +1,5 @@
 package ua.com.foxminded.service;
 
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,7 +24,7 @@ public class ManufacturerService {
     private final ManufacturerRepository manufacturerRepository;
     private final ManufacturerMapper manufacturerMapper;
     
-    public ManufacturerDto save(ManufacturerDto manufacturerDto) {
+    public ManufacturerDto create(ManufacturerDto manufacturerDto) {
         if (manufacturerRepository.existsById(manufacturerDto.getName())) {
             throw new AlreadyExistsException(String.format(MANUFACTURER_ALREADY_EXISTS, manufacturerDto.getName())); 
         }
@@ -46,9 +44,8 @@ public class ManufacturerService {
         manufacturerRepository.deleteById(name);
     }
 
-    public Optional<ManufacturerDto> getByName(String name) {
-        return manufacturerRepository.findById(name).or(() -> {
-            throw new NotFoundException(String.format(NO_MANUFACTURER, name));
-        }).map(manufacturerMapper::map);
+    public ManufacturerDto getByName(String name) {
+        return manufacturerRepository.findById(name).map(manufacturerMapper::map).orElseThrow(
+                () -> new NotFoundException(String.format(NO_MANUFACTURER, name)));
     }
 }

@@ -1,14 +1,15 @@
 package ua.com.foxminded.controller;
 
 import static org.hamcrest.Matchers.hasSize;
-import static ua.com.foxminded.controller.ExceptionHandlerController.DATA_INTEGRITY_VIOLATION_MESSAGE;
+import static ua.com.foxminded.controller.ExceptionHandlerController.DATA_INTEGRITY_VIOLATION_EXCEPTION_MESSAGE;
+import static ua.com.foxminded.controller.ExceptionHandlerController.NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE;
 import static ua.com.foxminded.service.ModelNameService.MODEL_NAME_ALREADY_EXISTS;
 import static ua.com.foxminded.service.ModelNameService.NO_MODEL_NAME;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-import ua.com.foxminded.dto.ModelDto;
+import ua.com.foxminded.dto.ModelNameDto;
 
 class ModelNameControllerComponentTest extends ComponentTestContext {
     
@@ -17,11 +18,22 @@ class ModelNameControllerComponentTest extends ComponentTestContext {
     public static final String NEW_MODEL_NAME = "Mustang";
     
     @Test
-    void save_ShouldReturn409_WhenSuchModelNameAlreadyExists() {
-        ModelDto modelDto = ModelDto.builder().name(MODEL_NAME).build();
+    void create_ShouldReturn400_WhenModelNameDtoNameIsNull() {
+        ModelNameDto modelNameDto = new ModelNameDto();
         webTestClient.post().uri("/v1/model-names")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
-                     .bodyValue(modelDto)
+                     .bodyValue(modelNameDto)
+                     .exchange()
+                     .expectStatus().isBadRequest()
+                     .expectBody().jsonPath("$.message").isEqualTo(NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE);
+    }
+    
+    @Test
+    void create_ShouldReturn409_WhenSuchModelNameAlreadyExists() {
+        ModelNameDto modelNameDto = ModelNameDto.builder().name(MODEL_NAME).build();
+        webTestClient.post().uri("/v1/model-names")
+                     .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
+                     .bodyValue(modelNameDto)
                      .exchange()
                      .expectStatus().isEqualTo(HttpStatus.CONFLICT)
                      .expectBody().jsonPath("$.message").isEqualTo(
@@ -29,11 +41,11 @@ class ModelNameControllerComponentTest extends ComponentTestContext {
     }
     
     @Test
-    void save_ShouldReturn201() {
-        ModelDto modelDto = ModelDto.builder().name(NEW_MODEL_NAME).build();
+    void create_ShouldReturn201() {
+        ModelNameDto modelNameDto = ModelNameDto.builder().name(NEW_MODEL_NAME).build();
         webTestClient.post().uri("/v1/model-names")
                      .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
-                     .bodyValue(modelDto)
+                     .bodyValue(modelNameDto)
                      .exchange()
                      .expectStatus().isCreated()
                      .expectHeader().location(carModelServiceBaseUrl + "/v1/model-names/" + NEW_MODEL_NAME); 
@@ -73,7 +85,7 @@ class ModelNameControllerComponentTest extends ComponentTestContext {
                      .exchange()
                      .expectStatus().isEqualTo(HttpStatus.METHOD_NOT_ALLOWED)
                      .expectBody().jsonPath("$.message").isEqualTo(
-                             String.format(DATA_INTEGRITY_VIOLATION_MESSAGE, MODEL_NAME));
+                             String.format(DATA_INTEGRITY_VIOLATION_EXCEPTION_MESSAGE, MODEL_NAME));
     }
     
     @Test

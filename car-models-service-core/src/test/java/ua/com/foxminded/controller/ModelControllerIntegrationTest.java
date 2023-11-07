@@ -91,7 +91,7 @@ class ModelControllerIntegrationTest {
     }
     
     @Test
-    void save_ShouldReturnStatus201() throws Exception {
+    void create_ShouldReturnStatus201() throws Exception {
         String vehicleDtoJson = mapper.writeValueAsString(modelDto);
         
         mockMvc.perform(post("/v1/manufacturers/{manufacturer}/models/{name}/{year}", 

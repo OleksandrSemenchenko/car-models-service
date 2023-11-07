@@ -62,7 +62,7 @@ class ManufacturerControllerIntegrationTest {
     }
     
     @Test
-    void save_ShouldReturnStatus201() throws Exception {
+    void create_ShouldReturnStatus201() throws Exception {
         manufacturerDto.setName(NEW_MANUFACTURER_NAME);
         manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
         

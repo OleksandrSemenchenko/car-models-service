@@ -30,9 +30,6 @@ public abstract class ComponentTestContext {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String CLIENT_SECRET = "secret";
     
-    public static WebTestClient webTestClient;
-    public static String carModelServiceBaseUrl;
-    
     private static Network network = Network.newNetwork();
     private static KeycloakTestcontainer keycloak;
     private static PostgreSQLContainer<?> postgres;
@@ -65,16 +62,18 @@ public abstract class ComponentTestContext {
                 .dependsOn(keycloak)
                 .withLogConsumer(new Slf4jLogConsumer(log));
         carsModelsService.start();
-        
-        carModelServiceBaseUrl = "http://" + carsModelsService.getHost() + ":" + carsModelsService.getMappedPort(8180);
-        webTestClient = WebTestClient.bindToServer().baseUrl(carModelServiceBaseUrl).build();
     }
+    
+    public WebTestClient webTestClient;
+    public String carModelServiceBaseUrl;
     
     @Autowired
     private PolicyEnforcerConfig policyEnforcerConfig;
     
     @BeforeEach
     void setUp() {
+        carModelServiceBaseUrl = "http://" + carsModelsService.getHost() + ":" + carsModelsService.getMappedPort(8180);
+        webTestClient = WebTestClient.bindToServer().baseUrl(carModelServiceBaseUrl).build();
         var databaseDelegate = new JdbcDatabaseDelegate(postgres, "");
         ScriptUtils.runInitScript(databaseDelegate, "data.sql");
     }

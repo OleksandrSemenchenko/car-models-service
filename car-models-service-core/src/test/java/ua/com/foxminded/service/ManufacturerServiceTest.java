@@ -52,10 +52,10 @@ class ManufacturerServiceTest {
     }
     
     @Test
-    void save_ShouldSaveManufacturer() {
+    void create_ShouldSaveManufacturer() {
         when(manufacturerRepository.existsById(manufacturerDto.getName())).thenReturn(false);
         when(manufacturerMapper.map(manufacturerDto)).thenReturn(manufacturer);
-        manufacturerService.save(manufacturerDto);
+        manufacturerService.create(manufacturerDto);
         
         verify(manufacturerRepository).existsById(manufacturerDto.getName());
         verify(manufacturerMapper).map(manufacturerDto);
@@ -63,10 +63,10 @@ class ManufacturerServiceTest {
     }
     
     @Test
-    void save_ShouldThrowAlreadyExistsExcepion_WhenNoSuchManufacturer() {
+    void create_ShouldThrowAlreadyExistsExcepion_WhenNoSuchManufacturer() {
         when(manufacturerRepository.existsById(manufacturerDto.getName())).thenReturn(true);
         
-        assertThrows(AlreadyExistsException.class, () -> manufacturerService.save(manufacturerDto));
+        assertThrows(AlreadyExistsException.class, () -> manufacturerService.create(manufacturerDto));
     }
     
     @Test

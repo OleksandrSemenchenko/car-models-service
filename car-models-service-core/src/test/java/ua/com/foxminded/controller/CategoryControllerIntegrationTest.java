@@ -47,7 +47,7 @@ class CategoryControllerIntegrationTest {
     }
     
     @Test
-    void save_ShouldReturnStatus201() throws Exception {
+    void create_ShouldReturnStatus201() throws Exception {
         categoryDto.setName(NEW_CATEGORY_NAME);
         String categoryDtoJson = mapper.writeValueAsString(categoryDto);
         
