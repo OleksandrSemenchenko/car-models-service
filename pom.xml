@@ -15,13 +15,9 @@
     <packaging>pom</packaging>
     <name>Car models data microservice</name>
 
-    <modules>
-        <module>car-models-service-core</module>
-        <module>car-models-service-component-tests</module>
-    </modules>
-
     <properties>
         <revision>1-SNAPSHOT</revision>
+        <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
         <java.version>17</java.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
@@ -37,17 +33,18 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>ua.com.foxminded</groupId>
-                <artifactId>car-models-service-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            
-            <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct</artifactId>
                 <version>${org.mapstruct.version}</version>
             </dependency>
-            
+
+            <!-- Module dependencies-->
+            <dependency>
+                <groupId>ua.com.foxminded</groupId>
+                <artifactId>car-models-service-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <!-- Document generation dependencies-->
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
@@ -59,8 +56,8 @@
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>${springdoc-openapi-starter-webmvc-ui.version}</version>
             </dependency>
-            
-             <!-- Security dependencies-->
+
+            <!-- Security dependencies-->
             <dependency>
                 <groupId>org.keycloak.bom</groupId>
                 <artifactId>keycloak-adapter-bom</artifactId>
@@ -107,6 +104,42 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>flatten-maven-plugin</artifactId>
+                    <version>${flatten-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>flatten</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>flatten</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>flatten.clean</id>
+                            <phase>clean</phase>
+                            <goals>
+                                <goal>clean</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>repackage</id>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                            <configuration>
+                                <attach>false</attach>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
                     <groupId>org.eclipse.jkube</groupId>
                     <artifactId>kubernetes-maven-plugin</artifactId>
                     <version>${jkube.version}</version>
@@ -136,20 +169,12 @@
                         </annotationProcessorPaths>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <configuration>
-                        <excludes>
-                            <exclude>
-                                <groupId>org.projectlombok</groupId>
-                                <artifactId>lombok</artifactId>
-                            </exclude>
-                        </excludes>
-                    </configuration>
-                </plugin>
             </plugins>
         </pluginManagement>
     </build>
-
+    
+    <modules>
+        <module>./car-models-service-core</module>
+        <module>./car-models-service-component-tests</module>
+    </modules>
 </project>

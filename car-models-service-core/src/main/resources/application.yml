@@ -1,5 +1,5 @@
 build:
-  version: ${project.version}
+  version: "@project.version@"
 
 spring:
   datasource:

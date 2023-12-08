@@ -9,6 +9,10 @@
     </parent>
     <artifactId>car-models-service-core</artifactId>
     <packaging>jar</packaging>
+    
+    <properties>
+        <start-class>ua.com.foxminded.CarModelsService</start-class>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -139,6 +143,10 @@
 
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
@@ -151,7 +159,7 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <configuration>
                     <delimiters>
-                        <delimiter>${*}</delimiter>
+                        <delimiter>@</delimiter>
                     </delimiters>
                     <useDefaultDelimiters>false</useDefaultDelimiters>
                 </configuration>

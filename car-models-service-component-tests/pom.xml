@@ -6,6 +6,7 @@
         <groupId>ua.com.foxminded</groupId>
         <artifactId>car-models-service</artifactId>
         <version>1.${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>car-models-service-component-tests</artifactId>
     <packaging>jar</packaging>
@@ -82,4 +83,13 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

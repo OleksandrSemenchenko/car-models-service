@@ -1,0 +1,78 @@
+services:
+  car-models-service-core:
+    image: foxminded/car-models-service-core
+    build:
+      context: .
+      target: production
+    networks:
+      - car-service
+    ports:
+      - 8180:8180
+    environment:
+      - POSTGRES_HOST=car-postgres
+      - KEYCLOAK_HOST=keycloak
+    depends_on:
+      - car-service-database
+      - keycloak-server
+  
+  keycloak-server:
+    image: quay.io/keycloak/keycloak:22.0.1
+    command: start-dev --import-realm
+    networks:
+      car-service:
+        aliases:
+          - keycloak
+    ports:
+      - 8080:8080 
+    volumes:
+      - type: bind
+        source: $PWD/config/realm-import.json
+        target: /opt/keycloak/data/import/realm-import.json
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_HTTP_RELATIVE_PATH=/auth
+      - KC_HOSTNAME=keycloak
+      - KC_HOSTNAME_PORT=8080
+      - KC_HOSTNAME_STRICT_BACKCHANNEL=true
+      - KC_DB=postgres
+      - KC_DB_URL_HOST=keycloak-postgres
+      - KC_DB_USERNAME=keycloak
+      - KC_DB_PASSWORD=keycloak
+    depends_on:
+      - keycloak-database
+  
+  car-service-database:
+    networks:
+      car-service:
+        aliases:
+          - car-postgres
+    image: postgres:15.0
+    environment:
+      - POSTGRES_USER=cars
+      - POSTGRES_PASSWORD=cars
+    volumes:
+      - car-postgres_data:/var/lib/postgresql/data
+      - car-postgres_config:/etc/postgresql/postgresql.conf
+  
+  keycloak-database:
+    networks:
+      car-service:
+        aliases:
+          - keycloak-postgres
+    image: postgres:15.0
+    environment:
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=keycloak
+    volumes:
+      - keycloak-postgres_data:/var/lib/postgresql/data
+      - keycloak-postgres_config:/etc/postgresql/postgresql.conf
+  
+networks:
+  car-service:
+
+volumes:
+  car-postgres_data:
+  car-postgres_config:
+  keycloak-postgres_data:
+  keycloak-postgres_config:
