@@ -53,7 +53,7 @@ public abstract class ComponentTestContext {
                 .withLogConsumer(new Slf4jLogConsumer(log));
         postgres.start();
         
-        carsModelsService = new GenericContainer<>("foxminded/car-models-service-core:latest")
+        carsModelsService = new GenericContainer<>("foxminded/car-models-service:latest")
                 .withExposedPorts(8180)
                 .withNetwork(network)
                 .withEnv("KEYCLOAK_HOST", AUTHORIZATION_SERVER_ALIAS)

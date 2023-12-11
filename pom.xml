@@ -140,11 +140,6 @@
                     </executions>
                 </plugin>
                 <plugin>
-                    <groupId>org.eclipse.jkube</groupId>
-                    <artifactId>kubernetes-maven-plugin</artifactId>
-                    <version>${jkube.version}</version>
-                </plugin>
-                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>

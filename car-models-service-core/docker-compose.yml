@@ -1,13 +1,14 @@
 services:
-  car-models-service-core:
-    image: foxminded/car-models-service-core
+  car-models-service:
+    image: foxminded/car-models-service
     build:
-      context: .
-      target: production
+      context: ../
+      target: development
     networks:
       - car-service
     ports:
       - 8180:8180
+      - 8000:8000
     environment:
       - POSTGRES_HOST=car-postgres
       - KEYCLOAK_HOST=keycloak
@@ -26,7 +27,7 @@ services:
       - 8080:8080 
     volumes:
       - type: bind
-        source: $PWD/config/realm-import.json
+        source: $PWD/../config/realm-import.json
         target: /opt/keycloak/data/import/realm-import.json
     environment:
       - KEYCLOAK_ADMIN=admin
