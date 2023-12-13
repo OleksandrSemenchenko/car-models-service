@@ -128,7 +128,7 @@
             </execution>
           </executions>
         </plugin>
-        
+
         <plugin>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
@@ -144,7 +144,7 @@
             </execution>
           </executions>
         </plugin>
-        
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -172,7 +172,7 @@
         </plugin>
       </plugins>
     </pluginManagement>
-    
+
     <plugins>
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
@@ -206,6 +206,7 @@
           <yaml>
             <includes>
               <include>src/**/*.yaml</include>
+              <include>src/**/*.yml</include>
             </includes>
             <jackson></jackson>
           </yaml>

@@ -1,57 +1,54 @@
+---
 spring:
   flyway:
     enabled: false
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:test;DB_CLOSE_ON_EXIT=FALSE;NON_KEYWORDS=year;
-    username: sa
-    password: 
+    driver-class-name: "org.h2.Driver"
+    url: "jdbc:h2:mem:test;DB_CLOSE_ON_EXIT=FALSE;NON_KEYWORDS=year;"
+    username: "sa"
+    password: null
   sql:
     init:
-      mode: embedded
-      platform: h2
+      mode: "embedded"
+      platform: "h2"
   jpa:
     show-sql: false
-    database-platform: H2
+    database-platform: "H2"
     generate-ddl: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: "create-drop"
     defer-datasource-initialization: true
   security:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:8080/auth/realms/car-services/protocol/openid-connect/certs
-
+          jwk-set-uri: "http://localhost:8080/auth/realms/car-services/protocol/openid-connect/certs"
 keycloak:
   policy-enforcer-config:
-    realm: car-services
-    auth-server-url: http://localhost:8080/auth
-    resource: car-models-service
+    realm: "car-services"
+    auth-server-url: "http://localhost:8080/auth"
+    resource: "car-models-service"
     credentials:
-      secret: eGtdvx8kd5XZ2ThQ1YlqWS5y7kuTGJwk
-    enforcement-mode: ENFORCING
+      secret: "eGtdvx8kd5XZ2ThQ1YlqWS5y7kuTGJwk"
+    enforcement-mode: "ENFORCING"
     http-method-as-scope: true
-
 server:
   port: 8180
-
 logging:
   level:
-    root: warn
-    org: warn
-
+    root: "warn"
+    org: "warn"
 application:
   sort:
     category:
-      by: name
-      direction: ASC
+      by: "name"
+      direction: "ASC"
     manufacturer:
-      by: name
-      direction: ASC
+      by: "name"
+      direction: "ASC"
     model-name:
-      by: name
-      direction: ASC
+      by: "name"
+      direction: "ASC"
     model:
-      by: year
-      direction: DESC
+      by: "year"
+      direction: "DESC"
