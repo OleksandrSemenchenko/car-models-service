@@ -2,7 +2,7 @@ services:
   car-models-service:
     image: foxminded/car-models-service
     build:
-      context: ../
+      context: ../car-models-service-core
       target: development
     networks:
       - car-service
@@ -27,7 +27,7 @@ services:
       - 8080:8080 
     volumes:
       - type: bind
-        source: $PWD/../config/realm-import.json
+        source: $PWD/config/realm-import.json
         target: /opt/keycloak/data/import/realm-import.json
     environment:
       - KEYCLOAK_ADMIN=admin
