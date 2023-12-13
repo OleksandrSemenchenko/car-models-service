@@ -16,12 +16,9 @@ public class SearchFilter {
     private String category;
     private String manufacturer;
     
-    @Positive
-    private Integer maxYear;
+    @Positive private Integer maxYear;
     
-    @Positive
-    private Integer minYear;
+    @Positive private Integer minYear;
     
-    @Positive
-    private Integer year;
+    @Positive private Integer year;
 }

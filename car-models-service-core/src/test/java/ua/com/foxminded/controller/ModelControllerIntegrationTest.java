@@ -15,8 +15,8 @@ import static ua.com.foxminded.controller.CategoryControllerIntegrationTest.CATE
 import static ua.com.foxminded.controller.ManufacturerControllerIntegrationTest.MANUFACTURER_NAME;
 import static ua.com.foxminded.controller.ModelNameControllerIntegrationTest.MODEL_NAME;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Set;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +24,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import ua.com.foxminded.dto.ModelDto;
 
 @SpringBootTest

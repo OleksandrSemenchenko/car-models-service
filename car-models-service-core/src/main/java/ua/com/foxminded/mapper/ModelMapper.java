@@ -6,7 +6,6 @@ import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-
 import ua.com.foxminded.dto.ModelDto;
 import ua.com.foxminded.entity.Model;
 

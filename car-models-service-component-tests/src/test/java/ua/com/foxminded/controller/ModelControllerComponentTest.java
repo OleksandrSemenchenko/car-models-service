@@ -20,10 +20,8 @@ import static ua.com.foxminded.service.ModelService.NO_MODEL_WITH_SUCH_ID;
 import static ua.com.foxminded.service.ModelService.NO_SUCH_MODEL;
 
 import java.util.Set;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-
 import ua.com.foxminded.dto.ModelDto;
 
 class ModelControllerComponentTest extends ComponentTestContext {

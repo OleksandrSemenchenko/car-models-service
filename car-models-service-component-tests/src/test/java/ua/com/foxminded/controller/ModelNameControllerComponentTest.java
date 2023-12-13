@@ -8,7 +8,6 @@ import static ua.com.foxminded.service.ModelNameService.NO_MODEL_NAME;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-
 import ua.com.foxminded.dto.ModelNameDto;
 
 class ModelNameControllerComponentTest extends ComponentTestContext {

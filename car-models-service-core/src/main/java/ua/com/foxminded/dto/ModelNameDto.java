@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ModelNameDto {
 
-    @NotNull
-    @NotEmpty
+    @NotNull @NotEmpty
     private String name;
 }

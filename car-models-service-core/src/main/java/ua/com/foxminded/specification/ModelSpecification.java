@@ -1,12 +1,10 @@
 package ua.com.foxminded.specification;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.data.jpa.domain.Specification;
-
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.SetJoin;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.data.jpa.domain.Specification;
 import ua.com.foxminded.entity.Category;
 import ua.com.foxminded.entity.Category_;
 import ua.com.foxminded.entity.Manufacturer_;

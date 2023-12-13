@@ -1,9 +1,8 @@
 package ua.com.foxminded.dto;
 
-import java.util.Set;
-
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +19,5 @@ public class ModelDto {
     private Integer year;
     private String manufacturer;
     
-    @NotNull
-    private Set<@NotNull @NotEmpty String> categories;
+    @NotNull private Set<@NotNull @NotEmpty String> categories;
 }

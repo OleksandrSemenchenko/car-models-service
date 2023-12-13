@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CategoryDto {
     
-    @NotNull
-    @NotEmpty
+    @NotNull @NotEmpty
     private String name;
 }

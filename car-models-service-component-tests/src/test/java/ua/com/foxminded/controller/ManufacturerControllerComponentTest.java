@@ -7,11 +7,9 @@ import static ua.com.foxminded.controller.ExceptionHandlerController.NOT_VALID_A
 import static ua.com.foxminded.service.ManufacturerService.MANUFACTURER_ALREADY_EXISTS;
 import static ua.com.foxminded.service.ManufacturerService.NO_MANUFACTURER;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import ua.com.foxminded.dto.ManufacturerDto;
 
 class ManufacturerControllerComponentTest extends ComponentTestContext {

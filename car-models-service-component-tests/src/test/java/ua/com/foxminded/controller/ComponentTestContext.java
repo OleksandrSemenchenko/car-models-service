@@ -1,5 +1,6 @@
 package ua.com.foxminded.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.keycloak.admin.client.Keycloak;
@@ -13,8 +14,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.ext.ScriptUtils;
 import org.testcontainers.jdbc.JdbcDatabaseDelegate;
-
-import lombok.extern.slf4j.Slf4j;
 import ua.com.foxminded.config.TestConfig;
 import ua.com.foxminded.testcontainer.KeycloakTestcontainer;
 

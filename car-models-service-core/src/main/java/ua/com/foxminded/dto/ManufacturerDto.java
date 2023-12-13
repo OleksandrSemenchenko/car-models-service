@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ManufacturerDto {
     
-    @NotNull
-    @NotEmpty
+    @NotNull @NotEmpty
     private String name;
 }

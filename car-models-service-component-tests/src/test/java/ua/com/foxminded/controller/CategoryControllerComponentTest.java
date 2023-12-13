@@ -8,7 +8,6 @@ import static ua.com.foxminded.service.CategoryService.NO_CATEGORY;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-
 import ua.com.foxminded.dto.CategoryDto;
 
 class CategoryControllerComponentTest extends ComponentTestContext {
