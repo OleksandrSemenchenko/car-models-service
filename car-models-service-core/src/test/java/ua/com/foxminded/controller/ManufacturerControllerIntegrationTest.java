@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 Oleksandr Semenchenko
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package ua.com.foxminded.controller;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -24,56 +39,59 @@ import ua.com.foxminded.dto.ManufacturerDto;
 @AutoConfigureMockMvc(addFilters = false)
 @Transactional
 class ManufacturerControllerIntegrationTest {
-    
-    public static final String NEW_MANUFACTURER_NAME = "Mercedes-Benz";
-    public static final String MANUFACTURER_NAME = "Audi";
-    public static final String MANUFACTURER_NAME_WITHOUT_RELATIONS = "Ford";
-    
-    @Autowired
-    private MockMvc mockMvc;
-    
-    @Autowired
-    private ObjectMapper mapper;
-    
-    private ManufacturerDto manufacturerDto;
-    private String manufacturerDtoJson;
-    
-    @BeforeEach
-    void setUp() {
-        manufacturerDto = ManufacturerDto.builder().name(MANUFACTURER_NAME).build();
-    }
-    
-    @Test
-    void getByName_ShouldReturnStatus200() throws Exception {
-        manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
-        
-        mockMvc.perform(get("/v1/manufacturers/{name}", MANUFACTURER_NAME))
-               .andExpect(status().isOk())
-               .andExpect(content().json(manufacturerDtoJson));
-    }
-    
-    @Test
-    void getAll_ShouldReturnStatus200() throws Exception {
-        mockMvc.perform(get("/v1/manufacturers"))
-               .andExpect(status().isOk())
-               .andExpect(jsonPath("$.content[0].name", MANUFACTURER_NAME).exists());
-    }
-    
-    @Test
-    void create_ShouldReturnStatus201() throws Exception {
-        manufacturerDto.setName(NEW_MANUFACTURER_NAME);
-        manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
-        
-        mockMvc.perform(post("/v1/manufacturers")
-                    .contentType(APPLICATION_JSON)
-                    .content(manufacturerDtoJson))
-               .andExpect(status().isCreated())
-               .andExpect(header().string("Location", containsString("/v1/manufacturers/" + NEW_MANUFACTURER_NAME)));
-    }
-    
-    @Test
-    void deleteByName_ShouldReturnStatus204() throws Exception {
-        mockMvc.perform(delete("/v1/manufacturers/{name}", MANUFACTURER_NAME_WITHOUT_RELATIONS))
-               .andExpect(status().isNoContent());
-    }
+
+  public static final String NEW_MANUFACTURER_NAME = "Mercedes-Benz";
+  public static final String MANUFACTURER_NAME = "Audi";
+  public static final String MANUFACTURER_NAME_WITHOUT_RELATIONS = "Ford";
+
+  @Autowired private MockMvc mockMvc;
+
+  @Autowired private ObjectMapper mapper;
+
+  private ManufacturerDto manufacturerDto;
+  private String manufacturerDtoJson;
+
+  @BeforeEach
+  void setUp() {
+    manufacturerDto = ManufacturerDto.builder().name(MANUFACTURER_NAME).build();
+  }
+
+  @Test
+  void getByName_ShouldReturnStatus200() throws Exception {
+    manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
+
+    mockMvc
+        .perform(get("/v1/manufacturers/{name}", MANUFACTURER_NAME))
+        .andExpect(status().isOk())
+        .andExpect(content().json(manufacturerDtoJson));
+  }
+
+  @Test
+  void getAll_ShouldReturnStatus200() throws Exception {
+    mockMvc
+        .perform(get("/v1/manufacturers"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.content[0].name", MANUFACTURER_NAME).exists());
+  }
+
+  @Test
+  void create_ShouldReturnStatus201() throws Exception {
+    manufacturerDto.setName(NEW_MANUFACTURER_NAME);
+    manufacturerDtoJson = mapper.writeValueAsString(manufacturerDto);
+
+    mockMvc
+        .perform(
+            post("/v1/manufacturers").contentType(APPLICATION_JSON).content(manufacturerDtoJson))
+        .andExpect(status().isCreated())
+        .andExpect(
+            header()
+                .string("Location", containsString("/v1/manufacturers/" + NEW_MANUFACTURER_NAME)));
+  }
+
+  @Test
+  void deleteByName_ShouldReturnStatus204() throws Exception {
+    mockMvc
+        .perform(delete("/v1/manufacturers/{name}", MANUFACTURER_NAME_WITHOUT_RELATIONS))
+        .andExpect(status().isNoContent());
+  }
 }

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 Oleksandr Semenchenko
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package ua.com.foxminded.mapper;
 
 import org.mapstruct.InheritInverseConfiguration;
@@ -9,18 +24,18 @@ import ua.com.foxminded.entity.Category;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CategoryMapper {
-    
-    CategoryDto map(Category category);
-    
-    @InheritInverseConfiguration
-    @Mapping(target = "models", ignore = true)
-    Category map(CategoryDto categoryDto);
-    
-    default String categoryToString(Category category) {
-        return category.getName();
-    }
-    
-    default Category stringToCategory(String name) {
-        return Category.builder().name(name).build();
-    }
+
+  CategoryDto map(Category category);
+
+  @InheritInverseConfiguration
+  @Mapping(target = "models", ignore = true)
+  Category map(CategoryDto categoryDto);
+
+  default String categoryToString(Category category) {
+    return category.getName();
+  }
+
+  default Category stringToCategory(String name) {
+    return Category.builder().name(name).build();
+  }
 }

@@ -11,7 +11,7 @@
   <artifactId>car-models-service</artifactId>
   <version>1.${revision}</version>
   <packaging>pom</packaging>
-  <name>Car models data microservice</name>
+  <name>Car models service API</name>
 
   <modules>
     <module>./car-models-service-core</module>
@@ -191,9 +191,13 @@
               <include>src/main/java/**/*.java</include>
               <include>src/test/java/**/*.java</include>
             </includes>
+            <googleJavaFormat></googleJavaFormat>
             <importOrder></importOrder>
             <removeUnusedImports></removeUnusedImports>
             <formatAnnotations></formatAnnotations>
+            <licenseHeader>
+              <file>${maven.multiModuleProjectDirectory}/development/config/license-header</file>
+            </licenseHeader>
           </java>
 
           <sql>

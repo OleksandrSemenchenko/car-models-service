@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 Oleksandr Semenchenko
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package ua.com.foxminded.controller;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -23,53 +38,55 @@ import ua.com.foxminded.dto.ModelNameDto;
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 class ModelNameControllerIntegrationTest {
-    
-    public static final String NEW_MODEL_NAME = "Fusion";
-    public static final String MODEL_NAME = "A7";
-    public static final String MODEL_NAME_WITHOUT_RELATIONS = "A8";
 
-    @Autowired
-    private MockMvc mockMvc;
-    
-    @Autowired
-    private ObjectMapper mapper;
-    
-    private ModelNameDto modelNameDto;
-    private String modelNameDtoJson;
+  public static final String NEW_MODEL_NAME = "Fusion";
+  public static final String MODEL_NAME = "A7";
+  public static final String MODEL_NAME_WITHOUT_RELATIONS = "A8";
 
-    @BeforeEach
-    void setUp() {
-        modelNameDto = ModelNameDto.builder().name(MODEL_NAME).build();
-    }
-    
-    @Test
-    void create_ShouldReturnStatus201() throws Exception {
-        modelNameDto.setName(NEW_MODEL_NAME);
-        modelNameDtoJson = mapper.writeValueAsString(modelNameDto);
-        
-        mockMvc.perform(post("/v1/model-names").contentType(APPLICATION_JSON)
-                                               .content(modelNameDtoJson))
-               .andExpect(status().isCreated())
-               .andExpect(header().string("Location", containsString("/v1/model-names/" + NEW_MODEL_NAME)));
-    }
-    
-    @Test
-    void getByName_ShouldReturnStatus200() throws Exception {
-        mockMvc.perform(get("/v1/model-names/{name}", MODEL_NAME))
-               .andExpect(status().isOk())
-               .andExpect(jsonPath("$.name", is(MODEL_NAME)));
-    }
-    
-    @Test
-    void getAll_ShouldReturnStatus200() throws Exception {
-        mockMvc.perform(get("/v1/model-names"))
-               .andExpect(status().isOk())
-               .andExpect(jsonPath("$.content", hasSize(2)));
-    }
-    
-    @Test
-    void deleteByName_ShouldReturnStatus204() throws Exception {
-        mockMvc.perform(delete("/v1/model-names/{name}", MODEL_NAME_WITHOUT_RELATIONS))
-               .andExpect(status().isNoContent());
-    }
+  @Autowired private MockMvc mockMvc;
+
+  @Autowired private ObjectMapper mapper;
+
+  private ModelNameDto modelNameDto;
+  private String modelNameDtoJson;
+
+  @BeforeEach
+  void setUp() {
+    modelNameDto = ModelNameDto.builder().name(MODEL_NAME).build();
+  }
+
+  @Test
+  void create_ShouldReturnStatus201() throws Exception {
+    modelNameDto.setName(NEW_MODEL_NAME);
+    modelNameDtoJson = mapper.writeValueAsString(modelNameDto);
+
+    mockMvc
+        .perform(post("/v1/model-names").contentType(APPLICATION_JSON).content(modelNameDtoJson))
+        .andExpect(status().isCreated())
+        .andExpect(
+            header().string("Location", containsString("/v1/model-names/" + NEW_MODEL_NAME)));
+  }
+
+  @Test
+  void getByName_ShouldReturnStatus200() throws Exception {
+    mockMvc
+        .perform(get("/v1/model-names/{name}", MODEL_NAME))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.name", is(MODEL_NAME)));
+  }
+
+  @Test
+  void getAll_ShouldReturnStatus200() throws Exception {
+    mockMvc
+        .perform(get("/v1/model-names"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.content", hasSize(2)));
+  }
+
+  @Test
+  void deleteByName_ShouldReturnStatus204() throws Exception {
+    mockMvc
+        .perform(delete("/v1/model-names/{name}", MODEL_NAME_WITHOUT_RELATIONS))
+        .andExpect(status().isNoContent());
+  }
 }
