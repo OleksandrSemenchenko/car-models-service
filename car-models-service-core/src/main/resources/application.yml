@@ -1,12 +1,12 @@
+---
 build:
-  version: ${project.version}
-
+  version: "${project.version}"
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:5432/cars
-    username: cars
-    password: cars
+    driver-class-name: "org.postgresql.Driver"
+    url: "jdbc:postgresql://${POSTGRES_HOST:localhost}:5432/cars"
+    username: "cars"
+    password: "cars"
   flyway:
     enabled: true
   jpa:
@@ -21,49 +21,43 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://${KEYCLOAK_HOST:localhost}:8080/auth/realms/car-services/protocol/openid-connect/certs
-
+          jwk-set-uri: "http://${KEYCLOAK_HOST:localhost}:8080/auth/realms/car-services/protocol/openid-connect/certs"
 logging:
   level:
-    root: info
-
+    root: "info"
 keycloak:
   policy-enforcer-config:
-    realm: car-services
-    auth-server-url: http://${KEYCLOAK_HOST:localhost}:8080/auth
-    resource: car-models-service
+    realm: "car-services"
+    auth-server-url: "http://${KEYCLOAK_HOST:localhost}:8080/auth"
+    resource: "car-models-service"
     credentials:
-      secret: eGtdvx8kd5XZ2ThQ1YlqWS5y7kuTGJwk
-    enforcement-mode: ENFORCING
+      secret: "eGtdvx8kd5XZ2ThQ1YlqWS5y7kuTGJwk"
+    enforcement-mode: "ENFORCING"
     http-method-as-scope: true
-  
 server:
   port: 8180
-  
   error:
-    include-message: always
+    include-message: "always"
     include-exception: true
-    include-binding-errors: always
-    
+    include-binding-errors: "always"
 springdoc:
   api-docs:
-    path: /api-docs
-    version: openapi-3-1
-  default-produces-media-type: application/json
+    path: "/api-docs"
+    version: "openapi-3-1"
+  default-produces-media-type: "application/json"
   auto-tag-classes: false
   override-with-generic-response: false
-
 application:
   sort:
     category:
-      by: name
-      direction: ASC
+      by: "name"
+      direction: "ASC"
     manufacturer:
-      by: name
-      direction: ASC
+      by: "name"
+      direction: "ASC"
     model-name:
-      by: name
-      direction: ASC
+      by: "name"
+      direction: "ASC"
     model:
-      by: year
-      direction: DESC      
+      by: "year"
+      direction: "DESC"

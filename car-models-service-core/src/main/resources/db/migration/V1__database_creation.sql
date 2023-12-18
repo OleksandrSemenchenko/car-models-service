@@ -1,23 +1,41 @@
-create table manufacturers(
-    name varchar primary key
-);
+CREATE
+    TABLE
+        manufacturers(
+            name VARCHAR PRIMARY KEY
+        );
 
-create table model_names(
-    name varchar primary key
-);
+CREATE
+    TABLE
+        model_names(
+            name VARCHAR PRIMARY KEY
+        );
 
-create table categories(
-    name varchar primary key
-);
+CREATE
+    TABLE
+        categories(
+            name VARCHAR PRIMARY KEY
+        );
 
-create table models(
-    id varchar primary key,
-    model_year integer not null,
-    manufacturer_name varchar references manufacturers(name) on update cascade not null,
-    name varchar references model_names(name) on update cascade not null
-);
+CREATE
+    TABLE
+        models(
+            id VARCHAR PRIMARY KEY,
+            model_year INTEGER NOT NULL,
+            manufacturer_name VARCHAR REFERENCES manufacturers(name) ON
+            UPDATE
+                CASCADE NOT NULL,
+                name VARCHAR REFERENCES model_names(name) ON
+                UPDATE
+                    CASCADE NOT NULL
+        );
 
-create table model_category(
-    model_id varchar references models(id) on update cascade not null,
-    category_name varchar references categories(name) on update cascade not null
-);
+CREATE
+    TABLE
+        model_category(
+            model_id VARCHAR REFERENCES models(id) ON
+            UPDATE
+                CASCADE NOT NULL,
+                category_name VARCHAR REFERENCES categories(name) ON
+                UPDATE
+                    CASCADE NOT NULL
+        );

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Oleksandr Semenchenko
+ * Copyright $YEAR Oleksandr Semenchenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,3 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ua.com.foxminded.repository;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import ua.com.foxminded.entity.Manufacturer;
-
-public interface ManufacturerRepository extends JpaRepository<Manufacturer, String> {}
