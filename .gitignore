@@ -1,4 +1,5 @@
 .*
+!.editorconfig
 .~lock*
 mvnw
 mvnw.cmd
