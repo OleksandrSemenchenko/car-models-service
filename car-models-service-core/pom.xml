@@ -11,6 +11,7 @@
 
   <properties>
     <start-class>ua.com.foxminded.CarModelsService</start-class>
+    <kubernetes-maven-plugin.version>1.15.0</kubernetes-maven-plugin.version>
   </properties>
 
   <dependencies>
@@ -158,6 +159,11 @@
           </delimiters>
           <useDefaultDelimiters>false</useDefaultDelimiters>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.eclipse.jkube</groupId>
+        <artifactId>kubernetes-maven-plugin</artifactId>
+        <version>${kubernetes-maven-plugin.version}</version>
       </plugin>
     </plugins>
   </build>
