@@ -37,14 +37,18 @@ public class ManufacturerService {
 
   public static final String NO_MANUFACTURER = "The manufacturer '%s' doesn't exist";
   public static final String MANUFACTURER_ALREADY_EXISTS = "The manufacturer '%s' already exists";
+  
+  private static final String GET_ALL_CACHE = "ManufacturerService.getAll";
+  private static final String GET_BY_NAME_CACHE = "ManufacturerService.getByName";
+  private static final String DTO_CACHE_KEY = "#manufacturerDto.name";
 
   private final ManufacturerRepository manufacturerRepository;
   private final ManufacturerMapper manufacturerMapper;
 
-  @CacheEvict(value = {"ManufacturerService.getAll"}, allEntries = true)
+  @CacheEvict(value = GET_ALL_CACHE, allEntries = true)
   @Caching(evict = {
-      @CacheEvict(value = "ManufacturerService.getAll", allEntries = true),
-      @CacheEvict(value = "ManufacturerService.getByName", key = "#manufacturerDto.name")
+      @CacheEvict(value = GET_ALL_CACHE, allEntries = true),
+      @CacheEvict(value = GET_BY_NAME_CACHE, key = DTO_CACHE_KEY)
   })
   public ManufacturerDto create(ManufacturerDto manufacturerDto) {
     verifyIfManufacturerExists(manufacturerDto.getName());
@@ -65,10 +69,9 @@ public class ManufacturerService {
     return manufacturerRepository.findAll(pageable).map(manufacturerMapper::map);
   }
 
-  @CacheEvict(value = {"ManufacturerService.getAll"}, allEntries = true)
   @Caching(evict = {
-      @CacheEvict(value = "ManufacturerService.getAll", allEntries = true),
-      @CacheEvict(value = "ManufacturerService.getByName", key = "#name")
+      @CacheEvict(value = GET_ALL_CACHE, allEntries = true),
+      @CacheEvict(value = GET_BY_NAME_CACHE)
   })
   public void deleteByName(String name) {
     manufacturerRepository
@@ -77,7 +80,7 @@ public class ManufacturerService {
     manufacturerRepository.deleteById(name);
   }
 
-  @Cacheable(value = "ManufacturerService.getByName")
+  @Cacheable(value = GET_BY_NAME_CACHE)
   public ManufacturerDto getByName(String name) {
     return manufacturerRepository
         .findById(name)
