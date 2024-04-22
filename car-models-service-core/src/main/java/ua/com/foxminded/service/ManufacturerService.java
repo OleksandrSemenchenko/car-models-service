@@ -16,6 +16,9 @@
 package ua.com.foxminded.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,21 +41,35 @@ public class ManufacturerService {
   private final ManufacturerRepository manufacturerRepository;
   private final ManufacturerMapper manufacturerMapper;
 
+  @CacheEvict(value = {"ManufacturerService.getAll"}, allEntries = true)
+  @Caching(evict = {
+      @CacheEvict(value = "ManufacturerService.getAll", allEntries = true),
+      @CacheEvict(value = "ManufacturerService.getByName", key = "#manufacturerDto.name")
+  })
   public ManufacturerDto create(ManufacturerDto manufacturerDto) {
-    if (manufacturerRepository.existsById(manufacturerDto.getName())) {
-      throw new AlreadyExistsException(
-          String.format(MANUFACTURER_ALREADY_EXISTS, manufacturerDto.getName()));
-    }
-
+    verifyIfManufacturerExists(manufacturerDto.getName());
     Manufacturer manufacturer = manufacturerMapper.map(manufacturerDto);
     Manufacturer persistedManufacturer = manufacturerRepository.save(manufacturer);
     return manufacturerMapper.map(persistedManufacturer);
   }
 
+  private void verifyIfManufacturerExists(String name) {
+    if (manufacturerRepository.existsById(name)) {
+      throw new AlreadyExistsException(
+          String.format(MANUFACTURER_ALREADY_EXISTS, name));
+    }
+  }
+
+  @Cacheable("ManufacturerService.getAll")
   public Page<ManufacturerDto> getAll(Pageable pageable) {
     return manufacturerRepository.findAll(pageable).map(manufacturerMapper::map);
   }
 
+  @CacheEvict(value = {"ManufacturerService.getAll"}, allEntries = true)
+  @Caching(evict = {
+      @CacheEvict(value = "ManufacturerService.getAll", allEntries = true),
+      @CacheEvict(value = "ManufacturerService.getByName", key = "#name")
+  })
   public void deleteByName(String name) {
     manufacturerRepository
         .findById(name)
@@ -60,6 +77,7 @@ public class ManufacturerService {
     manufacturerRepository.deleteById(name);
   }
 
+  @Cacheable(value = "ManufacturerService.getByName")
   public ManufacturerDto getByName(String name) {
     return manufacturerRepository
         .findById(name)
