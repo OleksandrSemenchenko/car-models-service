@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ua.com.foxminded.controller;
+package ua.com.foxminded.exceptionhandler;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
@@ -36,7 +36,7 @@ import ua.com.foxminded.exception.Violation;
 @Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
-public class ExceptionHandlerController {
+public class ServicesExceptionHandler {
 
   public static final String DATA_INTEGRITY_VIOLATION_EXCEPTION_MESSAGE =
       "The requested resource has relations to other resources";

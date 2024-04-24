@@ -39,7 +39,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.com.foxminded.dto.ModelDto;
 import ua.com.foxminded.exception.AlreadyExistsException;
-import ua.com.foxminded.exception.NotFoundException;
+import ua.com.foxminded.exceptionhandler.exceptions.NotFoundException;
 import ua.com.foxminded.service.ModelService;
 
 @WebMvcTest(controllers = ModelController.class)

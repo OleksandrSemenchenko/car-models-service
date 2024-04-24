@@ -36,7 +36,7 @@ import org.springframework.data.domain.Pageable;
 import ua.com.foxminded.dto.ManufacturerDto;
 import ua.com.foxminded.entity.Manufacturer;
 import ua.com.foxminded.exception.AlreadyExistsException;
-import ua.com.foxminded.exception.NotFoundException;
+import ua.com.foxminded.exceptionhandler.exceptions.NotFoundException;
 import ua.com.foxminded.mapper.ManufacturerMapper;
 import ua.com.foxminded.mapper.ManufacturerMapperImpl;
 import ua.com.foxminded.repository.ManufacturerRepository;

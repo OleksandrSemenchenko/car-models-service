@@ -15,7 +15,6 @@
  */
 package ua.com.foxminded.service;
 
-import static ua.com.foxminded.service.CategoryService.NO_CATEGORY;
 import static ua.com.foxminded.service.ManufacturerService.NO_MANUFACTURER;
 import static ua.com.foxminded.service.ModelNameService.NO_MODEL_NAME;
 
@@ -24,18 +23,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.dto.CategoryDto;
 import ua.com.foxminded.dto.ModelDto;
 import ua.com.foxminded.entity.Category;
 import ua.com.foxminded.entity.Model;
 import ua.com.foxminded.exception.AlreadyExistsException;
-import ua.com.foxminded.exception.NotFoundException;
+import ua.com.foxminded.exceptionhandler.exceptions.CategoryNotFoundException;
+import ua.com.foxminded.exceptionhandler.exceptions.NotFoundException;
 import ua.com.foxminded.mapper.ModelMapper;
 import ua.com.foxminded.repository.CategoryRepository;
 import ua.com.foxminded.repository.ManufacturerRepository;
@@ -177,7 +179,7 @@ public class ModelService {
       var category =
           categoryRepository
               .findById(categoryName)
-              .orElseThrow(() -> new NotFoundException(String.format(NO_CATEGORY, categoryName)));
+              .orElseThrow(() -> new CategoryNotFoundException(categoryName));
       model.addCategory(category);
     }
   }

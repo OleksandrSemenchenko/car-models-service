@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ua.com.foxminded.exception;
+package ua.com.foxminded.exceptionhandler.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import ua.com.foxminded.exception.ServiceException;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class NotFoundException extends ServiceException {
