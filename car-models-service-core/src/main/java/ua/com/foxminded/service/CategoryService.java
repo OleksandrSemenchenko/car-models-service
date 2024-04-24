@@ -15,6 +15,10 @@
  */
 package ua.com.foxminded.service;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,10 +36,14 @@ import ua.com.foxminded.repository.CategoryRepository;
 @Transactional
 @RequiredArgsConstructor
 public class CategoryService {
+  
+  private static final String CATEGORIES_CACHE = "categories";
 
   private final CategoryRepository categoryRepository;
   private final CategoryMapper categoryMapper;
-
+  
+  @CacheEvict(value = CATEGORIES_CACHE, key = "'getAll'")
+  @CachePut(value = CATEGORIES_CACHE, key = "{ 'getByName', #categoryDto.name }")
   public CategoryDto create(CategoryDto categoryDto) {
     if (categoryRepository.existsById(categoryDto.getName())) {
       throw new CategoryAlreadyExistsException(categoryDto.getName());
@@ -46,17 +54,23 @@ public class CategoryService {
     return categoryMapper.map(persistedCategory);
   }
 
+  @Cacheable(value = CATEGORIES_CACHE, key = "#root.methodName")
   public Page<CategoryDto> getAll(Pageable pageable) {
     return categoryRepository.findAll(pageable).map(categoryMapper::map);
   }
 
+  @Caching(evict = {
+      @CacheEvict(value = CATEGORIES_CACHE, key = "{ 'getByName', #name }"),
+      @CacheEvict(value = CATEGORIES_CACHE, key = "'getAll'")
+  })
   public void deleleteByName(String name) {
     categoryRepository
         .findById(name)
         .orElseThrow(() -> new CategoryNotFoundException(name));
     categoryRepository.deleteById(name);
   }
-
+  
+  @Cacheable(value = CATEGORIES_CACHE, key = "{ #root.methodName, #name }")
   public CategoryDto getByName(String name) {
     return categoryRepository
         .findById(name)

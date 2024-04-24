@@ -191,10 +191,8 @@
               <include>src/main/java/**/*.java</include>
               <include>src/test/java/**/*.java</include>
             </includes>
-            <googleJavaFormat></googleJavaFormat>
             <importOrder></importOrder>
             <removeUnusedImports></removeUnusedImports>
-            <formatAnnotations></formatAnnotations>
             <licenseHeader>
               <file>${maven.multiModuleProjectDirectory}/development/config/license-header</file>
             </licenseHeader>
