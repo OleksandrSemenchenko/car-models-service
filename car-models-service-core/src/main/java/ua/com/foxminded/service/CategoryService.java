@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.dto.CategoryDto;
 import ua.com.foxminded.entity.Category;
-import ua.com.foxminded.exception.AlreadyExistsException;
 import ua.com.foxminded.exceptionhandler.exceptions.CategoryAlreadyExistsException;
 import ua.com.foxminded.exceptionhandler.exceptions.CategoryNotFoundException;
 import ua.com.foxminded.mapper.CategoryMapper;

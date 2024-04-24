@@ -15,18 +15,20 @@
  */
 package ua.com.foxminded.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.dto.ManufacturerDto;
 import ua.com.foxminded.entity.Manufacturer;
-import ua.com.foxminded.exception.AlreadyExistsException;
-import ua.com.foxminded.exceptionhandler.exceptions.NotFoundException;
+import ua.com.foxminded.exceptionhandler.exceptions.ManufacturerAlreadyExistsException;
+import ua.com.foxminded.exceptionhandler.exceptions.ManufacturerNotFoundException;
 import ua.com.foxminded.mapper.ManufacturerMapper;
 import ua.com.foxminded.repository.ManufacturerRepository;
 
@@ -35,21 +37,13 @@ import ua.com.foxminded.repository.ManufacturerRepository;
 @RequiredArgsConstructor
 public class ManufacturerService {
 
-  public static final String NO_MANUFACTURER = "The manufacturer '%s' doesn't exist";
-  public static final String MANUFACTURER_ALREADY_EXISTS = "The manufacturer '%s' already exists";
-  
-  private static final String GET_ALL_CACHE = "ManufacturerService.getAll";
-  private static final String GET_BY_NAME_CACHE = "ManufacturerService.getByName";
-  private static final String DTO_CACHE_KEY = "#manufacturerDto.name";
+  private static final String MANUFACTURERS_CACHE = "manufacturers";
 
   private final ManufacturerRepository manufacturerRepository;
   private final ManufacturerMapper manufacturerMapper;
 
-  @CacheEvict(value = GET_ALL_CACHE, allEntries = true)
-  @Caching(evict = {
-      @CacheEvict(value = GET_ALL_CACHE, allEntries = true),
-      @CacheEvict(value = GET_BY_NAME_CACHE, key = DTO_CACHE_KEY)
-  })
+  @CachePut(value = MANUFACTURERS_CACHE, key = "{ 'getByName', #manufacturerDto.name }")
+  @CacheEvict(value = MANUFACTURERS_CACHE, key = "'getAll'")
   public ManufacturerDto create(ManufacturerDto manufacturerDto) {
     verifyIfManufacturerExists(manufacturerDto.getName());
     Manufacturer manufacturer = manufacturerMapper.map(manufacturerDto);
@@ -59,32 +53,31 @@ public class ManufacturerService {
 
   private void verifyIfManufacturerExists(String name) {
     if (manufacturerRepository.existsById(name)) {
-      throw new AlreadyExistsException(
-          String.format(MANUFACTURER_ALREADY_EXISTS, name));
+      throw new ManufacturerAlreadyExistsException(name);
     }
   }
 
-  @Cacheable("ManufacturerService.getAll")
+  @Cacheable(value = MANUFACTURERS_CACHE, key = "#root.methodName")
   public Page<ManufacturerDto> getAll(Pageable pageable) {
     return manufacturerRepository.findAll(pageable).map(manufacturerMapper::map);
   }
 
   @Caching(evict = {
-      @CacheEvict(value = GET_ALL_CACHE, allEntries = true),
-      @CacheEvict(value = GET_BY_NAME_CACHE)
+      @CacheEvict(value = MANUFACTURERS_CACHE, key = "{ 'getByName', #name }"),
+      @CacheEvict(value = MANUFACTURERS_CACHE, key = "'getAll'")
   })
   public void deleteByName(String name) {
     manufacturerRepository
         .findById(name)
-        .orElseThrow(() -> new NotFoundException(String.format(NO_MANUFACTURER, name)));
+        .orElseThrow(() -> new ManufacturerNotFoundException(name));
     manufacturerRepository.deleteById(name);
   }
 
-  @Cacheable(value = GET_BY_NAME_CACHE)
+  @Cacheable(value = MANUFACTURERS_CACHE, key = "{ #root.methodName, #name }")
   public ManufacturerDto getByName(String name) {
     return manufacturerRepository
         .findById(name)
         .map(manufacturerMapper::map)
-        .orElseThrow(() -> new NotFoundException(String.format(NO_MANUFACTURER, name)));
+        .orElseThrow(() -> new ManufacturerNotFoundException(name));
   }
 }

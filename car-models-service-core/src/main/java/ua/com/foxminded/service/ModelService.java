@@ -15,7 +15,6 @@
  */
 package ua.com.foxminded.service;
 
-import static ua.com.foxminded.service.ManufacturerService.NO_MANUFACTURER;
 import static ua.com.foxminded.service.ModelNameService.NO_MODEL_NAME;
 
 import java.util.HashSet;
@@ -37,6 +36,7 @@ import ua.com.foxminded.entity.Category;
 import ua.com.foxminded.entity.Model;
 import ua.com.foxminded.exception.AlreadyExistsException;
 import ua.com.foxminded.exceptionhandler.exceptions.CategoryNotFoundException;
+import ua.com.foxminded.exceptionhandler.exceptions.ManufacturerNotFoundException;
 import ua.com.foxminded.exceptionhandler.exceptions.NotFoundException;
 import ua.com.foxminded.mapper.ModelMapper;
 import ua.com.foxminded.repository.CategoryRepository;
@@ -204,7 +204,7 @@ public class ModelService {
           manufacturerRepository
               .findById(manufacturerName)
               .orElseThrow(
-                  () -> new NotFoundException(String.format(NO_MANUFACTURER, manufacturerName)));
+                  () -> new ManufacturerNotFoundException(manufacturerName));
       model.setManufacturer(manufacturer);
     } else {
       model.setManufacturer(null);
