@@ -49,7 +49,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ua.com.foxminded.dto.ModelDto;
-import ua.com.foxminded.exception.ErrorResponse;
+import ua.com.foxminded.exceptionhandler.ErrorResponse;
 import ua.com.foxminded.service.ModelService;
 import ua.com.foxminded.specification.SearchFilter;
 

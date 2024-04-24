@@ -15,33 +15,38 @@
  */
 package ua.com.foxminded.service;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.dto.ModelNameDto;
 import ua.com.foxminded.entity.ModelName;
-import ua.com.foxminded.exception.AlreadyExistsException;
-import ua.com.foxminded.exceptionhandler.exceptions.NotFoundException;
+import ua.com.foxminded.exceptionhandler.exceptions.ModelNameAlreadyExistsException;
+import ua.com.foxminded.exceptionhandler.exceptions.ModelNameNotFoundException;
 import ua.com.foxminded.mapper.ModelNameMapper;
 import ua.com.foxminded.repository.ModelNameRepository;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class ModelNameService {
-
-  public static final String NO_MODEL_NAME = "The model name '%s' doesn't exist";
-  public static final String MODEL_NAME_ALREADY_EXISTS = "The model name '%s' already exists";
+  
+  private static final String MODEL_NAME_CACHE = "modelNames";
 
   private final ModelNameRepository modelNameRepository;
   private final ModelNameMapper modeNamelMapper;
 
+  @Transactional
+  @CachePut(value = MODEL_NAME_CACHE, key = "{ 'getByName', #modelNameDto.name }")
+  @CacheEvict(value = MODEL_NAME_CACHE, key = "'getAll'")
   public ModelNameDto create(ModelNameDto modelNameDto) {
     if (modelNameRepository.existsById(modelNameDto.getName())) {
-      throw new AlreadyExistsException(
-          String.format(MODEL_NAME_ALREADY_EXISTS, modelNameDto.getName()));
+      throw new ModelNameAlreadyExistsException(modelNameDto.getName());
     }
 
     ModelName modelName = modeNamelMapper.map(modelNameDto);
@@ -49,21 +54,29 @@ public class ModelNameService {
     return modeNamelMapper.map(persistedModelName);
   }
 
+  @Cacheable(value = MODEL_NAME_CACHE, key = "#root.methodName")
   public Page<ModelNameDto> getAll(Pageable pageable) {
     return modelNameRepository.findAll(pageable).map(modeNamelMapper::map);
   }
 
+  @Transactional
+  @Caching(evict = {
+      @CacheEvict(value = MODEL_NAME_CACHE, key = "{ 'getByName', #name }"),
+      @CacheEvict(value = MODEL_NAME_CACHE, key = "'getAll'")
+      
+  })
   public void deleteByName(String name) {
     modelNameRepository
         .findById(name)
-        .orElseThrow(() -> new NotFoundException(String.format(NO_MODEL_NAME, name)));
+        .orElseThrow(() -> new ModelNameNotFoundException(name));
     modelNameRepository.deleteById(name);
   }
 
+  @Cacheable(value = MODEL_NAME_CACHE, key = "{ #root.methodName, #name }")
   public ModelNameDto getByName(String name) {
     return modelNameRepository
         .findById(name)
         .map(modeNamelMapper::map)
-        .orElseThrow(() -> new NotFoundException(String.format(NO_MODEL_NAME, name)));
+        .orElseThrow(() -> new ModelNameNotFoundException(name));
   }
 }

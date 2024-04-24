@@ -35,7 +35,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import ua.com.foxminded.dto.ModelNameDto;
 import ua.com.foxminded.entity.ModelName;
-import ua.com.foxminded.exception.AlreadyExistsException;
+import ua.com.foxminded.exceptionhandler.exceptions.AlreadyExistsException;
 import ua.com.foxminded.exceptionhandler.exceptions.NotFoundException;
 import ua.com.foxminded.mapper.ModelNameMapper;
 import ua.com.foxminded.mapper.ModelNameMapperImpl;

@@ -35,7 +35,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import ua.com.foxminded.dto.CategoryDto;
 import ua.com.foxminded.entity.Category;
-import ua.com.foxminded.exception.AlreadyExistsException;
+import ua.com.foxminded.exceptionhandler.exceptions.AlreadyExistsException;
 import ua.com.foxminded.exceptionhandler.exceptions.NotFoundException;
 import ua.com.foxminded.mapper.CategoryMapper;
 import ua.com.foxminded.mapper.CategoryMapperImpl;

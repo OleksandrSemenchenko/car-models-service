@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ua.com.foxminded.exception;
+package ua.com.foxminded.exceptionhandler.exceptions;
 
 public class ServiceException extends RuntimeException {
 

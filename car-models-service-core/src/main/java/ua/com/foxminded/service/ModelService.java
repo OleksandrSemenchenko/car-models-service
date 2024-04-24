@@ -15,7 +15,6 @@
  */
 package ua.com.foxminded.service;
 
-import static ua.com.foxminded.service.ModelNameService.NO_MODEL_NAME;
 
 import java.util.HashSet;
 import java.util.List;
@@ -34,9 +33,10 @@ import ua.com.foxminded.dto.CategoryDto;
 import ua.com.foxminded.dto.ModelDto;
 import ua.com.foxminded.entity.Category;
 import ua.com.foxminded.entity.Model;
-import ua.com.foxminded.exception.AlreadyExistsException;
+import ua.com.foxminded.exceptionhandler.exceptions.AlreadyExistsException;
 import ua.com.foxminded.exceptionhandler.exceptions.CategoryNotFoundException;
 import ua.com.foxminded.exceptionhandler.exceptions.ManufacturerNotFoundException;
+import ua.com.foxminded.exceptionhandler.exceptions.ModelNameNotFoundException;
 import ua.com.foxminded.exceptionhandler.exceptions.NotFoundException;
 import ua.com.foxminded.mapper.ModelMapper;
 import ua.com.foxminded.repository.CategoryRepository;
@@ -190,7 +190,7 @@ public class ModelService {
       var modelName =
           modelNameRepository
               .findById(name)
-              .orElseThrow(() -> new NotFoundException(String.format(NO_MODEL_NAME, name)));
+              .orElseThrow(() -> new ModelNameNotFoundException(name));
       model.setModelName(modelName);
     } else {
       model.setModelName(null);

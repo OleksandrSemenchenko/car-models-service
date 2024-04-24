@@ -44,7 +44,7 @@ import ua.com.foxminded.entity.Category;
 import ua.com.foxminded.entity.Manufacturer;
 import ua.com.foxminded.entity.Model;
 import ua.com.foxminded.entity.ModelName;
-import ua.com.foxminded.exception.AlreadyExistsException;
+import ua.com.foxminded.exceptionhandler.exceptions.AlreadyExistsException;
 import ua.com.foxminded.exceptionhandler.exceptions.NotFoundException;
 import ua.com.foxminded.mapper.ModelMapper;
 import ua.com.foxminded.repository.CategoryRepository;

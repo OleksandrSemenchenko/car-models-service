@@ -13,25 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ua.com.foxminded.exception;
+package ua.com.foxminded.exceptionhandler.exceptions;
 
-import java.time.Instant;
-import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class ErrorResponse {
+@ResponseStatus(HttpStatus.CONFLICT)
+public class AlreadyExistsException extends ServiceException {
 
-  private Instant timestamp;
-  private int status;
-  private String error;
-  private String message;
-  private String path;
-  private List<Violation> violations;
+  public AlreadyExistsException(String message) {
+    super(message);
+  }
 }

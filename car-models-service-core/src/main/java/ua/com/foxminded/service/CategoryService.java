@@ -33,7 +33,6 @@ import ua.com.foxminded.mapper.CategoryMapper;
 import ua.com.foxminded.repository.CategoryRepository;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class CategoryService {
   
@@ -42,6 +41,7 @@ public class CategoryService {
   private final CategoryRepository categoryRepository;
   private final CategoryMapper categoryMapper;
   
+  @Transactional
   @CacheEvict(value = CATEGORIES_CACHE, key = "'getAll'")
   @CachePut(value = CATEGORIES_CACHE, key = "{ 'getByName', #categoryDto.name }")
   public CategoryDto create(CategoryDto categoryDto) {
@@ -59,6 +59,7 @@ public class CategoryService {
     return categoryRepository.findAll(pageable).map(categoryMapper::map);
   }
 
+  @Transactional
   @Caching(evict = {
       @CacheEvict(value = CATEGORIES_CACHE, key = "{ 'getByName', #name }"),
       @CacheEvict(value = CATEGORIES_CACHE, key = "'getAll'")

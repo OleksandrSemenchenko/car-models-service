@@ -42,6 +42,7 @@ public class ManufacturerService {
   private final ManufacturerRepository manufacturerRepository;
   private final ManufacturerMapper manufacturerMapper;
 
+  @Transactional
   @CachePut(value = MANUFACTURERS_CACHE, key = "{ 'getByName', #manufacturerDto.name }")
   @CacheEvict(value = MANUFACTURERS_CACHE, key = "'getAll'")
   public ManufacturerDto create(ManufacturerDto manufacturerDto) {
@@ -62,6 +63,7 @@ public class ManufacturerService {
     return manufacturerRepository.findAll(pageable).map(manufacturerMapper::map);
   }
 
+  @Transactional
   @Caching(evict = {
       @CacheEvict(value = MANUFACTURERS_CACHE, key = "{ 'getByName', #name }"),
       @CacheEvict(value = MANUFACTURERS_CACHE, key = "'getAll'")
