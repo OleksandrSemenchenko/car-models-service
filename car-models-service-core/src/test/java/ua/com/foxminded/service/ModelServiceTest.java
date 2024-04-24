@@ -112,7 +112,7 @@ class ModelServiceTest {
     assertThrows(
         NotFoundException.class,
         () ->
-            modelService.getByManufacturerAndNameAndYear(MANUFACTURER_NAME, MODEL_NAME, NEW_YEAR));
+            modelService.getModel(MANUFACTURER_NAME, MODEL_NAME, NEW_YEAR));
   }
 
   @Test
@@ -120,7 +120,7 @@ class ModelServiceTest {
     when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any()))
         .thenReturn(Optional.of(model));
     when(modelMapper.map(model)).thenReturn(modelDto);
-    modelService.getByManufacturerAndNameAndYear(MANUFACTURER_NAME, MODEL_NAME, YEAR);
+    modelService.getModel(MANUFACTURER_NAME, MODEL_NAME, YEAR);
 
     verify(modelRepository).findOne(ArgumentMatchers.<Specification<Model>>any());
     verify(modelMapper).map(isA(Model.class));

@@ -104,7 +104,7 @@ public class ModelController {
       @PathVariable String manufacturer,
       @PathVariable String name,
       @PathVariable @Positive int year) {
-    return modelService.getByManufacturerAndNameAndYear(manufacturer, name, year);
+    return modelService.getModel(manufacturer, name, year);
   }
 
   @GetMapping("/models")
