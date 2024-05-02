@@ -5,7 +5,7 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>3.1.5</version>
-    <relativePath></relativePath>
+    <relativePath/>
   </parent>
   <groupId>ua.com.foxminded</groupId>
   <artifactId>car-models-service</artifactId>
@@ -183,7 +183,10 @@
             <includes>
               <include>pom.xml</include>
             </includes>
-            <sortPom></sortPom>
+            <sortPom>
+              <encoding>UTF-8</encoding>
+              <expandEmptyElements>false</expandEmptyElements>
+            </sortPom>
           </pom>
 
           <java>
@@ -191,33 +194,27 @@
               <include>src/main/java/**/*.java</include>
               <include>src/test/java/**/*.java</include>
             </includes>
-            <importOrder></importOrder>
-            <removeUnusedImports></removeUnusedImports>
+            <importOrder>
+              <wildcardsLast>false</wildcardsLast>
+              <semanticSort>true</semanticSort>
+            </importOrder>
+            <removeUnusedImports/>
             <licenseHeader>
               <file>${maven.multiModuleProjectDirectory}/development/config/license-header</file>
             </licenseHeader>
           </java>
-
-          <sql>
-            <includes>
-              <include>src/main/resources/**/*.sql</include>
-            </includes>
-            <dbeaver></dbeaver>
-          </sql>
-
           <yaml>
             <includes>
               <include>src/**/*.yaml</include>
               <include>src/**/*.yml</include>
             </includes>
-            <jackson></jackson>
+            <jackson/>
           </yaml>
-
           <json>
             <includes>
               <include>development/**/*.json</include>
             </includes>
-            <jackson></jackson>
+            <jackson/>
           </json>
         </configuration>
       </plugin>

@@ -20,14 +20,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.exceptionhandler.exceptions.CategoryNotFoundException;
 import ua.com.foxminded.exceptionhandler.exceptions.ManufacturerNotFoundException;
 import ua.com.foxminded.exceptionhandler.exceptions.ModelAlreadyExistsException;
@@ -64,17 +62,17 @@ public class ModelService {
   }
 
   @Transactional
-  public ModelDto create(ModelDto modelDto) {
-    verifyIfModelExists(modelDto.getManufacturer(), modelDto.getName(), modelDto.getYear());
+  public ModelDto create(ModelDto ModelDto) {
+    verifyIfModelExists(ModelDto.getManufacturer(), ModelDto.getName(), ModelDto.getYear());
 
-    var model = Model.builder().year(modelDto.getYear())
-                               .categories(new HashSet<>()).build();
+    Model model = Model.builder().year(ModelDto.getYear())
+                                 .categories(new HashSet<>()).build();
 
-    Model modelWithUpdatedCategoryRelations = updateCategoryRelations(modelDto, model);
+    Model modelWithUpdatedCategories = updateCategoryRelations(ModelDto, model);
     
     //TODO
-    updateManufacturerRelation(modelDto, modelWithUpdatedCategoryRelations);
-    updateModelRelation(modelDto, model);
+    updateManufacturerRelation(ModelDto, modelWithUpdatedCategories);
+    updateModelRelation(ModelDto, model);
 
     var persistedVehicle = modelRepository.save(model);
     return modelMapper.map(persistedVehicle);
