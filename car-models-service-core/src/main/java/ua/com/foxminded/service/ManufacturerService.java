@@ -46,9 +46,9 @@ public class ManufacturerService {
   @CacheEvict(value = MANUFACTURERS_CACHE, key = "'getAll'")
   public ManufacturerDto create(ManufacturerDto manufacturerDto) {
     verifyIfManufacturerExists(manufacturerDto.getName());
-    Manufacturer manufacturer = manufacturerMapper.map(manufacturerDto);
+    Manufacturer manufacturer = manufacturerMapper.toDto(manufacturerDto);
     Manufacturer persistedManufacturer = manufacturerRepository.save(manufacturer);
-    return manufacturerMapper.map(persistedManufacturer);
+    return manufacturerMapper.toEntity(persistedManufacturer);
   }
 
   private void verifyIfManufacturerExists(String name) {
@@ -59,7 +59,7 @@ public class ManufacturerService {
 
   @Cacheable(value = MANUFACTURERS_CACHE, key = "#root.methodName")
   public Page<ManufacturerDto> getAll(Pageable pageable) {
-    return manufacturerRepository.findAll(pageable).map(manufacturerMapper::map);
+    return manufacturerRepository.findAll(pageable).map(manufacturerMapper::toEntity);
   }
 
   @Transactional
@@ -78,7 +78,7 @@ public class ManufacturerService {
   public ManufacturerDto getByName(String name) {
     return manufacturerRepository
         .findById(name)
-        .map(manufacturerMapper::map)
+        .map(manufacturerMapper::toEntity)
         .orElseThrow(() -> new ManufacturerNotFoundException(name));
   }
 }

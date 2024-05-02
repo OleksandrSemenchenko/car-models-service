@@ -70,9 +70,9 @@ class ModelNameServiceTest {
     modelNameService.create(modelNameDto);
 
     verify(modelNameRepository).existsById(modelNameDto.getName());
-    verify(modelNameMapper).map(modelNameDto);
+    verify(modelNameMapper).toEntity(modelNameDto);
     verify(modelNameRepository).save(modelName);
-    verify(modelNameMapper).map(modelName);
+    verify(modelNameMapper).toDto(modelName);
   }
 
   @Test
@@ -91,7 +91,7 @@ class ModelNameServiceTest {
     modelNameService.getAll(pageable);
 
     verify(modelNameRepository).findAll(pageable);
-    verify(modelNameMapper).map(modelName);
+    verify(modelNameMapper).toDto(modelName);
   }
 
   @Test
@@ -124,6 +124,6 @@ class ModelNameServiceTest {
     modelNameService.getByName(MODEL_NAME);
 
     verify(modelNameRepository).findById(MODEL_NAME);
-    verify(modelNameMapper).map(modelName);
+    verify(modelNameMapper).toDto(modelName);
   }
 }

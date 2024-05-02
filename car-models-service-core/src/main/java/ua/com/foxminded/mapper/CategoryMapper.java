@@ -25,11 +25,11 @@ import ua.com.foxminded.service.dto.CategoryDto;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CategoryMapper {
 
-  CategoryDto map(Category category);
+  CategoryDto toEntity(Category category);
 
   @InheritInverseConfiguration
   @Mapping(target = "models", ignore = true)
-  Category map(CategoryDto categoryDto);
+  Category toDto(CategoryDto categoryDto);
 
   default String categoryToString(Category category) {
     return category.getName();

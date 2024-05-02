@@ -49,14 +49,14 @@ public class CategoryService {
       throw new CategoryAlreadyExistsException(categoryDto.getName());
     }
 
-    Category category = categoryMapper.map(categoryDto);
+    Category category = categoryMapper.toDto(categoryDto);
     Category persistedCategory = categoryRepository.save(category);
-    return categoryMapper.map(persistedCategory);
+    return categoryMapper.toEntity(persistedCategory);
   }
 
   @Cacheable(value = CATEGORIES_CACHE, key = "#root.methodName")
   public Page<CategoryDto> getAll(Pageable pageable) {
-    return categoryRepository.findAll(pageable).map(categoryMapper::map);
+    return categoryRepository.findAll(pageable).map(categoryMapper::toEntity);
   }
 
   @Transactional
@@ -75,7 +75,7 @@ public class CategoryService {
   public CategoryDto getByName(String name) {
     return categoryRepository
         .findById(name)
-        .map(categoryMapper::map)
+        .map(categoryMapper::toEntity)
         .orElseThrow(() -> new CategoryNotFoundException(name));
   }
 }

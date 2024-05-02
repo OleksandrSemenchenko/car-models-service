@@ -48,14 +48,14 @@ public class ModelNameService {
       throw new ModelNameAlreadyExistsException(modelNameDto.getName());
     }
 
-    ModelName modelName = modeNamelMapper.map(modelNameDto);
+    ModelName modelName = modeNamelMapper.toEntity(modelNameDto);
     ModelName persistedModelName = modelNameRepository.save(modelName);
-    return modeNamelMapper.map(persistedModelName);
+    return modeNamelMapper.toDto(persistedModelName);
   }
 
   @Cacheable(value = MODEL_NAME_CACHE, key = "#root.methodName")
   public Page<ModelNameDto> getAll(Pageable pageable) {
-    return modelNameRepository.findAll(pageable).map(modeNamelMapper::map);
+    return modelNameRepository.findAll(pageable).map(modeNamelMapper::toDto);
   }
 
   @Transactional
@@ -75,7 +75,7 @@ public class ModelNameService {
   public ModelNameDto getByName(String name) {
     return modelNameRepository
         .findById(name)
-        .map(modeNamelMapper::map)
+        .map(modeNamelMapper::toDto)
         .orElseThrow(() -> new ModelNameNotFoundException(name));
   }
 }

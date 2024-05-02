@@ -58,7 +58,7 @@ public class ModelService {
 
   public Page<ModelDto> search(SearchFilter searchFilter, Pageable pageRequest) {
     Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
-    return modelRepository.findAll(specification, pageRequest).map(modelMapper::map);
+    return modelRepository.findAll(specification, pageRequest).map(modelMapper::toDto);
   }
 
   @Transactional
@@ -75,7 +75,7 @@ public class ModelService {
     updateModelRelation(ModelDto, model);
 
     var persistedVehicle = modelRepository.save(model);
-    return modelMapper.map(persistedVehicle);
+    return modelMapper.toDto(persistedVehicle);
   }
   
   private void verifyIfModelExists(String manufacturer, String model, int year) {
@@ -122,7 +122,7 @@ public class ModelService {
 
     return modelRepository
         .findOne(specification)
-        .map(modelMapper::map)
+        .map(modelMapper::toDto)
         .orElseThrow(() -> new ModelNotFoundException(manufacturer, name, year));
   }
   
@@ -154,7 +154,7 @@ public class ModelService {
     updateCategoryRelations(modelDto, model);
 
     var updatedModel = modelRepository.save(model);
-    return modelMapper.map(updatedModel);
+    return modelMapper.toDto(updatedModel);
   }
 
   @Transactional
@@ -168,7 +168,7 @@ public class ModelService {
   public ModelDto getById(String id) {
     return modelRepository
         .findById(id)
-        .map(modelMapper::map)
+        .map(modelMapper::toDto)
         .orElseThrow(() -> new NotFoundException(String.format(NO_MODEL_WITH_SUCH_ID, id)));
   }
 

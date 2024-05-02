@@ -25,11 +25,11 @@ import ua.com.foxminded.service.dto.ManufacturerDto;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ManufacturerMapper {
 
-  ManufacturerDto map(Manufacturer manufacturer);
+  ManufacturerDto toEntity(Manufacturer manufacturer);
 
   @InheritInverseConfiguration
   @Mapping(target = "models", ignore = true)
-  Manufacturer map(ManufacturerDto manufacturerDto);
+  Manufacturer toDto(ManufacturerDto manufacturerDto);
 
   default String manufacturerToString(Manufacturer manufacturer) {
     return manufacturer.getName();

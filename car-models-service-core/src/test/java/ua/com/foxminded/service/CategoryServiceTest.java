@@ -69,9 +69,9 @@ class CategoryServiceTest {
     categoryService.create(categoryDto);
 
     verify(categoryRepository).existsById(CATEGORY_NAME);
-    verify(categoryMapper).map(categoryDto);
+    verify(categoryMapper).toDto(categoryDto);
     verify(categoryRepository).save(category);
-    verify(categoryMapper).map(category);
+    verify(categoryMapper).toEntity(category);
   }
 
   @Test
@@ -90,7 +90,7 @@ class CategoryServiceTest {
     categoryService.getAll(pageable);
 
     verify(categoryRepository).findAll(pageable);
-    verify(categoryMapper).map(category);
+    verify(categoryMapper).toEntity(category);
   }
 
   @Test
@@ -122,6 +122,6 @@ class CategoryServiceTest {
     categoryService.getByName(CATEGORY_NAME);
 
     verify(categoryRepository).findById(CATEGORY_NAME);
-    verify(categoryMapper).map(category);
+    verify(categoryMapper).toEntity(category);
   }
 }

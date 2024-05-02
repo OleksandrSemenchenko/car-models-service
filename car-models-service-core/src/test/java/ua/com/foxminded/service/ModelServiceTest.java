@@ -119,11 +119,11 @@ class ModelServiceTest {
   void getByManufacturerAndNameAndYear_ShouldReturnModel() {
     when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any()))
         .thenReturn(Optional.of(model));
-    when(modelMapper.map(model)).thenReturn(modelDto);
+    when(modelMapper.toDto(model)).thenReturn(modelDto);
     modelService.getModel(MANUFACTURER_NAME, MODEL_NAME, YEAR);
 
     verify(modelRepository).findOne(ArgumentMatchers.<Specification<Model>>any());
-    verify(modelMapper).map(isA(Model.class));
+    verify(modelMapper).toDto(isA(Model.class));
   }
 
   @Test
@@ -137,7 +137,7 @@ class ModelServiceTest {
 
     verify(modelRepository)
         .findAll(ArgumentMatchers.<Specification<Model>>any(), isA(Pageable.class));
-    verify(modelMapper).map(model);
+    verify(modelMapper).toDto(model);
   }
 
   @Test
@@ -157,7 +157,7 @@ class ModelServiceTest {
     verify(categoryRepository).findById(modelDto.getCategories().iterator().next());
     verify(modelNameRepository).findById(modelDto.getName());
     verify(modelRepository).save(model);
-    verify(modelMapper).map(model);
+    verify(modelMapper).toDto(model);
   }
 
   @Test
@@ -246,7 +246,7 @@ class ModelServiceTest {
     verify(modelRepository).findOne(ArgumentMatchers.<Specification<Model>>any());
     verify(categoryRepository).findById(modelDto.getCategories().iterator().next());
     verify(modelRepository).save(updatedVehicle);
-    verify(modelMapper).map(updatedVehicle);
+    verify(modelMapper).toDto(updatedVehicle);
   }
 
   @Test
@@ -275,10 +275,10 @@ class ModelServiceTest {
   @Test
   void getById_ShouldReturnModel() {
     when(modelRepository.findById(MODEL_ID)).thenReturn(Optional.of(model));
-    when(modelMapper.map(model)).thenReturn(modelDto);
+    when(modelMapper.toDto(model)).thenReturn(modelDto);
     modelService.getById(MODEL_ID);
 
     verify(modelRepository).findById(MODEL_ID);
-    verify(modelMapper).map(model);
+    verify(modelMapper).toDto(model);
   }
 }

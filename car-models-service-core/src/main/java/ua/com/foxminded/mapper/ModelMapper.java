@@ -31,8 +31,8 @@ import ua.com.foxminded.service.dto.ModelDto;
 public interface ModelMapper {
 
   @Mapping(target = "name", source = "modelName")
-  ModelDto map(Model model);
+  ModelDto toDto(Model model);
 
   @InheritInverseConfiguration
-  Model map(ModelDto modelDto);
+  Model toEntity(ModelDto modelDto);
 }

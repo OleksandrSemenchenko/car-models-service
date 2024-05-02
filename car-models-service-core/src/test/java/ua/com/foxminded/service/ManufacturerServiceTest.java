@@ -64,11 +64,11 @@ class ManufacturerServiceTest {
   @Test
   void create_ShouldSaveManufacturer() {
     when(manufacturerRepository.existsById(manufacturerDto.getName())).thenReturn(false);
-    when(manufacturerMapper.map(manufacturerDto)).thenReturn(manufacturer);
+    when(manufacturerMapper.toDto(manufacturerDto)).thenReturn(manufacturer);
     manufacturerService.create(manufacturerDto);
 
     verify(manufacturerRepository).existsById(manufacturerDto.getName());
-    verify(manufacturerMapper).map(manufacturerDto);
+    verify(manufacturerMapper).toDto(manufacturerDto);
     verify(manufacturerRepository).save(manufacturer);
   }
 
@@ -88,7 +88,7 @@ class ManufacturerServiceTest {
     manufacturerService.getAll(pageable);
 
     verify(manufacturerRepository).findAll(pageable);
-    verify(manufacturerMapper).map(manufacturer);
+    verify(manufacturerMapper).toEntity(manufacturer);
   }
 
   @Test
@@ -115,6 +115,6 @@ class ManufacturerServiceTest {
     manufacturerService.getByName(MANUFACTURER_NAME);
 
     verify(manufacturerRepository).findById(MANUFACTURER_NAME);
-    verify(manufacturerMapper).map(manufacturer);
+    verify(manufacturerMapper).toEntity(manufacturer);
   }
 }

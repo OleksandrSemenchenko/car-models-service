@@ -25,11 +25,11 @@ import ua.com.foxminded.service.dto.ModelNameDto;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ModelNameMapper {
 
-  ModelNameDto map(ModelName modelName);
+  ModelNameDto toDto(ModelName modelName);
 
   @InheritInverseConfiguration
   @Mapping(target = "models", ignore = true)
-  ModelName map(ModelNameDto modelNameDto);
+  ModelName toEntity(ModelNameDto modelNameDto);
 
   default String modelNameToString(ModelName modelName) {
     return modelName.getName();
