@@ -15,7 +15,9 @@
  */
 package ua.com.foxminded.repository.entity;
 
-import jakarta.persistence.Column;
+import java.util.Set;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,46 +27,33 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Table(name = "models")
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ToString(onlyExplicitlyIncluded = true)
 public class Model {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
-  @EqualsAndHashCode.Include
-  @ToString.Include
   private String id;
+  private String name;
 
-  @ToString.Include
+  @ManyToOne(cascade = CascadeType.PERSIST)
   @JoinColumn(name = "model_year")
-  @Column(name = "model_year")
-  private Integer year;
+  private ModelYear year;
 
   @ManyToOne
   @JoinColumn(name = "manufacturer_name")
   private Manufacturer manufacturer;
 
-  @ManyToOne
-  @JoinColumn(name = "name")
-  private ModelName name;
-
-  @ManyToMany
+  @ManyToMany(cascade = CascadeType.PERSIST)
   @JoinTable(
       name = "model_category",
       joinColumns = @JoinColumn(name = "model_id", referencedColumnName = "id"),

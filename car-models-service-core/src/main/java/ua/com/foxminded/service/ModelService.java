@@ -30,20 +30,19 @@ import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.exceptionhandler.exceptions.CategoryNotFoundException;
 import ua.com.foxminded.exceptionhandler.exceptions.ManufacturerNotFoundException;
 import ua.com.foxminded.exceptionhandler.exceptions.ModelAlreadyExistsException;
-import ua.com.foxminded.exceptionhandler.exceptions.ModelNameNotFoundException;
 import ua.com.foxminded.exceptionhandler.exceptions.ModelNotFoundException;
 import ua.com.foxminded.exceptionhandler.exceptions.NotFoundException;
 import ua.com.foxminded.mapper.ModelMapper;
 import ua.com.foxminded.repository.CategoryRepository;
 import ua.com.foxminded.repository.ManufacturerRepository;
-import ua.com.foxminded.repository.ModelNameRepository;
 import ua.com.foxminded.repository.ModelRepository;
+import ua.com.foxminded.repository.ModelYearRepository;
 import ua.com.foxminded.repository.entity.Category;
 import ua.com.foxminded.repository.entity.Model;
+import ua.com.foxminded.repository.specification.ModelSpecification;
+import ua.com.foxminded.repository.specification.SearchFilter;
 import ua.com.foxminded.service.dto.CategoryDto;
 import ua.com.foxminded.service.dto.ModelDto;
-import ua.com.foxminded.specification.ModelSpecification;
-import ua.com.foxminded.specification.SearchFilter;
 
 @Service
 @RequiredArgsConstructor
@@ -53,33 +52,21 @@ public class ModelService {
 
   private final ModelRepository modelRepository;
   private final CategoryRepository categoryRepository;
-  private final ModelNameRepository modelNameRepository;
   private final ManufacturerRepository manufacturerRepository;
+  private final ModelYearRepository modelYearRepository;
   private final ModelMapper modelMapper;
 
+  @Transactional
+  public ModelDto create(ModelDto modelDto) {
+    verifyIfModelExists(modelDto.getManufacturer(), modelDto.getName(), modelDto.getYear());
+    Model model = modelMapper.toEntity(modelDto);
+    Model savedModel = modelRepository.save(model);
+    return modelMapper.toDto(savedModel);
+  }
+  
   public Page<ModelDto> search(SearchFilter searchFilter, Pageable pageRequest) {
     Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
     return modelRepository.findAll(specification, pageRequest).map(modelMapper::toDto);
-  }
-
-  @Transactional
-  public ModelDto create(ModelDto ModelDto) {
-    verifyIfModelExists(ModelDto.getManufacturer(), ModelDto.getName(), ModelDto.getYear());
-
-//    Model model = Model.builder().year(ModelDto.getYear())
-//                                 .categories(new HashSet<>()).build();
-    Model model = modelMapper.toEntity(ModelDto);
-//    List<Category> categories = categoryReposito
-    
-
-    Model modelWithUpdatedCategories = updateCategoryRelations(ModelDto, model);
-    
-    //TODO
-    updateManufacturerRelation(ModelDto, modelWithUpdatedCategories);
-    updateModelRelation(ModelDto, model);
-
-    var persistedVehicle = modelRepository.save(model);
-    return modelMapper.toDto(persistedVehicle);
   }
   
   private void verifyIfModelExists(String manufacturer, String model, int year) {
@@ -132,7 +119,7 @@ public class ModelService {
   private Specification<Model>  buildSpecification(String manufacturer, String name, int year) {
     SearchFilter searchFilter = SearchFilter.builder()
         .manufacturer(manufacturer)
-        .model(name)
+        .name(name)
         .year(year).build();
      return ModelSpecification.getSpecification(searchFilter);
   }
@@ -145,7 +132,7 @@ public class ModelService {
     SearchFilter searchFilter =
         SearchFilter.builder()
             .manufacturer(modelDto.getManufacturer())
-            .model(modelDto.getName())
+            .name(modelDto.getName())
             .year(modelDto.getYear())
             .build();
     Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
@@ -186,16 +173,16 @@ public class ModelService {
   }
 
   private void updateModelRelation(ModelDto modelDto, Model model) {
-    if (modelDto.getName() != null) {
-      var name = modelDto.getName();
-      var modelName =
-          modelNameRepository
-              .findById(name)
-              .orElseThrow(() -> new ModelNameNotFoundException(name));
-      model.setName(modelName);
-    } else {
-      model.setName(null);
-    }
+//    if (modelDto.getName() != null) {
+//      var name = modelDto.getName();
+//      var modelName =
+//          modelNameRepository
+//              .findById(name)
+//              .orElseThrow(() -> new ModelNameNotFoundException(name));
+//      model.setName(modelName);
+//    } else {
+//      model.setName(null);
+//    }
   }
 
   private void updateManufacturerRelation(ModelDto modelDto, Model model) {

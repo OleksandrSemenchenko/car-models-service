@@ -13,37 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ua.com.foxminded.repository.entity;
+package ua.com.foxminded.repository.specification;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import java.util.Set;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
-@Entity
-@Table(name = "model_names")
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-@ToString(onlyExplicitlyIncluded = true)
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class ModelName {
+public class SearchFilter {
 
-  @Id 
-  @ToString.Include 
-  @EqualsAndHashCode.Include 
   private String name;
+  private String category;
+  private String manufacturer;
+  
+  @Positive 
+  private Integer maxYear;
 
-  @OneToMany(mappedBy = "name")
-  private Set<Model> models;
+  @Positive 
+  private Integer minYear;
+
+  @Positive 
+  private Integer year;
 }

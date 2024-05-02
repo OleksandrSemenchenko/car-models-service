@@ -23,8 +23,8 @@ import jakarta.persistence.metamodel.StaticMetamodel;
 public class Model_ {
 
   public static volatile SingularAttribute<Model, String> id;
-  public static volatile SingularAttribute<Model, Integer> year;
+  public static volatile SingularAttribute<Model, String> name;
+  public static volatile SingularAttribute<Model, ModelYear> year;
   public static volatile SingularAttribute<Model, Manufacturer> manufacturer;
-  public static volatile SingularAttribute<Model, ModelName> name;
   public static volatile SetAttribute<Model, Category> categories;
 }

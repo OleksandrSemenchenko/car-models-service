@@ -21,16 +21,18 @@ import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+
 import ua.com.foxminded.repository.entity.Model;
 import ua.com.foxminded.service.dto.ModelDto;
 
 @Mapper(
     nullValueCheckStrategy = ALWAYS,
     componentModel = MappingConstants.ComponentModel.SPRING,
-    uses = {CategoryMapper.class, ModelNameMapper.class, ManufacturerMapper.class})
+    uses = {CategoryMapper.class, ManufacturerMapper.class})
 public interface ModelMapper {
 
   @Mapping(target = "name", source = "name")
+  @Mapping(target = "year", source = "year.value")
   ModelDto toDto(Model model);
 
   @InheritInverseConfiguration

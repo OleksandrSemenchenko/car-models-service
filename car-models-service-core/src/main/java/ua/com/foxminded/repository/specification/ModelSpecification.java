@@ -13,18 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ua.com.foxminded.specification;
+package ua.com.foxminded.repository.specification;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.data.jpa.domain.Specification;
 
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.SetJoin;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.data.jpa.domain.Specification;
 import ua.com.foxminded.repository.entity.Category;
 import ua.com.foxminded.repository.entity.Category_;
 import ua.com.foxminded.repository.entity.Manufacturer_;
 import ua.com.foxminded.repository.entity.Model;
-import ua.com.foxminded.repository.entity.ModelName_;
+import ua.com.foxminded.repository.entity.ModelYear_;
 import ua.com.foxminded.repository.entity.Model_;
 
 public class ModelSpecification {
@@ -36,38 +38,35 @@ public class ModelSpecification {
       List<Predicate> predicates = new ArrayList<>();
 
       if (searchFilter.getManufacturer() != null) {
-        predicates.add(
-            criteriaBuilder.equal(
-                modelRoot.get(Model_.manufacturer).get(Manufacturer_.name),
-                searchFilter.getManufacturer()));
+        predicates.add(criteriaBuilder.equal(modelRoot.get(Model_.manufacturer).get(Manufacturer_.name),
+                                             searchFilter.getManufacturer()));
       }
 
       if (searchFilter.getCategory() != null) {
         SetJoin<Model, Category> category = modelRoot.join(Model_.categories);
-        predicates.add(
-            criteriaBuilder.equal(category.get(Category_.name), searchFilter.getCategory()));
+        predicates.add(criteriaBuilder.equal(category.get(Category_.name), 
+                                             searchFilter.getCategory()));
       }
 
       if (searchFilter.getMaxYear() != null) {
-        predicates.add(
-            criteriaBuilder.lessThanOrEqualTo(
-                modelRoot.get(Model_.year), searchFilter.getMaxYear()));
+        predicates.add(criteriaBuilder.lessThanOrEqualTo(modelRoot.get(Model_.year).get(ModelYear_.value), 
+                                                         searchFilter.getMaxYear()));
       }
 
       if (searchFilter.getMinYear() != null) {
         predicates.add(
-            criteriaBuilder.greaterThanOrEqualTo(
-                modelRoot.get(Model_.year), searchFilter.getMinYear()));
+            criteriaBuilder.greaterThanOrEqualTo(modelRoot.get(Model_.year).get(ModelYear_.value), 
+                                                 searchFilter.getMinYear()));
       }
 
-      if (searchFilter.getModel() != null) {
-        predicates.add(
-            criteriaBuilder.equal(
-                modelRoot.get(Model_.name).get(ModelName_.name), searchFilter.getModel()));
+      if (searchFilter.getName() != null) {
+        predicates.add(criteriaBuilder.equal(modelRoot.get(Model_.name), 
+                                             searchFilter.getName()));
       }
 
       if (searchFilter.getYear() != null) {
-        predicates.add(criteriaBuilder.equal(modelRoot.get(Model_.year), searchFilter.getYear()));
+        predicates.add(criteriaBuilder.equal(modelRoot.get(Model_.year).get(ModelYear_.value), 
+                                             searchFilter.getYear()));
       }
       return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     };

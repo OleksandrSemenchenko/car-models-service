@@ -34,5 +34,6 @@ public class ModelDto {
   private Integer year;
   private String manufacturer;
 
-  @NotNull private Set<@NotNull @NotEmpty String> categories;
+  @NotNull 
+  private Set<@NotNull @NotEmpty String> categories;
 }

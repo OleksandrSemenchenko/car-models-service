@@ -28,7 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ua.com.foxminded.controller.CategoryControllerIntegrationTest.CATEGORY_NAME;
 import static ua.com.foxminded.controller.ManufacturerControllerIntegrationTest.MANUFACTURER_NAME;
-import static ua.com.foxminded.controller.ModelNameControllerIntegrationTest.MODEL_NAME;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Set;
@@ -45,10 +44,12 @@ import ua.com.foxminded.service.dto.ModelDto;
 @AutoConfigureMockMvc(addFilters = false)
 @Transactional
 class ModelControllerIntegrationTest {
-
-  public static final int NEW_MODEL_YEAR = 2023;
-  public static final int MODEL_YEAR = 2020;
-  public static final String MODEL_ID = "1";
+  
+  private static final String MODEL_NAME = "A7";
+  private static final int NEW_MODEL_YEAR = 2023;
+  private static final int MODEL_YEAR = 2020;
+  private static final String MODEL_ID = "1";
+  
 
   @Autowired private MockMvc mockMvc;
 
