@@ -16,16 +16,17 @@
 package ua.com.foxminded.service;
 
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.exceptionhandler.exceptions.CategoryNotFoundException;
 import ua.com.foxminded.exceptionhandler.exceptions.ManufacturerNotFoundException;
 import ua.com.foxminded.exceptionhandler.exceptions.ModelAlreadyExistsException;
@@ -65,8 +66,11 @@ public class ModelService {
   public ModelDto create(ModelDto ModelDto) {
     verifyIfModelExists(ModelDto.getManufacturer(), ModelDto.getName(), ModelDto.getYear());
 
-    Model model = Model.builder().year(ModelDto.getYear())
-                                 .categories(new HashSet<>()).build();
+//    Model model = Model.builder().year(ModelDto.getYear())
+//                                 .categories(new HashSet<>()).build();
+    Model model = modelMapper.toEntity(ModelDto);
+//    List<Category> categories = categoryReposito
+    
 
     Model modelWithUpdatedCategories = updateCategoryRelations(ModelDto, model);
     
@@ -96,7 +100,6 @@ public class ModelService {
     List<Category> unnecessaryCategories = model.getCategories().stream()
         .filter(category -> !necessaryCategoryNames.contains(category.getName()))
         .toList();
-    
 
     for (Category category : unnecessaryCategories) {
       model.removeCategory(category);
@@ -189,9 +192,9 @@ public class ModelService {
           modelNameRepository
               .findById(name)
               .orElseThrow(() -> new ModelNameNotFoundException(name));
-      model.setModelName(modelName);
+      model.setName(modelName);
     } else {
-      model.setModelName(null);
+      model.setName(null);
     }
   }
 

@@ -39,8 +39,11 @@ import lombok.ToString;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ModelName {
 
-  @Id @ToString.Include @EqualsAndHashCode.Include private String name;
+  @Id 
+  @ToString.Include 
+  @EqualsAndHashCode.Include 
+  private String name;
 
-  @OneToMany(mappedBy = "modelName")
+  @OneToMany(mappedBy = "name")
   private Set<Model> models;
 }

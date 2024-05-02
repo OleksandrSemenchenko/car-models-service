@@ -63,7 +63,7 @@ public class ModelSpecification {
       if (searchFilter.getModel() != null) {
         predicates.add(
             criteriaBuilder.equal(
-                modelRoot.get(Model_.modelName).get(ModelName_.name), searchFilter.getModel()));
+                modelRoot.get(Model_.name).get(ModelName_.name), searchFilter.getModel()));
       }
 
       if (searchFilter.getYear() != null) {

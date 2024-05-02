@@ -30,7 +30,7 @@ import ua.com.foxminded.service.dto.ModelDto;
     uses = {CategoryMapper.class, ModelNameMapper.class, ManufacturerMapper.class})
 public interface ModelMapper {
 
-  @Mapping(target = "name", source = "modelName")
+  @Mapping(target = "name", source = "name")
   ModelDto toDto(Model model);
 
   @InheritInverseConfiguration

@@ -89,7 +89,7 @@ class ModelServiceTest {
             .id(MODEL_ID)
             .year(YEAR)
             .manufacturer(manufacturer)
-            .modelName(modelName)
+            .name(modelName)
             .categories(new HashSet<>(Arrays.asList(category)))
             .build();
     category.setModels(new HashSet<>(Arrays.asList(model)));
@@ -237,7 +237,7 @@ class ModelServiceTest {
             .id(model.getId())
             .year(modelDto.getYear())
             .manufacturer(manufacturer)
-            .modelName(modelName)
+            .name(modelName)
             .categories(new HashSet<Category>(Arrays.asList(updatedCategory)))
             .build();
     when(modelRepository.save(updatedVehicle)).thenReturn(updatedVehicle);

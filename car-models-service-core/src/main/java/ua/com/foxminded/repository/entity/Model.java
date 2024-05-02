@@ -62,7 +62,7 @@ public class Model {
 
   @ManyToOne
   @JoinColumn(name = "name")
-  private ModelName modelName;
+  private ModelName name;
 
   @ManyToMany
   @JoinTable(
