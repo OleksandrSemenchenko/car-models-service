@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ua.com.foxminded.entity;
+package ua.com.foxminded.repository.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -29,7 +29,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "model_names")
+@Table(name = "categories")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,10 +37,10 @@ import lombok.ToString;
 @Setter
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class ModelName {
+public class Category {
 
   @Id @ToString.Include @EqualsAndHashCode.Include private String name;
 
-  @OneToMany(mappedBy = "modelName")
+  @ManyToMany(mappedBy = "categories")
   private Set<Model> models;
 }

@@ -19,8 +19,9 @@ import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-import ua.com.foxminded.dto.CategoryDto;
-import ua.com.foxminded.entity.Category;
+
+import ua.com.foxminded.repository.entity.Category;
+import ua.com.foxminded.service.dto.CategoryDto;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CategoryMapper {

@@ -25,12 +25,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import ua.com.foxminded.dto.ModelNameDto;
-import ua.com.foxminded.entity.ModelName;
 import ua.com.foxminded.exceptionhandler.exceptions.ModelNameAlreadyExistsException;
 import ua.com.foxminded.exceptionhandler.exceptions.ModelNameNotFoundException;
 import ua.com.foxminded.mapper.ModelNameMapper;
 import ua.com.foxminded.repository.ModelNameRepository;
+import ua.com.foxminded.repository.entity.ModelName;
+import ua.com.foxminded.service.dto.ModelNameDto;
 
 @Service
 @RequiredArgsConstructor

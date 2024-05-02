@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,13 +34,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import ua.com.foxminded.dto.CategoryDto;
-import ua.com.foxminded.entity.Category;
+
 import ua.com.foxminded.exceptionhandler.exceptions.AlreadyExistsException;
 import ua.com.foxminded.exceptionhandler.exceptions.NotFoundException;
 import ua.com.foxminded.mapper.CategoryMapper;
 import ua.com.foxminded.mapper.CategoryMapperImpl;
 import ua.com.foxminded.repository.CategoryRepository;
+import ua.com.foxminded.repository.entity.Category;
+import ua.com.foxminded.service.dto.CategoryDto;
 
 @ExtendWith(MockitoExtension.class)
 class CategoryServiceTest {

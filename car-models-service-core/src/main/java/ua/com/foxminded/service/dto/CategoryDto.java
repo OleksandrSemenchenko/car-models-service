@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ua.com.foxminded.dto;
+package ua.com.foxminded.service.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,12 +26,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ModelDto {
+public class CategoryDto {
 
-  private String id;
-  private String name;
-  private Integer year;
-  private String manufacturer;
-
-  @NotNull private Set<@NotNull @NotEmpty String> categories;
+  @NotNull @NotEmpty private String name;
 }

@@ -19,8 +19,9 @@ import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-import ua.com.foxminded.dto.ManufacturerDto;
-import ua.com.foxminded.entity.Manufacturer;
+
+import ua.com.foxminded.repository.entity.Manufacturer;
+import ua.com.foxminded.service.dto.ManufacturerDto;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ManufacturerMapper {

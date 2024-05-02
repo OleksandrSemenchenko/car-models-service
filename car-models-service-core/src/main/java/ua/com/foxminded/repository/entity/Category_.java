@@ -13,20 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ua.com.foxminded.dto;
+package ua.com.foxminded.repository.entity;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.metamodel.SetAttribute;
+import jakarta.persistence.metamodel.SingularAttribute;
+import jakarta.persistence.metamodel.StaticMetamodel;
 
-@Builder
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class ModelNameDto {
+@StaticMetamodel(Category.class)
+public class Category_ {
 
-  @NotNull @NotEmpty private String name;
+  public static volatile SingularAttribute<Category, String> name;
+  public static volatile SetAttribute<Category, Model> models;
 }

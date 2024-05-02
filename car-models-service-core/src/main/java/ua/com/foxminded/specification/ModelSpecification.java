@@ -15,17 +15,19 @@
  */
 package ua.com.foxminded.specification;
 
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.SetJoin;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.data.jpa.domain.Specification;
-import ua.com.foxminded.entity.Category;
-import ua.com.foxminded.entity.Category_;
-import ua.com.foxminded.entity.Manufacturer_;
-import ua.com.foxminded.entity.Model;
-import ua.com.foxminded.entity.ModelName_;
-import ua.com.foxminded.entity.Model_;
+
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.SetJoin;
+import ua.com.foxminded.repository.entity.Category;
+import ua.com.foxminded.repository.entity.Category_;
+import ua.com.foxminded.repository.entity.Manufacturer_;
+import ua.com.foxminded.repository.entity.Model;
+import ua.com.foxminded.repository.entity.ModelName_;
+import ua.com.foxminded.repository.entity.Model_;
 
 public class ModelSpecification {
 

@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,11 +40,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import ua.com.foxminded.dto.ModelDto;
-import ua.com.foxminded.entity.Category;
-import ua.com.foxminded.entity.Manufacturer;
-import ua.com.foxminded.entity.Model;
-import ua.com.foxminded.entity.ModelName;
+
 import ua.com.foxminded.exceptionhandler.exceptions.AlreadyExistsException;
 import ua.com.foxminded.exceptionhandler.exceptions.NotFoundException;
 import ua.com.foxminded.mapper.ModelMapper;
@@ -51,6 +48,11 @@ import ua.com.foxminded.repository.CategoryRepository;
 import ua.com.foxminded.repository.ManufacturerRepository;
 import ua.com.foxminded.repository.ModelNameRepository;
 import ua.com.foxminded.repository.ModelRepository;
+import ua.com.foxminded.repository.entity.Category;
+import ua.com.foxminded.repository.entity.Manufacturer;
+import ua.com.foxminded.repository.entity.Model;
+import ua.com.foxminded.repository.entity.ModelName;
+import ua.com.foxminded.service.dto.ModelDto;
 import ua.com.foxminded.specification.SearchFilter;
 
 @ExtendWith(MockitoExtension.class)

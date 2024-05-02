@@ -25,12 +25,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import ua.com.foxminded.dto.ManufacturerDto;
-import ua.com.foxminded.entity.Manufacturer;
 import ua.com.foxminded.exceptionhandler.exceptions.ManufacturerAlreadyExistsException;
 import ua.com.foxminded.exceptionhandler.exceptions.ManufacturerNotFoundException;
 import ua.com.foxminded.mapper.ManufacturerMapper;
 import ua.com.foxminded.repository.ManufacturerRepository;
+import ua.com.foxminded.repository.entity.Manufacturer;
+import ua.com.foxminded.service.dto.ManufacturerDto;
 
 @Service
 @Transactional

@@ -13,20 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ua.com.foxminded.dto;
+package ua.com.foxminded.repository.entity;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
+@Entity
+@Table(name = "manufacturers")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryDto {
+@Getter
+@Setter
+@ToString(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Manufacturer {
 
-  @NotNull @NotEmpty private String name;
+  @Id @EqualsAndHashCode.Include @ToString.Include private String name;
+
+  @OneToMany(mappedBy = "manufacturer")
+  private Set<Model> models;
 }

@@ -28,10 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import ua.com.foxminded.dto.CategoryDto;
-import ua.com.foxminded.dto.ModelDto;
-import ua.com.foxminded.entity.Category;
-import ua.com.foxminded.entity.Model;
 import ua.com.foxminded.exceptionhandler.exceptions.CategoryNotFoundException;
 import ua.com.foxminded.exceptionhandler.exceptions.ManufacturerNotFoundException;
 import ua.com.foxminded.exceptionhandler.exceptions.ModelAlreadyExistsException;
@@ -43,6 +39,10 @@ import ua.com.foxminded.repository.CategoryRepository;
 import ua.com.foxminded.repository.ManufacturerRepository;
 import ua.com.foxminded.repository.ModelNameRepository;
 import ua.com.foxminded.repository.ModelRepository;
+import ua.com.foxminded.repository.entity.Category;
+import ua.com.foxminded.repository.entity.Model;
+import ua.com.foxminded.service.dto.CategoryDto;
+import ua.com.foxminded.service.dto.ModelDto;
 import ua.com.foxminded.specification.ModelSpecification;
 import ua.com.foxminded.specification.SearchFilter;
 
