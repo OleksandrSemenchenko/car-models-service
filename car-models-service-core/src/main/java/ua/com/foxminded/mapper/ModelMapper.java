@@ -21,7 +21,6 @@ import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-
 import ua.com.foxminded.repository.entity.Model;
 import ua.com.foxminded.service.dto.ModelDto;
 

@@ -19,14 +19,12 @@ package ua.com.foxminded.service;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.RequiredArgsConstructor;
 import ua.com.foxminded.exceptionhandler.exceptions.CategoryNotFoundException;
 import ua.com.foxminded.exceptionhandler.exceptions.ManufacturerNotFoundException;
 import ua.com.foxminded.exceptionhandler.exceptions.ModelAlreadyExistsException;

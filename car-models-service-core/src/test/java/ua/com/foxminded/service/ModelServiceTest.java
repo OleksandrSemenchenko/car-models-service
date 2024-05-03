@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,7 +38,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-
 import ua.com.foxminded.exceptionhandler.exceptions.AlreadyExistsException;
 import ua.com.foxminded.exceptionhandler.exceptions.NotFoundException;
 import ua.com.foxminded.mapper.ModelMapper;

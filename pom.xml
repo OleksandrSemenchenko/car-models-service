@@ -188,17 +188,16 @@
               <expandEmptyElements>false</expandEmptyElements>
             </sortPom>
           </pom>
-
           <java>
             <includes>
-              <include>src/main/java/**/*.java</include>
-              <include>src/test/java/**/*.java</include>
+              <include>src/**/*.java</include>
             </includes>
             <importOrder>
               <wildcardsLast>false</wildcardsLast>
-              <semanticSort>true</semanticSort>
             </importOrder>
-            <removeUnusedImports/>
+            <removeUnusedImports>
+              <engine>google-java-format</engine>
+            </removeUnusedImports>
             <licenseHeader>
               <file>${maven.multiModuleProjectDirectory}/development/config/license-header</file>
             </licenseHeader>
@@ -214,7 +213,9 @@
             <includes>
               <include>development/**/*.json</include>
             </includes>
-            <jackson/>
+            <jackson>
+              <spaceBeforeSeparator>false</spaceBeforeSeparator>
+            </jackson>
           </json>
         </configuration>
       </plugin>
