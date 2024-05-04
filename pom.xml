@@ -192,12 +192,12 @@
             <includes>
               <include>src/**/*.java</include>
             </includes>
+            <googleJavaFormat>
+              <style>GOOGLE</style>
+            </googleJavaFormat>
             <importOrder>
               <wildcardsLast>false</wildcardsLast>
             </importOrder>
-            <removeUnusedImports>
-              <engine>google-java-format</engine>
-            </removeUnusedImports>
             <licenseHeader>
               <file>${maven.multiModuleProjectDirectory}/development/config/license-header</file>
             </licenseHeader>

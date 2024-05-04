@@ -33,8 +33,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Category {
 
-  @Id
-  private String name;
+  @Id private String name;
 
   @ManyToMany(mappedBy = "categories")
   private Set<Model> models;

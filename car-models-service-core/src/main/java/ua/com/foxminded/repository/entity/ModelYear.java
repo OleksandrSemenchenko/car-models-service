@@ -33,11 +33,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ModelYear {
-  
+
   @Id
   @Column(name = "year_value")
   private Integer value;
-  
+
   @OneToMany(mappedBy = "year")
   private Set<Model> models;
 }

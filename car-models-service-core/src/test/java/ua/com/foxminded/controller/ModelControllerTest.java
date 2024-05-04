@@ -42,19 +42,16 @@ import ua.com.foxminded.service.dto.ModelDto;
 @WebMvcTest(controllers = ModelController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class ModelControllerTest {
-  
+
   private static final String MODEL_NAME = "A7";
   private static final int MODEL_YEAR = 2020;
   private static final String MODEL_ID = "1";
 
-  @Autowired 
-  private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-  @Autowired 
-  private ObjectMapper mapper;
+  @Autowired private ObjectMapper mapper;
 
-  @MockBean 
-  private ModelService modelService;
+  @MockBean private ModelService modelService;
 
   private ModelDto modelDto;
   private String modelDtoJson;

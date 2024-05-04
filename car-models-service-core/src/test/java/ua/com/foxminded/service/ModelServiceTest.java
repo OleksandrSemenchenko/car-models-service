@@ -60,20 +60,15 @@ class ModelServiceTest {
   private static final int NEW_YEAR = 2010;
   private static final String MODEL_NAME = "A7";
 
-  @InjectMocks 
-  private ModelService modelService;
+  @InjectMocks private ModelService modelService;
 
-  @Mock 
-  private ModelRepository modelRepository;
+  @Mock private ModelRepository modelRepository;
 
-  @Mock 
-  private ManufacturerRepository manufacturerRepository;
+  @Mock private ManufacturerRepository manufacturerRepository;
 
-  @Mock 
-  private CategoryRepository categoryRepository;
+  @Mock private CategoryRepository categoryRepository;
 
-  @Spy 
-  private ModelMapper modelMapper;
+  @Spy private ModelMapper modelMapper;
 
   private Manufacturer manufacturer;
   private Category category;
@@ -86,7 +81,7 @@ class ModelServiceTest {
     manufacturer = Manufacturer.builder().name(MANUFACTURER_NAME).build();
     category = Category.builder().name(CATEGORY_NAME).build();
     year = ModelYear.builder().value(YEAR).build();
-    
+
     model =
         Model.builder()
             .id(MODEL_ID)
@@ -114,8 +109,7 @@ class ModelServiceTest {
 
     assertThrows(
         NotFoundException.class,
-        () ->
-            modelService.getModel(MANUFACTURER_NAME, MODEL_NAME, NEW_YEAR));
+        () -> modelService.getModel(MANUFACTURER_NAME, MODEL_NAME, NEW_YEAR));
   }
 
   @Test

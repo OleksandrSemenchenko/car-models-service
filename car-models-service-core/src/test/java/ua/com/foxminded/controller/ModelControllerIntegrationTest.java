@@ -44,12 +44,11 @@ import ua.com.foxminded.service.dto.ModelDto;
 @AutoConfigureMockMvc(addFilters = false)
 @Transactional
 class ModelControllerIntegrationTest {
-  
+
   private static final String MODEL_NAME = "A7";
   private static final int NEW_MODEL_YEAR = 2023;
   private static final int MODEL_YEAR = 2020;
   private static final String MODEL_ID = "1";
-  
 
   @Autowired private MockMvc mockMvc;
 

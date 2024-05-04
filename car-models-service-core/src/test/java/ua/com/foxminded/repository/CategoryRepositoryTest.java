@@ -15,22 +15,20 @@
  */
 package ua.com.foxminded.repository;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
 public class CategoryRepositoryTest {
-  
+
   private final String MODEL_NAME = "A7";
-  
-  @Autowired
-  private CategoryRepository categoryRepository;
-  
-//  @Test
-//  void findByModelName_shouldReturnCategories_whenCategoriesAreInDb() {
-//    
-//    List<Category> categories = categoryRepository.findByModelsName_Name(MODEL_NAME);
-//    assertEquals(1, categories.size());
-//  }
+
+  @Autowired private CategoryRepository categoryRepository;
+
+  //  @Test
+  //  void findByModelName_shouldReturnCategories_whenCategoriesAreInDb() {
+  //
+  //    List<Category> categories = categoryRepository.findByModelsName_Name(MODEL_NAME);
+  //    assertEquals(1, categories.size());
+  //  }
 }

@@ -63,10 +63,11 @@ public class ManufacturerService {
   }
 
   @Transactional
-  @Caching(evict = {
-      @CacheEvict(value = MANUFACTURERS_CACHE, key = "{ 'getByName', #name }"),
-      @CacheEvict(value = MANUFACTURERS_CACHE, key = "'getAll'")
-  })
+  @Caching(
+      evict = {
+        @CacheEvict(value = MANUFACTURERS_CACHE, key = "{ 'getByName', #name }"),
+        @CacheEvict(value = MANUFACTURERS_CACHE, key = "'getAll'")
+      })
   public void deleteByName(String name) {
     manufacturerRepository
         .findById(name)

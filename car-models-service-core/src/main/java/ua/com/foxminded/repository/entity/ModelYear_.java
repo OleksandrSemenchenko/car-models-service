@@ -21,7 +21,7 @@ import jakarta.persistence.metamodel.StaticMetamodel;
 
 @StaticMetamodel(ModelYear.class)
 public class ModelYear_ {
-  
+
   public static volatile SingularAttribute<ModelYear, Integer> value;
   public static volatile SetAttribute<ModelYear, Model> models;
 }

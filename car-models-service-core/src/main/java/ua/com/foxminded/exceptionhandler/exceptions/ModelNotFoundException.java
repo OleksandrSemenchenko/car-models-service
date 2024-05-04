@@ -17,10 +17,16 @@ package ua.com.foxminded.exceptionhandler.exceptions;
 
 public class ModelNotFoundException extends NotFoundException {
 
-  public static final String MESSAGE = 
+  private static final String MODEL_NOT_FOUND_BY_ID = "The model with id=%s doesn't exist";
+
+  private static final String MODEL_NOT_FOUND_BY_MANUFATURER_AND_NAME_AND_YEAR =
       "The model with manufacturer '%s', name '%s' and year '%s' doesn't exist";
-  
+
+  public ModelNotFoundException(String modelId) {
+    super(MODEL_NOT_FOUND_BY_ID.formatted(modelId));
+  }
+
   public ModelNotFoundException(String manufacturer, String name, int year) {
-    super(MESSAGE.formatted(year, manufacturer, name));
+    super(MODEL_NOT_FOUND_BY_MANUFATURER_AND_NAME_AND_YEAR.formatted(year, manufacturer, name));
   }
 }

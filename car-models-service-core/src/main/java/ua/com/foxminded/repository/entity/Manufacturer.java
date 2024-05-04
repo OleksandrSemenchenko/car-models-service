@@ -33,8 +33,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Manufacturer {
 
-  @Id 
-  private String name;
+  @Id private String name;
 
   @OneToMany(mappedBy = "manufacturer")
   private Set<Model> models;

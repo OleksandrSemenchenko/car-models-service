@@ -197,19 +197,21 @@ public class ModelController {
             description = "Such model already exists",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
       })
-  public ResponseEntity<Void> create(@PathVariable String manufacturer,
-                                     @PathVariable String name,
-                                     @PathVariable @Positive int year,
-                                     @RequestBody @Valid ModelDto modelDto) {
+  public ResponseEntity<Void> create(
+      @PathVariable String manufacturer,
+      @PathVariable String name,
+      @PathVariable @Positive int year,
+      @RequestBody @Valid ModelDto modelDto) {
     modelDto.setManufacturer(manufacturer);
     modelDto.setName(name);
     modelDto.setYear(year);
 
     ModelDto persistedModel = modelService.create(modelDto);
-    URI location = ServletUriComponentsBuilder.fromCurrentServletMapping()
-                                              .path("/v1/models/{id}")
-                                              .buildAndExpand(persistedModel.getId())
-                                              .toUri();
+    URI location =
+        ServletUriComponentsBuilder.fromCurrentServletMapping()
+            .path("/v1/models/{id}")
+            .buildAndExpand(persistedModel.getId())
+            .toUri();
     return ResponseEntity.created(location).build();
   }
 

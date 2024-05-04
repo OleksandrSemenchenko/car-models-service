@@ -15,7 +15,6 @@
  */
 package ua.com.foxminded.service;
 
-
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -61,50 +60,56 @@ public class ModelService {
     Model savedModel = modelRepository.save(model);
     return modelMapper.toDto(savedModel);
   }
-  
+
   public Page<ModelDto> search(SearchFilter searchFilter, Pageable pageRequest) {
     Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
     return modelRepository.findAll(specification, pageRequest).map(modelMapper::toDto);
   }
-  
+
   private void verifyIfModelExists(String manufacturer, String model, int year) {
     Specification<Model> specification = buildSpecification(manufacturer, model, year);
 
-    modelRepository.findOne(specification).ifPresent(entity -> {
-      throw new ModelAlreadyExistsException(entity.getId());
-    });
+    modelRepository
+        .findOne(specification)
+        .ifPresent(
+            entity -> {
+              throw new ModelAlreadyExistsException(entity.getId());
+            });
   }
-  
+
   private Model updateCategoryRelations(ModelDto modelDto, Model model) {
-    
+
     Model cleanModel = clearEntityFromUnnecessaryCategories(modelDto.getCategories(), model);
     return addAbsentCategoriesToEntity(modelDto.getCategories(), cleanModel);
   }
-  
-  private Model clearEntityFromUnnecessaryCategories(Set<String> necessaryCategoryNames, Model model) {
-    List<Category> unnecessaryCategories = model.getCategories().stream()
-        .filter(category -> !necessaryCategoryNames.contains(category.getName()))
-        .toList();
+
+  private Model clearEntityFromUnnecessaryCategories(
+      Set<String> necessaryCategoryNames, Model model) {
+    List<Category> unnecessaryCategories =
+        model.getCategories().stream()
+            .filter(category -> !necessaryCategoryNames.contains(category.getName()))
+            .toList();
 
     for (Category category : unnecessaryCategories) {
       model.removeCategory(category);
     }
     return model;
   }
-  
+
   private Model addAbsentCategoriesToEntity(Set<String> necessaryCategoryNames, Model model) {
     Set<Category> categories = model.getCategories();
-    Set<CategoryDto> absentCategories = necessaryCategoryNames.stream()
-        .filter(categoryName -> isNotPresentCategory(categoryName, categories))
-        .map(categoryName -> CategoryDto.builder().name(categoryName).build())
-        .collect(Collectors.toSet());
+    Set<CategoryDto> absentCategories =
+        necessaryCategoryNames.stream()
+            .filter(categoryName -> isNotPresentCategory(categoryName, categories))
+            .map(categoryName -> CategoryDto.builder().name(categoryName).build())
+            .collect(Collectors.toSet());
     return addCategoryRelations(absentCategories, model);
   }
-  
+
   private boolean isNotPresentCategory(String categoryName, Set<Category> categories) {
     return categories.stream().noneMatch(category -> category.getName().equals(categoryName));
   }
-  
+
   public ModelDto getModel(String manufacturer, String name, int year) {
     Specification<Model> specification = buildSpecification(manufacturer, name, year);
 
@@ -113,17 +118,12 @@ public class ModelService {
         .map(modelMapper::toDto)
         .orElseThrow(() -> new ModelNotFoundException(manufacturer, name, year));
   }
-  
-  private Specification<Model>  buildSpecification(String manufacturer, String name, int year) {
-    SearchFilter searchFilter = SearchFilter.builder()
-        .manufacturer(manufacturer)
-        .name(name)
-        .year(year).build();
-     return ModelSpecification.getSpecification(searchFilter);
-  }
 
-  
-  
+  private Specification<Model> buildSpecification(String manufacturer, String name, int year) {
+    SearchFilter searchFilter =
+        SearchFilter.builder().manufacturer(manufacturer).name(name).year(year).build();
+    return ModelSpecification.getSpecification(searchFilter);
+  }
 
   @Transactional
   public ModelDto update(ModelDto modelDto) {
@@ -134,10 +134,13 @@ public class ModelService {
             .year(modelDto.getYear())
             .build();
     Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
-    var model = modelRepository.findOne(specification)
-                               .orElseThrow(() -> new ModelNotFoundException(modelDto.getManufacturer(), 
-                                                                             modelDto.getName(), 
-                                                                             modelDto.getYear()));
+    var model =
+        modelRepository
+            .findOne(specification)
+            .orElseThrow(
+                () ->
+                    new ModelNotFoundException(
+                        modelDto.getManufacturer(), modelDto.getName(), modelDto.getYear()));
 
     updateCategoryRelations(modelDto, model);
 
@@ -163,24 +166,26 @@ public class ModelService {
   private Model addCategoryRelations(Set<CategoryDto> categoriesDto, Model model) {
     for (CategoryDto categoryDto : categoriesDto) {
       var categoryName = categoryDto.getName();
-      var category = categoryRepository.findById(categoryName)
-          .orElseThrow(() -> new CategoryNotFoundException(categoryName));
+      var category =
+          categoryRepository
+              .findById(categoryName)
+              .orElseThrow(() -> new CategoryNotFoundException(categoryName));
       model.addCategory(category);
     }
     return model;
   }
 
   private void updateModelRelation(ModelDto modelDto, Model model) {
-//    if (modelDto.getName() != null) {
-//      var name = modelDto.getName();
-//      var modelName =
-//          modelNameRepository
-//              .findById(name)
-//              .orElseThrow(() -> new ModelNameNotFoundException(name));
-//      model.setName(modelName);
-//    } else {
-//      model.setName(null);
-//    }
+    //    if (modelDto.getName() != null) {
+    //      var name = modelDto.getName();
+    //      var modelName =
+    //          modelNameRepository
+    //              .findById(name)
+    //              .orElseThrow(() -> new ModelNameNotFoundException(name));
+    //      model.setName(modelName);
+    //    } else {
+    //      model.setName(null);
+    //    }
   }
 
   private void updateManufacturerRelation(ModelDto modelDto, Model model) {
@@ -189,8 +194,7 @@ public class ModelService {
       var manufacturer =
           manufacturerRepository
               .findById(manufacturerName)
-              .orElseThrow(
-                  () -> new ManufacturerNotFoundException(manufacturerName));
+              .orElseThrow(() -> new ManufacturerNotFoundException(manufacturerName));
       model.setManufacturer(manufacturer);
     } else {
       model.setManufacturer(null);
