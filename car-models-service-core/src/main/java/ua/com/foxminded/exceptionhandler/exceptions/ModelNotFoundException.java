@@ -19,7 +19,7 @@ public class ModelNotFoundException extends NotFoundException {
 
   private static final String MODEL_NOT_FOUND_BY_ID = "The model with id=%s doesn't exist";
 
-  private static final String MODEL_NOT_FOUND_BY_MANUFATURER_AND_NAME_AND_YEAR =
+  private static final String MODEL_NOT_FOUND_BY_MANUFACTURER_AND_NAME_AND_YEAR =
       "The model with manufacturer '%s', name '%s' and year '%s' doesn't exist";
 
   public ModelNotFoundException(String modelId) {
@@ -27,6 +27,6 @@ public class ModelNotFoundException extends NotFoundException {
   }
 
   public ModelNotFoundException(String manufacturer, String name, int year) {
-    super(MODEL_NOT_FOUND_BY_MANUFATURER_AND_NAME_AND_YEAR.formatted(year, manufacturer, name));
+    super(MODEL_NOT_FOUND_BY_MANUFACTURER_AND_NAME_AND_YEAR.formatted(manufacturer, name, year));
   }
 }

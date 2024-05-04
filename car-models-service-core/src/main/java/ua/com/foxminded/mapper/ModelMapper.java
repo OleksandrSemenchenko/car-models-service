@@ -21,6 +21,7 @@ import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.springframework.beans.BeanUtils;
 import ua.com.foxminded.repository.entity.Model;
 import ua.com.foxminded.service.dto.ModelDto;
 
@@ -36,4 +37,9 @@ public interface ModelMapper {
 
   @InheritInverseConfiguration
   Model toEntity(ModelDto modelDto);
+
+  default Model mergeWithDto(ModelDto modelDto, Model model) {
+    BeanUtils.copyProperties(this.toEntity(modelDto), model);
+    return model;
+  }
 }

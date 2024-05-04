@@ -19,6 +19,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -46,6 +50,10 @@ import ua.com.foxminded.service.dto.ModelDto;
 @RequiredArgsConstructor
 public class ModelServiceImp implements ModelService {
 
+  private static final String SEARCH_MODELS_CACHE = "searchModels";
+  private static final String GET_MODEL_BY_ID_CACHE = "getModelById";
+  private static final String GET_MODEL_CACHE = "getModel";
+
   private final ModelRepository modelRepository;
   private final CategoryRepository categoryRepository;
   private final ManufacturerRepository manufacturerRepository;
@@ -55,22 +63,43 @@ public class ModelServiceImp implements ModelService {
 
   @Override
   @Transactional
-  public ModelDto updateModel(ModelDto modelDto) {
-    Model model =
-        modelRepository
-            .findById(modelDto.getId())
-            .orElseThrow(() -> new ModelNotFoundException(modelDto.getId()));
-    Model modelWithRelations = defineRelationships(model, modelDto);
-    Model savedModel = modelRepository.save(modelWithRelations);
+  @Caching(
+    evict = {
+      @CacheEvict(value = SEARCH_MODELS_CACHE, allEntries = true),
+      @CacheEvict(value = GET_MODEL_BY_ID_CACHE, allEntries = true)
+    },
+    put = {
+      @CachePut(
+        value = GET_MODEL_CACHE,
+        key = "{ 'getModel', #sourceModelDto.manufacturer, #sourceModelDto.name, #sourceModelDto.year }")
+    })
+  public ModelDto updateModel(ModelDto sourceModelDto, ModelDto targetModelDto) {
+    Specification<Model> specification = buildSpecification(
+      targetModelDto.getManufacturer(),
+      targetModelDto.getName(),
+      targetModelDto.getYear());
+    Model model = modelRepository.findOne(specification)
+            .orElseThrow(() -> new ModelNotFoundException(
+              targetModelDto.getManufacturer(),
+              targetModelDto.getName(),
+              targetModelDto.getYear()));
+    Model updatedModel = defineRelations(sourceModelDto, model);
+    Model savedModel = modelRepository.save(updatedModel);
     return modelMapper.toDto(savedModel);
   }
 
-  // TODO delete categories years and manufactures also
   @Override
   @Transactional
-  public void deleteModelById(String id) {
-    Model model = modelRepository.findById(id).orElseThrow(() -> new ModelNotFoundException(id));
-    modelRepository.deleteById(id);
+
+  @Caching(
+    evict = {
+      @CacheEvict(value = SEARCH_MODELS_CACHE, allEntries = true),
+      @CacheEvict(value = GET_MODEL_BY_ID_CACHE, key = "{ 'getModelById', #modelId }"),
+      @CacheEvict(value = GET_MODEL_CACHE, allEntries = true)
+    })
+  public void deleteModelById(String modelId) {
+    Model model = modelRepository.findById(modelId).orElseThrow(() -> new ModelNotFoundException(modelId));
+    modelRepository.deleteById(modelId);
     deleteManufacturerIfNeeded(model.getManufacturer());
     deleteCategoriesIfNeeded(model.getCategories());
     deleteModelYearIfNeeded(model.getYear());
@@ -104,6 +133,7 @@ public class ModelServiceImp implements ModelService {
   }
 
   @Override
+  @Cacheable(value = GET_MODEL_BY_ID_CACHE, key = "{ #root.methodName, #modelId }")
   public ModelDto getModelById(String modelId) {
     Model model =
         modelRepository.findById(modelId).orElseThrow(() -> new ModelNotFoundException(modelId));
@@ -111,6 +141,7 @@ public class ModelServiceImp implements ModelService {
   }
 
   @Override
+  @Cacheable(value = GET_MODEL_CACHE, key = "{ #manufacturer, #name, #year }")
   public ModelDto getModel(String manufacturer, String name, int year) {
     Specification<Model> specification = buildSpecification(manufacturer, name, year);
 
@@ -126,8 +157,8 @@ public class ModelServiceImp implements ModelService {
     return ModelSpecification.getSpecification(searchFilter);
   }
 
-  // TODO cache
   @Override
+  @Cacheable(value = SEARCH_MODELS_CACHE, key = "{ #root.methodName, #searchFilter, #pageable }")
   public Page<ModelDto> search(SearchFilter searchFilter, Pageable pageable) {
     pageable = setDefaultSortIfNeeded(pageable);
     Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
@@ -147,18 +178,31 @@ public class ModelServiceImp implements ModelService {
 
   @Override
   @Transactional
-  public ModelDto create(ModelDto modelDto) {
+
+
+  @Caching(
+    evict = {
+      @CacheEvict(value = SEARCH_MODELS_CACHE, allEntries = true),
+      @CacheEvict(value = GET_MODEL_BY_ID_CACHE, allEntries = true)
+    },
+    put = {
+      @CachePut(
+        value = GET_MODEL_CACHE,
+        key = "{ 'getModel', #modelDto.manufacturer, #modelDto.name, #modelDto.year }")
+    })
+  public ModelDto createModel(ModelDto modelDto) {
     verifyIfModelExists(modelDto.getManufacturer(), modelDto.getName(), modelDto.getYear());
     Model model = modelMapper.toEntity(modelDto);
-    Model modelWithRelations = defineRelationships(model, modelDto);
+    Model modelWithRelations = defineRelations(modelDto, model);
     Model savedModel = modelRepository.save(modelWithRelations);
     return modelMapper.toDto(savedModel);
   }
 
-  private Model defineRelationships(Model model, ModelDto modelDto) {
+  private Model defineRelations(ModelDto modelDto, Model model) {
     Manufacturer manufacturer = findManufacturerByName(modelDto.getManufacturer());
     ModelYear year = findModelYearByValue(modelDto.getYear());
     Set<Category> categories = findCategories(modelDto.getCategories());
+    model = modelMapper.mergeWithDto(modelDto, model);
     model.setManufacturer(manufacturer);
     model.setYear(year);
     model.addCategories(categories);
@@ -200,6 +244,7 @@ public class ModelServiceImp implements ModelService {
 
     for (String categoryName : categoryNames) {
       Category category = findCategoryByName(categoryName);
+      category.setModels(new HashSet<>());
       categories.add(category);
     }
     return categories;

@@ -195,7 +195,7 @@ public class ModelController {
     modelDto.setName(name);
     modelDto.setYear(year);
 
-    ModelDto persistedModel = modelService.create(modelDto);
+    ModelDto persistedModel = modelService.createModel(modelDto);
     URI location =
         ServletUriComponentsBuilder.fromCurrentServletMapping()
             .path("/v1/models/{id}")
@@ -232,15 +232,17 @@ public class ModelController {
             description = "The model or model component has not been found",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
       })
-  public void update(
+  public void updateModelPartly(
       @PathVariable String manufacturer,
       @PathVariable String name,
       @PathVariable @Positive int year,
-      @RequestBody @Valid ModelDto modelDto) {
-    modelDto.setManufacturer(manufacturer);
-    modelDto.setName(name);
-    modelDto.setYear(year);
-    modelService.updateModel(modelDto);
+      @RequestBody ModelDto modelDto) {
+    ModelDto targetModel = ModelDto.builder()
+      .manufacturer(manufacturer)
+      .name(name)
+      .year(year).build();
+    //TODO PATCH
+    modelService.updateModel(modelDto, targetModel);
   }
 
   @DeleteMapping("/models/{id}")

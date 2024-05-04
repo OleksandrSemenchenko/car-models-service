@@ -99,7 +99,7 @@ class ModelControllerTest {
 
   @Test
   void create_ShouldReturnStatus409_WhenAlreadyExistsException() throws Exception {
-    doThrow(AlreadyExistsException.class).when(modelService).create(modelDto);
+    doThrow(AlreadyExistsException.class).when(modelService).createModel(modelDto);
     modelDtoJson = mapper.writeValueAsString(modelDto);
 
     mockMvc

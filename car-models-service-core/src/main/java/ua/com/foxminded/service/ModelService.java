@@ -22,7 +22,7 @@ import ua.com.foxminded.service.dto.ModelDto;
 
 public interface ModelService {
 
-  ModelDto updateModel(ModelDto modelDto);
+  ModelDto updateModel(ModelDto sourceModel, ModelDto targetModel);
 
   void deleteModelById(String id);
 
@@ -32,5 +32,5 @@ public interface ModelService {
 
   Page<ModelDto> search(SearchFilter searchFilter, Pageable pageable);
 
-  ModelDto create(ModelDto model);
+  ModelDto createModel(ModelDto model);
 }

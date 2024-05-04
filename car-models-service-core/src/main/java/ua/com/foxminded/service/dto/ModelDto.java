@@ -15,9 +15,12 @@
  */
 package ua.com.foxminded.service.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.Set;
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,10 +32,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ModelDto {
 
-  private String id;
+  @NotNull
+  private UUID id;
+
+  @NotBlank
   private String name;
+
+  @NotNull
   private Integer year;
+
+  @NotBlank
   private String manufacturer;
 
-  @NotNull private Set<@NotNull @NotEmpty String> categories;
+  @NotNull private Set<@NotBlank String> categories;
 }
