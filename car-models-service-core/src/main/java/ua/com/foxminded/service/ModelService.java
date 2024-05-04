@@ -1,203 +1,21 @@
-/*
- * Copyright 2023 Oleksandr Semenchenko
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package ua.com.foxminded.service;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import ua.com.foxminded.exceptionhandler.exceptions.CategoryNotFoundException;
-import ua.com.foxminded.exceptionhandler.exceptions.ManufacturerNotFoundException;
-import ua.com.foxminded.exceptionhandler.exceptions.ModelAlreadyExistsException;
-import ua.com.foxminded.exceptionhandler.exceptions.ModelNotFoundException;
-import ua.com.foxminded.exceptionhandler.exceptions.NotFoundException;
-import ua.com.foxminded.mapper.ModelMapper;
-import ua.com.foxminded.repository.CategoryRepository;
-import ua.com.foxminded.repository.ManufacturerRepository;
-import ua.com.foxminded.repository.ModelRepository;
-import ua.com.foxminded.repository.ModelYearRepository;
-import ua.com.foxminded.repository.entity.Category;
-import ua.com.foxminded.repository.entity.Model;
-import ua.com.foxminded.repository.specification.ModelSpecification;
 import ua.com.foxminded.repository.specification.SearchFilter;
-import ua.com.foxminded.service.dto.CategoryDto;
 import ua.com.foxminded.service.dto.ModelDto;
 
-@Service
-@RequiredArgsConstructor
-public class ModelService {
+public interface ModelService {
 
-  public static final String NO_MODEL_WITH_SUCH_ID = "The model with id=%s doesn't exist";
+  ModelDto updateModel(ModelDto modelDto);
 
-  private final ModelRepository modelRepository;
-  private final CategoryRepository categoryRepository;
-  private final ManufacturerRepository manufacturerRepository;
-  private final ModelYearRepository modelYearRepository;
-  private final ModelMapper modelMapper;
+  void deleteModelById(String id);
 
-  @Transactional
-  public ModelDto create(ModelDto modelDto) {
-    verifyIfModelExists(modelDto.getManufacturer(), modelDto.getName(), modelDto.getYear());
-    Model model = modelMapper.toEntity(modelDto);
-    Model savedModel = modelRepository.save(model);
-    return modelMapper.toDto(savedModel);
-  }
+  ModelDto getModelById(String modelId);
 
-  public Page<ModelDto> search(SearchFilter searchFilter, Pageable pageRequest) {
-    Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
-    return modelRepository.findAll(specification, pageRequest).map(modelMapper::toDto);
-  }
+  ModelDto getModel(String manufacturer, String modelName, int year);
 
-  private void verifyIfModelExists(String manufacturer, String model, int year) {
-    Specification<Model> specification = buildSpecification(manufacturer, model, year);
+  Page<ModelDto> search(SearchFilter searchFilter, Pageable pageable);
 
-    modelRepository
-        .findOne(specification)
-        .ifPresent(
-            entity -> {
-              throw new ModelAlreadyExistsException(entity.getId());
-            });
-  }
-
-  private Model updateCategoryRelations(ModelDto modelDto, Model model) {
-
-    Model cleanModel = clearEntityFromUnnecessaryCategories(modelDto.getCategories(), model);
-    return addAbsentCategoriesToEntity(modelDto.getCategories(), cleanModel);
-  }
-
-  private Model clearEntityFromUnnecessaryCategories(
-      Set<String> necessaryCategoryNames, Model model) {
-    List<Category> unnecessaryCategories =
-        model.getCategories().stream()
-            .filter(category -> !necessaryCategoryNames.contains(category.getName()))
-            .toList();
-
-    for (Category category : unnecessaryCategories) {
-      model.removeCategory(category);
-    }
-    return model;
-  }
-
-  private Model addAbsentCategoriesToEntity(Set<String> necessaryCategoryNames, Model model) {
-    Set<Category> categories = model.getCategories();
-    Set<CategoryDto> absentCategories =
-        necessaryCategoryNames.stream()
-            .filter(categoryName -> isNotPresentCategory(categoryName, categories))
-            .map(categoryName -> CategoryDto.builder().name(categoryName).build())
-            .collect(Collectors.toSet());
-    return addCategoryRelations(absentCategories, model);
-  }
-
-  private boolean isNotPresentCategory(String categoryName, Set<Category> categories) {
-    return categories.stream().noneMatch(category -> category.getName().equals(categoryName));
-  }
-
-  public ModelDto getModel(String manufacturer, String name, int year) {
-    Specification<Model> specification = buildSpecification(manufacturer, name, year);
-
-    return modelRepository
-        .findOne(specification)
-        .map(modelMapper::toDto)
-        .orElseThrow(() -> new ModelNotFoundException(manufacturer, name, year));
-  }
-
-  private Specification<Model> buildSpecification(String manufacturer, String name, int year) {
-    SearchFilter searchFilter =
-        SearchFilter.builder().manufacturer(manufacturer).name(name).year(year).build();
-    return ModelSpecification.getSpecification(searchFilter);
-  }
-
-  @Transactional
-  public ModelDto update(ModelDto modelDto) {
-    SearchFilter searchFilter =
-        SearchFilter.builder()
-            .manufacturer(modelDto.getManufacturer())
-            .name(modelDto.getName())
-            .year(modelDto.getYear())
-            .build();
-    Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
-    var model =
-        modelRepository
-            .findOne(specification)
-            .orElseThrow(
-                () ->
-                    new ModelNotFoundException(
-                        modelDto.getManufacturer(), modelDto.getName(), modelDto.getYear()));
-
-    updateCategoryRelations(modelDto, model);
-
-    var updatedModel = modelRepository.save(model);
-    return modelMapper.toDto(updatedModel);
-  }
-
-  @Transactional
-  public void deleteById(String id) {
-    modelRepository
-        .findById(id)
-        .orElseThrow(() -> new NotFoundException(String.format(NO_MODEL_WITH_SUCH_ID, id)));
-    modelRepository.deleteById(id);
-  }
-
-  public ModelDto getById(String id) {
-    return modelRepository
-        .findById(id)
-        .map(modelMapper::toDto)
-        .orElseThrow(() -> new NotFoundException(String.format(NO_MODEL_WITH_SUCH_ID, id)));
-  }
-
-  private Model addCategoryRelations(Set<CategoryDto> categoriesDto, Model model) {
-    for (CategoryDto categoryDto : categoriesDto) {
-      var categoryName = categoryDto.getName();
-      var category =
-          categoryRepository
-              .findById(categoryName)
-              .orElseThrow(() -> new CategoryNotFoundException(categoryName));
-      model.addCategory(category);
-    }
-    return model;
-  }
-
-  private void updateModelRelation(ModelDto modelDto, Model model) {
-    //    if (modelDto.getName() != null) {
-    //      var name = modelDto.getName();
-    //      var modelName =
-    //          modelNameRepository
-    //              .findById(name)
-    //              .orElseThrow(() -> new ModelNameNotFoundException(name));
-    //      model.setName(modelName);
-    //    } else {
-    //      model.setName(null);
-    //    }
-  }
-
-  private void updateManufacturerRelation(ModelDto modelDto, Model model) {
-    if (modelDto.getManufacturer() != null) {
-      var manufacturerName = modelDto.getManufacturer();
-      var manufacturer =
-          manufacturerRepository
-              .findById(manufacturerName)
-              .orElseThrow(() -> new ManufacturerNotFoundException(manufacturerName));
-      model.setManufacturer(manufacturer);
-    } else {
-      model.setManufacturer(null);
-    }
-  }
+  ModelDto create(ModelDto model);
 }

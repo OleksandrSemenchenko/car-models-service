@@ -52,7 +52,7 @@ import ua.com.foxminded.repository.specification.SearchFilter;
 import ua.com.foxminded.service.dto.ModelDto;
 
 @ExtendWith(MockitoExtension.class)
-class ModelServiceTest {
+class ModelServiceImpTest {
 
   private static final String NEW_MODEL_ID = "2";
   private static final String MODEL_ID = "1";
@@ -60,7 +60,7 @@ class ModelServiceTest {
   private static final int NEW_YEAR = 2010;
   private static final String MODEL_NAME = "A7";
 
-  @InjectMocks private ModelService modelService;
+  @InjectMocks private ModelServiceImp modelService;
 
   @Mock private ModelRepository modelRepository;
 
@@ -244,16 +244,16 @@ class ModelServiceTest {
   }
 
   @Test
-  void deleteById_ShouldThrowNotFoundException_WhenNoModel() {
+  void deleteModelById_ShouldThrowNotFoundException_WhenNoModel() {
     when(modelRepository.findById(MODEL_ID)).thenReturn(Optional.empty());
 
-    assertThrows(NotFoundException.class, () -> modelService.deleteById(MODEL_ID));
+    assertThrows(NotFoundException.class, () -> modelService.deleteModelById(MODEL_ID));
   }
 
   @Test
-  void deleteById_ShouldDeleteModel() {
+  void deleteById_ShouldDeleteModelModel() {
     when(modelRepository.findById(MODEL_ID)).thenReturn(Optional.of(model));
-    modelService.deleteById(MODEL_ID);
+    modelService.deleteModelById(MODEL_ID);
 
     verify(modelRepository).findById(MODEL_ID);
     verify(modelRepository).deleteById(MODEL_ID);

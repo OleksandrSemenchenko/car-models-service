@@ -23,6 +23,7 @@ import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -36,5 +37,6 @@ public class Category {
   @Id private String name;
 
   @ManyToMany(mappedBy = "categories")
+  @EqualsAndHashCode.Exclude
   private Set<Model> models;
 }

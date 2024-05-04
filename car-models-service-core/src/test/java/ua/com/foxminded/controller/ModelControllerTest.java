@@ -36,7 +36,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.com.foxminded.exceptionhandler.exceptions.AlreadyExistsException;
 import ua.com.foxminded.exceptionhandler.exceptions.NotFoundException;
-import ua.com.foxminded.service.ModelService;
+import ua.com.foxminded.service.ModelServiceImp;
 import ua.com.foxminded.service.dto.ModelDto;
 
 @WebMvcTest(controllers = ModelController.class)
@@ -51,7 +51,7 @@ class ModelControllerTest {
 
   @Autowired private ObjectMapper mapper;
 
-  @MockBean private ModelService modelService;
+  @MockBean private ModelServiceImp modelService;
 
   private ModelDto modelDto;
   private String modelDtoJson;
@@ -203,7 +203,7 @@ class ModelControllerTest {
 
   @Test
   void deleteById_ShouldReturnStatus404_WhenNotFoundException() throws Exception {
-    doThrow(NotFoundException.class).when(modelService).deleteById(MODEL_ID);
+    doThrow(NotFoundException.class).when(modelService).deleteModelById(MODEL_ID);
 
     mockMvc.perform(delete("/v1/models/{id}", MODEL_ID)).andExpect(status().isNotFound());
   }

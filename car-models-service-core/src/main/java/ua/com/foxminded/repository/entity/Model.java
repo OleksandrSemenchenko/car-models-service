@@ -17,6 +17,7 @@ package ua.com.foxminded.repository.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -56,12 +57,18 @@ public class Model {
   @JoinColumn(name = "manufacturer_name")
   private Manufacturer manufacturer;
 
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       name = "model_category",
       joinColumns = @JoinColumn(name = "model_id", referencedColumnName = "id"),
       inverseJoinColumns = @JoinColumn(name = "category_name", referencedColumnName = "name"))
   private Set<Category> categories;
+
+  public void addCategories(Set<Category> categories) {
+    for (Category category : categories) {
+      addCategory(category);
+    }
+  }
 
   public void addCategory(Category category) {
     this.categories.add(category);

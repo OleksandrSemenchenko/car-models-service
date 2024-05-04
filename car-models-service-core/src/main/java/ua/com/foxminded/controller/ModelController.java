@@ -15,8 +15,6 @@
  */
 package ua.com.foxminded.controller;
 
-import static org.springframework.http.HttpStatus.NO_CONTENT;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -27,7 +25,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
-import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,6 +49,10 @@ import ua.com.foxminded.exceptionhandler.ErrorResponse;
 import ua.com.foxminded.repository.specification.SearchFilter;
 import ua.com.foxminded.service.ModelService;
 import ua.com.foxminded.service.dto.ModelDto;
+
+import java.net.URI;
+
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @RestController
 @RequestMapping("/v1")
@@ -159,7 +160,7 @@ public class ModelController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
       })
   public ModelDto getById(@PathVariable String id) {
-    return modelService.getById(id);
+    return modelService.getModelById(id);
   }
 
   @PostMapping("/manufacturers/{manufacturer}/models/{name}/{year}")
@@ -251,7 +252,7 @@ public class ModelController {
     modelDto.setManufacturer(manufacturer);
     modelDto.setName(name);
     modelDto.setYear(year);
-    modelService.update(modelDto);
+    modelService.updateModel(modelDto);
   }
 
   @DeleteMapping("/models/{id}")
@@ -269,7 +270,7 @@ public class ModelController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
       })
   public void deleteById(@PathVariable String id) {
-    modelService.deleteById(id);
+    modelService.deleteModelById(id);
   }
 
   private Pageable setDefaultSortIfNeeded(Pageable pageRequest) {
