@@ -15,6 +15,18 @@
  */
 package ua.com.foxminded.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+import ua.com.foxminded.service.dto.ModelDto;
+
+import java.util.Set;
+
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
@@ -26,19 +38,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ua.com.foxminded.controller.CategoryControllerIntegrationTest.CATEGORY_NAME;
-import static ua.com.foxminded.controller.ManufacturerControllerIntegrationTest.MANUFACTURER_NAME;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Set;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-import ua.com.foxminded.service.dto.ModelDto;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
@@ -49,6 +48,8 @@ class ModelControllerIntegrationTest {
   private static final int NEW_MODEL_YEAR = 2023;
   private static final int MODEL_YEAR = 2020;
   private static final String MODEL_ID = "1";
+  private static final String MANUFACTURER_NAME = "Audi";
+  private static final String CATEGORY_NAME = "Sedan";
 
   @Autowired private MockMvc mockMvc;
 

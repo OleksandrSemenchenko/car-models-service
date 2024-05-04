@@ -128,7 +128,6 @@
             </execution>
           </executions>
         </plugin>
-
         <plugin>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
@@ -144,7 +143,6 @@
             </execution>
           </executions>
         </plugin>
-
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -184,7 +182,6 @@
               <include>pom.xml</include>
             </includes>
             <sortPom>
-              <encoding>UTF-8</encoding>
               <expandEmptyElements>false</expandEmptyElements>
             </sortPom>
           </pom>
@@ -202,13 +199,6 @@
               <file>${maven.multiModuleProjectDirectory}/development/config/license-header</file>
             </licenseHeader>
           </java>
-          <yaml>
-            <includes>
-              <include>src/**/*.yaml</include>
-              <include>src/**/*.yml</include>
-            </includes>
-            <jackson/>
-          </yaml>
           <json>
             <includes>
               <include>development/**/*.json</include>

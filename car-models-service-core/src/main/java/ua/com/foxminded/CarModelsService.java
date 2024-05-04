@@ -17,10 +17,15 @@ package ua.com.foxminded;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.annotation.PropertySource;
+import ua.com.foxminded.config.AppConfig;
 
 @SpringBootApplication
 @EnableCaching
+@EnableConfigurationProperties(AppConfig.class)
+@PropertySource("classpath:/application.yml")
 public class CarModelsService {
 
   public static void main(String[] args) {

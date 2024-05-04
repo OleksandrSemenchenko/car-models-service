@@ -13,22 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ua.com.foxminded.repository;
+package ua.com.foxminded.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.data.domain.Sort.Direction;
 
-@DataJpaTest
-public class CategoryRepositoryTest {
+@ConfigurationProperties
+@Data
+public class AppConfig {
 
-  private final String MODEL_NAME = "A7";
-
-  @Autowired private CategoryRepository categoryRepository;
-
-  //  @Test
-  //  void findByModelName_shouldReturnCategories_whenCategoriesAreInDb() {
-  //
-  //    List<Category> categories = categoryRepository.findByModelsName_Name(MODEL_NAME);
-  //    assertEquals(1, categories.size());
-  //  }
+  private final String modelSortBy;
+  private final Direction modelSortDirection;
 }

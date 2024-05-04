@@ -48,7 +48,7 @@ public class Model {
   @NotNull private String name;
 
   @NotNull
-  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne
   @JoinColumn(name = "model_year")
   private ModelYear year;
 

@@ -15,18 +15,7 @@
  */
 package ua.com.foxminded.controller;
 
-import static org.mockito.Mockito.doThrow;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ua.com.foxminded.controller.CategoryControllerIntegrationTest.CATEGORY_NAME;
-import static ua.com.foxminded.controller.ManufacturerControllerIntegrationTest.MANUFACTURER_NAME;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +28,16 @@ import ua.com.foxminded.exceptionhandler.exceptions.NotFoundException;
 import ua.com.foxminded.service.ModelServiceImp;
 import ua.com.foxminded.service.dto.ModelDto;
 
+import java.util.Set;
+
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @WebMvcTest(controllers = ModelController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class ModelControllerTest {
@@ -46,6 +45,8 @@ class ModelControllerTest {
   private static final String MODEL_NAME = "A7";
   private static final int MODEL_YEAR = 2020;
   private static final String MODEL_ID = "1";
+  private static final String MANUFACTURER_NAME = "Audi";
+  private static final String CATEGORY_NAME = "Sedan";
 
   @Autowired private MockMvc mockMvc;
 
@@ -152,7 +153,7 @@ class ModelControllerTest {
 
   @Test
   void update_ShouldReturnStatus404_WhenNotFoundException() throws Exception {
-    doThrow(NotFoundException.class).when(modelService).update(modelDto);
+    doThrow(NotFoundException.class).when(modelService).updateModel(modelDto);
     modelDtoJson = mapper.writeValueAsString(modelDto);
 
     mockMvc

@@ -205,7 +205,7 @@ class ModelServiceImpTest {
     when(categoryRepository.findById(modelDto.getCategories().iterator().next()))
         .thenReturn(Optional.empty());
 
-    assertThrows(NotFoundException.class, () -> modelService.update(modelDto));
+    assertThrows(NotFoundException.class, () -> modelService.updateModel(modelDto));
   }
 
   @Test
@@ -213,7 +213,7 @@ class ModelServiceImpTest {
     when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any()))
         .thenReturn(Optional.empty());
 
-    assertThrows(NotFoundException.class, () -> modelService.update(modelDto));
+    assertThrows(NotFoundException.class, () -> modelService.updateModel(modelDto));
   }
 
   @Test
@@ -235,7 +235,7 @@ class ModelServiceImpTest {
             .categories(new HashSet<Category>(Arrays.asList(updatedCategory)))
             .build();
     when(modelRepository.save(updatedVehicle)).thenReturn(updatedVehicle);
-    modelService.update(modelDto);
+    modelService.updateModel(modelDto);
 
     verify(modelRepository).findOne(ArgumentMatchers.<Specification<Model>>any());
     verify(categoryRepository).findById(modelDto.getCategories().iterator().next());
@@ -263,14 +263,14 @@ class ModelServiceImpTest {
   void getById_ShouldThrowNotFoundException_WhenNoModelWithSuchId() {
     when(modelRepository.findById(NEW_MODEL_ID)).thenReturn(Optional.empty());
 
-    assertThrows(NotFoundException.class, () -> modelService.getById(NEW_MODEL_ID));
+    assertThrows(NotFoundException.class, () -> modelService.getModelById(NEW_MODEL_ID));
   }
 
   @Test
   void getById_ShouldReturnModel() {
     when(modelRepository.findById(MODEL_ID)).thenReturn(Optional.of(model));
     when(modelMapper.toDto(model)).thenReturn(modelDto);
-    modelService.getById(MODEL_ID);
+    modelService.getModelById(MODEL_ID);
 
     verify(modelRepository).findById(MODEL_ID);
     verify(modelMapper).toDto(model);

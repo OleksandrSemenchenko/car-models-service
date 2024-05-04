@@ -15,8 +15,6 @@
  */
 package ua.com.foxminded.repository;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -25,14 +23,82 @@ import ua.com.foxminded.repository.entity.Model;
 import ua.com.foxminded.repository.specification.ModelSpecification;
 import ua.com.foxminded.repository.specification.SearchFilter;
 
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @DataJpaTest
 class ModelRepositoryTest {
 
-  private final String MODEL_NAME = "A7";
-  private final String MANUFACTURE_NAME = "Audi";
-  private final Integer MODEL_YEAR = 2020;
+  private final static String MODEL_NAME = "A7";
+  private final static String MANUFACTURE_NAME = "Audi";
+  private final static String NOT_EXISTING_MANUFACTURER_NAME = "Volvo";
+  private final static Integer MODEL_YEAR = 2020;
+  private final static Integer NOT_EXISTING_MODEL_YEAR = 2035;
+  private final static String CATEGORY_NAME = "Sedan";
+  private final static String NOT_EXISTING_CATEGORY_NAME = "Pickup";
 
   @Autowired private ModelRepository modelRepository;
+
+  @Test
+  void existsByYearValue_shouldReturnTrue_whenNoModelInDb() {
+    boolean isModelExist = modelRepository.existsByYearValue(NOT_EXISTING_MODEL_YEAR);
+
+    assertFalse(isModelExist);
+  }
+
+  @Test
+  void existsByYearValue_shouldReturnTrue_whenModelIsInDb() {
+    boolean isModelExist = modelRepository.existsByYearValue(MODEL_YEAR);
+
+    assertTrue(isModelExist);
+  }
+
+  @Test
+  void existsByCategoriesName_shouldReturnTrue_whenNoModelInDb() {
+    boolean isModelExist = modelRepository.existsByCategoriesName(NOT_EXISTING_CATEGORY_NAME);
+
+    assertFalse(isModelExist);
+  }
+
+  @Test
+  void existsByCategoriesName_shouldReturnTrue_whenModelIsInDb() {
+    boolean isModelExist = modelRepository.existsByCategoriesName(CATEGORY_NAME);
+
+    assertTrue(isModelExist);
+  }
+
+
+  @Test
+  void existsByManufacturer_Name_shouldReturnFalse_whenNoModelInDb() {
+    boolean isModelExist = modelRepository.existsByManufacturerName(NOT_EXISTING_MANUFACTURER_NAME);
+
+    assertFalse(isModelExist);
+  }
+
+  @Test
+  void existsByManufacturer_Name_shouldReturnTrue_whenModelIsInDb() {
+    boolean isModelExist = modelRepository.existsByManufacturerName(MANUFACTURE_NAME);
+
+    assertTrue(isModelExist);
+  }
+
+  @Test
+  void findByNameYearManufacturerName_shouldReturnEmptyOptional_whenModelIsInDb() {
+    SearchFilter filter =
+      SearchFilter.builder()
+        .name(MODEL_NAME)
+        .manufacturer(NOT_EXISTING_MANUFACTURER_NAME)
+        .year(MODEL_YEAR)
+        .build();
+    Specification<Model> specification = ModelSpecification.getSpecification(filter);
+
+    Optional<Model> modelOptional = modelRepository.findOne(specification);
+
+    assertTrue(modelOptional.isEmpty());
+  }
 
   @Test
   void findByNameYearManufacturerName_shouldReturnModel_whenModelIsInDb() {

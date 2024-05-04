@@ -15,6 +15,8 @@
  */
 package ua.com.foxminded.controller;
 
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -25,14 +27,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -50,22 +49,12 @@ import ua.com.foxminded.repository.specification.SearchFilter;
 import ua.com.foxminded.service.ModelService;
 import ua.com.foxminded.service.dto.ModelDto;
 
-import java.net.URI;
-
-import static org.springframework.http.HttpStatus.NO_CONTENT;
-
 @RestController
 @RequestMapping("/v1")
 @RequiredArgsConstructor
 @Validated
 @SecurityRequirement(name = "bearerAuth")
 public class ModelController {
-
-  @Value("${application.sort.model.by}")
-  private String modelSortBy;
-
-  @Value("${application.sort.model.direction}")
-  private Direction modelSortDirection;
 
   private final ModelService modelService;
 
@@ -128,7 +117,6 @@ public class ModelController {
       })
   public Page<ModelDto> search(
       @Valid @ParameterObject SearchFilter searchFilter, @ParameterObject Pageable pageRequest) {
-    pageRequest = setDefaultSortIfNeeded(pageRequest);
     return modelService.search(searchFilter, pageRequest);
   }
 
@@ -271,16 +259,5 @@ public class ModelController {
       })
   public void deleteById(@PathVariable String id) {
     modelService.deleteModelById(id);
-  }
-
-  private Pageable setDefaultSortIfNeeded(Pageable pageRequest) {
-    if (pageRequest.getSort().isUnsorted()) {
-      Sort defaulSort = Sort.by(modelSortDirection, modelSortBy);
-      return PageRequest.of(
-          pageRequest.getPageNumber(),
-          pageRequest.getPageSize(),
-          pageRequest.getSortOr(defaulSort));
-    }
-    return pageRequest;
   }
 }

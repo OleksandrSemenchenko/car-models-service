@@ -30,9 +30,9 @@ import static ua.com.foxminded.controller.ModelNameControllerComponentTest.NEW_M
 import static ua.com.foxminded.service.CategoryService.NO_CATEGORY;
 import static ua.com.foxminded.service.ManufacturerService.NO_MANUFACTURER;
 import static ua.com.foxminded.service.ModelNameService.NO_MODEL_NAME;
-import static ua.com.foxminded.service.ModelService.MODEL_ALREADY_EXISTS;
-import static ua.com.foxminded.service.ModelService.NO_MODEL_WITH_SUCH_ID;
-import static ua.com.foxminded.service.ModelService.NO_SUCH_MODEL;
+import static ua.com.foxminded.service.ModelServiceImp.MODEL_ALREADY_EXISTS;
+import static ua.com.foxminded.service.ModelServiceImp.NO_MODEL_WITH_SUCH_ID;
+import static ua.com.foxminded.service.ModelServiceImp.NO_SUCH_MODEL;
 
 import java.util.Set;
 import org.junit.jupiter.api.Test;

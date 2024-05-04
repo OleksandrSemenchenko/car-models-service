@@ -1,6 +1,6 @@
 insert into categories(name) values('Sedan');
-insert into model_years(year_value) values(2020);
 insert into categories(name) values('Coupe');
+insert into model_years(year_value) values(2020);
 insert into manufacturers(name) values('Audi');
 insert into manufacturers(name) values('Ford');
 insert into models(id, model_year, manufacturer_name, name) values (1, 2020, 'Audi', 'A7');

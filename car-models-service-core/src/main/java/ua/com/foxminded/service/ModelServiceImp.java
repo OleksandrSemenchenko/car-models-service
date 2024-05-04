@@ -15,12 +15,18 @@
  */
 package ua.com.foxminded.service;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.com.foxminded.config.AppConfig;
 import ua.com.foxminded.exceptionhandler.exceptions.ModelAlreadyExistsException;
 import ua.com.foxminded.exceptionhandler.exceptions.ModelNotFoundException;
 import ua.com.foxminded.mapper.ModelMapper;
@@ -36,9 +42,6 @@ import ua.com.foxminded.repository.specification.ModelSpecification;
 import ua.com.foxminded.repository.specification.SearchFilter;
 import ua.com.foxminded.service.dto.ModelDto;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Service
 @RequiredArgsConstructor
 public class ModelServiceImp implements ModelService {
@@ -48,31 +51,62 @@ public class ModelServiceImp implements ModelService {
   private final ManufacturerRepository manufacturerRepository;
   private final ModelYearRepository modelYearRepository;
   private final ModelMapper modelMapper;
+  private final AppConfig appConfig;
 
   @Override
   @Transactional
   public ModelDto updateModel(ModelDto modelDto) {
-    Model model = modelRepository
-      .findById(modelDto.getId())
-      .orElseThrow(() -> new ModelNotFoundException(modelDto.getId()));
+    Model model =
+        modelRepository
+            .findById(modelDto.getId())
+            .orElseThrow(() -> new ModelNotFoundException(modelDto.getId()));
     Model modelWithRelations = defineRelationships(model, modelDto);
     Model savedModel = modelRepository.save(modelWithRelations);
     return modelMapper.toDto(savedModel);
   }
 
-  //TODO delete categories years and manufactures also
+  // TODO delete categories years and manufactures also
   @Override
   @Transactional
   public void deleteModelById(String id) {
-    modelRepository
-      .findById(id)
-      .orElseThrow(() -> new ModelNotFoundException(id));
+    Model model = modelRepository.findById(id).orElseThrow(() -> new ModelNotFoundException(id));
     modelRepository.deleteById(id);
+    deleteManufacturerIfNeeded(model.getManufacturer());
+    deleteCategoriesIfNeeded(model.getCategories());
+    deleteModelYearIfNeeded(model.getYear());
+  }
+
+  private void deleteManufacturerIfNeeded(Manufacturer manufacturer) {
+    if (!modelRepository.existsByManufacturerName(manufacturer.getName())) {
+      manufacturerRepository.deleteById(manufacturer.getName());
+    }
+  }
+
+  private void deleteCategoriesIfNeeded(Set<Category> categories) {
+    List<String> categoryNames = categories.stream()
+      .map(Category::getName).toList();
+
+    for (String categoryName : categoryNames) {
+      deleteCategoryIfNeeded(categoryName);
+    }
+  }
+
+  private void deleteCategoryIfNeeded(String categoryName) {
+    if (!modelRepository.existsByCategoriesName(categoryName)) {
+      categoryRepository.deleteById(categoryName);
+    }
+  }
+
+  private void deleteModelYearIfNeeded(ModelYear modelYear) {
+    if (!modelRepository.existsByYearValue(modelYear.getValue())) {
+      modelYearRepository.deleteById(modelYear.getValue());
+    }
   }
 
   @Override
   public ModelDto getModelById(String modelId) {
-    Model model = modelRepository.findById(modelId).orElseThrow(() -> new ModelNotFoundException(modelId));
+    Model model =
+        modelRepository.findById(modelId).orElseThrow(() -> new ModelNotFoundException(modelId));
     return modelMapper.toDto(model);
   }
 
@@ -81,25 +115,34 @@ public class ModelServiceImp implements ModelService {
     Specification<Model> specification = buildSpecification(manufacturer, name, year);
 
     return modelRepository
-      .findOne(specification)
-      .map(modelMapper::toDto)
-      .orElseThrow(() -> new ModelNotFoundException(manufacturer, name, year));
+        .findOne(specification)
+        .map(modelMapper::toDto)
+        .orElseThrow(() -> new ModelNotFoundException(manufacturer, name, year));
   }
 
   private Specification<Model> buildSpecification(String manufacturer, String name, int year) {
-    SearchFilter searchFilter = SearchFilter.builder()
-      .manufacturer(manufacturer)
-      .name(name)
-      .year(year).build();
+    SearchFilter searchFilter =
+        SearchFilter.builder().manufacturer(manufacturer).name(name).year(year).build();
     return ModelSpecification.getSpecification(searchFilter);
   }
 
-  //TODO sorting
-  //TODO cache
+  // TODO cache
   @Override
-  public Page<ModelDto> search(SearchFilter searchFilter, Pageable pageRequest) {
+  public Page<ModelDto> search(SearchFilter searchFilter, Pageable pageable) {
+    pageable = setDefaultSortIfNeeded(pageable);
     Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
-    return modelRepository.findAll(specification, pageRequest).map(modelMapper::toDto);
+    return modelRepository.findAll(specification, pageable).map(modelMapper::toDto);
+  }
+
+  private Pageable setDefaultSortIfNeeded(Pageable pageRequest) {
+    if (pageRequest.getSort().isUnsorted()) {
+      Sort defaulSort = Sort.by(appConfig.getModelSortDirection(), appConfig.getModelSortBy());
+      return PageRequest.of(
+          pageRequest.getPageNumber(),
+          pageRequest.getPageSize(),
+          pageRequest.getSortOr(defaulSort));
+    }
+    return pageRequest;
   }
 
   @Override
@@ -133,17 +176,23 @@ public class ModelServiceImp implements ModelService {
   }
 
   private Manufacturer findManufacturerByName(String manufacturerName) {
-    return manufacturerRepository.findById(manufacturerName).orElseGet(() -> {
-      Manufacturer manufacturer = Manufacturer.builder().name(manufacturerName).build();
-      return manufacturerRepository.save(manufacturer);
-    });
+    return manufacturerRepository
+        .findById(manufacturerName)
+        .orElseGet(
+            () -> {
+              Manufacturer manufacturer = Manufacturer.builder().name(manufacturerName).build();
+              return manufacturerRepository.save(manufacturer);
+            });
   }
 
   private ModelYear findModelYearByValue(int year) {
-    return modelYearRepository.findById(year).orElseGet(() -> {
-      ModelYear modelYear = ModelYear.builder().value(year).build();
-      return modelYearRepository.save(modelYear);
-    });
+    return modelYearRepository
+        .findById(year)
+        .orElseGet(
+            () -> {
+              ModelYear modelYear = ModelYear.builder().value(year).build();
+              return modelYearRepository.save(modelYear);
+            });
   }
 
   private Set<Category> findCategories(Set<String> categoryNames) {
@@ -157,9 +206,12 @@ public class ModelServiceImp implements ModelService {
   }
 
   private Category findCategoryByName(String categoryName) {
-    return categoryRepository.findById(categoryName).orElseGet(() -> {
-      Category category = Category.builder().name(categoryName).build();
-      return categoryRepository.save(category);
-    });
+    return categoryRepository
+        .findById(categoryName)
+        .orElseGet(
+            () -> {
+              Category category = Category.builder().name(categoryName).build();
+              return categoryRepository.save(category);
+            });
   }
 }
