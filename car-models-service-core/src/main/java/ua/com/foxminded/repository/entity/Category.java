@@ -25,6 +25,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "categories")
@@ -38,5 +39,6 @@ public class Category {
 
   @ManyToMany(mappedBy = "categories")
   @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private Set<Model> models;
 }

@@ -15,7 +15,6 @@
  */
 package ua.com.foxminded.repository.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -28,10 +27,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import java.util.Set;
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "models")
@@ -43,7 +46,8 @@ public class Model {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
-  private String id;
+  @JdbcTypeCode(SqlTypes.VARCHAR)
+  private UUID id;
 
   @NotNull private String name;
 

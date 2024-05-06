@@ -15,9 +15,6 @@
  */
 package ua.com.foxminded.service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -46,6 +43,11 @@ import ua.com.foxminded.repository.specification.ModelSpecification;
 import ua.com.foxminded.repository.specification.SearchFilter;
 import ua.com.foxminded.service.dto.ModelDto;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class ModelServiceImp implements ModelService {
@@ -64,41 +66,66 @@ public class ModelServiceImp implements ModelService {
   @Override
   @Transactional
   @Caching(
-    evict = {
-      @CacheEvict(value = SEARCH_MODELS_CACHE, allEntries = true),
-      @CacheEvict(value = GET_MODEL_BY_ID_CACHE, allEntries = true)
-    },
+    evict = @CacheEvict(value = SEARCH_MODELS_CACHE, allEntries = true),
     put = {
       @CachePut(
         value = GET_MODEL_CACHE,
-        key = "{ 'getModel', #sourceModelDto.manufacturer, #sourceModelDto.name, #sourceModelDto.year }")
+        key = "{ 'getModel', #modelDto.manufacturer, #modelDto.name, #modelDto.year }"),
+      @CachePut(
+        value = GET_MODEL_BY_ID_CACHE,
+        key = "{ 'getModelById', #modelDto.id }")
     })
-  public ModelDto updateModel(ModelDto sourceModelDto, ModelDto targetModelDto) {
-    Specification<Model> specification = buildSpecification(
-      targetModelDto.getManufacturer(),
-      targetModelDto.getName(),
-      targetModelDto.getYear());
-    Model model = modelRepository.findOne(specification)
-            .orElseThrow(() -> new ModelNotFoundException(
-              targetModelDto.getManufacturer(),
-              targetModelDto.getName(),
-              targetModelDto.getYear()));
-    Model updatedModel = defineRelations(sourceModelDto, model);
+  public ModelDto updateModel(ModelDto modelDto) {
+    Model targetModel = modelRepository.findById(modelDto.getId())
+      .orElseThrow(() -> new ModelNotFoundException(modelDto.getId()));
+    Model updatedModel = modelMapper.mergeWithDto(modelDto, targetModel);
+    verifyIfModelExists(updatedModel);
     Model savedModel = modelRepository.save(updatedModel);
     return modelMapper.toDto(savedModel);
   }
 
   @Override
   @Transactional
-
   @Caching(
-    evict = {
-      @CacheEvict(value = SEARCH_MODELS_CACHE, allEntries = true),
-      @CacheEvict(value = GET_MODEL_BY_ID_CACHE, key = "{ 'getModelById', #modelId }"),
-      @CacheEvict(value = GET_MODEL_CACHE, allEntries = true)
-    })
-  public void deleteModelById(String modelId) {
-    Model model = modelRepository.findById(modelId).orElseThrow(() -> new ModelNotFoundException(modelId));
+      evict = {
+        @CacheEvict(value = SEARCH_MODELS_CACHE, allEntries = true),
+        @CacheEvict(value = GET_MODEL_BY_ID_CACHE, allEntries = true)
+      },
+      put = {
+        @CachePut(
+            value = GET_MODEL_CACHE,
+            key =
+                "{ 'getModel', #sourceModelDto.manufacturer, #sourceModelDto.name, #sourceModelDto.year }")
+      })
+  public ModelDto updateModelPartly(ModelDto sourceModelDto, ModelDto targetModelDto) {
+    Model targetModel = findModelBySpecification(
+      targetModelDto.getManufacturer(),
+      targetModelDto.getName(),
+      targetModelDto.getYear());
+    targetModel = modelMapper.mergeWithNotNullDtoProperties(sourceModelDto, targetModel);
+    verifyIfModelExists(targetModel);
+    Model updatedModel = setRelationships(sourceModelDto, targetModel);
+    Model savedModel = modelRepository.save(updatedModel);
+    return modelMapper.toDto(savedModel);
+  }
+
+  private void verifyIfModelExists(Model model) {
+    Manufacturer manufacturer = model.getManufacturer();
+    ModelYear modelYear = model.getYear();
+    verifyIfModelExists(manufacturer.getName(), model.getName(), modelYear.getValue());
+  }
+
+  @Override
+  @Transactional
+  @Caching(
+      evict = {
+        @CacheEvict(value = SEARCH_MODELS_CACHE, allEntries = true),
+        @CacheEvict(value = GET_MODEL_BY_ID_CACHE, key = "{ 'getModelById', #modelId }"),
+        @CacheEvict(value = GET_MODEL_CACHE, allEntries = true)
+      })
+  public void deleteModelById(UUID modelId) {
+    Model model =
+        modelRepository.findById(modelId).orElseThrow(() -> new ModelNotFoundException(modelId));
     modelRepository.deleteById(modelId);
     deleteManufacturerIfNeeded(model.getManufacturer());
     deleteCategoriesIfNeeded(model.getCategories());
@@ -112,8 +139,7 @@ public class ModelServiceImp implements ModelService {
   }
 
   private void deleteCategoriesIfNeeded(Set<Category> categories) {
-    List<String> categoryNames = categories.stream()
-      .map(Category::getName).toList();
+    List<String> categoryNames = categories.stream().map(Category::getName).toList();
 
     for (String categoryName : categoryNames) {
       deleteCategoryIfNeeded(categoryName);
@@ -134,21 +160,24 @@ public class ModelServiceImp implements ModelService {
 
   @Override
   @Cacheable(value = GET_MODEL_BY_ID_CACHE, key = "{ #root.methodName, #modelId }")
-  public ModelDto getModelById(String modelId) {
+  public ModelDto getModelById(UUID modelId) {
     Model model =
         modelRepository.findById(modelId).orElseThrow(() -> new ModelNotFoundException(modelId));
     return modelMapper.toDto(model);
   }
 
   @Override
-  @Cacheable(value = GET_MODEL_CACHE, key = "{ #manufacturer, #name, #year }")
+  @Cacheable(value = GET_MODEL_CACHE, key = "{ #root.methodName,  #manufacturer, #name, #year }")
   public ModelDto getModel(String manufacturer, String name, int year) {
-    Specification<Model> specification = buildSpecification(manufacturer, name, year);
+    Model model = findModelBySpecification(manufacturer, name, year);
+    return modelMapper.toDto(model);
+  }
 
+  private Model findModelBySpecification(String manufacturer, String modelName, int modelYear) {
+    Specification<Model> specification = buildSpecification(manufacturer, modelName, modelYear);
     return modelRepository
-        .findOne(specification)
-        .map(modelMapper::toDto)
-        .orElseThrow(() -> new ModelNotFoundException(manufacturer, name, year));
+      .findOne(specification)
+      .orElseThrow(() -> new ModelNotFoundException(manufacturer, modelName, modelYear));
   }
 
   private Specification<Model> buildSpecification(String manufacturer, String name, int year) {
@@ -178,44 +207,41 @@ public class ModelServiceImp implements ModelService {
 
   @Override
   @Transactional
-
-
   @Caching(
-    evict = {
-      @CacheEvict(value = SEARCH_MODELS_CACHE, allEntries = true),
-      @CacheEvict(value = GET_MODEL_BY_ID_CACHE, allEntries = true)
-    },
-    put = {
-      @CachePut(
-        value = GET_MODEL_CACHE,
-        key = "{ 'getModel', #modelDto.manufacturer, #modelDto.name, #modelDto.year }")
-    })
+      evict = {
+        @CacheEvict(value = SEARCH_MODELS_CACHE, allEntries = true),
+        @CacheEvict(value = GET_MODEL_BY_ID_CACHE, allEntries = true)
+      },
+      put = {
+        @CachePut(
+            value = GET_MODEL_CACHE,
+            key = "{ 'getModel', #modelDto.manufacturer, #modelDto.name, #modelDto.year }")
+      })
   public ModelDto createModel(ModelDto modelDto) {
     verifyIfModelExists(modelDto.getManufacturer(), modelDto.getName(), modelDto.getYear());
     Model model = modelMapper.toEntity(modelDto);
-    Model modelWithRelations = defineRelations(modelDto, model);
+    Model modelWithRelations = setRelationships(modelDto, model);
     Model savedModel = modelRepository.save(modelWithRelations);
     return modelMapper.toDto(savedModel);
   }
 
-  private Model defineRelations(ModelDto modelDto, Model model) {
+  private Model setRelationships(ModelDto modelDto, Model model) {
     Manufacturer manufacturer = findManufacturerByName(modelDto.getManufacturer());
     ModelYear year = findModelYearByValue(modelDto.getYear());
     Set<Category> categories = findCategories(modelDto.getCategories());
-    model = modelMapper.mergeWithDto(modelDto, model);
     model.setManufacturer(manufacturer);
     model.setYear(year);
     model.addCategories(categories);
     return model;
   }
 
-  private void verifyIfModelExists(String manufacturer, String model, int year) {
-    Specification<Model> specification = buildSpecification(manufacturer, model, year);
+  private void verifyIfModelExists(String manufacturerName, String modelName, int year) {
+    Specification<Model> specification = buildSpecification(manufacturerName, modelName, year);
     modelRepository
         .findOne(specification)
         .ifPresent(
             entity -> {
-              throw new ModelAlreadyExistsException(entity.getId());
+              throw new ModelAlreadyExistsException(manufacturerName, modelName, year, entity.getId());
             });
   }
 

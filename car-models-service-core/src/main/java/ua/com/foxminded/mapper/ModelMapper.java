@@ -24,15 +24,17 @@ import org.mapstruct.MappingConstants;
 import org.springframework.beans.BeanUtils;
 import ua.com.foxminded.repository.entity.Model;
 import ua.com.foxminded.service.dto.ModelDto;
+import ua.com.foxminded.service.util.MapperUtils;
 
 @Mapper(
     nullValueCheckStrategy = ALWAYS,
     componentModel = MappingConstants.ComponentModel.SPRING,
-    uses = {CategoryMapper.class, ManufacturerMapper.class})
+    uses = CategoryMapper.class)
 public interface ModelMapper {
 
   @Mapping(target = "name", source = "name")
   @Mapping(target = "year", source = "year.value")
+  @Mapping(target = "manufacturer", source = "manufacturer.name")
   ModelDto toDto(Model model);
 
   @InheritInverseConfiguration
@@ -40,6 +42,12 @@ public interface ModelMapper {
 
   default Model mergeWithDto(ModelDto modelDto, Model model) {
     BeanUtils.copyProperties(this.toEntity(modelDto), model);
+    return model;
+  }
+
+  default Model mergeWithNotNullDtoProperties(ModelDto modelDto, Model model) {
+    String[] notNullProperties = MapperUtils.definePropertiesWithNullValued(modelDto);
+    BeanUtils.copyProperties(this.toEntity(modelDto), model, notNullProperties);
     return model;
   }
 }

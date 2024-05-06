@@ -23,7 +23,9 @@ import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "manufacturers")
@@ -36,5 +38,7 @@ public class Manufacturer {
   @Id private String name;
 
   @OneToMany(mappedBy = "manufacturer")
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private Set<Model> models;
 }

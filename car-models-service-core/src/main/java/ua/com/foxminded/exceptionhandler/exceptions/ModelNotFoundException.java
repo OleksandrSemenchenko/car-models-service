@@ -15,6 +15,8 @@
  */
 package ua.com.foxminded.exceptionhandler.exceptions;
 
+import java.util.UUID;
+
 public class ModelNotFoundException extends NotFoundException {
 
   private static final String MODEL_NOT_FOUND_BY_ID = "The model with id=%s doesn't exist";
@@ -22,8 +24,8 @@ public class ModelNotFoundException extends NotFoundException {
   private static final String MODEL_NOT_FOUND_BY_MANUFACTURER_AND_NAME_AND_YEAR =
       "The model with manufacturer '%s', name '%s' and year '%s' doesn't exist";
 
-  public ModelNotFoundException(String modelId) {
-    super(MODEL_NOT_FOUND_BY_ID.formatted(modelId));
+  public ModelNotFoundException(UUID modelId) {
+    super(MODEL_NOT_FOUND_BY_ID.formatted(modelId.toString()));
   }
 
   public ModelNotFoundException(String manufacturer, String name, int year) {

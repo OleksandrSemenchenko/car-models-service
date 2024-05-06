@@ -24,7 +24,9 @@ import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "model_years")
@@ -39,5 +41,7 @@ public class ModelYear {
   private Integer value;
 
   @OneToMany(mappedBy = "year")
+  @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private Set<Model> models;
 }

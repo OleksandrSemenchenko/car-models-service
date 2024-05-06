@@ -15,6 +15,11 @@
  */
 package ua.com.foxminded.repository;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -23,22 +28,16 @@ import ua.com.foxminded.repository.entity.Model;
 import ua.com.foxminded.repository.specification.ModelSpecification;
 import ua.com.foxminded.repository.specification.SearchFilter;
 
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DataJpaTest
 class ModelRepositoryTest {
 
-  private final static String MODEL_NAME = "A7";
-  private final static String MANUFACTURE_NAME = "Audi";
-  private final static String NOT_EXISTING_MANUFACTURER_NAME = "Volvo";
-  private final static Integer MODEL_YEAR = 2020;
-  private final static Integer NOT_EXISTING_MODEL_YEAR = 2035;
-  private final static String CATEGORY_NAME = "Sedan";
-  private final static String NOT_EXISTING_CATEGORY_NAME = "Pickup";
+  private static final String MODEL_NAME = "A7";
+  private static final String MANUFACTURE_NAME = "Audi";
+  private static final String NOT_EXISTING_MANUFACTURER_NAME = "Volvo";
+  private static final Integer MODEL_YEAR = 2020;
+  private static final Integer NOT_EXISTING_MODEL_YEAR = 2035;
+  private static final String CATEGORY_NAME = "Sedan";
+  private static final String NOT_EXISTING_CATEGORY_NAME = "Pickup";
 
   @Autowired private ModelRepository modelRepository;
 
@@ -70,7 +69,6 @@ class ModelRepositoryTest {
     assertTrue(isModelExist);
   }
 
-
   @Test
   void existsByManufacturer_Name_shouldReturnFalse_whenNoModelInDb() {
     boolean isModelExist = modelRepository.existsByManufacturerName(NOT_EXISTING_MANUFACTURER_NAME);
@@ -88,11 +86,11 @@ class ModelRepositoryTest {
   @Test
   void findByNameYearManufacturerName_shouldReturnEmptyOptional_whenModelIsInDb() {
     SearchFilter filter =
-      SearchFilter.builder()
-        .name(MODEL_NAME)
-        .manufacturer(NOT_EXISTING_MANUFACTURER_NAME)
-        .year(MODEL_YEAR)
-        .build();
+        SearchFilter.builder()
+            .name(MODEL_NAME)
+            .manufacturer(NOT_EXISTING_MANUFACTURER_NAME)
+            .year(MODEL_YEAR)
+            .build();
     Specification<Model> specification = ModelSpecification.getSpecification(filter);
 
     Optional<Model> modelOptional = modelRepository.findOne(specification);

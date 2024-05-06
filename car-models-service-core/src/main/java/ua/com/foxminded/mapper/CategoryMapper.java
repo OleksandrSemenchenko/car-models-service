@@ -31,11 +31,9 @@ public interface CategoryMapper {
   @Mapping(target = "models", ignore = true)
   Category toDto(CategoryDto categoryDto);
 
-  default String categoryToString(Category category) {
-    return category.getName();
-  }
+  @Mapping(target = ".", source = "name")
+  String entityToString(Category category);
 
-  default Category stringToCategory(String name) {
-    return Category.builder().name(name).build();
-  }
+  @Mapping(target = "name", source = ".")
+  Category stringToEntity(String category);
 }

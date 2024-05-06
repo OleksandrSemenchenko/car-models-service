@@ -26,6 +26,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,11 +56,13 @@ import ua.com.foxminded.service.dto.ModelDto;
 @ExtendWith(MockitoExtension.class)
 class ModelServiceImpTest {
 
-  private static final String NEW_MODEL_ID = "2";
-  private static final String MODEL_ID = "1";
+  private static final UUID NEW_MODEL_ID = UUID.randomUUID();
+  private static final UUID MODEL_ID = UUID.randomUUID();
   private static final int YEAR = 2020;
   private static final int NEW_YEAR = 2010;
   private static final String MODEL_NAME = "A7";
+  private static final String MANUFACTURER_NAME = "Audi";
+  private static final String CATEGORY_NAME = "Sedan";
 
   @InjectMocks private ModelServiceImp modelService;
 
@@ -205,7 +209,7 @@ class ModelServiceImpTest {
     when(categoryRepository.findById(modelDto.getCategories().iterator().next()))
         .thenReturn(Optional.empty());
 
-    assertThrows(NotFoundException.class, () -> modelService.updateModel(modelDto));
+    assertThrows(NotFoundException.class, () -> modelService.updateModelPartly(modelDto));
   }
 
   @Test
@@ -213,11 +217,11 @@ class ModelServiceImpTest {
     when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any()))
         .thenReturn(Optional.empty());
 
-    assertThrows(NotFoundException.class, () -> modelService.updateModel(modelDto));
+    assertThrows(NotFoundException.class, () -> modelService.updateModelPartly(modelDto));
   }
 
   @Test
-  void update_ShouldUpdateModel() {
+  void update_ShouldUpdateModelPartly() {
     String updatedCategoryName = "Pickup";
     Category updatedCategory =
         Category.builder().name(updatedCategoryName).models(new HashSet<>()).build();
@@ -235,7 +239,7 @@ class ModelServiceImpTest {
             .categories(new HashSet<Category>(Arrays.asList(updatedCategory)))
             .build();
     when(modelRepository.save(updatedVehicle)).thenReturn(updatedVehicle);
-    modelService.updateModel(modelDto);
+    modelService.updateModelPartly(modelDto);
 
     verify(modelRepository).findOne(ArgumentMatchers.<Specification<Model>>any());
     verify(categoryRepository).findById(modelDto.getCategories().iterator().next());

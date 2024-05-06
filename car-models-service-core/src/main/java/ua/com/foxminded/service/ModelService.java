@@ -20,13 +20,17 @@ import org.springframework.data.domain.Pageable;
 import ua.com.foxminded.repository.specification.SearchFilter;
 import ua.com.foxminded.service.dto.ModelDto;
 
+import java.util.UUID;
+
 public interface ModelService {
 
-  ModelDto updateModel(ModelDto sourceModel, ModelDto targetModel);
+  ModelDto updateModel(ModelDto model);
 
-  void deleteModelById(String id);
+  ModelDto updateModelPartly(ModelDto sourceModel, ModelDto targetModel);
 
-  ModelDto getModelById(String modelId);
+  void deleteModelById(UUID id);
+
+  ModelDto getModelById(UUID modelId);
 
   ModelDto getModel(String manufacturer, String modelName, int year);
 

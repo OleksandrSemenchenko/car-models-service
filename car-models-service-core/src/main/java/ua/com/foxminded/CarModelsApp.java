@@ -20,15 +20,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import ua.com.foxminded.config.AppConfig;
 
 @SpringBootApplication
 @EnableCaching
+@EnableTransactionManagement
 @EnableConfigurationProperties(AppConfig.class)
 @PropertySource("classpath:/application.yml")
-public class CarModelsService {
+public class CarModelsApp {
 
   public static void main(String[] args) {
-    SpringApplication.run(CarModelsService.class, args);
+    SpringApplication.run(CarModelsApp.class, args);
   }
 }
