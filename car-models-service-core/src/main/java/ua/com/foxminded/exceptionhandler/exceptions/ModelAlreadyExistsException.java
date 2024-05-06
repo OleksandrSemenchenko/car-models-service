@@ -19,10 +19,9 @@ import java.util.UUID;
 
 public class ModelAlreadyExistsException extends AlreadyExistsException {
 
-
   private static final String MESSAGE_BY_ID = "The model with id='%s' already exists";
   private static final String MESSAGE_BY_PARAMETERS =
-    "The model with manufacturer '%s', name '%s' and year '%s' already exists, its id='%s'";
+      "The model with manufacturer '%s', name '%s' and year '%s' already exists, its id='%s'";
 
   public ModelAlreadyExistsException(String manufacturer, String name, int year, UUID modelId) {
     super(MESSAGE_BY_PARAMETERS.formatted(manufacturer, name, year, String.valueOf(modelId)));

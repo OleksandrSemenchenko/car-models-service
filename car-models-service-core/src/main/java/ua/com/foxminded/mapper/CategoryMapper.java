@@ -15,25 +15,21 @@
  */
 package ua.com.foxminded.mapper;
 
-import org.mapstruct.InheritInverseConfiguration;
+import java.util.Set;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import ua.com.foxminded.repository.entity.Category;
-import ua.com.foxminded.service.dto.CategoryDto;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CategoryMapper {
 
-  CategoryDto toEntity(Category category);
-
-  @InheritInverseConfiguration
-  @Mapping(target = "models", ignore = true)
-  Category toDto(CategoryDto categoryDto);
-
-  @Mapping(target = ".", source = "name")
-  String entityToString(Category category);
-
-  @Mapping(target = "name", source = ".")
+  @Mapping(target = "name", source = "category")
   Category stringToEntity(String category);
+
+  default String entityToString(Category category) {
+    return category.getName();
+  }
+
+  Set<String> categoriesToSet(Set<Category> categories);
 }

@@ -15,6 +15,10 @@
  */
 package ua.com.foxminded.service;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -30,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.com.foxminded.config.AppConfig;
 import ua.com.foxminded.exceptionhandler.exceptions.ModelAlreadyExistsException;
 import ua.com.foxminded.exceptionhandler.exceptions.ModelNotFoundException;
+import ua.com.foxminded.mapper.CategoryMapper;
 import ua.com.foxminded.mapper.ModelMapper;
 import ua.com.foxminded.repository.CategoryRepository;
 import ua.com.foxminded.repository.ManufacturerRepository;
@@ -42,11 +47,6 @@ import ua.com.foxminded.repository.entity.ModelYear;
 import ua.com.foxminded.repository.specification.ModelSpecification;
 import ua.com.foxminded.repository.specification.SearchFilter;
 import ua.com.foxminded.service.dto.ModelDto;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -62,57 +62,26 @@ public class ModelServiceImp implements ModelService {
   private final ModelYearRepository modelYearRepository;
   private final ModelMapper modelMapper;
   private final AppConfig appConfig;
+  private final CategoryMapper categoryMapper;
 
   @Override
   @Transactional
   @Caching(
-    evict = @CacheEvict(value = SEARCH_MODELS_CACHE, allEntries = true),
-    put = {
-      @CachePut(
-        value = GET_MODEL_CACHE,
-        key = "{ 'getModel', #modelDto.manufacturer, #modelDto.name, #modelDto.year }"),
-      @CachePut(
-        value = GET_MODEL_BY_ID_CACHE,
-        key = "{ 'getModelById', #modelDto.id }")
-    })
-  public ModelDto updateModel(ModelDto modelDto) {
-    Model targetModel = modelRepository.findById(modelDto.getId())
-      .orElseThrow(() -> new ModelNotFoundException(modelDto.getId()));
-    Model updatedModel = modelMapper.mergeWithDto(modelDto, targetModel);
-    verifyIfModelExists(updatedModel);
-    Model savedModel = modelRepository.save(updatedModel);
-    return modelMapper.toDto(savedModel);
-  }
-
-  @Override
-  @Transactional
-  @Caching(
-      evict = {
-        @CacheEvict(value = SEARCH_MODELS_CACHE, allEntries = true),
-        @CacheEvict(value = GET_MODEL_BY_ID_CACHE, allEntries = true)
-      },
+      evict = @CacheEvict(value = SEARCH_MODELS_CACHE, allEntries = true),
       put = {
         @CachePut(
             value = GET_MODEL_CACHE,
-            key =
-                "{ 'getModel', #sourceModelDto.manufacturer, #sourceModelDto.name, #sourceModelDto.year }")
+            key = "{ 'getModel', #modelDto.manufacturer, #modelDto.name, #modelDto.year }"),
+        @CachePut(value = GET_MODEL_BY_ID_CACHE, key = "{ 'getModelById', #modelDto.id }")
       })
-  public ModelDto updateModelPartly(ModelDto sourceModelDto, ModelDto targetModelDto) {
-    Model targetModel = findModelBySpecification(
-      targetModelDto.getManufacturer(),
-      targetModelDto.getName(),
-      targetModelDto.getYear());
-    targetModel = modelMapper.mergeWithNotNullDtoProperties(sourceModelDto, targetModel);
-    verifyIfModelExists(targetModel);
-    Model updatedModel = setRelationships(sourceModelDto, targetModel);
-    Model savedModel = modelRepository.save(updatedModel);
+  public ModelDto updateModel(ModelDto modelDto) {
+    Model foundModel =
+        findModelBySpecification(
+            modelDto.getManufacturer(), modelDto.getName(), modelDto.getYear());
+    Set<Category> foundCategories = findCategories(modelDto.getCategories());
+    foundModel.addCategories(foundCategories);
+    Model savedModel = modelRepository.save(foundModel);
     return modelMapper.toDto(savedModel);
-  }
-
-  private void verifyIfModelExists(Model model) {
-    Manufacturer manufacturer = model.getManufacturer();
-    ModelYear modelYear = model.getYear();
-    verifyIfModelExists(manufacturer.getName(), model.getName(), modelYear.getValue());
   }
 
   @Override
@@ -176,8 +145,8 @@ public class ModelServiceImp implements ModelService {
   private Model findModelBySpecification(String manufacturer, String modelName, int modelYear) {
     Specification<Model> specification = buildSpecification(manufacturer, modelName, modelYear);
     return modelRepository
-      .findOne(specification)
-      .orElseThrow(() -> new ModelNotFoundException(manufacturer, modelName, modelYear));
+        .findOne(specification)
+        .orElseThrow(() -> new ModelNotFoundException(manufacturer, modelName, modelYear));
   }
 
   private Specification<Model> buildSpecification(String manufacturer, String name, int year) {
@@ -220,18 +189,21 @@ public class ModelServiceImp implements ModelService {
   public ModelDto createModel(ModelDto modelDto) {
     verifyIfModelExists(modelDto.getManufacturer(), modelDto.getName(), modelDto.getYear());
     Model model = modelMapper.toEntity(modelDto);
-    Model modelWithRelations = setRelationships(modelDto, model);
+    Model modelWithRelations = setRelationships(model);
     Model savedModel = modelRepository.save(modelWithRelations);
     return modelMapper.toDto(savedModel);
   }
 
-  private Model setRelationships(ModelDto modelDto, Model model) {
-    Manufacturer manufacturer = findManufacturerByName(modelDto.getManufacturer());
-    ModelYear year = findModelYearByValue(modelDto.getYear());
-    Set<Category> categories = findCategories(modelDto.getCategories());
-    model.setManufacturer(manufacturer);
-    model.setYear(year);
-    model.addCategories(categories);
+  private Model setRelationships(Model model) {
+    Manufacturer manufacturer = model.getManufacturer();
+    ModelYear year = model.getYear();
+    Set<String> categoryNames = categoryMapper.categoriesToSet(model.getCategories());
+    Manufacturer foundManufacturer = findManufacturerByName(manufacturer.getName());
+    ModelYear foundYear = findModelYearByValue(year.getValue());
+    Set<Category> foundCategories = findCategories(categoryNames);
+    model.setManufacturer(foundManufacturer);
+    model.setYear(foundYear);
+    model.addCategories(foundCategories);
     return model;
   }
 
@@ -241,7 +213,8 @@ public class ModelServiceImp implements ModelService {
         .findOne(specification)
         .ifPresent(
             entity -> {
-              throw new ModelAlreadyExistsException(manufacturerName, modelName, year, entity.getId());
+              throw new ModelAlreadyExistsException(
+                  manufacturerName, modelName, year, entity.getId());
             });
   }
 

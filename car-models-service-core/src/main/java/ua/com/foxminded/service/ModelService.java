@@ -15,18 +15,15 @@
  */
 package ua.com.foxminded.service;
 
+import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ua.com.foxminded.repository.specification.SearchFilter;
 import ua.com.foxminded.service.dto.ModelDto;
 
-import java.util.UUID;
-
 public interface ModelService {
 
   ModelDto updateModel(ModelDto model);
-
-  ModelDto updateModelPartly(ModelDto sourceModel, ModelDto targetModel);
 
   void deleteModelById(UUID id);
 

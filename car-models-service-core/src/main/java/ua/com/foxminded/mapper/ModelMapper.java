@@ -15,21 +15,18 @@
  */
 package ua.com.foxminded.mapper;
 
+import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 import static org.mapstruct.NullValueCheckStrategy.ALWAYS;
 
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
 import org.springframework.beans.BeanUtils;
 import ua.com.foxminded.repository.entity.Model;
 import ua.com.foxminded.service.dto.ModelDto;
 import ua.com.foxminded.service.util.MapperUtils;
 
-@Mapper(
-    nullValueCheckStrategy = ALWAYS,
-    componentModel = MappingConstants.ComponentModel.SPRING,
-    uses = CategoryMapper.class)
+@Mapper(nullValueCheckStrategy = ALWAYS, componentModel = SPRING, uses = CategoryMapper.class)
 public interface ModelMapper {
 
   @Mapping(target = "name", source = "name")

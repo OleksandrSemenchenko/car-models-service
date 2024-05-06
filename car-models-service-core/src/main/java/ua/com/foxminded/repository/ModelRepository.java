@@ -15,11 +15,10 @@
  */
 package ua.com.foxminded.repository;
 
+import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import ua.com.foxminded.repository.entity.Model;
-
-import java.util.UUID;
 
 public interface ModelRepository
     extends JpaRepository<Model, UUID>, JpaSpecificationExecutor<Model> {
