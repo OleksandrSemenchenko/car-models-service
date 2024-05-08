@@ -75,6 +75,20 @@ class ModelServiceImpTest {
 
   // TODO deleteModelById
 
+  void deleteModelById_shouldDeleteModel_whenNoNeedToDeleteRelatedEntities() {
+    when(modelRepository.findById(MODEL_ID)).thenReturn(Optional.empty());
+
+
+
+  }
+
+  @Test
+  void deleteModelById_shouldThrowModelNotFoundException_whenNoModelInDb() {
+    when(modelRepository.findById(MODEL_ID)).thenReturn(Optional.empty());
+
+    assertThrows(ModelNotFoundException.class, () -> modelService.deleteModelById(MODEL_ID));
+  }
+
   @Test
   void updateModel_shouldUpdateModel_whenCategoryIsInDb() {
     Model model = TestDataGenerator.generateModelEntityWithId();
