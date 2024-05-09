@@ -53,7 +53,7 @@ public class Model {
   @NotNull
   @ManyToOne
   @JoinColumn(name = "model_year")
-  private ModelYear year;
+  private Year year;
 
   @NotNull
   @ManyToOne

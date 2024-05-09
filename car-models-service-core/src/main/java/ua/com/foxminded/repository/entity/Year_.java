@@ -13,11 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ua.com.foxminded.repository;
+package ua.com.foxminded.repository.entity;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import ua.com.foxminded.repository.entity.ModelYear;
+import jakarta.persistence.metamodel.SetAttribute;
+import jakarta.persistence.metamodel.SingularAttribute;
+import jakarta.persistence.metamodel.StaticMetamodel;
 
-public interface ModelYearRepository
-    extends JpaRepository<ModelYear, Integer>, JpaSpecificationExecutor<ModelYear> {}
+@StaticMetamodel(Year.class)
+public class Year_ {
+
+  public static volatile SingularAttribute<Year, Integer> value;
+  public static volatile SetAttribute<Year, Model> models;
+}

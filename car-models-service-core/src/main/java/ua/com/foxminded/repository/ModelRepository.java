@@ -18,10 +18,28 @@ package ua.com.foxminded.repository;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import ua.com.foxminded.repository.entity.Model;
 
 public interface ModelRepository
     extends JpaRepository<Model, UUID>, JpaSpecificationExecutor<Model> {
+
+  @Query(value = """
+    delete from model_category
+    	where model_id = :modelId AND category_name = :categoryName
+    """, nativeQuery = true)
+  void removeModelFromCategory(@Param("modelId") UUID modelId,
+                               @Param("categoryName") String categoryName);
+
+  @Modifying
+  @Query(value = """
+    insert into model_category(model_id, category_name)
+    	values(:modelId, :categoryName);
+    """, nativeQuery = true)
+  void putModelToCategory(@Param("modelId") UUID modelId,
+                          @Param("categoryName") String categoryName);
 
   boolean existsByYearValue(int year);
 

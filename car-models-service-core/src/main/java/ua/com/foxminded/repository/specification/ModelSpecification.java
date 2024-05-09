@@ -24,7 +24,7 @@ import ua.com.foxminded.repository.entity.Category;
 import ua.com.foxminded.repository.entity.Category_;
 import ua.com.foxminded.repository.entity.Manufacturer_;
 import ua.com.foxminded.repository.entity.Model;
-import ua.com.foxminded.repository.entity.ModelYear_;
+import ua.com.foxminded.repository.entity.Year_;
 import ua.com.foxminded.repository.entity.Model_;
 
 public class ModelSpecification {
@@ -51,13 +51,13 @@ public class ModelSpecification {
       if (searchFilter.getMaxYear() != null) {
         predicates.add(
             criteriaBuilder.lessThanOrEqualTo(
-                modelRoot.get(Model_.year).get(ModelYear_.value), searchFilter.getMaxYear()));
+                modelRoot.get(Model_.year).get(Year_.value), searchFilter.getMaxYear()));
       }
 
       if (searchFilter.getMinYear() != null) {
         predicates.add(
             criteriaBuilder.greaterThanOrEqualTo(
-                modelRoot.get(Model_.year).get(ModelYear_.value), searchFilter.getMinYear()));
+                modelRoot.get(Model_.year).get(Year_.value), searchFilter.getMinYear()));
       }
 
       if (searchFilter.getName() != null) {
@@ -67,7 +67,7 @@ public class ModelSpecification {
       if (searchFilter.getYear() != null) {
         predicates.add(
             criteriaBuilder.equal(
-                modelRoot.get(Model_.year).get(ModelYear_.value), searchFilter.getYear()));
+                modelRoot.get(Model_.year).get(Year_.value), searchFilter.getYear()));
       }
       return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     };

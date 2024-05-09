@@ -34,7 +34,7 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ModelYear {
+public class Year {
 
   @Id
   @Column(name = "year_value")

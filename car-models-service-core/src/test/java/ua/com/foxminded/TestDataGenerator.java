@@ -22,7 +22,7 @@ import org.springframework.data.jpa.domain.Specification;
 import ua.com.foxminded.repository.entity.Category;
 import ua.com.foxminded.repository.entity.Manufacturer;
 import ua.com.foxminded.repository.entity.Model;
-import ua.com.foxminded.repository.entity.ModelYear;
+import ua.com.foxminded.repository.entity.Year;
 import ua.com.foxminded.repository.specification.ModelSpecification;
 import ua.com.foxminded.repository.specification.SearchFilter;
 import ua.com.foxminded.service.dto.ModelDto;
@@ -64,7 +64,7 @@ public class TestDataGenerator {
   }
 
   public static Model generateModelEntity(UUID modelId) {
-    ModelYear year = ModelYear.builder().value(YEAR).build();
+    Year year = Year.builder().value(YEAR).build();
     Category category = Category.builder().name(CATEGORY_NAME).build();
     Manufacturer manufacturer = Manufacturer.builder().name(MANUFACTURER_NAME).build();
     return Model.builder()

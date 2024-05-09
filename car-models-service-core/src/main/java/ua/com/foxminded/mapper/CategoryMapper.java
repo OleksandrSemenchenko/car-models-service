@@ -15,14 +15,21 @@
  */
 package ua.com.foxminded.mapper;
 
+import java.util.List;
 import java.util.Set;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.springdoc.core.customizers.QuerydslPredicateOperationCustomizer;
 import ua.com.foxminded.repository.entity.Category;
+import ua.com.foxminded.service.dto.CategoryDto;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CategoryMapper {
+
+  Set<CategoryDto> toDtoSet(List<Category> categories);
+
+  CategoryDto toDto(Category category);
 
   @Mapping(target = "name", source = "category")
   Category stringToEntity(String category);
