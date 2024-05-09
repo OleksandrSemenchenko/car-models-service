@@ -38,7 +38,6 @@ import ua.com.foxminded.repository.entity.Model;
 import ua.com.foxminded.repository.entity.Year;
 import ua.com.foxminded.repository.specification.ModelSpecification;
 import ua.com.foxminded.repository.specification.SearchFilter;
-import ua.com.foxminded.service.dto.CategoryDto;
 import ua.com.foxminded.service.dto.ModelDto;
 
 import java.util.List;
@@ -101,24 +100,6 @@ public class ModelServiceImp implements ModelService {
     return categories.stream()
       .map(Category::getName)
       .collect(Collectors.toSet());
-  }
-
-  private void updateCategories(ModelDto modelDto, Model existingModel) {
-    Set<String> shouldBeCategoryNames = categoryService.getCategories(modelDto.getCategories())
-      .stream().map(CategoryDto::getName)
-      .collect(Collectors.toSet());
-
-    Set<String> existingCategoryNames = existingModel.getCategories().stream()
-      .map(Category::getName)
-      .collect(Collectors.toSet());
-
-    for (String existingCategoryName : existingCategoryNames) {
-      if (!shouldBeCategoryNames.contains(existingCategoryName)) {
-        categoryService.deleteCategory(existingCategoryName);
-      }
-    }
-    shouldBeCategoryNames.remove(existingCategoryNames);
-    putModelToCategories(existingModel.getId(), shouldBeCategoryNames);
   }
 
   @Override

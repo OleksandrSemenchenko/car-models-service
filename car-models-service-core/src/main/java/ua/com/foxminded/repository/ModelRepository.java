@@ -26,6 +26,7 @@ import ua.com.foxminded.repository.entity.Model;
 public interface ModelRepository
     extends JpaRepository<Model, UUID>, JpaSpecificationExecutor<Model> {
 
+  @Modifying
   @Query(value = """
     delete from model_category
     	where model_id = :modelId AND category_name = :categoryName
