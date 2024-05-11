@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>ua.com.foxminded</groupId>
+    <groupId>ua.foxminded.cars</groupId>
     <artifactId>car-models-service</artifactId>
     <version>1.${revision}</version>
   </parent>
@@ -10,11 +10,15 @@
   <packaging>jar</packaging>
 
   <properties>
-    <start-class>ua.com.foxminded.CarModelsApp</start-class>
+    <start-class>ua.foxminded.cars.CarModelsApplication</start-class>
     <kubernetes-maven-plugin.version>1.15.0</kubernetes-maven-plugin.version>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aop</artifactId>
+    </dependency>
     <dependency>
       <groupId>jakarta.validation</groupId>
       <artifactId>jakarta.validation-api</artifactId>

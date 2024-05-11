@@ -7,7 +7,7 @@
     <version>3.1.5</version>
     <relativePath/>
   </parent>
-  <groupId>ua.com.foxminded</groupId>
+  <groupId>ua.foxminded.cars</groupId>
   <artifactId>car-models-service</artifactId>
   <version>1.${revision}</version>
   <packaging>pom</packaging>
