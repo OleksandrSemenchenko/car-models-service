@@ -27,18 +27,24 @@ public interface ModelRepository
     extends JpaRepository<Model, UUID>, JpaSpecificationExecutor<Model> {
 
   @Modifying
-  @Query(value = """
+  @Query(
+      value =
+          """
     delete from model_category
     	where model_id = :modelId AND category_name = :categoryName
-    """, nativeQuery = true)
+    """,
+      nativeQuery = true)
   void removeModelFromCategory(@Param("modelId") UUID modelId,
                                @Param("categoryName") String categoryName);
 
   @Modifying
-  @Query(value = """
+  @Query(
+      value =
+          """
     insert into model_category(model_id, category_name)
     	values(:modelId, :categoryName);
-    """, nativeQuery = true)
+    """,
+      nativeQuery = true)
   void putModelToCategory(@Param("modelId") UUID modelId,
                           @Param("categoryName") String categoryName);
 

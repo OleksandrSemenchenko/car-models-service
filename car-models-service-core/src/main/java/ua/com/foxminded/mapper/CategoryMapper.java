@@ -20,7 +20,6 @@ import java.util.Set;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-import org.springdoc.core.customizers.QuerydslPredicateOperationCustomizer;
 import ua.com.foxminded.repository.entity.Category;
 import ua.com.foxminded.service.dto.CategoryDto;
 

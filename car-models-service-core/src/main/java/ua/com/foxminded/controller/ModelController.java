@@ -119,7 +119,7 @@ public class ModelController {
       })
   public Page<ModelDto> search(
       @Valid @ParameterObject SearchFilter searchFilter, @ParameterObject Pageable pageRequest) {
-    return modelService.search(searchFilter, pageRequest);
+    return modelService.searchModel(searchFilter, pageRequest);
   }
 
   @GetMapping("/models/{id}")

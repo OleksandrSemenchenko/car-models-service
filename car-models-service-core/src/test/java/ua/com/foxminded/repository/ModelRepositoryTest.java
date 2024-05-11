@@ -22,8 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 import java.util.UUID;
-
-import org.hibernate.exception.DataException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -60,8 +58,9 @@ class ModelRepositoryTest {
 
   @Test
   void putModelToCategory_shouldThrowException_whenNoModelAndCategoryInDB() {
-    assertThrows(DataIntegrityViolationException.class,
-      () -> modelRepository.putModelToCategory(NOT_EXISTING_MODEL_ID, NOT_EXISTING_CATEGORY));
+    assertThrows(
+        DataIntegrityViolationException.class,
+        () -> modelRepository.putModelToCategory(NOT_EXISTING_MODEL_ID, NOT_EXISTING_CATEGORY));
   }
 
   @Test
@@ -133,11 +132,7 @@ class ModelRepositoryTest {
   @Test
   void findOne_shouldReturnModel_whenModelIsInDb() {
     SearchFilter filter =
-        SearchFilter.builder()
-            .name(MODEL)
-            .manufacturer(MANUFACTURE)
-            .year(MODEL_YEAR)
-            .build();
+        SearchFilter.builder().name(MODEL).manufacturer(MANUFACTURE).year(MODEL_YEAR).build();
     Specification<Model> specification = ModelSpecification.getSpecification(filter);
 
     Model model = modelRepository.findOne(specification).get();

@@ -31,7 +31,7 @@ public interface ModelService {
 
   ModelDto getModel(String manufacturer, String modelName, int year);
 
-  Page<ModelDto> search(SearchFilter searchFilter, Pageable pageable);
+  Page<ModelDto> searchModel(SearchFilter searchFilter, Pageable pageable);
 
   ModelDto createModel(ModelDto model);
 }

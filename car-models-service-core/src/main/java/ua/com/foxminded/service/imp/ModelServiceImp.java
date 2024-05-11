@@ -13,8 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ua.com.foxminded.service;
+package ua.com.foxminded.service.imp;
 
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -38,12 +42,11 @@ import ua.com.foxminded.repository.entity.Model;
 import ua.com.foxminded.repository.entity.Year;
 import ua.com.foxminded.repository.specification.ModelSpecification;
 import ua.com.foxminded.repository.specification.SearchFilter;
+import ua.com.foxminded.service.CategoryService;
+import ua.com.foxminded.service.ManufacturerService;
+import ua.com.foxminded.service.ModelService;
+import ua.com.foxminded.service.YearService;
 import ua.com.foxminded.service.dto.ModelDto;
-
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -79,27 +82,24 @@ public class ModelServiceImp implements ModelService {
     Set<String> sourceCategories = getCategoryNames(sourceModel.getCategories());
     Set<String> targetCategories = targetModelDto.getCategories();
     removeModelFromCategories(sourceModel.getId(), sourceCategories, targetCategories);
-    targetCategories.remove(sourceCategories);
+    targetCategories.removeAll(sourceCategories);
     putModelToCategories(sourceModel.getId(), targetCategories);
     targetModelDto.setId(sourceModel.getId());
     return targetModelDto;
   }
 
-  private void removeModelFromCategories(UUID modelId,
-                                         Set<String> sourceCategories,
-                                         Set<String> targetCategories) {
+  private Set<String> getCategoryNames(Set<Category> categories) {
+    return categories.stream().map(Category::getName).collect(Collectors.toSet());
+  }
+
+  private void removeModelFromCategories(
+      UUID modelId, Set<String> sourceCategories, Set<String> targetCategories) {
     for (String sourceCategory : sourceCategories) {
       if (!targetCategories.contains(sourceCategory)) {
         modelRepository.removeModelFromCategory(modelId, sourceCategory);
         deleteCategoryIfNeeded(sourceCategory);
       }
     }
-  }
-
-  private Set<String> getCategoryNames(Set<Category> categories) {
-    return categories.stream()
-      .map(Category::getName)
-      .collect(Collectors.toSet());
   }
 
   @Override
@@ -111,7 +111,8 @@ public class ModelServiceImp implements ModelService {
         @CacheEvict(value = GET_MODEL_CACHE, allEntries = true)
       })
   public void deleteModelById(UUID modelId) {
-    Model model = modelRepository.findById(modelId).orElseThrow(() -> new ModelNotFoundException(modelId));
+    Model model =
+        modelRepository.findById(modelId).orElseThrow(() -> new ModelNotFoundException(modelId));
     modelRepository.deleteById(modelId);
     deleteManufacturerIfNeeded(model.getManufacturer());
     deleteModelYearIfNeeded(model.getYear());
@@ -168,12 +169,10 @@ public class ModelServiceImp implements ModelService {
 
   @Override
   @Cacheable(value = SEARCH_MODELS_CACHE, key = "{ #root.methodName, #searchFilter, #pageable }")
-  public Page<ModelDto> search(SearchFilter searchFilter, Pageable pageable) {
+  public Page<ModelDto> searchModel(SearchFilter searchFilter, Pageable pageable) {
     pageable = setDefaultSortIfNeeded(pageable);
     Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
-    return modelRepository
-        .findAll(specification, pageable)
-        .map(modelMapper::toDto);
+    return modelRepository.findAll(specification, pageable).map(modelMapper::toDto);
   }
 
   private Pageable setDefaultSortIfNeeded(Pageable pageRequest) {
@@ -214,17 +213,17 @@ public class ModelServiceImp implements ModelService {
   private void verifyIfModelExists(String manufacturerName, String modelName, int year) {
     Specification<Model> specification = buildSpecification(manufacturerName, modelName, year);
     modelRepository
-      .findOne(specification)
-      .ifPresent(
-        entity -> {
-          throw new ModelAlreadyExistsException(
-            manufacturerName, modelName, year, entity.getId());
-        });
+        .findOne(specification)
+        .ifPresent(
+            entity -> {
+              throw new ModelAlreadyExistsException(
+                  manufacturerName, modelName, year, entity.getId());
+            });
   }
 
   private Specification<Model> buildSpecification(String manufacturer, String name, int year) {
     SearchFilter searchFilter =
-      SearchFilter.builder().manufacturer(manufacturer).name(name).year(year).build();
+        SearchFilter.builder().manufacturer(manufacturer).name(name).year(year).build();
     return ModelSpecification.getSpecification(searchFilter);
   }
 

@@ -22,7 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import ua.com.foxminded.service.ModelServiceImp;
+import ua.com.foxminded.service.imp.ModelServiceImp;
 import ua.com.foxminded.service.dto.ModelDto;
 
 @WebMvcTest(controllers = ModelController.class)

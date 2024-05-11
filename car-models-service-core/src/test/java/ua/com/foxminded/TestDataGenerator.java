@@ -17,6 +17,7 @@ package ua.com.foxminded;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.domain.Specification;
 import ua.com.foxminded.repository.entity.Category;
@@ -55,7 +56,7 @@ public class TestDataGenerator {
         .year(YEAR)
         .manufacturer(MANUFACTURER_NAME)
         .name(MODEL_NAME)
-        .categories(new HashSet<>(Arrays.asList(CATEGORY_NAME)))
+        .categories(new HashSet<>(List.of(CATEGORY_NAME)))
         .build();
   }
 
@@ -72,7 +73,7 @@ public class TestDataGenerator {
         .year(year)
         .manufacturer(manufacturer)
         .name(MODEL_NAME)
-        .categories(new HashSet<>(Arrays.asList(category)))
+        .categories(new HashSet<>(List.of(category)))
         .build();
   }
 }

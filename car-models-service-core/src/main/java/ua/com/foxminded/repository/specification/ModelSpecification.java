@@ -24,8 +24,8 @@ import ua.com.foxminded.repository.entity.Category;
 import ua.com.foxminded.repository.entity.Category_;
 import ua.com.foxminded.repository.entity.Manufacturer_;
 import ua.com.foxminded.repository.entity.Model;
-import ua.com.foxminded.repository.entity.Year_;
 import ua.com.foxminded.repository.entity.Model_;
+import ua.com.foxminded.repository.entity.Year_;
 
 public class ModelSpecification {
 
