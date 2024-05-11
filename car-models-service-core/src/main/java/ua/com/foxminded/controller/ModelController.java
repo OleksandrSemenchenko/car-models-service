@@ -126,7 +126,7 @@ public class ModelController {
   @Operation(
       summary = "Get a model by its id",
       operationId = "getModelById",
-      description = "Seach for and revrieve a model from the database by its name",
+      description = "Search for and retrieve a model from the database by its name",
       tags = "model",
       responses = {
         @ApiResponse(
@@ -229,18 +229,18 @@ public class ModelController {
   @DeleteMapping("/models/{id}")
   @ResponseStatus(NO_CONTENT)
   @Operation(
-      summary = "Delete a model by its id",
+      summary = "Delete a model by its ID",
       operationId = "deleteModelById",
-      description = "Search for and delete from the database a model by its id",
+      description = "Search for and delete a model from a database",
       tags = "model",
       responses = {
         @ApiResponse(responseCode = "204", description = "The model has been deleted"),
         @ApiResponse(
             responseCode = "404",
-            description = "The model has not been found",
+            description = "The model not found",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
       })
-  public void deleteById(@PathVariable UUID id) {
+  public void deleteModelById(@PathVariable UUID id) {
     modelService.deleteModelById(id);
   }
 }

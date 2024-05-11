@@ -108,7 +108,7 @@ class ModelServiceImpTest {
   }
 
   @Test
-  void updateModel_shouldCreateCategory_whenNoCategoryInDb() {
+  void updateModel_shouldCreateRelatedCategory_whenNoCategoryInDb() {
     ModelDto modelDto = TestDataGenerator.generateModelDtoWithId();
     Model model = TestDataGenerator.generateModelEntityWithId();
     model.setCategories(Set.of(Category.builder().name(NOT_NEEDED_CATEGORY).build()));
