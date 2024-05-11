@@ -17,10 +17,10 @@ package ua.foxminded.cars.service.imp;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ua.foxminded.cars.service.YearService;
 import ua.foxminded.cars.exceptionhandler.exceptions.YearNotFoundException;
 import ua.foxminded.cars.repository.YearRepository;
 import ua.foxminded.cars.repository.entity.Year;
+import ua.foxminded.cars.service.YearService;
 
 @Service
 @RequiredArgsConstructor

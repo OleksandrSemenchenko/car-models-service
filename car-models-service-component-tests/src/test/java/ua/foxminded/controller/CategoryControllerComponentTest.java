@@ -16,14 +16,10 @@
 package ua.foxminded.controller;
 
 import static org.hamcrest.Matchers.hasSize;
-import static ua.com.foxminded.controller.ExceptionHandlerController.DATA_INTEGRITY_VIOLATION_EXCEPTION_MESSAGE;
-import static ua.com.foxminded.controller.ExceptionHandlerController.NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE;
-import static ua.foxminded.cars.service.CategoryService.CATEGORY_ALREADY_EXISTS;
-import static ua.foxminded.cars.service.CategoryService.NO_CATEGORY;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import ua.com.foxminded.dto.CategoryDto;
+import ua.foxminded.cars.service.dto.CategoryDto;
 
 class CategoryControllerComponentTest extends ComponentTestContext {
 

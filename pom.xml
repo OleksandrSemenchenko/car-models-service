@@ -9,7 +9,8 @@
   </parent>
   <groupId>ua.foxminded.cars</groupId>
   <artifactId>car-models-service</artifactId>
-  <version>1.${revision}</version>
+  <!--  <version>1.${revision}</version>-->
+  <version>1.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Car models service API</name>
 
@@ -20,7 +21,7 @@
 
   <properties>
     <spotless-maven-plugin.version>2.41.1</spotless-maven-plugin.version>
-    <revision>1-SNAPSHOT</revision>
+    <!--    <revision>0.1-SNAPSHOT</revision>-->
     <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
     <java.version>17</java.version>
     <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
@@ -44,7 +45,7 @@
 
       <!-- Module dependencies-->
       <dependency>
-        <groupId>ua.com.foxminded</groupId>
+        <groupId>ua.foxminded.cars</groupId>
         <artifactId>car-models-service-core</artifactId>
         <version>${project.version}</version>
       </dependency>

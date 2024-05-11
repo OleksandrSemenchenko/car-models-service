@@ -15,6 +15,18 @@
  */
 package ua.foxminded.cars.service.imp;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,19 +56,6 @@ import ua.foxminded.cars.service.CategoryService;
 import ua.foxminded.cars.service.ManufacturerService;
 import ua.foxminded.cars.service.YearService;
 import ua.foxminded.cars.service.dto.ModelDto;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ModelServiceImpTest {
@@ -99,7 +98,8 @@ class ModelServiceImpTest {
     Model model = TestDataGenerator.generateModelEntityWithId();
     model.setCategories(Set.of(Category.builder().name(NOT_NEEDED_CATEGORY).build()));
 
-    when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.of(model));
+    when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any()))
+        .thenReturn(Optional.of(model));
 
     ModelDto actualModelDto = modelService.updateModel(modelDto);
 
@@ -113,7 +113,8 @@ class ModelServiceImpTest {
     Model model = TestDataGenerator.generateModelEntityWithId();
     model.setCategories(Set.of(Category.builder().name(NOT_NEEDED_CATEGORY).build()));
 
-    when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.of(model));
+    when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any()))
+        .thenReturn(Optional.of(model));
 
     ModelDto actualModelDto = modelService.updateModel(modelDto);
 
@@ -125,7 +126,8 @@ class ModelServiceImpTest {
   void updateModel_shouldThrowModelNotFoundException_whenNoModelInDb() {
     ModelDto modelDto = TestDataGenerator.generateModelDtoWithId();
 
-    when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.empty());
+    when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any()))
+        .thenReturn(Optional.empty());
 
     assertThrows(ModelNotFoundException.class, () -> modelService.updateModel(modelDto));
   }
@@ -189,7 +191,8 @@ class ModelServiceImpTest {
   @Test
   void getModel_shouldReturnModel_whenModelIsInDb() {
     Model model = TestDataGenerator.generateModelEntityWithId();
-    when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.of(model));
+    when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any()))
+        .thenReturn(Optional.of(model));
 
     ModelDto actualModel = modelService.getModel(MANUFACTURER_NAME, MODEL_NAME, YEAR);
 
@@ -198,9 +201,12 @@ class ModelServiceImpTest {
 
   @Test
   void getModel_shouldThrowModelNotFoundException_whenNoModelInDb() {
-    when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any())).thenReturn(Optional.empty());
+    when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any()))
+        .thenReturn(Optional.empty());
 
-    assertThrows(ModelNotFoundException.class, () -> modelService.getModel(MANUFACTURER_NAME, MODEL_NAME, YEAR));
+    assertThrows(
+        ModelNotFoundException.class,
+        () -> modelService.getModel(MANUFACTURER_NAME, MODEL_NAME, YEAR));
   }
 
   @Test
@@ -212,7 +218,7 @@ class ModelServiceImpTest {
     Page<Model> modelsPage = new PageImpl<>(List.of(model));
 
     when(modelRepository.findAll(ArgumentMatchers.<Specification<Model>>any(), any(Pageable.class)))
-      .thenReturn(modelsPage);
+        .thenReturn(modelsPage);
 
     Page<ModelDto> actualPage = modelService.searchModel(filter, pageable);
 
@@ -230,7 +236,7 @@ class ModelServiceImpTest {
     when(appConfig.getModelSortDirection()).thenReturn(Sort.Direction.DESC);
     when(appConfig.getModelSortBy()).thenReturn(SORT_BY_NAME);
     when(modelRepository.findAll(ArgumentMatchers.<Specification<Model>>any(), any(Pageable.class)))
-      .thenReturn(modelsPage);
+        .thenReturn(modelsPage);
 
     Page<ModelDto> actualPage = modelService.searchModel(filter, pageable);
 
@@ -244,7 +250,7 @@ class ModelServiceImpTest {
     Model model = TestDataGenerator.generateModelEntityWithId();
 
     when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any()))
-      .thenReturn(Optional.empty());
+        .thenReturn(Optional.empty());
     when(modelRepository.save(any(Model.class))).thenReturn(model);
 
     ModelDto createdModel = modelService.createModel(modelDto);
@@ -270,7 +276,7 @@ class ModelServiceImpTest {
     ModelDto modelDto = TestDataGenerator.generateModelDtoWithId();
 
     when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any()))
-      .thenReturn(Optional.of(new Model()));
+        .thenReturn(Optional.of(new Model()));
 
     assertThrows(ModelAlreadyExistsException.class, () -> modelService.createModel(modelDto));
   }

@@ -19,11 +19,11 @@ import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ua.foxminded.cars.mapper.CategoryMapper;
-import ua.foxminded.cars.service.CategoryService;
 import ua.foxminded.cars.exceptionhandler.exceptions.CategoryNotFoundException;
+import ua.foxminded.cars.mapper.CategoryMapper;
 import ua.foxminded.cars.repository.CategoryRepository;
 import ua.foxminded.cars.repository.entity.Category;
+import ua.foxminded.cars.service.CategoryService;
 import ua.foxminded.cars.service.dto.CategoryDto;
 
 @Service

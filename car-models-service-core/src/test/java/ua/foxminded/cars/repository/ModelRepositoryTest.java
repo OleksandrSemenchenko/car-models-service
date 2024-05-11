@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.domain.Specification;
-import ua.foxminded.cars.repository.ModelRepository;
 import ua.foxminded.cars.repository.entity.Model;
 import ua.foxminded.cars.repository.specification.ModelSpecification;
 import ua.foxminded.cars.repository.specification.SearchFilter;

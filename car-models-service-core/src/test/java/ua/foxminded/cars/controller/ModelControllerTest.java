@@ -22,8 +22,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import ua.foxminded.cars.service.imp.ModelServiceImp;
 import ua.foxminded.cars.service.dto.ModelDto;
+import ua.foxminded.cars.service.imp.ModelServiceImp;
 
 @WebMvcTest(controllers = ModelController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -43,8 +43,6 @@ class ModelControllerTest {
 
   private ModelDto modelDto;
   private String modelDtoJson;
-
-
 
   //  @BeforeEach
   //  void setUp() {

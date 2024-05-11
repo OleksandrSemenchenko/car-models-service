@@ -34,8 +34,8 @@ public interface ModelRepository
     	where model_id = :modelId AND category_name = :categoryName
     """,
       nativeQuery = true)
-  void removeModelFromCategory(@Param("modelId") UUID modelId,
-                               @Param("categoryName") String categoryName);
+  void removeModelFromCategory(
+      @Param("modelId") UUID modelId, @Param("categoryName") String categoryName);
 
   @Modifying
   @Query(
@@ -45,8 +45,8 @@ public interface ModelRepository
     	values(:modelId, :categoryName);
     """,
       nativeQuery = true)
-  void putModelToCategory(@Param("modelId") UUID modelId,
-                          @Param("categoryName") String categoryName);
+  void putModelToCategory(
+      @Param("modelId") UUID modelId, @Param("categoryName") String categoryName);
 
   boolean existsByYearValue(int year);
 

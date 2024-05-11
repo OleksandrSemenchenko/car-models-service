@@ -17,10 +17,10 @@ package ua.foxminded.cars.service.imp;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ua.foxminded.cars.service.ManufacturerService;
 import ua.foxminded.cars.exceptionhandler.exceptions.ManufacturerNotFoundException;
 import ua.foxminded.cars.repository.ManufacturerRepository;
 import ua.foxminded.cars.repository.entity.Manufacturer;
+import ua.foxminded.cars.service.ManufacturerService;
 
 @Service
 @RequiredArgsConstructor

@@ -17,19 +17,19 @@ package ua.foxminded.controller;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
-import static ua.foxminded.controller.CategoryControllerComponentTest.CATEGORY_NAME;
-import static ua.foxminded.controller.CategoryControllerComponentTest.CATEGORY_NAME_WITHOUT_RELATIONS;
-import static ua.foxminded.controller.CategoryControllerComponentTest.NEW_CATEGORY_NAME;
 import static ua.com.foxminded.controller.ExceptionHandlerController.NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE;
-import static ua.foxminded.controller.ModelNameControllerComponentTest.MODEL_NAME;
-import static ua.foxminded.controller.ModelNameControllerComponentTest.MODEL_NAME_WITHOUT_RELATIONS;
-import static ua.foxminded.controller.ModelNameControllerComponentTest.NEW_MODEL_NAME;
+import static ua.com.foxminded.service.ModelNameService.NO_MODEL_NAME;
 import static ua.foxminded.cars.service.CategoryService.NO_CATEGORY;
 import static ua.foxminded.cars.service.ManufacturerService.NO_MANUFACTURER;
-import static ua.com.foxminded.service.ModelNameService.NO_MODEL_NAME;
 import static ua.foxminded.cars.service.imp.ModelServiceImp.MODEL_ALREADY_EXISTS;
 import static ua.foxminded.cars.service.imp.ModelServiceImp.NO_MODEL_WITH_SUCH_ID;
 import static ua.foxminded.cars.service.imp.ModelServiceImp.NO_SUCH_MODEL;
+import static ua.foxminded.controller.CategoryControllerComponentTest.CATEGORY_NAME;
+import static ua.foxminded.controller.CategoryControllerComponentTest.CATEGORY_NAME_WITHOUT_RELATIONS;
+import static ua.foxminded.controller.CategoryControllerComponentTest.NEW_CATEGORY_NAME;
+import static ua.foxminded.controller.ModelNameControllerComponentTest.MODEL_NAME;
+import static ua.foxminded.controller.ModelNameControllerComponentTest.MODEL_NAME_WITHOUT_RELATIONS;
+import static ua.foxminded.controller.ModelNameControllerComponentTest.NEW_MODEL_NAME;
 
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -76,7 +76,12 @@ class ModelControllerComponentTest extends ComponentTestContext {
         .isNotFound()
         .expectBody()
         .jsonPath("$.message")
-        .isEqualTo(String.format(NO_SUCH_MODEL, ManufacturerControllerComponentTest.MANUFACTURER_NAME, MODEL_NAME, NEW_MODEL_YEAR));
+        .isEqualTo(
+            String.format(
+                NO_SUCH_MODEL,
+                ManufacturerControllerComponentTest.MANUFACTURER_NAME,
+                MODEL_NAME,
+                NEW_MODEL_YEAR));
   }
 
   @Test
@@ -107,7 +112,8 @@ class ModelControllerComponentTest extends ComponentTestContext {
                     .path("/v1/models")
                     .queryParam("model", MODEL_NAME)
                     .queryParam("category", CATEGORY_NAME)
-                    .queryParam("manufacturer", ManufacturerControllerComponentTest.MANUFACTURER_NAME)
+                    .queryParam(
+                        "manufacturer", ManufacturerControllerComponentTest.MANUFACTURER_NAME)
                     .queryParam("maxYear", -2025)
                     .queryParam("minYear", -2023)
                     .build())
@@ -130,7 +136,8 @@ class ModelControllerComponentTest extends ComponentTestContext {
                     .path("/v1/models")
                     .queryParam("model", MODEL_NAME)
                     .queryParam("category", CATEGORY_NAME)
-                    .queryParam("manufacturer", ManufacturerControllerComponentTest.MANUFACTURER_NAME)
+                    .queryParam(
+                        "manufacturer", ManufacturerControllerComponentTest.MANUFACTURER_NAME)
                     .queryParam("maxYear", MODEL_YEAR)
                     .queryParam("minYear", MODEL_YEAR)
                     .build())
@@ -287,7 +294,9 @@ class ModelControllerComponentTest extends ComponentTestContext {
         .isNotFound()
         .expectBody()
         .jsonPath("$.message")
-        .isEqualTo(String.format(NO_MANUFACTURER, ManufacturerControllerComponentTest.NEW_MANUFACTURER_NAME));
+        .isEqualTo(
+            String.format(
+                NO_MANUFACTURER, ManufacturerControllerComponentTest.NEW_MANUFACTURER_NAME));
   }
 
   @Test
@@ -412,7 +421,12 @@ class ModelControllerComponentTest extends ComponentTestContext {
         .isNotFound()
         .expectBody()
         .jsonPath("$.message")
-        .isEqualTo(String.format(NO_SUCH_MODEL, ManufacturerControllerComponentTest.MANUFACTURER_NAME, NEW_MODEL_NAME, MODEL_YEAR));
+        .isEqualTo(
+            String.format(
+                NO_SUCH_MODEL,
+                ManufacturerControllerComponentTest.MANUFACTURER_NAME,
+                NEW_MODEL_NAME,
+                MODEL_YEAR));
   }
 
   @Test
