@@ -15,7 +15,7 @@
  */
 package ua.foxminded.cars.exceptionhandler.exceptions;
 
-public class ManufacturerNotFoundException extends NotFoundException {
+public class ManufacturerNotFoundException extends UnitNotFoundException {
 
   public static final String MESSAGE = "The %s manufacturer not found";
 

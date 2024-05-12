@@ -17,18 +17,17 @@ package ua.foxminded.cars.exceptionhandler.exceptions;
 
 import java.util.UUID;
 
-public class ModelNotFoundException extends NotFoundException {
+public class ModelNotFoundException extends UnitNotFoundException {
 
-  private static final String MODEL_NOT_FOUND_BY_ID = "The model with id=%s doesn't exist";
-
-  private static final String MODEL_NOT_FOUND_BY_MANUFACTURER_AND_NAME_AND_YEAR =
-      "The model with manufacturer '%s', name '%s' and year '%s' doesn't exist";
+  private static final String MODEL_NOT_FOUND_BY_ID = "The model with id=%s not found";
+  private static final String MODEL_NOT_FOUND =
+      "The model with manufacturer '%s', name '%s' and year '%s' not found";
 
   public ModelNotFoundException(UUID modelId) {
     super(MODEL_NOT_FOUND_BY_ID.formatted(modelId.toString()));
   }
 
   public ModelNotFoundException(String manufacturer, String name, int year) {
-    super(MODEL_NOT_FOUND_BY_MANUFACTURER_AND_NAME_AND_YEAR.formatted(manufacturer, name, year));
+    super(MODEL_NOT_FOUND.formatted(manufacturer, name, year));
   }
 }

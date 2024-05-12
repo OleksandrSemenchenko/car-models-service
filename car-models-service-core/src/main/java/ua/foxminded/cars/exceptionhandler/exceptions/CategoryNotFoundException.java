@@ -15,7 +15,7 @@
  */
 package ua.foxminded.cars.exceptionhandler.exceptions;
 
-public class CategoryNotFoundException extends NotFoundException {
+public class CategoryNotFoundException extends UnitNotFoundException {
 
   private static final String MESSAGE = "The %s category not found";
 

@@ -15,6 +15,7 @@
  */
 package ua.foxminded.cars.service.imp;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -70,8 +71,8 @@ public class ModelServiceImp implements ModelService {
       put = {
         @CachePut(
             value = GET_MODEL_CACHE,
-            key = "{ 'getModel', #modelDto.manufacturer, #modelDto.name, #modelDto.year }"),
-        @CachePut(value = GET_MODEL_BY_ID_CACHE, key = "{ 'getModelById', #modelDto.id }")
+            key = "{ 'getModel', #targetModelDto.manufacturer, #targetModelDto.name, #targetModelDto.year }"),
+        @CachePut(value = GET_MODEL_BY_ID_CACHE, key = "{ 'getModelById', #targetModelDto.id }")
       })
   public ModelDto updateModel(ModelDto targetModelDto) {
     Model sourceModel =
@@ -80,7 +81,7 @@ public class ModelServiceImp implements ModelService {
 
     createCategoriesIfNeeded(targetModelDto.getCategories());
     Set<String> sourceCategories = getCategoryNames(sourceModel.getCategories());
-    Set<String> targetCategories = targetModelDto.getCategories();
+    Set<String> targetCategories = new HashSet<>(targetModelDto.getCategories());
     removeModelFromCategories(sourceModel.getId(), sourceCategories, targetCategories);
     targetCategories.removeAll(sourceCategories);
     putModelToCategories(sourceModel.getId(), targetCategories);

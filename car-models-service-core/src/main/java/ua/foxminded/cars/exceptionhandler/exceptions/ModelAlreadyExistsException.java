@@ -17,7 +17,7 @@ package ua.foxminded.cars.exceptionhandler.exceptions;
 
 import java.util.UUID;
 
-public class ModelAlreadyExistsException extends AlreadyExistsException {
+public class ModelAlreadyExistsException extends DataIntegrityViolationException {
 
   private static final String MESSAGE_BY_ID = "The model with id='%s' already exists";
   private static final String MESSAGE_BY_PARAMETERS =

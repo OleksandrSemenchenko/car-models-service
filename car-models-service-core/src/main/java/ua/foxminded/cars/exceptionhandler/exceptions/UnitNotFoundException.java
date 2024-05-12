@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ua.foxminded.cars.exceptionhandler;
+package ua.foxminded.cars.exceptionhandler.exceptions;
 
-import lombok.Data;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-@Data
-public class Violation {
+public class UnitNotFoundException extends RuntimeException {
 
-  private final String attribute;
-  private final String message;
+  public UnitNotFoundException(String message) {
+    super(message);
+  }
 }

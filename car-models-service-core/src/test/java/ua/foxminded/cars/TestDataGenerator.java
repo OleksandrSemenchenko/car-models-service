@@ -46,17 +46,18 @@ public class TestDataGenerator {
   }
 
   public static ModelDto generateModelDtoWithId() {
-    return generateModelDto(MODEL_ID);
+    ModelDto modelDto = generateModelDto();
+    modelDto.setId(MODEL_ID);
+    return modelDto;
   }
 
-  public static ModelDto generateModelDto(UUID modelId) {
+  public static ModelDto generateModelDto() {
     return ModelDto.builder()
-        .id(MODEL_ID)
-        .year(YEAR)
-        .manufacturer(MANUFACTURER_NAME)
-        .name(MODEL_NAME)
-        .categories(new HashSet<>(List.of(CATEGORY_NAME)))
-        .build();
+      .year(YEAR)
+      .manufacturer(MANUFACTURER_NAME)
+      .name(MODEL_NAME)
+      .categories(new HashSet<>(List.of(CATEGORY_NAME)))
+      .build();
   }
 
   public static Model generateModelEntityWithId() {

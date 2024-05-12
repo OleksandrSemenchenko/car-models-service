@@ -33,6 +33,7 @@ public class ManufacturerServiceImp implements ManufacturerService {
     if (!manufacturerRepository.existsById(manufacturerName)) {
       throw new ManufacturerNotFoundException(manufacturerName);
     }
+    manufacturerRepository.deleteById(manufacturerName);
   }
 
   @Override
