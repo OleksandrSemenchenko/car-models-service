@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Oleksandr Semenchenko
+ * Copyright 2024 Oleksandr Semenchenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import ua.foxminded.cars.config.AppConfig;
@@ -28,7 +27,6 @@ import ua.foxminded.cars.config.AppConfig;
 @EnableCaching
 @EnableTransactionManagement
 @EnableConfigurationProperties(AppConfig.class)
-@EnableAspectJAutoProxy
 @PropertySource("classpath:/application.yml")
 public class CarModelsApplication {
 

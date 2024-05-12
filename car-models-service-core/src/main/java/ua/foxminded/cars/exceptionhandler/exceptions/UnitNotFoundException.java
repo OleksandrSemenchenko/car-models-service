@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Oleksandr Semenchenko
+ * Copyright 2024 Oleksandr Semenchenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 package ua.foxminded.cars.exceptionhandler.exceptions;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 public class UnitNotFoundException extends RuntimeException {
 

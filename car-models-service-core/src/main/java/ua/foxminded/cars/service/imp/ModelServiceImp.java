@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Oleksandr Semenchenko
+ * Copyright 2024 Oleksandr Semenchenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,8 @@ public class ModelServiceImp implements ModelService {
       put = {
         @CachePut(
             value = GET_MODEL_CACHE,
-            key = "{ 'getModel', #targetModelDto.manufacturer, #targetModelDto.name, #targetModelDto.year }"),
+            key =
+                "{ 'getModel', #targetModelDto.manufacturer, #targetModelDto.name, #targetModelDto.year }"),
         @CachePut(value = GET_MODEL_BY_ID_CACHE, key = "{ 'getModelById', #targetModelDto.id }")
       })
   public ModelDto updateModel(ModelDto targetModelDto) {

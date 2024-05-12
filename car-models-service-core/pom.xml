@@ -4,7 +4,6 @@
   <parent>
     <groupId>ua.foxminded.cars</groupId>
     <artifactId>car-models-service</artifactId>
-    <!--    <version>1.${revision}</version>-->
     <version>1.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>car-models-service-core</artifactId>
@@ -16,10 +15,6 @@
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-aop</artifactId>
-    </dependency>
     <dependency>
       <groupId>jakarta.validation</groupId>
       <artifactId>jakarta.validation-api</artifactId>
@@ -168,6 +163,17 @@
         <groupId>org.eclipse.jkube</groupId>
         <artifactId>kubernetes-maven-plugin</artifactId>
         <version>${kubernetes-maven-plugin.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <configuration>
+          <java>
+            <licenseHeader>
+              <file>${project.basedir}/src/main/resources/license-header</file>
+            </licenseHeader>
+          </java>
+        </configuration>
       </plugin>
     </plugins>
   </build>

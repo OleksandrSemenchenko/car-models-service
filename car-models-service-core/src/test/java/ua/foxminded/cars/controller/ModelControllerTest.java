@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Oleksandr Semenchenko
+ * Copyright 2024 Oleksandr Semenchenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,12 @@
  */
 package ua.foxminded.cars.controller;
 
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.UUID;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -30,13 +33,6 @@ import ua.foxminded.cars.TestDataGenerator;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelNotFoundException;
 import ua.foxminded.cars.service.dto.ModelDto;
 import ua.foxminded.cars.service.imp.ModelServiceImp;
-
-import static org.apache.http.client.methods.RequestBuilder.delete;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = ModelController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -63,9 +59,12 @@ class ModelControllerTest {
 
     doThrow(ModelNotFoundException.class).when(modelService).updateModel(modelDto);
 
-    mockMvc.perform(put(MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, YEAR)
-        .contentType(MediaType.APPLICATION_JSON).content(requestBody))
-      .andExpect(status().isOk());
+    mockMvc
+        .perform(
+            put(MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, YEAR)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+        .andExpect(status().isOk());
   }
 
   @Test
@@ -73,16 +72,20 @@ class ModelControllerTest {
     ModelDto modelDto = TestDataGenerator.generateModelDto();
     String requestBody = objectMapper.writeValueAsString(modelDto);
 
-    mockMvc.perform(put(MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, NEGATIVE_YEAR)
-        .contentType(MediaType.APPLICATION_JSON).content(requestBody))
-      .andExpect(status().isBadRequest());
+    mockMvc
+        .perform(
+            put(MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, NEGATIVE_YEAR)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+        .andExpect(status().isBadRequest());
   }
 
   @Test
   void deleteModelById_shouldReturn404_whenNoModelInDb() throws Exception {
     doThrow(ModelNotFoundException.class).when(modelService).deleteModelById(MODEL_ID);
 
-    mockMvc.perform(MockMvcRequestBuilders.delete(MODEL_ID_PATH, MODEL_ID))
-      .andExpect(status().isNotFound());
+    mockMvc
+        .perform(MockMvcRequestBuilders.delete(MODEL_ID_PATH, MODEL_ID))
+        .andExpect(status().isNotFound());
   }
 }

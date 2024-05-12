@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Oleksandr Semenchenko
+ * Copyright 2024 Oleksandr Semenchenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package ua.foxminded.cars.controller;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +28,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.cars.TestDataGenerator;
 import ua.foxminded.cars.service.dto.ModelDto;
-
-import java.util.UUID;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
@@ -52,15 +50,19 @@ class ModelControllerIntegrationTest {
     ModelDto modelDto = TestDataGenerator.generateModelDto();
     String requestBody = objectMapper.writeValueAsString(modelDto);
 
-    mockMvc.perform(MockMvcRequestBuilders.put(MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, YEAR)
-        .contentType(MediaType.APPLICATION_JSON).content(requestBody))
-      .andExpect(status().isOk());
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.put(MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, YEAR)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+        .andExpect(status().isOk());
   }
 
   @Test
   void deleteModelById_shouldReturn204_whenModelIsInDb() throws Exception {
-    mockMvc.perform(MockMvcRequestBuilders.delete(MODEL_ID_PATH, MODEL_ID))
-      .andExpect(status().isNoContent());
+    mockMvc
+        .perform(MockMvcRequestBuilders.delete(MODEL_ID_PATH, MODEL_ID))
+        .andExpect(status().isNoContent());
   }
 
   //  @BeforeEach

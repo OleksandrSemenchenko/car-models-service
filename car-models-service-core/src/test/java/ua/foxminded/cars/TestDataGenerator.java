@@ -53,11 +53,11 @@ public class TestDataGenerator {
 
   public static ModelDto generateModelDto() {
     return ModelDto.builder()
-      .year(YEAR)
-      .manufacturer(MANUFACTURER_NAME)
-      .name(MODEL_NAME)
-      .categories(new HashSet<>(List.of(CATEGORY_NAME)))
-      .build();
+        .year(YEAR)
+        .manufacturer(MANUFACTURER_NAME)
+        .name(MODEL_NAME)
+        .categories(new HashSet<>(List.of(CATEGORY_NAME)))
+        .build();
   }
 
   public static Model generateModelEntityWithId() {

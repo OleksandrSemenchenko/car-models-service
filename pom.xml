@@ -9,7 +9,6 @@
   </parent>
   <groupId>ua.foxminded.cars</groupId>
   <artifactId>car-models-service</artifactId>
-  <!--  <version>1.${revision}</version>-->
   <version>1.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Car models service API</name>
@@ -21,7 +20,6 @@
 
   <properties>
     <spotless-maven-plugin.version>2.41.1</spotless-maven-plugin.version>
-    <!--    <revision>0.1-SNAPSHOT</revision>-->
     <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
     <java.version>17</java.version>
     <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
@@ -196,19 +194,24 @@
             <importOrder>
               <wildcardsLast>false</wildcardsLast>
             </importOrder>
-            <licenseHeader>
-              <file>${maven.multiModuleProjectDirectory}/development/config/license-header</file>
-            </licenseHeader>
           </java>
           <json>
             <includes>
-              <include>development/**/*.json</include>
+              <include>/**/*.json</include>
             </includes>
             <jackson>
               <spaceBeforeSeparator>false</spaceBeforeSeparator>
             </jackson>
           </json>
         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>process-classes</phase>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

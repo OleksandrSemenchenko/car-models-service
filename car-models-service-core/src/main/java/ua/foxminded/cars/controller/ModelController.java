@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Oleksandr Semenchenko
+ * Copyright 2024 Oleksandr Semenchenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,12 +87,8 @@ public class ModelController {
                                     + "\"year\": \"2023\", "
                                     + "\"manufacturer\": \"Audi\", "
                                     + "\"categories\": [\"SUV\"]}"))),
-        @ApiResponse(
-            responseCode = "400",
-            description = "The model year must be positive"),
-        @ApiResponse(
-            responseCode = "404",
-            description = "The model has not been found")
+        @ApiResponse(responseCode = "400", description = "The model year must be positive"),
+        @ApiResponse(responseCode = "404", description = "The model has not been found")
       })
   public ModelDto getByManufacturerAndNameAndYear(
       @PathVariable String manufacturer,
@@ -102,24 +98,24 @@ public class ModelController {
   }
 
   @Operation(
-    summary = "Search models",
-    operationId = "searchModels",
-    description =
-      "Seach for models in the database by optional parameters if no one is specified, "
-        + "retrieve all models",
-    tags = "model",
-    responses = {
-      @ApiResponse(
-        responseCode = "200",
-        description = "The sorted page of models",
-        useReturnTypeSchema = true),
-      @ApiResponse(
-        responseCode = "400",
-        description = "The maxYear, minYear, year parameters must be positive")
-    })
+      summary = "Search models",
+      operationId = "searchModels",
+      description =
+          "Seach for models in the database by optional parameters if no one is specified, "
+              + "retrieve all models",
+      tags = "model",
+      responses = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The sorted page of models",
+            useReturnTypeSchema = true),
+        @ApiResponse(
+            responseCode = "400",
+            description = "The maxYear, minYear, year parameters must be positive")
+      })
   @GetMapping(value = V1 + MODELS_PATH)
-  public Page<ModelDto> searchModels(@Valid @ParameterObject SearchFilter searchFilter,
-                                     @ParameterObject Pageable pageRequest) {
+  public Page<ModelDto> searchModels(
+      @Valid @ParameterObject SearchFilter searchFilter, @ParameterObject Pageable pageRequest) {
     return modelService.searchModel(searchFilter, pageRequest);
   }
 
@@ -145,15 +141,13 @@ public class ModelController {
                                     + "\"year\": \"2023\", "
                                     + "\"manufacturer\": \"Audi\", "
                                     + "\"categories\": [\"Sedan\"]}"))),
-        @ApiResponse(
-            responseCode = "404",
-            description = "The model has not been found")
+        @ApiResponse(responseCode = "404", description = "The model has not been found")
       })
   public ModelDto getById(@PathVariable UUID id) {
     return modelService.getModelById(id);
   }
 
-  //TODO
+  // TODO
   @Operation(
       summary = "Create a model",
       operationId = "createModel",
@@ -169,12 +163,8 @@ public class ModelController {
             description =
                 "The model must have a non-empty and non-null category and "
                     + "a model year must be positive"),
-        @ApiResponse(
-            responseCode = "404",
-            description = "The model component has not been found"),
-        @ApiResponse(
-            responseCode = "409",
-            description = "Such model already exists")
+        @ApiResponse(responseCode = "404", description = "The model component has not been found"),
+        @ApiResponse(responseCode = "409", description = "Such model already exists")
       })
   @PostMapping("/models")
   public ResponseEntity<Void> createModel(
@@ -203,9 +193,13 @@ public class ModelController {
       responses = {
         @ApiResponse(responseCode = "200", description = "The model data has been updated"),
         @ApiResponse(
-          responseCode = "400",
-          description = "Bad request",
-          content = @Content(examples = @ExampleObject("""
+            responseCode = "400",
+            description = "Bad request",
+            content =
+                @Content(
+                    examples =
+                        @ExampleObject(
+                            """
             {
               "timestamp": "2024-05-12T12:04:46.015013732",
               "errorCode": 400,
@@ -217,7 +211,11 @@ public class ModelController {
         @ApiResponse(
             responseCode = "404",
             description = "A model has not been found",
-            content = @Content(examples = @ExampleObject("""
+            content =
+                @Content(
+                    examples =
+                        @ExampleObject(
+                            """
               {
                 "timestamp": "2024-05-12T10:36:28.639097556",
                 "errorCode": 404,
@@ -228,12 +226,11 @@ public class ModelController {
   @ResponseStatus(OK)
   @PutMapping(value = V1 + MODEL_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
   public void updateModel(
-      @Parameter(description = "A manufacturer name", example = "BMW")
-      @PathVariable String manufacturer,
-      @Parameter(description = "A model name", example = "x7")
-      @PathVariable String name,
-      @Parameter(description = "A year of a model", example = "'2023")
-      @PathVariable @Positive int year,
+      @Parameter(description = "A manufacturer name", example = "BMW") @PathVariable
+          String manufacturer,
+      @Parameter(description = "A model name", example = "x7") @PathVariable String name,
+      @Parameter(description = "A year of a model", example = "'2023") @PathVariable @Positive
+          int year,
       @RequestBody ModelDto modelDto) {
     modelDto.setYear(year);
     modelDto.setManufacturer(manufacturer);
@@ -253,18 +250,22 @@ public class ModelController {
         @ApiResponse(
             responseCode = "404",
             description = "The model not found",
-            content = @Content(examples = @ExampleObject("""
+            content =
+                @Content(
+                    examples =
+                        @ExampleObject(
+                            """
               {
                 "timestamp": "2024-05-12T10:20:47.550424959",
                 "errorCode": 404,
                 "details": "The model with id=d2541b4c-4882-439e-ab9c-f0c5a3924c47 not found"
               }
-              """
-            )))
+              """)))
       })
   public void deleteModelById(
-    @Parameter(description = "a model ID", example = "52096834-48af-41d1-b422-93600eff629a")
-    @PathVariable UUID id) {
+      @Parameter(description = "a model ID", example = "52096834-48af-41d1-b422-93600eff629a")
+          @PathVariable
+          UUID id) {
     modelService.deleteModelById(id);
   }
 }
