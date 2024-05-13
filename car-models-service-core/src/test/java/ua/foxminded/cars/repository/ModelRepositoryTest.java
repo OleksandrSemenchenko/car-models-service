@@ -12,11 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.test.context.jdbc.Sql;
 import ua.foxminded.cars.repository.entity.Model;
 import ua.foxminded.cars.repository.specification.ModelSpecification;
 import ua.foxminded.cars.repository.specification.SearchFilter;
 
 @DataJpaTest
+@Sql(scripts = "/model-test-data.sql")
 class ModelRepositoryTest {
 
   private static final String MODEL = "A7";

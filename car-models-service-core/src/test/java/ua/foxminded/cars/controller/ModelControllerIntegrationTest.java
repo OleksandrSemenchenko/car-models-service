@@ -1,13 +1,18 @@
 package ua.foxminded.cars.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,13 +21,16 @@ import ua.foxminded.cars.service.dto.ModelDto;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
+@Sql(scripts = "/model-test-data.sql")
 @Transactional
 class ModelControllerIntegrationTest {
 
-  private static final String MODEL_ID_PATH = "/v1/models/{modelId}";
-  private static final String MODEL_PATH = "/v1/manufacturers/{manufacturer}/models/{name}/{year}";
+  private static final String V1 = "/v1";
+  private static final String MODEL_ID_PATH = "/models/{modelId}";
+  private static final String MODEL_PATH = "/manufacturers/{manufacturer}/models/{name}/{year}";
   private static final int YEAR = 2020;
   private static final String MODEL_NAME = "A7";
+  private static final String NEW_MODEL_NAME = "Q8";
   private static final String MANUFACTURER_NAME = "Audi";
   private static final String MODEL_ID = "52096834-48af-41d1-b422-93600eff629a";
 
@@ -31,13 +39,27 @@ class ModelControllerIntegrationTest {
   @Autowired private ObjectMapper objectMapper;
 
   @Test
+  void createModel_shouldReturnStatus200_whenNoModelInDb() throws Exception {
+    ModelDto modelDto = TestDataGenerator.generateModelDto();
+    String requestBody = objectMapper.writeValueAsString(modelDto);
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(V1 + MODEL_PATH, MANUFACTURER_NAME, NEW_MODEL_NAME, YEAR)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+        .andExpect(status().isCreated())
+        .andExpect(header().string("Location", CoreMatchers.containsString(V1 + "/models/")));
+  }
+
+  @Test
   void updateModel_shouldReturnStatus200_whenModelIsInDb() throws Exception {
     ModelDto modelDto = TestDataGenerator.generateModelDto();
     String requestBody = objectMapper.writeValueAsString(modelDto);
 
     mockMvc
         .perform(
-            MockMvcRequestBuilders.put(MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, YEAR)
+            put(V1 + MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, YEAR)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
         .andExpect(status().isOk());
@@ -45,9 +67,7 @@ class ModelControllerIntegrationTest {
 
   @Test
   void deleteModelById_shouldReturn204_whenModelIsInDb() throws Exception {
-    mockMvc
-        .perform(MockMvcRequestBuilders.delete(MODEL_ID_PATH, MODEL_ID))
-        .andExpect(status().isNoContent());
+    mockMvc.perform(delete(V1 + MODEL_ID_PATH, MODEL_ID)).andExpect(status().isNoContent());
   }
 
   //  @BeforeEach

@@ -42,7 +42,7 @@ import ua.foxminded.cars.service.dto.ModelDto;
 @SecurityRequirement(name = "bearerAuth")
 public class ModelController {
 
-  private static final String V1 = "v1";
+  private static final String V1 = "/v1";
   private static final String MODEL_ID_PATH = "/models/{id}";
   private static final String MODEL_PATH = "/manufacturers/{manufacturer}/models/{name}/{year}";
   private static final String MODELS_PATH = "/models";
@@ -151,7 +151,7 @@ public class ModelController {
         @ApiResponse(responseCode = "404", description = "The model component has not been found"),
         @ApiResponse(responseCode = "409", description = "Such model already exists")
       })
-  @PostMapping(value = V1 + MODELS_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(value = V1 + MODEL_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Void> createModel(
       @PathVariable String manufacturer,
       @PathVariable String name,
