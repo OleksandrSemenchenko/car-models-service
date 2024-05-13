@@ -1,6 +1,8 @@
 package ua.foxminded.cars.controller;
 
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -15,16 +17,18 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ua.foxminded.cars.TestDataGenerator;
+import ua.foxminded.cars.exceptionhandler.exceptions.ModelAlreadyExistsException;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelNotFoundException;
+import ua.foxminded.cars.service.ModelService;
 import ua.foxminded.cars.service.dto.ModelDto;
-import ua.foxminded.cars.service.imp.ModelServiceImp;
 
 @WebMvcTest(controllers = ModelController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class ModelControllerTest {
 
-  private static final String MODEL_ID_PATH = "/v1/models/{modelId}";
-  private static final String MODEL_PATH = "/v1/manufacturers/{manufacturer}/models/{name}/{year}";
+  private static final String V1 = "/v1";
+  private static final String MODEL_ID_PATH = "/models/{modelId}";
+  private static final String MODEL_PATH = "/manufacturers/{manufacturer}/models/{name}/{year}";
   private static final String MANUFACTURER_NAME = "Audi";
   private static final String MODEL_NAME = "A7";
   private static final int YEAR = 2020;
@@ -35,7 +39,36 @@ class ModelControllerTest {
 
   @Autowired private ObjectMapper objectMapper;
 
-  @MockBean private ModelServiceImp modelService;
+  @MockBean private ModelService modelService;
+
+  @Test
+  void createModel_shouldReturnStatus409_whenModelAlreadyInDb() throws Exception {
+    ModelDto modelDto = TestDataGenerator.generateModelDto();
+    String requestBody = objectMapper.writeValueAsString(modelDto);
+
+    doThrow(ModelAlreadyExistsException.class).when(modelService).createModel(isA(ModelDto.class));
+
+    mockMvc
+        .perform(
+            post(V1 + MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, YEAR)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+        .andExpect(status().isConflict());
+  }
+
+  @Test
+  void createModel_shouldReturnStatus400_whenNoCategoryInRequestBody() throws Exception {
+    ModelDto modelDto = TestDataGenerator.generateModelDto();
+    modelDto.setCategories(null);
+    String requestBody = objectMapper.writeValueAsString(modelDto);
+
+    mockMvc
+        .perform(
+            post(V1 + MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, YEAR)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+        .andExpect(status().isBadRequest());
+  }
 
   @Test
   void updateModel_shouldReturnStatus404_whenNoModelInDb() throws Exception {
@@ -46,7 +79,7 @@ class ModelControllerTest {
 
     mockMvc
         .perform(
-            put(MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, YEAR)
+            put(V1 + MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, YEAR)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
         .andExpect(status().isOk());
@@ -59,7 +92,7 @@ class ModelControllerTest {
 
     mockMvc
         .perform(
-            put(MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, NEGATIVE_YEAR)
+            put(V1 + MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, NEGATIVE_YEAR)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
         .andExpect(status().isBadRequest());
@@ -70,7 +103,7 @@ class ModelControllerTest {
     doThrow(ModelNotFoundException.class).when(modelService).deleteModelById(MODEL_ID);
 
     mockMvc
-        .perform(MockMvcRequestBuilders.delete(MODEL_ID_PATH, MODEL_ID))
+        .perform(MockMvcRequestBuilders.delete(V1 + MODEL_ID_PATH, MODEL_ID))
         .andExpect(status().isNotFound());
   }
 }

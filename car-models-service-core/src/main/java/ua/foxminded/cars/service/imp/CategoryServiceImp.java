@@ -47,7 +47,7 @@ public class CategoryServiceImp implements CategoryService {
   public void createCategoryIfNeeded(String categoryName) {
     if (!categoryRepository.existsById(categoryName)) {
       Category category = Category.builder().name(categoryName).build();
-      categoryRepository.save(category);
+      categoryRepository.saveAndFlush(category);
     }
   }
 }

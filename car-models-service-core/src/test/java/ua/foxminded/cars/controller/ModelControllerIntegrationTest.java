@@ -29,9 +29,11 @@ class ModelControllerIntegrationTest {
   private static final String MODEL_ID_PATH = "/models/{modelId}";
   private static final String MODEL_PATH = "/manufacturers/{manufacturer}/models/{name}/{year}";
   private static final int YEAR = 2020;
+  private static final int NEW_YEAR = 2024;
   private static final String MODEL_NAME = "A7";
   private static final String NEW_MODEL_NAME = "Q8";
   private static final String MANUFACTURER_NAME = "Audi";
+  private static final String NEW_MANUFACTURER_NAME = "Audi";
   private static final String MODEL_ID = "52096834-48af-41d1-b422-93600eff629a";
 
   @Autowired private MockMvc mockMvc;
@@ -45,7 +47,8 @@ class ModelControllerIntegrationTest {
 
     mockMvc
         .perform(
-            MockMvcRequestBuilders.post(V1 + MODEL_PATH, MANUFACTURER_NAME, NEW_MODEL_NAME, YEAR)
+            MockMvcRequestBuilders.post(
+                    V1 + MODEL_PATH, NEW_MANUFACTURER_NAME, NEW_MODEL_NAME, NEW_YEAR)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
         .andExpect(status().isCreated())

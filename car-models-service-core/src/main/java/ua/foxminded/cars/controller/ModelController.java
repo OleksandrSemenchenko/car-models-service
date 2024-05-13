@@ -132,7 +132,6 @@ public class ModelController {
     return modelService.getModelById(id);
   }
 
-  // TODO controller tests
   @Operation(
       summary = "Create a model",
       operationId = "createModel",
@@ -146,10 +145,35 @@ public class ModelController {
         @ApiResponse(
             responseCode = "400",
             description =
-                "The model must have a non-empty and non-null category and "
-                    + "a model year must be positive"),
-        @ApiResponse(responseCode = "404", description = "The model component has not been found"),
-        @ApiResponse(responseCode = "409", description = "Such model already exists")
+                "The model must have a non-empty category and a model year must be positive",
+            content =
+                @Content(
+                    examples =
+                        @ExampleObject(
+                            """
+          {
+            "timestamp": "2024-05-13T19:30:34.002022885",
+            "errorCode": 400,
+            "details": {
+              "categories": "must not be null"
+            }
+          }
+          """))),
+        @ApiResponse(
+            responseCode = "409",
+            description = "The model already exists",
+            content =
+                @Content(
+                    examples =
+                        @ExampleObject(
+                            """
+          {
+            "timestamp": "2024-05-13T19:14:07.474768927",
+            "errorCode": 409,
+            "details": "The model with manufacturer 'Chevrolet', name 'Q9' and year '20292' already exists, \
+          its id='2482dbde-60c3-43cc-850e-8da8235a5510'"
+          }
+          """)))
       })
   @PostMapping(value = V1 + MODEL_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Void> createModel(

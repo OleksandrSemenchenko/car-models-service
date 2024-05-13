@@ -6,9 +6,13 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ua.foxminded.cars.exceptionhandler.exceptions.DataIntegrityViolationException;
@@ -21,6 +25,21 @@ public class ServiceExceptionHandler {
   private static final String DETAILS_FIELD = "details";
   private static final String ERROR_CODE_FIELD = "errorCode";
   private static final String TIMESTAMP_FILED = "timestamp";
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  protected ResponseEntity<Object> handleMethodArgumentNotValidException(
+      MethodArgumentNotValidException e) {
+    Map<String, String> details = getMethodArgumentValidationDetails(e);
+    Map<String, Object> responseBody = buildResponseBody(HttpStatus.BAD_REQUEST, details);
+    return ResponseEntity.badRequest().body(responseBody);
+  }
+
+  private Map<String, String> getMethodArgumentValidationDetails(
+      MethodArgumentNotValidException e) {
+    return e.getBindingResult().getFieldErrors().stream()
+        .collect(
+            Collectors.toMap(FieldError::getField, MessageSourceResolvable::getDefaultMessage));
+  }
 
   @ExceptionHandler(ConstraintViolationException.class)
   protected ResponseEntity<Object> handleConstraintViolationException(

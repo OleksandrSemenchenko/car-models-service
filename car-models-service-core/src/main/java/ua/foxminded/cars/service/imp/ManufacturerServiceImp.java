@@ -25,7 +25,7 @@ public class ManufacturerServiceImp implements ManufacturerService {
   public void createManufacturerIfNeeded(String manufacturerName) {
     if (!manufacturerRepository.existsById(manufacturerName)) {
       Manufacturer manufacturer = Manufacturer.builder().name(manufacturerName).build();
-      manufacturerRepository.save(manufacturer);
+      manufacturerRepository.saveAndFlush(manufacturer);
     }
   }
 }

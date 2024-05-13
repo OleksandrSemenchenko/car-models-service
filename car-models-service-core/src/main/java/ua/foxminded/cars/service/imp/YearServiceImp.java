@@ -25,7 +25,7 @@ public class YearServiceImp implements YearService {
   public void createYearIfNeeded(int value) {
     if (!yearRepository.existsById(value)) {
       Year year = Year.builder().value(value).build();
-      yearRepository.save(year);
+      yearRepository.saveAndFlush(year);
     }
   }
 }
