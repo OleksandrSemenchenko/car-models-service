@@ -1,18 +1,3 @@
-/*
- * Copyright 2024 Oleksandr Semenchenko
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package ua.foxminded.cars.controller;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
@@ -147,7 +132,7 @@ public class ModelController {
     return modelService.getModelById(id);
   }
 
-  // TODO
+  // TODO controller tests
   @Operation(
       summary = "Create a model",
       operationId = "createModel",
@@ -166,7 +151,7 @@ public class ModelController {
         @ApiResponse(responseCode = "404", description = "The model component has not been found"),
         @ApiResponse(responseCode = "409", description = "Such model already exists")
       })
-  @PostMapping("/models")
+  @PostMapping(value = V1 + MODELS_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Void> createModel(
       @PathVariable String manufacturer,
       @PathVariable String name,
@@ -179,7 +164,7 @@ public class ModelController {
     ModelDto persistedModel = modelService.createModel(modelDto);
     URI location =
         ServletUriComponentsBuilder.fromCurrentServletMapping()
-            .path("/v1/models/{id}")
+            .path(V1 + MODEL_ID_PATH)
             .buildAndExpand(persistedModel.getId())
             .toUri();
     return ResponseEntity.created(location).build();
