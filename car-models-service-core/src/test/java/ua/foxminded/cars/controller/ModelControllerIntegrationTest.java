@@ -1,12 +1,15 @@
 package ua.foxminded.cars.controller;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -35,10 +38,23 @@ class ModelControllerIntegrationTest {
   private static final String MANUFACTURER_NAME = "Audi";
   private static final String NEW_MANUFACTURER_NAME = "Audi";
   private static final String MODEL_ID = "52096834-48af-41d1-b422-93600eff629a";
+  private static final String CATEGORY_NAME = "Sedan";
 
   @Autowired private MockMvc mockMvc;
 
   @Autowired private ObjectMapper objectMapper;
+
+  @Test
+  void getModelById_shouldReturnBodyAndStatus200_whenModelIsInDb() throws Exception {
+    mockMvc
+        .perform(get(V1 + MODEL_ID_PATH, MODEL_ID).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").exists())
+        .andExpect(jsonPath("$.name", is(MODEL_NAME)))
+        .andExpect(jsonPath("$.manufacturer", is(MANUFACTURER_NAME)))
+        .andExpect(jsonPath("$.year", is(YEAR)))
+        .andExpect(jsonPath("$.categories[0]", is(CATEGORY_NAME)));
+  }
 
   @Test
   void createModel_shouldReturnStatus200_whenNoModelInDb() throws Exception {
@@ -52,7 +68,7 @@ class ModelControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
         .andExpect(status().isCreated())
-        .andExpect(header().string("Location", CoreMatchers.containsString(V1 + "/models/")));
+        .andExpect(header().string("Location", containsString(V1 + "/models/")));
   }
 
   @Test

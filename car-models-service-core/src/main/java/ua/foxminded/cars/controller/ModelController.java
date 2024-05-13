@@ -104,11 +104,10 @@ public class ModelController {
     return modelService.searchModel(searchFilter, pageRequest);
   }
 
-  @GetMapping("/models/{id}")
   @Operation(
       summary = "Get a model by its id",
       operationId = "getModelById",
-      description = "Search for and retrieve a model from the database by its name",
+      description = "Search for and retrieve a model from the database by its ID",
       tags = "model",
       responses = {
         @ApiResponse(
@@ -116,19 +115,36 @@ public class ModelController {
             description = "The model",
             content =
                 @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = ModelDto.class)),
                     examples =
                         @ExampleObject(
-                            name = "model",
-                            value =
-                                "{\"id\": \"1\", "
-                                    + "\"name\": \"A7\", "
-                                    + "\"year\": \"2023\", "
-                                    + "\"manufacturer\": \"Audi\", "
-                                    + "\"categories\": [\"Sedan\"]}"))),
-        @ApiResponse(responseCode = "404", description = "The model has not been found")
+                            """
+              {
+                "id": "52096834-48af-41d1-b422-93600eff629a",
+                "name": "A7",
+                "year": 2020,
+                "manufacturer": "Audi",
+                "categories": [
+                  "Sedan"
+                ]
+              }
+              """))),
+        @ApiResponse(
+            responseCode = "404",
+            description = "The model has not been found",
+            content =
+                @Content(
+                    examples =
+                        @ExampleObject(
+                            """
+            {
+              "timestamp": "2024-05-13T19:41:22.788843813",
+              "errorCode": 404,
+              "details": "The model with id=37ce882b-f56b-4e66-a1a0-eab0f252bce6 not found"
+            }
+            """)))
       })
-  public ModelDto getById(@PathVariable UUID id) {
+  @GetMapping(V1 + MODEL_ID_PATH)
+  public ModelDto getModelById(@PathVariable UUID id) {
     return modelService.getModelById(id);
   }
 

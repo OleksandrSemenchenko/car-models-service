@@ -1,7 +1,9 @@
 package ua.foxminded.cars.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,6 +42,15 @@ class ModelControllerTest {
   @Autowired private ObjectMapper objectMapper;
 
   @MockBean private ModelService modelService;
+
+  @Test
+  void getModelById_shouldReturnStatus404_whenModelIsInDb() throws Exception {
+    doThrow(ModelNotFoundException.class).when(modelService).getModelById(any(UUID.class));
+
+    mockMvc
+        .perform(get(V1 + MODEL_ID_PATH, MODEL_ID).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound());
+  }
 
   @Test
   void createModel_shouldReturnStatus409_whenModelAlreadyInDb() throws Exception {
