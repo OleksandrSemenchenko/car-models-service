@@ -25,7 +25,7 @@ class ModelRepositoryTest {
   private static final String MODEL = "A7";
   private static final String MANUFACTURE = "Audi";
   private static final String NOT_EXISTING_MANUFACTURER = "Volvo";
-  private static final Year MODEL_YEAR = Year.of(2020);
+  private static final int MODEL_YEAR = 2020;
   private static final Year NOT_EXISTING_MODEL_YEAR = Year.of(2035);
   private static final String CATEGORY = "Sedan";
   private static final String CATEGORY_WITHOUT_RELATIONS = "Coupe";
@@ -69,7 +69,7 @@ class ModelRepositoryTest {
 
   @Test
   void existsByYearValue_shouldReturnTrue_whenModelIsInDb() {
-    boolean isModelExist = modelRepository.existsByYearValue(MODEL_YEAR);
+    boolean isModelExist = modelRepository.existsByYearValue(Year.of(MODEL_YEAR));
 
     assertTrue(isModelExist);
   }

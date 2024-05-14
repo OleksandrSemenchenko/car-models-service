@@ -9,18 +9,22 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.Year;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ua.foxminded.cars.TestDataGenerator;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelAlreadyExistsException;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelNotFoundException;
+import ua.foxminded.cars.exceptionhandler.exceptions.PeriodNotValidException;
+import ua.foxminded.cars.repository.specification.SearchFilter;
 import ua.foxminded.cars.service.ModelService;
 import ua.foxminded.cars.service.dto.ModelDto;
 
@@ -37,6 +41,8 @@ class ModelControllerTest {
   private static final int YEAR = 2020;
   private static final int NEGATIVE_YEAR = -2020;
   private static final UUID MODEL_ID = UUID.fromString("52096834-48af-41d1-b422-93600eff629a");
+  private static final Year MAX_YEAR = Year.of(2024);
+  private static final Year MIN_YEAR = Year.of(2020);
   private static final String CATEGORY_NAME = "Sedan";
 
   @Autowired private MockMvc mockMvc;
@@ -44,6 +50,21 @@ class ModelControllerTest {
   @Autowired private ObjectMapper objectMapper;
 
   @MockBean private ModelService modelService;
+
+  @Test
+  void searchModels_shouldReturnStatus400_whenMaxYearIsBeforeMinYear() throws Exception {
+    doThrow(PeriodNotValidException.class)
+        .when(modelService)
+        .searchModel(any(SearchFilter.class), any(Pageable.class));
+
+    mockMvc
+        .perform(
+            get(V1 + MODELS_PATH)
+                .param("maxYear", MIN_YEAR.toString())
+                .param("minYear", MAX_YEAR.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
 
   @Test
   void searchModels_shouldReturnStatus400_whenYearIsNegative() throws Exception {

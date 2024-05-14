@@ -1,6 +1,5 @@
 package ua.foxminded.cars.service;
 
-import java.time.Year;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +14,7 @@ public interface ModelService {
 
   ModelDto getModelById(UUID modelId);
 
-  ModelDto getModel(String manufacturer, String modelName, Year year);
+  ModelDto getModel(String manufacturer, String modelName, int year);
 
   Page<ModelDto> searchModel(SearchFilter searchFilter, Pageable pageable);
 

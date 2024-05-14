@@ -1,7 +1,5 @@
 package ua.foxminded.cars.service.imp;
 
-import static java.util.Objects.nonNull;
-
 import java.time.Year;
 import java.util.HashSet;
 import java.util.List;
@@ -146,12 +144,12 @@ public class ModelServiceImp implements ModelService {
 
   @Override
   @Cacheable(value = GET_MODEL_CACHE, key = "{ #root.methodName,  #manufacturer, #name, #year }")
-  public ModelDto getModel(String manufacturer, String name, Year year) {
+  public ModelDto getModel(String manufacturer, String name, int year) {
     Model model = findModelBySpecification(manufacturer, name, year);
     return modelMapper.toDto(model);
   }
 
-  private Model findModelBySpecification(String manufacturer, String modelName, Year modelYear) {
+  private Model findModelBySpecification(String manufacturer, String modelName, int modelYear) {
     Specification<Model> specification = buildSpecification(manufacturer, modelName, modelYear);
     return modelRepository
         .findOne(specification)
@@ -168,10 +166,10 @@ public class ModelServiceImp implements ModelService {
   }
 
   private SearchFilter validateSearchFilter(SearchFilter searchFilter) {
-    Year minYear = searchFilter.getMinYear();
-    Year maxYear = searchFilter.getMaxYear();
+    Year minYear = Year.of(searchFilter.getMinYear());
+    Year maxYear = Year.of(searchFilter.getMaxYear());
 
-    if (nonNull(minYear) && nonNull(maxYear) && minYear.isAfter(maxYear)) {
+    if (minYear.isAfter(maxYear)) {
       throw new PeriodNotValidException(minYear, maxYear);
     } else {
       return searchFilter;
@@ -204,7 +202,8 @@ public class ModelServiceImp implements ModelService {
   public ModelDto createModel(ModelDto modelDto) {
     verifyIfModelExists(modelDto.getManufacturer(), modelDto.getName(), modelDto.getYear());
     manufacturerService.createManufacturerIfNeeded(modelDto.getManufacturer());
-    modelYearService.createYearIfNeeded(modelDto.getYear());
+    Year year = Year.of(modelDto.getYear());
+    modelYearService.createYearIfNeeded(year);
     Model model = modelMapper.toEntity(modelDto);
     Model savedModel = modelRepository.save(model);
     createCategoriesIfNeeded(modelDto.getCategories());
@@ -213,7 +212,7 @@ public class ModelServiceImp implements ModelService {
     return modelDto;
   }
 
-  private void verifyIfModelExists(String manufacturerName, String modelName, Year year) {
+  private void verifyIfModelExists(String manufacturerName, String modelName, int year) {
     Specification<Model> specification = buildSpecification(manufacturerName, modelName, year);
     modelRepository
         .findOne(specification)
@@ -224,7 +223,7 @@ public class ModelServiceImp implements ModelService {
             });
   }
 
-  private Specification<Model> buildSpecification(String manufacturer, String name, Year year) {
+  private Specification<Model> buildSpecification(String manufacturer, String name, int year) {
     SearchFilter searchFilter =
         SearchFilter.builder().manufacturer(manufacturer).name(name).year(year).build();
     return ModelSpecification.getSpecification(searchFilter);

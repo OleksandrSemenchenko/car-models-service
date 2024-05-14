@@ -13,6 +13,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "model_years")
@@ -24,6 +26,7 @@ public class ModelYear {
 
   @Id
   @Column(name = "year_value")
+  @JdbcTypeCode(SqlTypes.TIMESTAMP)
   private Year value;
 
   @OneToMany(mappedBy = "year")

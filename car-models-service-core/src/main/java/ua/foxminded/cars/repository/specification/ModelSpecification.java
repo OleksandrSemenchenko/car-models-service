@@ -2,6 +2,7 @@ package ua.foxminded.cars.repository.specification;
 
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.SetJoin;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
@@ -34,15 +35,17 @@ public class ModelSpecification {
       }
 
       if (searchFilter.getMaxYear() != null) {
+        Year maxYear = Year.of(searchFilter.getMaxYear());
         predicates.add(
             criteriaBuilder.lessThanOrEqualTo(
-                modelRoot.get(Model_.year).get(ModelYear_.value), searchFilter.getMaxYear()));
+                modelRoot.get(Model_.year).get(ModelYear_.value), maxYear));
       }
 
       if (searchFilter.getMinYear() != null) {
+        Year minYear = Year.of(searchFilter.getMinYear());
         predicates.add(
             criteriaBuilder.greaterThanOrEqualTo(
-                modelRoot.get(Model_.year).get(ModelYear_.value), searchFilter.getMinYear()));
+                modelRoot.get(Model_.year).get(ModelYear_.value), minYear));
       }
 
       if (searchFilter.getName() != null) {

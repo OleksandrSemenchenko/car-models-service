@@ -16,7 +16,7 @@ import ua.foxminded.cars.service.dto.ModelDto;
 public class TestDataGenerator {
 
   private static final UUID MODEL_ID = UUID.fromString("2bd84edb-70aa-4e74-9a41-c0e962fd36db");
-  private static final Year YEAR = Year.of(2021);
+  private static final int YEAR = 2021;
   private static final String MODEL_NAME = "x6";
   private static final String MANUFACTURER_NAME = "BMW";
   private static final String CATEGORY_NAME = "Pickup";
@@ -51,7 +51,7 @@ public class TestDataGenerator {
   }
 
   public static Model generateModelEntity(UUID modelId) {
-    ModelYear modelYear = ModelYear.builder().value(YEAR).build();
+    ModelYear modelYear = ModelYear.builder().value(Year.of(YEAR)).build();
     Category category = Category.builder().name(CATEGORY_NAME).build();
     Manufacturer manufacturer = Manufacturer.builder().name(MANUFACTURER_NAME).build();
     return Model.builder()

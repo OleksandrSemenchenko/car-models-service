@@ -1,6 +1,5 @@
 package ua.foxminded.cars.exceptionhandler.exceptions;
 
-import java.time.Year;
 import java.util.UUID;
 
 public class ModelNotFoundException extends UnitNotFoundException {
@@ -9,7 +8,7 @@ public class ModelNotFoundException extends UnitNotFoundException {
     super(ExceptionMessages.MODEL_NOT_FOUND_BY_ID.formatted(modelId.toString()));
   }
 
-  public ModelNotFoundException(String manufacturer, String name, Year year) {
+  public ModelNotFoundException(String manufacturer, String name, int year) {
     super(ExceptionMessages.MODEL_NOT_FOUND.formatted(manufacturer, name, year));
   }
 }

@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import java.net.URI;
-import java.time.Year;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
@@ -80,7 +79,7 @@ public class ModelController {
   public ModelDto getByManufacturerAndNameAndYear(
       @PathVariable String manufacturer,
       @PathVariable String name,
-      @PathVariable @Positive Year modelYear) {
+      @PathVariable @Positive int modelYear) {
     return modelService.getModel(manufacturer, name, modelYear);
   }
 
@@ -197,7 +196,7 @@ public class ModelController {
   public ResponseEntity<Void> createModel(
       @PathVariable String manufacturer,
       @PathVariable String name,
-      @PathVariable @Positive Year modelYear,
+      @PathVariable @Positive Integer modelYear,
       @RequestBody @Valid ModelDto modelDto) {
     modelDto.setManufacturer(manufacturer);
     modelDto.setName(name);
@@ -257,7 +256,7 @@ public class ModelController {
           String manufacturer,
       @Parameter(description = "A model name", example = "x7") @PathVariable String name,
       @Parameter(description = "A modelYear of a model", example = "'2023") @PathVariable @Positive
-          Year modelYear,
+          int modelYear,
       @RequestBody ModelDto modelDto) {
     modelDto.setYear(modelYear);
     modelDto.setManufacturer(manufacturer);

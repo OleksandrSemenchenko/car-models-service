@@ -31,6 +31,7 @@ import ua.foxminded.cars.TestDataGenerator;
 import ua.foxminded.cars.config.AppConfig;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelAlreadyExistsException;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelNotFoundException;
+import ua.foxminded.cars.exceptionhandler.exceptions.PeriodNotValidException;
 import ua.foxminded.cars.mapper.CategoryMapper;
 import ua.foxminded.cars.mapper.ModelMapper;
 import ua.foxminded.cars.repository.ModelRepository;
@@ -48,7 +49,7 @@ class ModelServiceImpTest {
   private static final String MODEL_MAPPER_FIELD = "modelMapper";
   private static final String CATEGORY_MAPPER_FIELD = "categoryMapper";
   private static final UUID MODEL_ID = UUID.fromString("2bd84edb-70aa-4e74-9a41-c0e962fd36db");
-  private static final Year YEAR = Year.of(2021);
+  private static final int YEAR = 2021;
   private static final String MODEL_NAME = "x6";
   private static final String MANUFACTURER_NAME = "BMW";
   private static final String CATEGORY_NAME = "Pickup";
@@ -56,6 +57,8 @@ class ModelServiceImpTest {
   private static final String SORT_BY_NAME = "name";
   private static final int FIVE_ELEMENTS = 5;
   private static final int FIRST_PAGE = 1;
+  private static final int MAX_YEAR = 2024;
+  private static final int MIN_YEAR = 2020;
 
   @InjectMocks private ModelServiceImp modelService;
 
@@ -123,7 +126,7 @@ class ModelServiceImpTest {
 
     when(modelRepository.findById(MODEL_ID)).thenReturn(Optional.of(model));
     when(modelRepository.existsByManufacturerName(MANUFACTURER_NAME)).thenReturn(true);
-    when(modelRepository.existsByYearValue(YEAR)).thenReturn(true);
+    when(modelRepository.existsByYearValue(Year.of(YEAR))).thenReturn(true);
     when(modelRepository.existsByCategoriesName(CATEGORY_NAME)).thenReturn(true);
 
     modelService.deleteModelById(MODEL_ID);
@@ -137,14 +140,14 @@ class ModelServiceImpTest {
 
     when(modelRepository.findById(MODEL_ID)).thenReturn(Optional.of(model));
     when(modelRepository.existsByManufacturerName(MANUFACTURER_NAME)).thenReturn(false);
-    when(modelRepository.existsByYearValue(YEAR)).thenReturn(false);
+    when(modelRepository.existsByYearValue(Year.of(YEAR))).thenReturn(false);
     when(modelRepository.existsByCategoriesName(CATEGORY_NAME)).thenReturn(false);
 
     modelService.deleteModelById(MODEL_ID);
 
     verify(modelRepository).deleteById(MODEL_ID);
     verify(manufacturerService).deleteManufacturer(MANUFACTURER_NAME);
-    verify(modelYearService).deleteYear(YEAR);
+    verify(modelYearService).deleteYear(Year.of(YEAR));
     verify(categoryService).deleteCategory(CATEGORY_NAME);
   }
 
@@ -227,6 +230,14 @@ class ModelServiceImpTest {
 
     ModelDto actualModelDto = actualPage.getContent().get(0);
     verifyModelDto(actualModelDto);
+  }
+
+  @Test
+  void searchModel_shouldThrowPeriodNodValidException_whenMaxYearIsBeforeMinYear() {
+    Pageable pageable = Pageable.ofSize(FIVE_ELEMENTS);
+    SearchFilter filter = SearchFilter.builder().minYear(MAX_YEAR).maxYear(MIN_YEAR).build();
+
+    assertThrows(PeriodNotValidException.class, () -> modelService.searchModel(filter, pageable));
   }
 
   @Test

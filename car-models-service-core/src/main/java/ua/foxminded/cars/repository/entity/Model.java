@@ -51,20 +51,4 @@ public class Model {
       joinColumns = @JoinColumn(name = "model_id", referencedColumnName = "id"),
       inverseJoinColumns = @JoinColumn(name = "category_name", referencedColumnName = "name"))
   private Set<Category> categories;
-
-  public void addCategories(Set<Category> categories) {
-    for (Category category : categories) {
-      addCategory(category);
-    }
-  }
-
-  public void addCategory(Category category) {
-    this.categories.add(category);
-    category.getModels().add(this);
-  }
-
-  public void removeCategory(Category category) {
-    this.categories.remove(category);
-    category.getModels().remove(this);
-  }
 }
