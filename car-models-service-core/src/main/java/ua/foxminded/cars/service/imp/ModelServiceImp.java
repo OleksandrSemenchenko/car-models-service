@@ -52,6 +52,12 @@ public class ModelServiceImp implements ModelService {
   private final ModelYearService modelYearService;
   private final CategoryService categoryService;
 
+  /**
+   * Updates a model, if related entities after the updating have no relations it removes them.
+   *
+   * @param targetModelDto - the state of a car model that should be in a database
+   * @return - a car model object that reflects a database state after updating
+   */
   @Override
   @Transactional
   @Caching(
@@ -92,6 +98,12 @@ public class ModelServiceImp implements ModelService {
     }
   }
 
+  /**
+   * Deletes a car model if related entities after deleting the model have no relations it removes
+   * them too.
+   *
+   * @param modelId - ID of a model
+   */
   @Override
   @Transactional
   @Caching(
@@ -157,6 +169,14 @@ public class ModelServiceImp implements ModelService {
         .orElseThrow(() -> new ModelNotFoundException(manufacturer, modelName, modelYear));
   }
 
+  /**
+   * Searches for models by provided parameters if no parameters are present it returns all models
+   * in a database. There is a validation, maxYear value must be greater than minYear value.
+   *
+   * @param searchFilter - parameters for the search
+   * @param pageable - parameter for a page
+   * @return Page<ModelDto> - a page containing models
+   */
   @Override
   @Cacheable(value = SEARCH_MODELS_CACHE, key = "{ #root.methodName, #searchFilter, #pageable }")
   public Page<ModelDto> searchModel(SearchFilter searchFilter, Pageable pageable) {
@@ -188,6 +208,12 @@ public class ModelServiceImp implements ModelService {
     return pageRequest;
   }
 
+  /**
+   * Creates a model. If a database has no needed entities it creates them.
+   *
+   * @param modelDto - DTO of a model
+   * @return ModelDto
+   */
   @Override
   @Transactional
   @Caching(

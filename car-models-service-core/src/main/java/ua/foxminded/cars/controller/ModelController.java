@@ -78,6 +78,16 @@ public class ModelController {
     return modelService.getModel(manufacturer, name, year);
   }
 
+  /**
+   * Searches for models by provided parameters if no one is present it returns all models. There is
+   * validation for year parameters, its value must be positive, and maxYear value must be after
+   * minYear value.
+   *
+   * @param searchFilter - a parameter object containing maxYear, minYear, year, manufacturer, name,
+   *     category parameters
+   * @param pageRequest - an object with page parameters
+   * @return - Page<ModelDto> - a page containing models
+   */
   @Operation(
       summary = "Searchers models",
       operationId = "searchModels",
@@ -156,6 +166,16 @@ public class ModelController {
     return modelService.getModelById(id);
   }
 
+  /**
+   * Creates a model with provided parameters if no such one is present otherwise the exception will
+   * be thrown.
+   *
+   * @param manufacturer - manufacturer name
+   * @param name - model name
+   * @param year - year
+   * @param modelDto - a DTO containing model categories
+   * @return ResponseEntity<Void>
+   */
   @Operation(
       summary = "Create a model",
       operationId = "createModel",
