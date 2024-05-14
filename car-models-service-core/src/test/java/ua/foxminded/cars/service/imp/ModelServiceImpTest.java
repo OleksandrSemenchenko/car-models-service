@@ -3,11 +3,11 @@ package ua.foxminded.cars.service.imp;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -39,7 +39,7 @@ import ua.foxminded.cars.repository.entity.Model;
 import ua.foxminded.cars.repository.specification.SearchFilter;
 import ua.foxminded.cars.service.CategoryService;
 import ua.foxminded.cars.service.ManufacturerService;
-import ua.foxminded.cars.service.YearService;
+import ua.foxminded.cars.service.ModelYearService;
 import ua.foxminded.cars.service.dto.ModelDto;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,7 +48,7 @@ class ModelServiceImpTest {
   private static final String MODEL_MAPPER_FIELD = "modelMapper";
   private static final String CATEGORY_MAPPER_FIELD = "categoryMapper";
   private static final UUID MODEL_ID = UUID.fromString("2bd84edb-70aa-4e74-9a41-c0e962fd36db");
-  private static final int YEAR = 2021;
+  private static final Year YEAR = Year.of(2021);
   private static final String MODEL_NAME = "x6";
   private static final String MANUFACTURER_NAME = "BMW";
   private static final String CATEGORY_NAME = "Pickup";
@@ -63,7 +63,7 @@ class ModelServiceImpTest {
 
   @Mock private ManufacturerService manufacturerService;
 
-  @Mock private YearService yearService;
+  @Mock private ModelYearService modelYearService;
 
   @Mock private CategoryService categoryService;
 
@@ -144,7 +144,7 @@ class ModelServiceImpTest {
 
     verify(modelRepository).deleteById(MODEL_ID);
     verify(manufacturerService).deleteManufacturer(MANUFACTURER_NAME);
-    verify(yearService).deleteYear(YEAR);
+    verify(modelYearService).deleteYear(YEAR);
     verify(categoryService).deleteCategory(CATEGORY_NAME);
   }
 
@@ -241,7 +241,7 @@ class ModelServiceImpTest {
     ModelDto createdModel = modelService.createModel(modelDto);
 
     verify(manufacturerService).createManufacturerIfNeeded(anyString());
-    verify(yearService).createYearIfNeeded(anyInt());
+    verify(modelYearService).createYearIfNeeded(any(Year.class));
     verify(categoryService).createCategoryIfNeeded(anyString());
     verify(modelRepository).putModelToCategory(any(UUID.class), anyString());
     verifyModelDto(createdModel);

@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import java.net.URI;
+import java.time.Year;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
@@ -44,17 +45,18 @@ public class ModelController {
 
   private static final String V1 = "/v1";
   private static final String MODEL_ID_PATH = "/models/{id}";
-  private static final String MODEL_PATH = "/manufacturers/{manufacturer}/models/{name}/{year}";
+  private static final String MODEL_PATH =
+      "/manufacturers/{manufacturer}/models/{name}/{modelYear}";
   private static final String MODELS_PATH = "/models";
 
   private final ModelService modelService;
 
-  @GetMapping("/manufacturers/{manufacturer}/models/{name}/{year}")
+  @GetMapping("/manufacturers/{manufacturer}/models/{name}/{modelYear}")
   @Operation(
-      summary = "Get a model by its manufacturer, name and year",
+      summary = "Get a model by its manufacturer, name and modelYear",
       operationId = "getModelByManufacturerAndNameAndYear",
       description =
-          "Seach for and retrieve a model by its manufacturer, name and year from the database",
+          "Seach for and retrieve a model by its manufacturer, name and modelYear from the database",
       tags = "model",
       responses = {
         @ApiResponse(
@@ -69,25 +71,24 @@ public class ModelController {
                             value =
                                 "{\"id\": \"1\", "
                                     + "\"name\": \"A7\", "
-                                    + "\"year\": \"2023\", "
+                                    + "\"modelYear\": \"2023\", "
                                     + "\"manufacturer\": \"Audi\", "
                                     + "\"categories\": [\"SUV\"]}"))),
-        @ApiResponse(responseCode = "400", description = "The model year must be positive"),
+        @ApiResponse(responseCode = "400", description = "The model modelYear must be positive"),
         @ApiResponse(responseCode = "404", description = "The model has not been found")
       })
   public ModelDto getByManufacturerAndNameAndYear(
       @PathVariable String manufacturer,
       @PathVariable String name,
-      @PathVariable @Positive int year) {
-    return modelService.getModel(manufacturer, name, year);
+      @PathVariable @Positive Year modelYear) {
+    return modelService.getModel(manufacturer, name, modelYear);
   }
 
   @Operation(
-      summary = "Search models",
+      summary = "Searchers models",
       operationId = "searchModels",
       description =
-          "Seach for models in the database by optional parameters if no one is specified, "
-              + "retrieve all models",
+          "Searchers for models by optional parameters when no one is specified, retrieves all models",
       tags = "model",
       responses = {
         @ApiResponse(
@@ -96,7 +97,8 @@ public class ModelController {
             useReturnTypeSchema = true),
         @ApiResponse(
             responseCode = "400",
-            description = "The maxYear, minYear, year parameters must be positive")
+            description = "The maxYear, minYear, modelYear parameters must be positive")
+        // TODO max must be greater than min
       })
   @GetMapping(value = V1 + MODELS_PATH)
   public Page<ModelDto> searchModels(
@@ -121,7 +123,7 @@ public class ModelController {
               {
                 "id": "52096834-48af-41d1-b422-93600eff629a",
                 "name": "A7",
-                "year": 2020,
+                "modelYear": 2020,
                 "manufacturer": "Audi",
                 "categories": [
                   "Sedan"
@@ -161,7 +163,7 @@ public class ModelController {
         @ApiResponse(
             responseCode = "400",
             description =
-                "The model must have a non-empty category and a model year must be positive",
+                "The model must have a non-empty category and a model modelYear must be positive",
             content =
                 @Content(
                     examples =
@@ -186,7 +188,7 @@ public class ModelController {
           {
             "timestamp": "2024-05-13T19:14:07.474768927",
             "errorCode": 409,
-            "details": "The model with manufacturer 'Chevrolet', name 'Q9' and year '20292' already exists, \
+            "details": "The model with manufacturer 'Chevrolet', name 'Q9' and modelYear '20292' already exists, \
           its id='2482dbde-60c3-43cc-850e-8da8235a5510'"
           }
           """)))
@@ -195,11 +197,11 @@ public class ModelController {
   public ResponseEntity<Void> createModel(
       @PathVariable String manufacturer,
       @PathVariable String name,
-      @PathVariable @Positive int year,
+      @PathVariable @Positive Year modelYear,
       @RequestBody @Valid ModelDto modelDto) {
     modelDto.setManufacturer(manufacturer);
     modelDto.setName(name);
-    modelDto.setYear(year);
+    modelDto.setYear(modelYear);
 
     ModelDto persistedModel = modelService.createModel(modelDto);
     URI location =
@@ -229,7 +231,7 @@ public class ModelController {
               "timestamp": "2024-05-12T12:04:46.015013732",
               "errorCode": 400,
               "details": {
-                "updateModel.year": "must be greater than 0"
+                "updateModel.modelYear": "must be greater than 0"
               }
             }
             """))),
@@ -244,7 +246,7 @@ public class ModelController {
               {
                 "timestamp": "2024-05-12T10:36:28.639097556",
                 "errorCode": 404,
-                "details": "The model with manufacturer 'Chevrolet', name 'Malibu' and year '20292' not found"
+                "details": "The model with manufacturer 'Chevrolet', name 'Malibu' and modelYear '20292' not found"
               }
               """)))
       })
@@ -254,10 +256,10 @@ public class ModelController {
       @Parameter(description = "A manufacturer name", example = "BMW") @PathVariable
           String manufacturer,
       @Parameter(description = "A model name", example = "x7") @PathVariable String name,
-      @Parameter(description = "A year of a model", example = "'2023") @PathVariable @Positive
-          int year,
+      @Parameter(description = "A modelYear of a model", example = "'2023") @PathVariable @Positive
+          Year modelYear,
       @RequestBody ModelDto modelDto) {
-    modelDto.setYear(year);
+    modelDto.setYear(modelYear);
     modelDto.setManufacturer(manufacturer);
     modelDto.setName(name);
     modelService.updateModel(modelDto);

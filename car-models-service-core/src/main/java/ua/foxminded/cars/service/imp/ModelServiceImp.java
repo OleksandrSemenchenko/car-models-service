@@ -1,5 +1,8 @@
 package ua.foxminded.cars.service.imp;
 
+import static java.util.Objects.nonNull;
+
+import java.time.Year;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,18 +23,19 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.cars.config.AppConfig;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelAlreadyExistsException;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelNotFoundException;
+import ua.foxminded.cars.exceptionhandler.exceptions.PeriodNotValidException;
 import ua.foxminded.cars.mapper.ModelMapper;
 import ua.foxminded.cars.repository.ModelRepository;
 import ua.foxminded.cars.repository.entity.Category;
 import ua.foxminded.cars.repository.entity.Manufacturer;
 import ua.foxminded.cars.repository.entity.Model;
-import ua.foxminded.cars.repository.entity.Year;
+import ua.foxminded.cars.repository.entity.ModelYear;
 import ua.foxminded.cars.repository.specification.ModelSpecification;
 import ua.foxminded.cars.repository.specification.SearchFilter;
 import ua.foxminded.cars.service.CategoryService;
 import ua.foxminded.cars.service.ManufacturerService;
 import ua.foxminded.cars.service.ModelService;
-import ua.foxminded.cars.service.YearService;
+import ua.foxminded.cars.service.ModelYearService;
 import ua.foxminded.cars.service.dto.ModelDto;
 
 @Service
@@ -46,7 +50,7 @@ public class ModelServiceImp implements ModelService {
   private final ModelMapper modelMapper;
   private final AppConfig appConfig;
   private final ManufacturerService manufacturerService;
-  private final YearService yearService;
+  private final ModelYearService modelYearService;
   private final CategoryService categoryService;
 
   @Override
@@ -112,9 +116,9 @@ public class ModelServiceImp implements ModelService {
     }
   }
 
-  private void deleteModelYearIfNeeded(Year year) {
-    if (!modelRepository.existsByYearValue(year.getValue())) {
-      yearService.deleteYear(year.getValue());
+  private void deleteModelYearIfNeeded(ModelYear modelYear) {
+    if (!modelRepository.existsByYearValue(modelYear.getValue())) {
+      modelYearService.deleteYear(modelYear.getValue());
     }
   }
 
@@ -142,12 +146,12 @@ public class ModelServiceImp implements ModelService {
 
   @Override
   @Cacheable(value = GET_MODEL_CACHE, key = "{ #root.methodName,  #manufacturer, #name, #year }")
-  public ModelDto getModel(String manufacturer, String name, int year) {
+  public ModelDto getModel(String manufacturer, String name, Year year) {
     Model model = findModelBySpecification(manufacturer, name, year);
     return modelMapper.toDto(model);
   }
 
-  private Model findModelBySpecification(String manufacturer, String modelName, int modelYear) {
+  private Model findModelBySpecification(String manufacturer, String modelName, Year modelYear) {
     Specification<Model> specification = buildSpecification(manufacturer, modelName, modelYear);
     return modelRepository
         .findOne(specification)
@@ -157,9 +161,21 @@ public class ModelServiceImp implements ModelService {
   @Override
   @Cacheable(value = SEARCH_MODELS_CACHE, key = "{ #root.methodName, #searchFilter, #pageable }")
   public Page<ModelDto> searchModel(SearchFilter searchFilter, Pageable pageable) {
+    SearchFilter validatedSearchFilter = validateSearchFilter(searchFilter);
+    Specification<Model> specification = ModelSpecification.getSpecification(validatedSearchFilter);
     pageable = setDefaultSortIfNeeded(pageable);
-    Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
     return modelRepository.findAll(specification, pageable).map(modelMapper::toDto);
+  }
+
+  private SearchFilter validateSearchFilter(SearchFilter searchFilter) {
+    Year minYear = searchFilter.getMinYear();
+    Year maxYear = searchFilter.getMaxYear();
+
+    if (nonNull(minYear) && nonNull(maxYear) && minYear.isAfter(maxYear)) {
+      throw new PeriodNotValidException(minYear, maxYear);
+    } else {
+      return searchFilter;
+    }
   }
 
   private Pageable setDefaultSortIfNeeded(Pageable pageRequest) {
@@ -188,7 +204,7 @@ public class ModelServiceImp implements ModelService {
   public ModelDto createModel(ModelDto modelDto) {
     verifyIfModelExists(modelDto.getManufacturer(), modelDto.getName(), modelDto.getYear());
     manufacturerService.createManufacturerIfNeeded(modelDto.getManufacturer());
-    yearService.createYearIfNeeded(modelDto.getYear());
+    modelYearService.createYearIfNeeded(modelDto.getYear());
     Model model = modelMapper.toEntity(modelDto);
     Model savedModel = modelRepository.save(model);
     createCategoriesIfNeeded(modelDto.getCategories());
@@ -197,7 +213,7 @@ public class ModelServiceImp implements ModelService {
     return modelDto;
   }
 
-  private void verifyIfModelExists(String manufacturerName, String modelName, int year) {
+  private void verifyIfModelExists(String manufacturerName, String modelName, Year year) {
     Specification<Model> specification = buildSpecification(manufacturerName, modelName, year);
     modelRepository
         .findOne(specification)
@@ -208,7 +224,7 @@ public class ModelServiceImp implements ModelService {
             });
   }
 
-  private Specification<Model> buildSpecification(String manufacturer, String name, int year) {
+  private Specification<Model> buildSpecification(String manufacturer, String name, Year year) {
     SearchFilter searchFilter =
         SearchFilter.builder().manufacturer(manufacturer).name(name).year(year).build();
     return ModelSpecification.getSpecification(searchFilter);

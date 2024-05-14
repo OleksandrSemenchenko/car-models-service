@@ -3,7 +3,7 @@ CREATE TABLE manufacturers(
 );
 
 CREATE TABLE model_years(
-  year_value INTEGER PRIMARY KEY 
+  year_value TIMESTAMP PRIMARY KEY
 );
 
 CREATE TABLE categories(
@@ -13,7 +13,7 @@ CREATE TABLE categories(
 CREATE TABLE models(
   id VARCHAR PRIMARY KEY,
   name VARCHAR(256),
-  model_year INTEGER references model_years(year_value) ON UPDATE CASCADE NOT NULL,
+  model_year TIMESTAMP references model_years(year_value) ON UPDATE CASCADE NOT NULL,
   manufacturer_name VARCHAR(256) REFERENCES manufacturers(name) ON UPDATE CASCADE NOT NULL
 );
 

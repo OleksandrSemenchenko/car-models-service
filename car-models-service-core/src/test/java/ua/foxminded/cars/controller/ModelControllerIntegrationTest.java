@@ -31,6 +31,7 @@ class ModelControllerIntegrationTest {
   private static final String V1 = "/v1";
   private static final String MODEL_ID_PATH = "/models/{modelId}";
   private static final String MODEL_PATH = "/manufacturers/{manufacturer}/models/{name}/{year}";
+  private static final String MODELS_PATH = "/models";
   private static final int YEAR = 2020;
   private static final int NEW_YEAR = 2024;
   private static final String MODEL_NAME = "A7";
@@ -43,6 +44,18 @@ class ModelControllerIntegrationTest {
   @Autowired private MockMvc mockMvc;
 
   @Autowired private ObjectMapper objectMapper;
+
+  @Test
+  void searchModels_shouldReturnPageAndStatus200_whenModelIsInDb() throws Exception {
+    mockMvc
+        .perform(get(V1 + MODELS_PATH).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.content[0].id").exists())
+        .andExpect(jsonPath("$.content[0].name", is(MODEL_NAME)))
+        .andExpect(jsonPath("$.content[0].manufacturer", is(MANUFACTURER_NAME)))
+        .andExpect(jsonPath("$.content[0].year", is(YEAR)))
+        .andExpect(jsonPath("$.content[0].categories[0]", is(CATEGORY_NAME)));
+  }
 
   @Test
   void getModelById_shouldReturnBodyAndStatus200_whenModelIsInDb() throws Exception {

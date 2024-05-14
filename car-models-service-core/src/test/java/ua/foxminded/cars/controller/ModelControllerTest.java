@@ -31,17 +31,33 @@ class ModelControllerTest {
   private static final String V1 = "/v1";
   private static final String MODEL_ID_PATH = "/models/{modelId}";
   private static final String MODEL_PATH = "/manufacturers/{manufacturer}/models/{name}/{year}";
+  private static final String MODELS_PATH = "/models";
   private static final String MANUFACTURER_NAME = "Audi";
   private static final String MODEL_NAME = "A7";
   private static final int YEAR = 2020;
   private static final int NEGATIVE_YEAR = -2020;
   private static final UUID MODEL_ID = UUID.fromString("52096834-48af-41d1-b422-93600eff629a");
+  private static final String CATEGORY_NAME = "Sedan";
 
   @Autowired private MockMvc mockMvc;
 
   @Autowired private ObjectMapper objectMapper;
 
   @MockBean private ModelService modelService;
+
+  @Test
+  void searchModels_shouldReturnStatus400_whenYearIsNegative() throws Exception {
+    String negativeYear = "-2023";
+
+    mockMvc
+        .perform(
+            get(V1 + MODELS_PATH)
+                .param("maxYear", negativeYear)
+                .param("minYear", negativeYear)
+                .param("year", negativeYear)
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
 
   @Test
   void getModelById_shouldReturnStatus404_whenModelIsInDb() throws Exception {

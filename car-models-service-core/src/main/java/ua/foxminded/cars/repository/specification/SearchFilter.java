@@ -1,6 +1,7 @@
 package ua.foxminded.cars.repository.specification;
 
 import jakarta.validation.constraints.Positive;
+import java.time.Year;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,9 +17,9 @@ public class SearchFilter {
   private String category;
   private String manufacturer;
 
-  @Positive private Integer maxYear;
+  @Positive private Year maxYear;
 
-  @Positive private Integer minYear;
+  @Positive private Year minYear;
 
-  @Positive private Integer year;
+  @Positive private Year year;
 }

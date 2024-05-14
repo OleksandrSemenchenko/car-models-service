@@ -39,16 +39,5 @@ logging:
     root: "warn"
     org: "warn"
 application:
-  sort:
-    category:
-      by: "name"
-      direction: "ASC"
-    manufacturer:
-      by: "name"
-      direction: "ASC"
-    model-name:
-      by: "name"
-      direction: "ASC"
-    model:
-      by: "year"
-      direction: "DESC"
+  model-sort-direction: "ASC"
+  model-sort-by: name

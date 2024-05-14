@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.time.Year;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,11 +20,11 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Year {
+public class ModelYear {
 
   @Id
   @Column(name = "year_value")
-  private Integer value;
+  private Year value;
 
   @OneToMany(mappedBy = "year")
   @EqualsAndHashCode.Exclude

@@ -2,6 +2,7 @@ package ua.foxminded.cars.service.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.time.Year;
 import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -17,11 +18,11 @@ public class ModelDto {
 
   private UUID id;
 
-  @NotBlank private String name;
+  private String name;
 
-  @NotNull private Integer year;
+  private Year year;
 
-  @NotBlank private String manufacturer;
+  private String manufacturer;
 
   @NotNull private Set<@NotBlank String> categories;
 }

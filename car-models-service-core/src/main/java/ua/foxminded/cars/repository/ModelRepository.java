@@ -1,5 +1,6 @@
 package ua.foxminded.cars.repository;
 
+import java.time.Year;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -33,7 +34,7 @@ public interface ModelRepository
   void putModelToCategory(
       @Param("modelId") UUID modelId, @Param("categoryName") String categoryName);
 
-  boolean existsByYearValue(int year);
+  boolean existsByYearValue(Year year);
 
   boolean existsByCategoriesName(String categoryName);
 

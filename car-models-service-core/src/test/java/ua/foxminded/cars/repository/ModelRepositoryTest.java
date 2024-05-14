@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.Year;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -24,8 +25,8 @@ class ModelRepositoryTest {
   private static final String MODEL = "A7";
   private static final String MANUFACTURE = "Audi";
   private static final String NOT_EXISTING_MANUFACTURER = "Volvo";
-  private static final Integer MODEL_YEAR = 2020;
-  private static final Integer NOT_EXISTING_MODEL_YEAR = 2035;
+  private static final Year MODEL_YEAR = Year.of(2020);
+  private static final Year NOT_EXISTING_MODEL_YEAR = Year.of(2035);
   private static final String CATEGORY = "Sedan";
   private static final String CATEGORY_WITHOUT_RELATIONS = "Coupe";
   private static final String NOT_EXISTING_CATEGORY = "Pickup";
