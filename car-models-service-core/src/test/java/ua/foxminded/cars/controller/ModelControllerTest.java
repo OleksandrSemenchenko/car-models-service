@@ -1,11 +1,15 @@
 package ua.foxminded.cars.controller;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,7 +56,22 @@ class ModelControllerTest {
   @MockBean private ModelService modelService;
 
   @Test
-  void searchModels_shouldReturnStatus400_whenMaxYearIsBeforeMinYear() throws Exception {
+  void getModel_shouldReturnStatus404AndErrorBody_whenNoModelInDb() throws Exception {
+    doThrow(ModelNotFoundException.class)
+        .when(modelService)
+        .getModel(anyString(), anyString(), anyInt());
+
+    mockMvc
+        .perform(get(V1 + MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, YEAR))
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.details").hasJsonPath())
+        .andExpect(jsonPath("$.timestamp").exists())
+        .andExpect(jsonPath("$.errorCode", is(404)));
+  }
+
+  @Test
+  void searchModels_shouldReturnStatus400AndErrorBody_whenMaxYearIsBeforeMinYear()
+      throws Exception {
     doThrow(PeriodNotValidException.class)
         .when(modelService)
         .searchModel(any(SearchFilter.class), any(Pageable.class));
@@ -63,11 +82,14 @@ class ModelControllerTest {
                 .param("maxYear", MIN_YEAR.toString())
                 .param("minYear", MAX_YEAR.toString())
                 .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.details").hasJsonPath())
+        .andExpect(jsonPath("$.timestamp").exists())
+        .andExpect(jsonPath("$.errorCode", is(400)));
   }
 
   @Test
-  void searchModels_shouldReturnStatus400_whenYearIsNegative() throws Exception {
+  void searchModels_shouldReturnStatus400AndErrorBody_whenYearIsNegative() throws Exception {
     String negativeYear = "-2023";
 
     mockMvc
@@ -77,20 +99,26 @@ class ModelControllerTest {
                 .param("minYear", negativeYear)
                 .param("year", negativeYear)
                 .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.details").hasJsonPath())
+        .andExpect(jsonPath("$.timestamp").exists())
+        .andExpect(jsonPath("$.errorCode", is(400)));
   }
 
   @Test
-  void getModelById_shouldReturnStatus404_whenModelIsInDb() throws Exception {
+  void getModelById_shouldReturnStatus404AndErrorBody_whenModelIsInDb() throws Exception {
     doThrow(ModelNotFoundException.class).when(modelService).getModelById(any(UUID.class));
 
     mockMvc
         .perform(get(V1 + MODEL_ID_PATH, MODEL_ID).contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isNotFound());
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.details").hasJsonPath())
+        .andExpect(jsonPath("$.timestamp").exists())
+        .andExpect(jsonPath("$.errorCode", is(404)));
   }
 
   @Test
-  void createModel_shouldReturnStatus409_whenModelAlreadyInDb() throws Exception {
+  void createModel_shouldReturnStatus409AndErrorBody_whenModelAlreadyInDb() throws Exception {
     ModelDto modelDto = TestDataGenerator.generateModelDto();
     String requestBody = objectMapper.writeValueAsString(modelDto);
 
@@ -101,11 +129,15 @@ class ModelControllerTest {
             post(V1 + MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, YEAR)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
-        .andExpect(status().isConflict());
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.details").hasJsonPath())
+        .andExpect(jsonPath("$.timestamp").exists())
+        .andExpect(jsonPath("$.errorCode", is(409)));
   }
 
   @Test
-  void createModel_shouldReturnStatus400_whenNoCategoryInRequestBody() throws Exception {
+  void createModel_shouldReturnStatus400AndErrorBody_whenNoCategoryInRequestBody()
+      throws Exception {
     ModelDto modelDto = TestDataGenerator.generateModelDto();
     modelDto.setCategories(null);
     String requestBody = objectMapper.writeValueAsString(modelDto);
@@ -115,26 +147,32 @@ class ModelControllerTest {
             post(V1 + MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, YEAR)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.details").hasJsonPath())
+        .andExpect(jsonPath("$.timestamp").exists())
+        .andExpect(jsonPath("$.errorCode", is(400)));
   }
 
   @Test
-  void updateModel_shouldReturnStatus404_whenNoModelInDb() throws Exception {
+  void updateModel_shouldReturnStatus404AndErrorBody_whenNoModelInDb() throws Exception {
     ModelDto modelDto = TestDataGenerator.generateModelDto();
     String requestBody = objectMapper.writeValueAsString(modelDto);
 
-    doThrow(ModelNotFoundException.class).when(modelService).updateModel(modelDto);
+    doThrow(ModelNotFoundException.class).when(modelService).updateModel(isA(ModelDto.class));
 
     mockMvc
         .perform(
             put(V1 + MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, YEAR)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
-        .andExpect(status().isOk());
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.details").hasJsonPath())
+        .andExpect(jsonPath("$.timestamp").exists())
+        .andExpect(jsonPath("$.errorCode", is(404)));
   }
 
   @Test
-  void updateModel_shouldReturn400_whenYearIsNegative() throws Exception {
+  void updateModel_shouldReturn400AndErrorBody_whenYearIsNegative() throws Exception {
     ModelDto modelDto = TestDataGenerator.generateModelDto();
     String requestBody = objectMapper.writeValueAsString(modelDto);
 
@@ -143,15 +181,21 @@ class ModelControllerTest {
             put(V1 + MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, NEGATIVE_YEAR)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.details").hasJsonPath())
+        .andExpect(jsonPath("$.timestamp").exists())
+        .andExpect(jsonPath("$.errorCode", is(400)));
   }
 
   @Test
-  void deleteModelById_shouldReturn404_whenNoModelInDb() throws Exception {
+  void deleteModelById_shouldReturn404AndErrorBody_whenNoModelInDb() throws Exception {
     doThrow(ModelNotFoundException.class).when(modelService).deleteModelById(MODEL_ID);
 
     mockMvc
         .perform(MockMvcRequestBuilders.delete(V1 + MODEL_ID_PATH, MODEL_ID))
-        .andExpect(status().isNotFound());
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.details").hasJsonPath())
+        .andExpect(jsonPath("$.timestamp").exists())
+        .andExpect(jsonPath("$.errorCode", is(404)));
   }
 }

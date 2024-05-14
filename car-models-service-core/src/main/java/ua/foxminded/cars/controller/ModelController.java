@@ -6,10 +6,8 @@ import static org.springframework.http.HttpStatus.OK;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.headers.Header;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -44,43 +42,40 @@ public class ModelController {
 
   private static final String V1 = "/v1";
   private static final String MODEL_ID_PATH = "/models/{id}";
-  private static final String MODEL_PATH =
-      "/manufacturers/{manufacturer}/models/{name}/{modelYear}";
+  private static final String MODEL_PATH = "/manufacturers/{manufacturer}/models/{name}/{year}";
   private static final String MODELS_PATH = "/models";
 
   private final ModelService modelService;
 
-  @GetMapping("/manufacturers/{manufacturer}/models/{name}/{modelYear}")
   @Operation(
-      summary = "Get a model by its manufacturer, name and modelYear",
-      operationId = "getModelByManufacturerAndNameAndYear",
-      description =
-          "Seach for and retrieve a model by its manufacturer, name and modelYear from the database",
+      summary = "Get a model by manufacturer, name, and year",
+      operationId = "getModel",
+      description = "Searchers for and retrieve a model by manufacturer, name, and year",
       tags = "model",
       responses = {
         @ApiResponse(
             responseCode = "200",
-            description = "The model",
+            description = "The model received",
             content =
                 @Content(
-                    array = @ArraySchema(schema = @Schema(implementation = ModelDto.class)),
                     examples =
                         @ExampleObject(
-                            name = "model",
-                            value =
-                                "{\"id\": \"1\", "
-                                    + "\"name\": \"A7\", "
-                                    + "\"modelYear\": \"2023\", "
-                                    + "\"manufacturer\": \"Audi\", "
-                                    + "\"categories\": [\"SUV\"]}"))),
+                            """
+              {
+                "timestamp": "2024-05-14T16:49:20.184738133",
+                "errorCode": 404,
+                "details": "The model with manufacturer 'Chevrolet', name 'Q9' and year '2025' not found"
+              }
+              """))),
         @ApiResponse(responseCode = "400", description = "The model modelYear must be positive"),
         @ApiResponse(responseCode = "404", description = "The model has not been found")
       })
-  public ModelDto getByManufacturerAndNameAndYear(
+  @GetMapping(value = V1 + MODEL_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ModelDto getModel(
       @PathVariable String manufacturer,
       @PathVariable String name,
-      @PathVariable @Positive int modelYear) {
-    return modelService.getModel(manufacturer, name, modelYear);
+      @PathVariable @Positive int year) {
+    return modelService.getModel(manufacturer, name, year);
   }
 
   @Operation(
@@ -96,8 +91,20 @@ public class ModelController {
             useReturnTypeSchema = true),
         @ApiResponse(
             responseCode = "400",
-            description = "The maxYear, minYear, modelYear parameters must be positive")
-        // TODO max must be greater than min
+            description = "The maxYear, minYear, modelYear parameters must be positive",
+            content =
+                @Content(
+                    examples =
+                        @ExampleObject(
+                            """
+              {
+                "timestamp": "2024-05-14T16:09:01.564992622",
+                "errorCode": 400,
+                "details": {
+                  "minYear": "must be greater than 0"
+                }
+              }
+            """)))
       })
   @GetMapping(value = V1 + MODELS_PATH)
   public Page<ModelDto> searchModels(
@@ -196,11 +203,11 @@ public class ModelController {
   public ResponseEntity<Void> createModel(
       @PathVariable String manufacturer,
       @PathVariable String name,
-      @PathVariable @Positive Integer modelYear,
+      @PathVariable @Positive Integer year,
       @RequestBody @Valid ModelDto modelDto) {
     modelDto.setManufacturer(manufacturer);
     modelDto.setName(name);
-    modelDto.setYear(modelYear);
+    modelDto.setYear(year);
 
     ModelDto persistedModel = modelService.createModel(modelDto);
     URI location =
@@ -256,9 +263,9 @@ public class ModelController {
           String manufacturer,
       @Parameter(description = "A model name", example = "x7") @PathVariable String name,
       @Parameter(description = "A modelYear of a model", example = "'2023") @PathVariable @Positive
-          int modelYear,
+          int year,
       @RequestBody ModelDto modelDto) {
-    modelDto.setYear(modelYear);
+    modelDto.setYear(year);
     modelDto.setManufacturer(manufacturer);
     modelDto.setName(name);
     modelService.updateModel(modelDto);

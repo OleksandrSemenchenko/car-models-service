@@ -3,6 +3,7 @@ package ua.foxminded.cars.service.imp;
 import java.time.Year;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -166,10 +167,10 @@ public class ModelServiceImp implements ModelService {
   }
 
   private SearchFilter validateSearchFilter(SearchFilter searchFilter) {
-    Year minYear = Year.of(searchFilter.getMinYear());
-    Year maxYear = Year.of(searchFilter.getMaxYear());
+    Integer minYear = searchFilter.getMinYear();
+    Integer maxYear = searchFilter.getMaxYear();
 
-    if (minYear.isAfter(maxYear)) {
+    if (Objects.nonNull(minYear) && Objects.nonNull(maxYear) && minYear > maxYear) {
       throw new PeriodNotValidException(minYear, maxYear);
     } else {
       return searchFilter;

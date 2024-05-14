@@ -55,7 +55,7 @@ public class ModelSpecification {
       if (searchFilter.getYear() != null) {
         predicates.add(
             criteriaBuilder.equal(
-                modelRoot.get(Model_.year).get(ModelYear_.value), searchFilter.getYear()));
+                modelRoot.get(Model_.year).get(ModelYear_.value), Year.of(searchFilter.getYear())));
       }
       return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     };

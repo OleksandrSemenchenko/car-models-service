@@ -34,6 +34,7 @@ import ua.foxminded.cars.exceptionhandler.exceptions.ModelNotFoundException;
 import ua.foxminded.cars.exceptionhandler.exceptions.PeriodNotValidException;
 import ua.foxminded.cars.mapper.CategoryMapper;
 import ua.foxminded.cars.mapper.ModelMapper;
+import ua.foxminded.cars.mapper.ModelYearMapper;
 import ua.foxminded.cars.repository.ModelRepository;
 import ua.foxminded.cars.repository.entity.Category;
 import ua.foxminded.cars.repository.entity.Model;
@@ -48,6 +49,7 @@ class ModelServiceImpTest {
 
   private static final String MODEL_MAPPER_FIELD = "modelMapper";
   private static final String CATEGORY_MAPPER_FIELD = "categoryMapper";
+  private static final String MODEL_YEAR_MAPPER_FIELD = "modelYearMapper";
   private static final UUID MODEL_ID = UUID.fromString("2bd84edb-70aa-4e74-9a41-c0e962fd36db");
   private static final int YEAR = 2021;
   private static final String MODEL_NAME = "x6";
@@ -77,6 +79,8 @@ class ModelServiceImpTest {
     ModelMapper modelMapper = Mappers.getMapper(ModelMapper.class);
     CategoryMapper categoryMapper = Mappers.getMapper(CategoryMapper.class);
     ReflectionTestUtils.setField(modelMapper, CATEGORY_MAPPER_FIELD, categoryMapper);
+    ModelYearMapper modelYearMapper = Mappers.getMapper(ModelYearMapper.class);
+    ReflectionTestUtils.setField(modelMapper, MODEL_YEAR_MAPPER_FIELD, modelYearMapper);
     ReflectionTestUtils.setField(modelService, MODEL_MAPPER_FIELD, modelMapper);
   }
 

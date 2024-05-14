@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -17,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.cars.TestDataGenerator;
 import ua.foxminded.cars.service.dto.ModelDto;
@@ -44,6 +44,18 @@ class ModelControllerIntegrationTest {
   @Autowired private MockMvc mockMvc;
 
   @Autowired private ObjectMapper objectMapper;
+
+  @Test
+  void getModel_shouldReturnStatus200AndBody_whenModelIsInDb() throws Exception {
+    mockMvc
+        .perform(get(V1 + MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, YEAR))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").exists())
+        .andExpect(jsonPath("$.name", is(MODEL_NAME)))
+        .andExpect(jsonPath("$.manufacturer", is(MANUFACTURER_NAME)))
+        .andExpect(jsonPath("$.year", is(YEAR)))
+        .andExpect(jsonPath("$.categories[0]", is(CATEGORY_NAME)));
+  }
 
   @Test
   void searchModels_shouldReturnPageAndStatus200_whenModelIsInDb() throws Exception {
@@ -76,8 +88,7 @@ class ModelControllerIntegrationTest {
 
     mockMvc
         .perform(
-            MockMvcRequestBuilders.post(
-                    V1 + MODEL_PATH, NEW_MANUFACTURER_NAME, NEW_MODEL_NAME, NEW_YEAR)
+            post(V1 + MODEL_PATH, NEW_MANUFACTURER_NAME, NEW_MODEL_NAME, NEW_YEAR)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
         .andExpect(status().isCreated())
@@ -101,94 +112,4 @@ class ModelControllerIntegrationTest {
   void deleteModelById_shouldReturn204_whenModelIsInDb() throws Exception {
     mockMvc.perform(delete(V1 + MODEL_ID_PATH, MODEL_ID)).andExpect(status().isNoContent());
   }
-
-  //  @BeforeEach
-  //  void SetUp() {
-  //    modelDto =
-  //
-  // ModelDto.builder().id(MODEL_ID).year(MODEL_YEAR).categories(Set.of(CATEGORY_NAME)).build();
-  //  }
-  //
-  //  @Test
-  //  void searchByManufacturerAndModelAndYear_ShouldReturnStaus200() throws Exception {
-  //    mockMvc
-  //        .perform(
-  //            get(
-  //                "/v1/manufacturers/{manufacturer}/models/{model}/{year}",
-  //                MANUFACTURER_NAME,
-  //                MODEL_NAME,
-  //                MODEL_YEAR))
-  //        .andExpect(status().isOk());
-  //  }
-  //
-  //  @Test
-  //  void search_ShouldReturnStatus200_WhenParametersArePresent() throws Exception {
-  //    mockMvc
-  //        .perform(
-  //            get("/v1/models")
-  //                .param("model", MODEL_NAME)
-  //                .param("category", CATEGORY_NAME)
-  //                .param("manufacturer", MANUFACTURER_NAME)
-  //                .param("maxYear", String.valueOf(MODEL_YEAR))
-  //                .param("minYear", String.valueOf(MODEL_YEAR)))
-  //        .andExpect(status().isOk())
-  //        .andExpect(jsonPath("$.content", hasSize(1)))
-  //        .andExpect(jsonPath("$.content[0].year", is(MODEL_YEAR)))
-  //        .andExpect(jsonPath("$.content[0].manufacturer", is(MANUFACTURER_NAME)))
-  //        .andExpect(jsonPath("$.content[0].categories[0]", is(CATEGORY_NAME)));
-  //  }
-  //
-  //  @Test
-  //  void search_ShouldReturnStatus200_WhenNoParameters() throws Exception {
-  //    mockMvc
-  //        .perform(get("/v1/models"))
-  //        .andExpect(status().isOk())
-  //        .andExpect(jsonPath("$.content", hasSize(1)));
-  //  }
-  //
-  //  @Test
-  //  void getById_ShouldReturnStatus200() throws Exception {
-  //    mockMvc
-  //        .perform(get("/v1/models/{id}", MODEL_ID))
-  //        .andExpect(status().isOk())
-  //        .andExpect(jsonPath("$.id").value(MODEL_ID));
-  //  }
-  //
-  //  @Test
-  //  void create_ShouldReturnStatus201() throws Exception {
-  //    String vehicleDtoJson = mapper.writeValueAsString(modelDto);
-  //
-  //    mockMvc
-  //        .perform(
-  //            post(
-  //                    "/v1/manufacturers/{manufacturer}/models/{name}/{year}",
-  //                    MANUFACTURER_NAME,
-  //                    MODEL_NAME,
-  //                    NEW_MODEL_YEAR)
-  //                .contentType(APPLICATION_JSON)
-  //                .content(vehicleDtoJson))
-  //        .andExpect(status().isCreated())
-  //        .andExpect(header().string("Location", containsString("/v1/models/")));
-  //  }
-  //
-  //  @Test
-  //  void update_ShouldReturnStatus200() throws Exception {
-  //    modelDtoJson = mapper.writeValueAsString(modelDto);
-  //
-  //    mockMvc
-  //        .perform(
-  //            put(
-  //                    "/v1/manufacturers/{manufacturers}/models/{name}/{year}",
-  //                    MANUFACTURER_NAME,
-  //                    MODEL_NAME,
-  //                    MODEL_YEAR)
-  //                .contentType(APPLICATION_JSON)
-  //                .content(modelDtoJson))
-  //        .andExpect(status().isOk());
-  //  }
-  //
-  //  @Test
-  //  void deleteById_ShouldReturnStatus204() throws Exception {
-  //    mockMvc.perform(delete("/v1/models/{id}", MODEL_ID)).andExpect(status().isNoContent());
-  //  }
 }

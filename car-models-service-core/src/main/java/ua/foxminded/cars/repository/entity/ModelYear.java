@@ -26,7 +26,7 @@ public class ModelYear {
 
   @Id
   @Column(name = "year_value")
-  @JdbcTypeCode(SqlTypes.TIMESTAMP)
+  @JdbcTypeCode(SqlTypes.INTEGER)
   private Year value;
 
   @OneToMany(mappedBy = "year")
