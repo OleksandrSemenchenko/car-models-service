@@ -74,12 +74,17 @@ public class ModelServiceImp implements ModelService {
         findModelBySpecification(
             targetModelDto.getManufacturer(), targetModelDto.getName(), targetModelDto.getYear());
 
-    createCategoriesIfNecessary(targetModelDto.getCategories());
     Set<String> sourceCategories = getCategoryNames(sourceModel.getCategories());
     Set<String> targetCategories = new HashSet<>(targetModelDto.getCategories());
-    removeModelFromCategories(sourceModel.getId(), sourceCategories, targetCategories);
-    targetCategories.removeAll(sourceCategories);
-    putModelToCategories(sourceModel.getId(), targetCategories);
+    List<String> shouldBeAssignedCategories =
+        targetCategories.stream().filter(category -> !sourceCategories.contains(category)).toList();
+    categoryService.createCategoriesIfNecessary(shouldBeAssignedCategories);
+    putModelToCategories(sourceModel.getId(), shouldBeAssignedCategories);
+    sourceCategories.removeAll(targetCategories);
+
+    if (!sourceCategories.isEmpty()) {
+      removeModelFromCategories(sourceModel.getId(), sourceCategories);
+    }
     targetModelDto.setId(sourceModel.getId());
     return targetModelDto;
   }
@@ -88,13 +93,10 @@ public class ModelServiceImp implements ModelService {
     return categories.stream().map(Category::getName).collect(Collectors.toSet());
   }
 
-  private void removeModelFromCategories(
-      UUID modelId, Set<String> sourceCategories, Set<String> targetCategories) {
-    for (String sourceCategory : sourceCategories) {
-      if (!targetCategories.contains(sourceCategory)) {
-        modelRepository.removeModelFromCategory(modelId, sourceCategory);
-        deleteCategoryIfNecessary(sourceCategory);
-      }
+  private void removeModelFromCategories(UUID modelId, Set<String> categoryNames) {
+    for (String categoryName : categoryNames) {
+      modelRepository.removeModelFromCategory(modelId, categoryName);
+      deleteCategoryIfNecessary(categoryName);
     }
   }
 
@@ -233,7 +235,7 @@ public class ModelServiceImp implements ModelService {
     modelYearService.createYearIfNecessary(year);
     Model model = modelMapper.toEntity(modelDto);
     Model savedModel = modelRepository.save(model);
-    createCategoriesIfNecessary(modelDto.getCategories());
+    categoryService.createCategoriesIfNecessary(modelDto.getCategories());
     putModelToCategories(savedModel.getId(), modelDto.getCategories());
     modelDto.setId(savedModel.getId());
     return modelDto;
@@ -256,13 +258,7 @@ public class ModelServiceImp implements ModelService {
     return ModelSpecification.getSpecification(searchFilter);
   }
 
-  private void createCategoriesIfNecessary(Set<String> categoryNames) {
-    for (String name : categoryNames) {
-      categoryService.createCategoryIfNecessary(name);
-    }
-  }
-
-  private void putModelToCategories(UUID modelId, Set<String> categoryNames) {
+  private void putModelToCategories(UUID modelId, List<String> categoryNames) {
     for (String categoryName : categoryNames) {
       modelRepository.putModelToCategory(modelId, categoryName);
     }

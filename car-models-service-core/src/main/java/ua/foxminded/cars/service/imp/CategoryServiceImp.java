@@ -19,20 +19,20 @@ public class CategoryServiceImp implements CategoryService {
   public final CategoryMapper categoryMapper;
 
   @Override
-  public Set<CategoryDto> getCategories(Set<String> categoryNames) {
-    List<Category> categories = categoryRepository.findAllById(categoryNames);
-    verifyIfAllCategoriesPresent(categoryNames, categories);
-    return categoryMapper.toDtoSet(categories);
+  public List<CategoryDto> getCategories(Set<String> categoryNames) {
+    List<Category> categories = findAllCategoriesById(categoryNames);
+    return categoryMapper.toDtoList(categories);
   }
 
-  private void verifyIfAllCategoriesPresent(
-      Set<String> expectedNames, List<Category> actualCategories) {
-    actualCategories.forEach(
+  private List<Category> findAllCategoriesById(Set<String> categoryNames) {
+    List<Category> receivedCategories = categoryRepository.findAllById(categoryNames);
+    receivedCategories.forEach(
         category -> {
-          if (!expectedNames.contains(category.getName())) {
+          if (!categoryNames.contains(category.getName())) {
             throw new CategoryNotFoundException(category.getName());
           }
         });
+    return receivedCategories;
   }
 
   @Override
@@ -43,11 +43,27 @@ public class CategoryServiceImp implements CategoryService {
     categoryRepository.deleteById(categoryName);
   }
 
+  /**
+   * Creates categories if it is not in the database and returns only created ones.
+   *
+   * @param categoryNames - category names
+   * @return List<CategoryDto> - created categories
+   */
   @Override
-  public void createCategoryIfNecessary(String categoryName) {
-    if (!categoryRepository.existsById(categoryName)) {
-      Category category = Category.builder().name(categoryName).build();
-      categoryRepository.saveAndFlush(category);
-    }
+  public List<CategoryDto> createCategoriesIfNecessary(List<String> categoryNames) {
+    List<String> shouldBeCreatedCategoryNames = defineCategoriesToCreate(categoryNames);
+    List<Category> shouldBeCreatedCategories =
+        shouldBeCreatedCategoryNames.stream()
+            .map(name -> Category.builder().name(name).build())
+            .toList();
+    List<Category> createdCategories =
+        categoryRepository.saveAllAndFlush(shouldBeCreatedCategories);
+    return categoryMapper.toDtoList(createdCategories);
+  }
+
+  private List<String> defineCategoriesToCreate(List<String> categoryNames) {
+    return categoryNames.stream()
+        .filter(categoryName -> !categoryRepository.existsById(categoryName))
+        .toList();
   }
 }

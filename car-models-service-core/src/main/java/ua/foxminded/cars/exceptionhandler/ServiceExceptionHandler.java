@@ -16,7 +16,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ua.foxminded.cars.exceptionhandler.exceptions.DataIntegrityViolationException;
-import ua.foxminded.cars.exceptionhandler.exceptions.RestrictionViolationException;
+import ua.foxminded.cars.exceptionhandler.exceptions.UnitAlreadyExistsException;
 import ua.foxminded.cars.exceptionhandler.exceptions.UnitNotFoundException;
 
 @RestControllerAdvice
@@ -27,9 +27,9 @@ public class ServiceExceptionHandler {
   private static final String ERROR_CODE_FIELD = "errorCode";
   private static final String TIMESTAMP_FILED = "timestamp";
 
-  @ExceptionHandler(RestrictionViolationException.class)
+  @ExceptionHandler(UnitAlreadyExistsException.class)
   protected ResponseEntity<Object> handleRestrictionViolationException(
-      RestrictionViolationException e) {
+      UnitAlreadyExistsException e) {
     Map<String, Object> responseBody = buildResponseBody(HttpStatus.BAD_REQUEST, e.getMessage());
     return ResponseEntity.badRequest().body(responseBody);
   }
