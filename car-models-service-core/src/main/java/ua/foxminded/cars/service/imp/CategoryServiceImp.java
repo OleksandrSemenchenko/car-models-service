@@ -44,7 +44,7 @@ public class CategoryServiceImp implements CategoryService {
   }
 
   @Override
-  public void createCategoryIfNeeded(String categoryName) {
+  public void createCategoryIfNecessary(String categoryName) {
     if (!categoryRepository.existsById(categoryName)) {
       Category category = Category.builder().name(categoryName).build();
       categoryRepository.saveAndFlush(category);

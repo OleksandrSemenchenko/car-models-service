@@ -23,7 +23,7 @@ public class ModelYearServiceImp implements ModelYearService {
   }
 
   @Override
-  public void createYearIfNeeded(Year value) {
+  public void createYearIfNecessary(Year value) {
     // TODO validate negative year
     if (!modelYearRepository.existsById(value)) {
       ModelYear modelYear = ModelYear.builder().value(value).build();

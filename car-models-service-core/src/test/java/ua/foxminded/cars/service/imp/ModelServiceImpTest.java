@@ -255,9 +255,9 @@ class ModelServiceImpTest {
 
     ModelDto createdModel = modelService.createModel(modelDto);
 
-    verify(manufacturerService).createManufacturerIfNeeded(anyString());
-    verify(modelYearService).createYearIfNeeded(any(Year.class));
-    verify(categoryService).createCategoryIfNeeded(anyString());
+    verify(manufacturerService).createManufacturerIfNecessary(anyString());
+    verify(modelYearService).createYearIfNecessary(any(Year.class));
+    verify(categoryService).createCategoryIfNecessary(anyString());
     verify(modelRepository).putModelToCategory(any(UUID.class), anyString());
     verifyModelDto(createdModel);
   }

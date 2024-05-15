@@ -9,5 +9,5 @@ public interface CategoryService {
 
   void deleteCategory(String category);
 
-  void createCategoryIfNeeded(String category);
+  void createCategoryIfNecessary(String category);
 }

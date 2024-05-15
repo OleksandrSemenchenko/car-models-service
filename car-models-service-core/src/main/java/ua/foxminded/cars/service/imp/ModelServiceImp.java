@@ -74,7 +74,7 @@ public class ModelServiceImp implements ModelService {
         findModelBySpecification(
             targetModelDto.getManufacturer(), targetModelDto.getName(), targetModelDto.getYear());
 
-    createCategoriesIfNeeded(targetModelDto.getCategories());
+    createCategoriesIfNecessary(targetModelDto.getCategories());
     Set<String> sourceCategories = getCategoryNames(sourceModel.getCategories());
     Set<String> targetCategories = new HashSet<>(targetModelDto.getCategories());
     removeModelFromCategories(sourceModel.getId(), sourceCategories, targetCategories);
@@ -93,7 +93,7 @@ public class ModelServiceImp implements ModelService {
     for (String sourceCategory : sourceCategories) {
       if (!targetCategories.contains(sourceCategory)) {
         modelRepository.removeModelFromCategory(modelId, sourceCategory);
-        deleteCategoryIfNeeded(sourceCategory);
+        deleteCategoryIfNecessary(sourceCategory);
       }
     }
   }
@@ -116,32 +116,32 @@ public class ModelServiceImp implements ModelService {
     Model model =
         modelRepository.findById(modelId).orElseThrow(() -> new ModelNotFoundException(modelId));
     modelRepository.deleteById(modelId);
-    deleteManufacturerIfNeeded(model.getManufacturer());
-    deleteModelYearIfNeeded(model.getYear());
-    deleteCategoriesIfNeeded(model.getCategories());
+    deleteManufacturerIfNecessary(model.getManufacturer());
+    deleteModelYearIfNecessary(model.getYear());
+    deleteCategoriesIfNecessary(model.getCategories());
   }
 
-  private void deleteManufacturerIfNeeded(Manufacturer manufacturer) {
+  private void deleteManufacturerIfNecessary(Manufacturer manufacturer) {
     if (!modelRepository.existsByManufacturerName(manufacturer.getName())) {
       manufacturerService.deleteManufacturer(manufacturer.getName());
     }
   }
 
-  private void deleteModelYearIfNeeded(ModelYear modelYear) {
+  private void deleteModelYearIfNecessary(ModelYear modelYear) {
     if (!modelRepository.existsByYearValue(modelYear.getValue())) {
       modelYearService.deleteYear(modelYear.getValue());
     }
   }
 
-  private void deleteCategoriesIfNeeded(Set<Category> categories) {
+  private void deleteCategoriesIfNecessary(Set<Category> categories) {
     List<String> categoryNames = categories.stream().map(Category::getName).toList();
 
     for (String categoryName : categoryNames) {
-      deleteCategoryIfNeeded(categoryName);
+      deleteCategoryIfNecessary(categoryName);
     }
   }
 
-  private void deleteCategoryIfNeeded(String categoryName) {
+  private void deleteCategoryIfNecessary(String categoryName) {
     if (!modelRepository.existsByCategoriesName(categoryName)) {
       categoryService.deleteCategory(categoryName);
     }
@@ -182,7 +182,7 @@ public class ModelServiceImp implements ModelService {
   public Page<ModelDto> searchModel(SearchFilter searchFilter, Pageable pageable) {
     SearchFilter validatedSearchFilter = validateSearchFilter(searchFilter);
     Specification<Model> specification = ModelSpecification.getSpecification(validatedSearchFilter);
-    pageable = setDefaultSortIfNeeded(pageable);
+    pageable = setDefaultSortIfNecessary(pageable);
     return modelRepository.findAll(specification, pageable).map(modelMapper::toDto);
   }
 
@@ -197,7 +197,7 @@ public class ModelServiceImp implements ModelService {
     }
   }
 
-  private Pageable setDefaultSortIfNeeded(Pageable pageRequest) {
+  private Pageable setDefaultSortIfNecessary(Pageable pageRequest) {
     if (pageRequest.getSort().isUnsorted()) {
       Sort defaulSort = Sort.by(appConfig.getModelSortDirection(), appConfig.getModelSortBy());
       return PageRequest.of(
@@ -209,7 +209,7 @@ public class ModelServiceImp implements ModelService {
   }
 
   /**
-   * Creates a model. If a database has no needed entities it creates them.
+   * Creates a model. If a database has no necessary entities it creates them.
    *
    * @param modelDto - DTO of a model
    * @return ModelDto
@@ -228,12 +228,12 @@ public class ModelServiceImp implements ModelService {
       })
   public ModelDto createModel(ModelDto modelDto) {
     verifyIfModelExists(modelDto.getManufacturer(), modelDto.getName(), modelDto.getYear());
-    manufacturerService.createManufacturerIfNeeded(modelDto.getManufacturer());
+    manufacturerService.createManufacturerIfNecessary(modelDto.getManufacturer());
     Year year = Year.of(modelDto.getYear());
-    modelYearService.createYearIfNeeded(year);
+    modelYearService.createYearIfNecessary(year);
     Model model = modelMapper.toEntity(modelDto);
     Model savedModel = modelRepository.save(model);
-    createCategoriesIfNeeded(modelDto.getCategories());
+    createCategoriesIfNecessary(modelDto.getCategories());
     putModelToCategories(savedModel.getId(), modelDto.getCategories());
     modelDto.setId(savedModel.getId());
     return modelDto;
@@ -256,9 +256,9 @@ public class ModelServiceImp implements ModelService {
     return ModelSpecification.getSpecification(searchFilter);
   }
 
-  private void createCategoriesIfNeeded(Set<String> categoryNames) {
+  private void createCategoriesIfNecessary(Set<String> categoryNames) {
     for (String name : categoryNames) {
-      categoryService.createCategoryIfNeeded(name);
+      categoryService.createCategoryIfNecessary(name);
     }
   }
 

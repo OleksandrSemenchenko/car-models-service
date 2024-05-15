@@ -22,7 +22,7 @@ public class ManufacturerServiceImp implements ManufacturerService {
   }
 
   @Override
-  public void createManufacturerIfNeeded(String manufacturerName) {
+  public void createManufacturerIfNecessary(String manufacturerName) {
     if (!manufacturerRepository.existsById(manufacturerName)) {
       Manufacturer manufacturer = Manufacturer.builder().name(manufacturerName).build();
       manufacturerRepository.saveAndFlush(manufacturer);

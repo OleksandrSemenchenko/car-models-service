@@ -6,5 +6,5 @@ public interface ModelYearService {
 
   void deleteYear(Year year);
 
-  void createYearIfNeeded(Year year);
+  void createYearIfNecessary(Year year);
 }
