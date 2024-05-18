@@ -6,4 +6,6 @@ import ua.foxminded.cars.service.dto.ManufacturerDto;
 public interface ManufacturerMapper {
 
   Manufacturer toEntity(ManufacturerDto manufacturerDto);
+
+  ManufacturerDto toDto(Manufacturer manufacturer);
 }

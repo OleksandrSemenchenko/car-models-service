@@ -2,6 +2,8 @@ package ua.foxminded.cars.service.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -23,5 +25,5 @@ public class ModelDto {
 
   private String manufacturer;
 
-  @NotNull private Set<@NotBlank String> categories;
+  @NotNull private List<@NotBlank String> categories;
 }

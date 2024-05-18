@@ -11,6 +11,8 @@ import ua.foxminded.cars.service.dto.CategoryDto;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CategoryMapper {
 
+  List<Category> toEntityList(Collection<CategoryDto> categoriesDto);
+
   List<CategoryDto> toDtoList(Collection<Category> categories);
 
   CategoryDto toDto(Category category);

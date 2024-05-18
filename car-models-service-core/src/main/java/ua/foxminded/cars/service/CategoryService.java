@@ -1,14 +1,17 @@
 package ua.foxminded.cars.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import ua.foxminded.cars.service.dto.CategoryDto;
 
 public interface CategoryService {
 
-  List<CategoryDto> createCategoriesIfNecessary(List<String> categoryNames);
+  boolean isCategoryExist(String name);
 
-  List<CategoryDto> getCategories(Set<String> categoryNames);
+  List<CategoryDto> createCategories(Collection<CategoryDto> categories);
+
+  List<CategoryDto> getCategories(Collection<String> categoryNames);
 
   void deleteCategory(String category);
 }

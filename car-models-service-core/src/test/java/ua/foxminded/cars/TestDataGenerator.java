@@ -1,6 +1,8 @@
 package ua.foxminded.cars;
 
 import java.time.Year;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -42,7 +44,7 @@ public class TestDataGenerator {
         .year(YEAR)
         .manufacturer(MANUFACTURER_NAME)
         .name(MODEL_NAME)
-        .categories(new HashSet<>(List.of(CATEGORY_NAME)))
+        .categories(List.of(CATEGORY_NAME))
         .build();
   }
 

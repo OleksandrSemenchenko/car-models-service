@@ -1,10 +1,14 @@
 package ua.foxminded.cars.service;
 
+import ua.foxminded.cars.service.dto.ModelYearDto;
+
 import java.time.Year;
 
 public interface ModelYearService {
 
-  void deleteYear(Year year);
+  void deleteYear(int year);
 
-  void createYearIfNecessary(Year year);
+  ModelYearDto createModelYear(ModelYearDto year);
+
+  boolean isModelYearExist(int year);
 }
