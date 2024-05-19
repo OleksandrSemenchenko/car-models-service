@@ -127,6 +127,6 @@ class ModelRepositoryTest {
 
     assertEquals(MODEL, model.getName());
     assertEquals(MANUFACTURE, model.getManufacturer().getName());
-    assertEquals(Year.of(MODEL_YEAR), model.getYear().getYear());
+    assertEquals(Year.of(MODEL_YEAR), model.getYear().getValue());
   }
 }

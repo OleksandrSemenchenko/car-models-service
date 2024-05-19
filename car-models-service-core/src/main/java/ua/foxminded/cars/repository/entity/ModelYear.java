@@ -27,7 +27,7 @@ public class ModelYear {
   @Id
   @Column(name = "year_value")
   @JdbcTypeCode(SqlTypes.INTEGER)
-  private Year year;
+  private Year value;
 
   @OneToMany(mappedBy = "year")
   @EqualsAndHashCode.Exclude

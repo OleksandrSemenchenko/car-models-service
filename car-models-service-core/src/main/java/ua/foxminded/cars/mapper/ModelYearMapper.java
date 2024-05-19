@@ -16,17 +16,19 @@ public interface ModelYearMapper {
     return year.getValue();
   }
 
-  default Integer toInteger(ModelYear year) {
-    return year.getYear().getValue();
+  default Integer toInteger(ModelYear modelYear) {
+    Year year = modelYear.getValue();
+    return year.getValue();
   }
 
   default Year toYear(Integer year) {
     return Year.of(year);
   }
 
-  @Mapping(target = "year", source = "year")
+  @Mapping(target = "value", source = "year")
   ModelYear toEntity(Integer year);
 
+  @Mapping(target = "value", source = "year")
   ModelYear toEntity(ModelYearDto modelYearDto);
 
   @InheritInverseConfiguration

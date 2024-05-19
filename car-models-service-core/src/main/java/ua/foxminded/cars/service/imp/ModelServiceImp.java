@@ -1,5 +1,6 @@
 package ua.foxminded.cars.service.imp;
 
+import java.time.Year;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -56,11 +57,6 @@ public class ModelServiceImp implements ModelService {
   private final ManufacturerService manufacturerService;
   private final ModelYearService modelYearService;
   private final CategoryService categoryService;
-
-  @Override
-  public boolean isModelExistById(UUID modelId) {
-    return modelRepository.existsById(modelId);
-  }
 
   /**
    * Updates a model, if related entities after the updating have no relations it removes them too.
@@ -152,8 +148,9 @@ public class ModelServiceImp implements ModelService {
   }
 
   private void deleteModelYearIfNecessary(ModelYear modelYear) {
-    if (!modelRepository.existsByYearValue(modelYear.getYear())) {
-      modelYearService.deleteYear(modelYear.getYear().getValue());
+    if (!modelRepository.existsByYearValue(modelYear.getValue())) {
+      Year year = modelYear.getValue();
+      modelYearService.deleteYear(year.getValue());
     }
   }
 

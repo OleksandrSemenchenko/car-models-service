@@ -14,7 +14,7 @@ import ua.foxminded.cars.service.util.MapperUtils;
 @Mapper(
     nullValueCheckStrategy = ALWAYS,
     componentModel = SPRING,
-    uses = {CategoryMapper.class, ModelYearMapper.class})
+    uses = {CategoryMapper.class, ModelYearMapper.class, ManufacturerMapper.class})
 public interface ModelMapper {
 
   @Mapping(target = "year", source = "year")

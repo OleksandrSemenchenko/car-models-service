@@ -51,7 +51,7 @@ public class TestDataGenerator {
   }
 
   public static Model generateModelEntity(UUID modelId) {
-    ModelYear modelYear = ModelYear.builder().year(Year.of(YEAR)).build();
+    ModelYear modelYear = ModelYear.builder().value(Year.of(YEAR)).build();
     Category category = Category.builder().name(CATEGORY_NAME).build();
     Manufacturer manufacturer = Manufacturer.builder().name(MANUFACTURER_NAME).build();
     return Model.builder()

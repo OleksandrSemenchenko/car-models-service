@@ -8,8 +8,6 @@ import ua.foxminded.cars.service.dto.ModelDto;
 
 public interface ModelService {
 
-  boolean isModelExistById(UUID modelId);
-
   ModelDto updateModel(ModelDto model);
 
   void deleteModelById(UUID id);

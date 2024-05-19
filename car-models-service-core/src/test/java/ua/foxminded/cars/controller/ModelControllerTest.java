@@ -47,7 +47,6 @@ class ModelControllerTest {
   private static final UUID MODEL_ID = UUID.fromString("52096834-48af-41d1-b422-93600eff629a");
   private static final Year MAX_YEAR = Year.of(2024);
   private static final Year MIN_YEAR = Year.of(2020);
-  private static final String CATEGORY_NAME = "Sedan";
 
   @Autowired private MockMvc mockMvc;
 
