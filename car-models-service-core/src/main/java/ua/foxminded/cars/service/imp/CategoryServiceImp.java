@@ -2,20 +2,14 @@ package ua.foxminded.cars.service.imp;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ua.foxminded.cars.exceptionhandler.exceptions.CategoryNotFoundException;
-import ua.foxminded.cars.exceptionhandler.exceptions.ExceptionMessages;
-import ua.foxminded.cars.exceptionhandler.exceptions.ModelNotFoundException;
 import ua.foxminded.cars.mapper.CategoryMapper;
 import ua.foxminded.cars.repository.CategoryRepository;
 import ua.foxminded.cars.repository.entity.Category;
 import ua.foxminded.cars.service.CategoryService;
-import ua.foxminded.cars.service.ModelService;
 import ua.foxminded.cars.service.dto.CategoryDto;
 
 @Service

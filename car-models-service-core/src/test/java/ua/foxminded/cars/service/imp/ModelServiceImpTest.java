@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -42,7 +43,10 @@ import ua.foxminded.cars.repository.specification.SearchFilter;
 import ua.foxminded.cars.service.CategoryService;
 import ua.foxminded.cars.service.ManufacturerService;
 import ua.foxminded.cars.service.ModelYearService;
+import ua.foxminded.cars.service.dto.CategoryDto;
+import ua.foxminded.cars.service.dto.ManufacturerDto;
 import ua.foxminded.cars.service.dto.ModelDto;
+import ua.foxminded.cars.service.dto.ModelYearDto;
 
 @ExtendWith(MockitoExtension.class)
 class ModelServiceImpTest {
@@ -88,14 +92,17 @@ class ModelServiceImpTest {
   void updateModel_shouldDeleteCategory_whenCategoryHasNoRelatedModel() {
     ModelDto modelDto = TestDataGenerator.generateModelDtoWithId();
     Model model = TestDataGenerator.generateModelEntityWithId();
-    model.setCategories(Set.of(Category.builder().name(NOT_NEEDED_CATEGORY).build()));
+    Category category = Category.builder().name(NOT_NEEDED_CATEGORY).build();
+    model.getCategories().add(category);
 
     when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any()))
         .thenReturn(Optional.of(model));
+    when(categoryService.createCategories(ArgumentMatchers.<List<CategoryDto>>any()))
+        .thenReturn(new ArrayList<>());
 
     ModelDto actualModelDto = modelService.updateModel(modelDto);
 
-    verify(modelRepository).putModelToCategory(MODEL_ID, CATEGORY_NAME);
+    verify(categoryService).createCategories(ArgumentMatchers.<List<CategoryDto>>any());
     verifyModelDto(actualModelDto);
   }
 
@@ -135,7 +142,7 @@ class ModelServiceImpTest {
 
     modelService.deleteModelById(MODEL_ID);
 
-    verify(modelRepository).deleteById(MODEL_ID);
+    verify(modelRepository).delete(model);
   }
 
   @Test
@@ -149,9 +156,9 @@ class ModelServiceImpTest {
 
     modelService.deleteModelById(MODEL_ID);
 
-    verify(modelRepository).deleteById(MODEL_ID);
+    verify(modelRepository).delete(any(Model.class));
     verify(manufacturerService).deleteManufacturer(MANUFACTURER_NAME);
-    verify(modelYearService).deleteYear(Year.of(YEAR));
+    verify(modelYearService).deleteYear(YEAR);
     verify(categoryService).deleteCategory(CATEGORY_NAME);
   }
 
@@ -245,19 +252,45 @@ class ModelServiceImpTest {
   }
 
   @Test
-  void createModel_shouldCreateModel_whenNoModelInDb() {
+  void
+      createModel_shouldCreateModelAndOmitRelatedEntities_whenNoModelInDbButRelatedEntitiesAreInDb() {
     ModelDto modelDto = TestDataGenerator.generateModelDtoWithId();
     Model model = TestDataGenerator.generateModelEntityWithId();
+    CategoryDto categoryDto = CategoryDto.builder().name(CATEGORY_NAME).build();
 
     when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any()))
         .thenReturn(Optional.empty());
+    when(manufacturerService.isManufacturerExistByName(MANUFACTURER_NAME)).thenReturn(true);
+    when(modelYearService.isModelYearExist(YEAR)).thenReturn(true);
     when(modelRepository.save(any(Model.class))).thenReturn(model);
+    when(categoryService.getCategories(ArgumentMatchers.<List<String>>any()))
+        .thenReturn(List.of(categoryDto));
 
     ModelDto createdModel = modelService.createModel(modelDto);
 
-//    verify(manufacturerService).createManufacturerIfNecessary(anyString());
-//    verify(modelYearService).createModelYear(any(Year.class));
-    verify(categoryService).createCategories(ArgumentMatchers.<List<String>>any());
+    verify(modelRepository).putModelToCategory(any(UUID.class), anyString());
+    verifyModelDto(createdModel);
+  }
+
+  @Test
+  void createModel_shouldCreateModelAndRelatedEntities_whenNoModelAndRelatedEntitiesInDb() {
+    ModelDto modelDto = TestDataGenerator.generateModelDtoWithId();
+    Model model = TestDataGenerator.generateModelEntityWithId();
+    CategoryDto categoryDto = CategoryDto.builder().name(CATEGORY_NAME).build();
+
+    when(modelRepository.findOne(ArgumentMatchers.<Specification<Model>>any()))
+        .thenReturn(Optional.empty());
+    when(manufacturerService.isManufacturerExistByName(MANUFACTURER_NAME)).thenReturn(false);
+    when(modelYearService.isModelYearExist(YEAR)).thenReturn(false);
+    when(modelRepository.save(any(Model.class))).thenReturn(model);
+    when(categoryService.getCategories(ArgumentMatchers.<List<String>>any()))
+        .thenReturn(List.of(categoryDto));
+
+    ModelDto createdModel = modelService.createModel(modelDto);
+
+    verify(manufacturerService).createManufacturer(any(ManufacturerDto.class));
+    verify(modelYearService).createModelYear(any(ModelYearDto.class));
+    verify(categoryService).createCategories(ArgumentMatchers.<List<CategoryDto>>any());
     verify(modelRepository).putModelToCategory(any(UUID.class), anyString());
     verifyModelDto(createdModel);
   }

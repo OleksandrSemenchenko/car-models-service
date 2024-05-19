@@ -33,8 +33,8 @@ public class ModelYearServiceImp implements ModelYearService {
 
   @Override
   public ModelYearDto createModelYear(ModelYearDto modelYearDto) {
-      ModelYear modelYear = modelYearMapper.toEntity(modelYearDto);
-      modelYearRepository.saveAndFlush(modelYear);
-      return modelYearMapper.toDto(modelYear);
+    ModelYear modelYear = modelYearMapper.toEntity(modelYearDto);
+    modelYearRepository.saveAndFlush(modelYear);
+    return modelYearMapper.toDto(modelYear);
   }
 }

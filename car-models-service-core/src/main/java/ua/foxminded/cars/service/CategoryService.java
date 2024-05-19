@@ -2,7 +2,6 @@ package ua.foxminded.cars.service;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import ua.foxminded.cars.service.dto.CategoryDto;
 
 public interface CategoryService {

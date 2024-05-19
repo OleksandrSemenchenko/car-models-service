@@ -1,7 +1,6 @@
 package ua.foxminded.cars.service.imp;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -81,14 +80,15 @@ public class ModelServiceImp implements ModelService {
         @CachePut(value = GET_MODEL_BY_ID_CACHE, key = "{ 'getModelById', #targetModelDto.id }")
       })
   public ModelDto updateModel(ModelDto targetModelDto) {
-    Model sourceModel =
-        findModelBySpecification(
-            targetModelDto.getManufacturer(), targetModelDto.getName(), targetModelDto.getYear());
-
+    String manufacturerName = targetModelDto.getManufacturer();
+    String modelName = targetModelDto.getName();
+    int year = targetModelDto.getYear();
+    Model sourceModel = findModelBySpecification(manufacturerName, modelName, year);
     List<String> sourceCategories = getCategoryNames(sourceModel.getCategories());
     List<String> targetCategories = targetModelDto.getCategories();
-    List<CategoryDto> shouldBeAssignedCategories = selectCategoriesToAssign(sourceCategories, targetCategories);
-    List<CategoryDto> persistedCategories = categoryService.createCategories(shouldBeAssignedCategories);
+    List<CategoryDto> shouldBeAssignedCategories =
+        selectCategoriesToAssign(sourceCategories, targetCategories);
+    List<CategoryDto> persistedCategories = createCategoriesIfNecessary(shouldBeAssignedCategories);
     putModelToCategories(sourceModel.getId(), persistedCategories);
     sourceCategories.removeAll(targetCategories);
 
@@ -99,16 +99,21 @@ public class ModelServiceImp implements ModelService {
     return targetModelDto;
   }
 
-  private List<CategoryDto> selectCategoriesToAssign(Collection<String> sourceCategories,
-                                                     Collection<String> targetCategories) {
+  private List<CategoryDto> selectCategoriesToAssign(
+      Collection<String> sourceCategories, Collection<String> targetCategories) {
     return targetCategories.stream()
-      .filter(category -> !sourceCategories.contains(category))
-      .map(category -> CategoryDto.builder().name(category).build())
-      .toList();
+        .filter(category -> !sourceCategories.contains(category))
+        .map(category -> CategoryDto.builder().name(category).build())
+        .toList();
+  }
+
+  private List<CategoryDto> createCategoriesIfNecessary(Collection<CategoryDto> categoriesDto) {
+    List<String> categoryNames = categoriesDto.stream().map(CategoryDto::getName).toList();
+    return createCategoriesIfNecessary(categoryNames);
   }
 
   private List<String> getCategoryNames(Collection<Category> categories) {
-    return categories.stream().map(Category::getName).toList();
+    return categories.stream().map(Category::getName).collect(Collectors.toList());
   }
 
   private void removeModelFromCategories(UUID modelId, Collection<String> categoryNames) {
@@ -153,9 +158,7 @@ public class ModelServiceImp implements ModelService {
   }
 
   private void deleteCategoriesIfNecessary(Set<Category> categories) {
-    List<String> categoryNames = categories.stream()
-      .map(Category::getName)
-      .toList();
+    List<String> categoryNames = categories.stream().map(Category::getName).toList();
 
     for (String categoryName : categoryNames) {
       deleteCategoryIfNecessary(categoryName);
@@ -192,7 +195,8 @@ public class ModelServiceImp implements ModelService {
 
   /**
    * Searches for models by provided parameters if no parameters are present it returns all models
-   * in a database. There is a validation, a value of the maxYear must be greater than a value of minYear one.
+   * in a database. There is a validation, a value of the maxYear must be greater than a value of
+   * minYear one.
    *
    * @param searchFilter - parameters for the search
    * @param pageable - parameter for a page
@@ -261,43 +265,40 @@ public class ModelServiceImp implements ModelService {
   private void verifyIfModelExists(String manufacturerName, String modelName, int year) {
     Specification<Model> specification = buildSpecification(manufacturerName, modelName, year);
     modelRepository
-      .findOne(specification)
-      .ifPresent(
-        entity -> {
-          log.debug(ExceptionMessages.MODEL_ALREADY_EXIST_BY_PARAMETERS
-            .formatted(manufacturerName, modelName, year, entity.getId()));
-          throw new ModelAlreadyExistsException(
-            manufacturerName, modelName, year, entity.getId());
-        });
+        .findOne(specification)
+        .ifPresent(
+            entity -> {
+              log.debug(
+                  ExceptionMessages.MODEL_ALREADY_EXIST_BY_PARAMETERS.formatted(
+                      manufacturerName, modelName, year, entity.getId()));
+              throw new ModelAlreadyExistsException(
+                  manufacturerName, modelName, year, entity.getId());
+            });
   }
 
   private Specification<Model> buildSpecification(String manufacturer, String name, int year) {
     SearchFilter searchFilter =
-      SearchFilter.builder().manufacturer(manufacturer).name(name).year(year).build();
+        SearchFilter.builder().manufacturer(manufacturer).name(name).year(year).build();
     return ModelSpecification.getSpecification(searchFilter);
   }
 
   private void createManufacturerIfNecessary(String manufacturerName) {
     if (!manufacturerService.isManufacturerExistByName(manufacturerName)) {
-      ManufacturerDto manufacturerDto = ManufacturerDto.builder()
-        .name(manufacturerName)
-        .build();
+      ManufacturerDto manufacturerDto = ManufacturerDto.builder().name(manufacturerName).build();
       manufacturerService.createManufacturer(manufacturerDto);
     }
   }
 
   private List<CategoryDto> defineCategoriesToCreate(List<String> categoryNames) {
     return categoryNames.stream()
-      .filter(categoryName -> !categoryService.isCategoryExist(categoryName))
-      .map(categoryName -> CategoryDto.builder().name(categoryName).build())
-      .toList();
+        .filter(categoryName -> !categoryService.isCategoryExist(categoryName))
+        .map(categoryName -> CategoryDto.builder().name(categoryName).build())
+        .toList();
   }
 
   private void createModelYearIfNecessary(int year) {
     if (!modelYearService.isModelYearExist(year)) {
-      ModelYearDto modelYearDto = ModelYearDto.builder()
-        .year(year)
-        .build();
+      ModelYearDto modelYearDto = ModelYearDto.builder().year(year).build();
       modelYearService.createModelYear(modelYearDto);
     }
   }
