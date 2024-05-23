@@ -5,11 +5,11 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>3.1.5</version>
-    <relativePath></relativePath>
+    <relativePath/>
   </parent>
-  <groupId>ua.com.foxminded</groupId>
+  <groupId>ua.foxminded.cars</groupId>
   <artifactId>car-models-service</artifactId>
-  <version>1.${revision}</version>
+  <version>1.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Car models service API</name>
 
@@ -20,7 +20,6 @@
 
   <properties>
     <spotless-maven-plugin.version>2.41.1</spotless-maven-plugin.version>
-    <revision>1-SNAPSHOT</revision>
     <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
     <java.version>17</java.version>
     <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
@@ -44,7 +43,7 @@
 
       <!-- Module dependencies-->
       <dependency>
-        <groupId>ua.com.foxminded</groupId>
+        <groupId>ua.foxminded.cars</groupId>
         <artifactId>car-models-service-core</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -128,7 +127,6 @@
             </execution>
           </executions>
         </plugin>
-
         <plugin>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
@@ -144,7 +142,6 @@
             </execution>
           </executions>
         </plugin>
-
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -183,45 +180,38 @@
             <includes>
               <include>pom.xml</include>
             </includes>
-            <sortPom></sortPom>
+            <sortPom>
+              <expandEmptyElements>false</expandEmptyElements>
+            </sortPom>
           </pom>
-
           <java>
             <includes>
-              <include>src/main/java/**/*.java</include>
-              <include>src/test/java/**/*.java</include>
+              <include>src/**/*.java</include>
             </includes>
-            <googleJavaFormat></googleJavaFormat>
-            <importOrder></importOrder>
-            <removeUnusedImports></removeUnusedImports>
-            <formatAnnotations></formatAnnotations>
-            <licenseHeader>
-              <file>${maven.multiModuleProjectDirectory}/development/config/license-header</file>
-            </licenseHeader>
+            <googleJavaFormat>
+              <style>GOOGLE</style>
+            </googleJavaFormat>
+            <importOrder>
+              <wildcardsLast>false</wildcardsLast>
+            </importOrder>
           </java>
-
-          <sql>
-            <includes>
-              <include>src/main/resources/**/*.sql</include>
-            </includes>
-            <dbeaver></dbeaver>
-          </sql>
-
-          <yaml>
-            <includes>
-              <include>src/**/*.yaml</include>
-              <include>src/**/*.yml</include>
-            </includes>
-            <jackson></jackson>
-          </yaml>
-
           <json>
             <includes>
-              <include>development/**/*.json</include>
+              <include>/**/*.json</include>
             </includes>
-            <jackson></jackson>
+            <jackson>
+              <spaceBeforeSeparator>false</spaceBeforeSeparator>
+            </jackson>
           </json>
         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>process-classes</phase>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

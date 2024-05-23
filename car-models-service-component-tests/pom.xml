@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>ua.com.foxminded</groupId>
+    <groupId>ua.foxminded.cars</groupId>
     <artifactId>car-models-service</artifactId>
-    <version>1.${revision}</version>
+    <version>1.0.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>car-models-service-component-tests</artifactId>
@@ -12,7 +12,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>ua.com.foxminded</groupId>
+      <groupId>ua.foxminded.cars</groupId>
       <artifactId>car-models-service-core</artifactId>
       <scope>test</scope>
     </dependency>

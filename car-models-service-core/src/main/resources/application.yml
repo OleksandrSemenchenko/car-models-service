@@ -3,10 +3,10 @@ build:
   version: "${project.version}"
 spring:
   datasource:
-    driver-class-name: "org.postgresql.Driver"
-    url: "jdbc:postgresql://${POSTGRES_HOST:localhost}:5432/cars"
-    username: "cars"
-    password: "cars"
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:5432/cars
+    username: cars
+    password: cars
   flyway:
     enabled: true
   jpa:
@@ -24,7 +24,7 @@ spring:
           jwk-set-uri: "http://${KEYCLOAK_HOST:localhost}:8080/auth/realms/car-services/protocol/openid-connect/certs"
 logging:
   level:
-    root: "info"
+    root: "warn"
 keycloak:
   policy-enforcer-config:
     realm: "car-services"
@@ -48,16 +48,5 @@ springdoc:
   auto-tag-classes: false
   override-with-generic-response: false
 application:
-  sort:
-    category:
-      by: "name"
-      direction: "ASC"
-    manufacturer:
-      by: "name"
-      direction: "ASC"
-    model-name:
-      by: "name"
-      direction: "ASC"
-    model:
-      by: "year"
-      direction: "DESC"
+  model-sort-direction: "ASC"
+  model-sort-by: name
