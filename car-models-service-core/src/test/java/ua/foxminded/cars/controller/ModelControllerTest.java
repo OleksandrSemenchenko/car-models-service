@@ -20,15 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ua.foxminded.cars.TestDataGenerator;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelAlreadyExistsException;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelNotFoundException;
-import ua.foxminded.cars.exceptionhandler.exceptions.PeriodNotValidException;
-import ua.foxminded.cars.repository.specification.SearchFilter;
 import ua.foxminded.cars.service.ModelService;
 import ua.foxminded.cars.service.dto.ModelDto;
 
@@ -71,9 +68,6 @@ class ModelControllerTest {
   @Test
   void searchModels_shouldReturnStatus400AndErrorBody_whenMaxYearIsBeforeMinYear()
       throws Exception {
-    doThrow(PeriodNotValidException.class)
-        .when(modelService)
-        .searchModel(any(SearchFilter.class), any(Pageable.class));
 
     mockMvc
         .perform(

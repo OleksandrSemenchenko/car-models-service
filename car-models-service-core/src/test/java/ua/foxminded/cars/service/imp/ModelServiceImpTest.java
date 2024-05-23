@@ -32,7 +32,6 @@ import ua.foxminded.cars.TestDataGenerator;
 import ua.foxminded.cars.config.AppConfig;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelAlreadyExistsException;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelNotFoundException;
-import ua.foxminded.cars.exceptionhandler.exceptions.PeriodNotValidException;
 import ua.foxminded.cars.mapper.CategoryMapper;
 import ua.foxminded.cars.mapper.ModelMapper;
 import ua.foxminded.cars.mapper.ModelYearMapper;
@@ -241,14 +240,6 @@ class ModelServiceImpTest {
 
     ModelDto actualModelDto = actualPage.getContent().get(0);
     verifyModelDto(actualModelDto);
-  }
-
-  @Test
-  void searchModel_shouldThrowPeriodNodValidException_whenMaxYearIsBeforeMinYear() {
-    Pageable pageable = Pageable.ofSize(FIVE_ELEMENTS);
-    SearchFilter filter = SearchFilter.builder().minYear(MAX_YEAR).maxYear(MIN_YEAR).build();
-
-    assertThrows(PeriodNotValidException.class, () -> modelService.searchModel(filter, pageable));
   }
 
   @Test

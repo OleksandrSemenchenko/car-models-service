@@ -3,7 +3,6 @@ package ua.foxminded.cars.service.imp;
 import java.time.Year;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -24,7 +23,6 @@ import ua.foxminded.cars.config.AppConfig;
 import ua.foxminded.cars.exceptionhandler.exceptions.ExceptionMessages;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelAlreadyExistsException;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelNotFoundException;
-import ua.foxminded.cars.exceptionhandler.exceptions.PeriodNotValidException;
 import ua.foxminded.cars.mapper.ModelMapper;
 import ua.foxminded.cars.repository.ModelRepository;
 import ua.foxminded.cars.repository.entity.Category;
@@ -59,7 +57,8 @@ public class ModelServiceImp implements ModelService {
   private final CategoryService categoryService;
 
   /**
-   * Updates a model, if related entities after the updating have no relations it removes them too.
+   * Updates a model, if there are no needed entities they will be created if after updating the
+   * previously related entities have no relations then they will be removed.
    *
    * @param targetModelDto - the state of a model that should be in a database
    * @return - a model object that reflects a database state after updating
@@ -202,21 +201,9 @@ public class ModelServiceImp implements ModelService {
   @Override
   @Cacheable(value = SEARCH_MODELS_CACHE, key = "{ #root.methodName, #searchFilter, #pageable }")
   public Page<ModelDto> searchModel(SearchFilter searchFilter, Pageable pageable) {
-    SearchFilter validatedSearchFilter = validateSearchFilter(searchFilter);
-    Specification<Model> specification = ModelSpecification.getSpecification(validatedSearchFilter);
+    Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
     pageable = setDefaultSortIfNecessary(pageable);
     return modelRepository.findAll(specification, pageable).map(modelMapper::toDto);
-  }
-
-  private SearchFilter validateSearchFilter(SearchFilter searchFilter) {
-    Integer minYear = searchFilter.getMinYear();
-    Integer maxYear = searchFilter.getMaxYear();
-
-    if (Objects.nonNull(minYear) && Objects.nonNull(maxYear) && minYear > maxYear) {
-      throw new PeriodNotValidException(minYear, maxYear);
-    } else {
-      return searchFilter;
-    }
   }
 
   private Pageable setDefaultSortIfNecessary(Pageable pageRequest) {

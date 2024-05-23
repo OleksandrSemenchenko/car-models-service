@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import ua.foxminded.cars.config.AppConfig;
 
 @SpringBootApplication
-@EnableCaching
 @EnableTransactionManagement
+@EnableCaching
 @EnableConfigurationProperties(AppConfig.class)
 @PropertySource("classpath:/application.yml")
 public class CarModelsApplication {

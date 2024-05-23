@@ -5,11 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ua.foxminded.cars.validation.PeriodIncluded;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@PeriodIncluded
 public class SearchFilter {
 
   private String name;
