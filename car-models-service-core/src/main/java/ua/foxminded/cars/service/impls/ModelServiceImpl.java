@@ -1,4 +1,4 @@
-package ua.foxminded.cars.service.imp;
+package ua.foxminded.cars.service.impls;
 
 import java.time.Year;
 import java.util.Collection;
@@ -20,7 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.cars.config.AppConfig;
-import ua.foxminded.cars.exceptionhandler.exceptions.ExceptionMessages;
+import ua.foxminded.cars.exceptionhandler.ExceptionMessages;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelAlreadyExistsException;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelNotFoundException;
 import ua.foxminded.cars.mapper.ModelMapper;
@@ -43,7 +43,7 @@ import ua.foxminded.cars.service.dto.ModelYearDto;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ModelServiceImp implements ModelService {
+public class ModelServiceImpl implements ModelService {
 
   private static final String SEARCH_MODELS_CACHE = "searchModels";
   private static final String GET_MODEL_BY_ID_CACHE = "getModelById";

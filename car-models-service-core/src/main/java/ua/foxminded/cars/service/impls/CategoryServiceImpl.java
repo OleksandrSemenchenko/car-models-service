@@ -1,4 +1,4 @@
-package ua.foxminded.cars.service.imp;
+package ua.foxminded.cars.service.impls;
 
 import java.util.Collection;
 import java.util.List;
@@ -15,7 +15,7 @@ import ua.foxminded.cars.service.dto.CategoryDto;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CategoryServiceImp implements CategoryService {
+public class CategoryServiceImpl implements CategoryService {
 
   private final CategoryRepository categoryRepository;
   private final CategoryMapper categoryMapper;

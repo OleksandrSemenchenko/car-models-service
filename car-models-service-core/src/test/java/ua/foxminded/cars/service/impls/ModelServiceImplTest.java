@@ -1,4 +1,4 @@
-package ua.foxminded.cars.service.imp;
+package ua.foxminded.cars.service.impls;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -48,7 +48,7 @@ import ua.foxminded.cars.service.dto.ModelDto;
 import ua.foxminded.cars.service.dto.ModelYearDto;
 
 @ExtendWith(MockitoExtension.class)
-class ModelServiceImpTest {
+class ModelServiceImplTest {
 
   private static final String MODEL_MAPPER_FIELD = "modelMapper";
   private static final String CATEGORY_MAPPER_FIELD = "categoryMapper";
@@ -65,7 +65,7 @@ class ModelServiceImpTest {
   private static final int MAX_YEAR = 2024;
   private static final int MIN_YEAR = 2020;
 
-  @InjectMocks private ModelServiceImp modelService;
+  @InjectMocks private ModelServiceImpl modelService;
 
   @Mock private ModelRepository modelRepository;
 

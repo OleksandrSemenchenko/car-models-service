@@ -1,6 +1,7 @@
 package ua.foxminded.cars.exceptionhandler.exceptions;
 
 import java.util.UUID;
+import ua.foxminded.cars.exceptionhandler.ExceptionMessages;
 
 public class ModelAlreadyExistsException extends DataIntegrityViolationException {
 

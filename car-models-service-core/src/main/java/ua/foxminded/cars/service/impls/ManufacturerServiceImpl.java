@@ -1,4 +1,4 @@
-package ua.foxminded.cars.service.imp;
+package ua.foxminded.cars.service.impls;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,10 +11,19 @@ import ua.foxminded.cars.service.dto.ManufacturerDto;
 
 @Service
 @RequiredArgsConstructor
-public class ManufacturerServiceImp implements ManufacturerService {
+public class ManufacturerServiceImpl implements ManufacturerService {
 
   private final ManufacturerRepository manufacturerRepository;
   private final ManufacturerMapper manufacturerMapper;
+
+  @Override
+  public ManufacturerDto getManufacturer(String name) {
+    Manufacturer manufacturer =
+        manufacturerRepository
+            .findById(name)
+            .orElseThrow(() -> new ManufacturerNotFoundException(name));
+    return manufacturerMapper.toDto(manufacturer);
+  }
 
   @Override
   public void deleteManufacturer(String manufacturerName) {

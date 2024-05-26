@@ -11,6 +11,7 @@ import ua.foxminded.cars.repository.entity.Model;
 import ua.foxminded.cars.repository.entity.ModelYear;
 import ua.foxminded.cars.repository.specification.ModelSpecification;
 import ua.foxminded.cars.repository.specification.SearchFilter;
+import ua.foxminded.cars.service.dto.ManufacturerDto;
 import ua.foxminded.cars.service.dto.ModelDto;
 
 public class TestDataGenerator {
@@ -20,6 +21,14 @@ public class TestDataGenerator {
   private static final String MODEL_NAME = "x6";
   private static final String MANUFACTURER_NAME = "BMW";
   private static final String CATEGORY_NAME = "Pickup";
+
+  public static ManufacturerDto generateManufacturerDto() {
+    return ManufacturerDto.builder().name(MANUFACTURER_NAME).build();
+  }
+
+  public static Manufacturer generateManufacturer() {
+    return Manufacturer.builder().name(MANUFACTURER_NAME).build();
+  }
 
   public static Category generateCategoryEntity() {
     return Category.builder().name(CATEGORY_NAME).build();
