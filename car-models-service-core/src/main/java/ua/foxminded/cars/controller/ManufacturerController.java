@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +26,27 @@ public class ManufacturerController {
   private final ManufacturerService manufacturerService;
 
   @Operation(
-      summary = "Reads a manufacturer",
+      summary = "Gets all manufacturers",
+      operationId = "getAllManufacturers",
+      description = "Gets a sorted page with all manufacturers",
+      responses = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "A page with manufacturers",
+            useReturnTypeSchema = true),
+        @ApiResponse(
+            responseCode = "401",
+            description = "A user not authorized",
+            content = @Content(examples = @ExampleObject("no content")))
+      })
+  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Page<ManufacturerDto>> getAllManufacturers(Pageable pageable) {
+    Page<ManufacturerDto> manufacturersPage = manufacturerService.getAllManufacturers(pageable);
+    return ResponseEntity.ok(manufacturersPage);
+  }
+
+  @Operation(
+      summary = "Gets a manufacturer",
       operationId = "getManufacturer",
       description = "Gets a manufacturer by the manufacturer name",
       responses = {

@@ -208,7 +208,7 @@ class ModelServiceImplTest {
   }
 
   @Test
-  void searchModel_shouldReturnPage_whenRequestHasSorting() {
+  void searchModel_shouldReturnSortedPage_whenRequestHasSorting() {
     SearchFilter filter = SearchFilter.builder().manufacturer(MANUFACTURER_NAME).build();
     Sort sortByName = Sort.by(SORT_BY_NAME);
     Pageable pageable = PageRequest.of(FIRST_PAGE, FIVE_ELEMENTS, sortByName);
@@ -225,7 +225,7 @@ class ModelServiceImplTest {
   }
 
   @Test
-  void searchModel_shouldSortPage_whenRequestHasNoSorting() {
+  void searchModel_shouldSortedPage_whenRequestHasNoSorting() {
     SearchFilter filter = SearchFilter.builder().manufacturer(MANUFACTURER_NAME).build();
     Pageable pageable = Pageable.ofSize(FIVE_ELEMENTS);
     Model model = TestDataGenerator.generateModelEntityWithId();

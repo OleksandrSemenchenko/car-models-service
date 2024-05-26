@@ -41,3 +41,5 @@ logging:
 application:
   model-sort-direction: "ASC"
   model-sort-by: name
+  manufacturer-sort-direction: ASC
+  manufacturer-sort-by: name

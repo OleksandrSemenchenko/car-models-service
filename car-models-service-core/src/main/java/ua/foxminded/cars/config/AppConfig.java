@@ -8,6 +8,8 @@ import org.springframework.data.domain.Sort.Direction;
 @Data
 public class AppConfig {
 
-  private final String modelSortBy;
-  private final Direction modelSortDirection;
+  private String modelSortBy;
+  private Direction modelSortDirection;
+  private String manufacturerSortBy;
+  private Direction manufacturerSortDirection;
 }
