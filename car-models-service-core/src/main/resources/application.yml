@@ -48,5 +48,7 @@ springdoc:
   auto-tag-classes: false
   override-with-generic-response: false
 application:
-  model-sort-direction: "ASC"
+  model-sort-direction: ASC
   model-sort-by: name
+  manufacturer-sort-direction: ASC
+  manufacturer-sort-by: name

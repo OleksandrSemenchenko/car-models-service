@@ -13,9 +13,7 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +41,7 @@ import ua.foxminded.cars.service.dto.ModelYearDto;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ModelServiceImpl implements ModelService {
+public class ModelServiceImpl extends AbstractService implements ModelService {
 
   private static final String SEARCH_MODELS_CACHE = "searchModels";
   private static final String GET_MODEL_BY_ID_CACHE = "getModelById";
@@ -202,19 +200,10 @@ public class ModelServiceImpl implements ModelService {
   @Cacheable(value = SEARCH_MODELS_CACHE, key = "{ #root.methodName, #searchFilter, #pageable }")
   public Page<ModelDto> searchModel(SearchFilter searchFilter, Pageable pageable) {
     Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
-    pageable = setDefaultSortIfNecessary(pageable);
+    pageable =
+        setDefaultSortIfNecessary(
+            pageable, appConfig.getModelSortDirection(), appConfig.getModelSortBy());
     return modelRepository.findAll(specification, pageable).map(modelMapper::toDto);
-  }
-
-  private Pageable setDefaultSortIfNecessary(Pageable pageRequest) {
-    if (pageRequest.getSort().isUnsorted()) {
-      Sort defaulSort = Sort.by(appConfig.getModelSortDirection(), appConfig.getModelSortBy());
-      return PageRequest.of(
-          pageRequest.getPageNumber(),
-          pageRequest.getPageSize(),
-          pageRequest.getSortOr(defaulSort));
-    }
-    return pageRequest;
   }
 
   /**
