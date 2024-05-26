@@ -49,7 +49,7 @@ class ManufacturerServiceImplTest {
   }
 
   @Test
-  void getAllManufacturers_shouldReturnPage_whenRequestHasSorting() {
+  void getAllManufacturers_shouldReturnSortedPage_whenRequestHasSorting() {
     Manufacturer manufacturer = TestDataGenerator.generateManufacturer();
     Sort sortByName = Sort.by("name");
     Pageable pageable = PageRequest.of(FIRST_PAGE, FIVE_ELEMENTS, sortByName);
@@ -65,7 +65,7 @@ class ManufacturerServiceImplTest {
   }
 
   @Test
-  void getAllManufacturers_shouldReturnPage_whenRequestHasNoSorting() {
+  void getAllManufacturers_shouldReturnSortedPage_whenRequestHasNoSorting() {
     Manufacturer manufacturer = TestDataGenerator.generateManufacturer();
     Pageable pageable = Pageable.ofSize(5);
     Page<Manufacturer> manufacturersPage = new PageImpl<>(List.of(manufacturer));

@@ -28,7 +28,7 @@ public class ManufacturerController {
   @Operation(
       summary = "Gets all manufacturers",
       operationId = "getAllManufacturers",
-      description = "Gets all manufacturers on a sorted page",
+      description = "Gets a sorted page with all manufacturers",
       responses = {
         @ApiResponse(
             responseCode = "200",
