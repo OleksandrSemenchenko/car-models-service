@@ -32,7 +32,7 @@ public interface ModelMapper {
 
   // TODO
   default Model mergeWithNotNullDtoProperties(ModelDto modelDto, Model model) {
-    String[] notNullProperties = MapperUtils.definePropertiesWithNullValued(modelDto);
+    String[] notNullProperties = MapperUtils.defineNullProperties(modelDto);
     BeanUtils.copyProperties(this.toEntity(modelDto), model, notNullProperties);
     return model;
   }

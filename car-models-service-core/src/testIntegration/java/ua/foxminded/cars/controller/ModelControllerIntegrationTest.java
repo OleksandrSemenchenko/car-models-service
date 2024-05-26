@@ -16,16 +16,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.cars.TestDataGenerator;
 import ua.foxminded.cars.service.dto.ModelDto;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-@Sql(scripts = "/model-test-data.sql")
-@Transactional
+@Sql(scripts = "/db/model-test-data.sql")
+@TestPropertySource("/application-it.properties")
 class ModelControllerIntegrationTest {
 
   private static final String V1 = "/v1";

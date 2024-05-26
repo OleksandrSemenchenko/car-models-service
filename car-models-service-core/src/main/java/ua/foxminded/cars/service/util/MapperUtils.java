@@ -9,7 +9,7 @@ import org.springframework.util.ReflectionUtils;
 
 public class MapperUtils {
 
-  public static String[] definePropertiesWithNullValued(Object object) {
+  public static String[] defineNullProperties(Object object) {
     Field[] fields = object.getClass().getDeclaredFields();
     List<String> fieldNames = new ArrayList<>();
 

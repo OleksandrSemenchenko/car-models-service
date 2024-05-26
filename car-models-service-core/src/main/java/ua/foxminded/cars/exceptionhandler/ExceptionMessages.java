@@ -1,4 +1,4 @@
-package ua.foxminded.cars.exceptionhandler.exceptions;
+package ua.foxminded.cars.exceptionhandler;
 
 public class ExceptionMessages {
 

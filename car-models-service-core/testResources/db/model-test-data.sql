@@ -1,3 +1,9 @@
+delete from model_category;
+delete from models;
+delete from categories;
+delete from model_years;
+delete from manufacturers;
+
 insert into categories(name) values('Sedan');
 insert into categories(name) values('Coupe');
 insert into model_years(year_value) values(2020);

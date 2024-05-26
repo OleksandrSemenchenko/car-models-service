@@ -1,4 +1,4 @@
-package ua.foxminded.cars.service.imp;
+package ua.foxminded.cars.service.impls;
 
 import java.time.Year;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ import ua.foxminded.cars.service.dto.ModelYearDto;
 
 @Service
 @RequiredArgsConstructor
-public class ModelYearServiceImp implements ModelYearService {
+public class ModelYearServiceImpl implements ModelYearService {
 
   private final ModelYearRepository modelYearRepository;
   private final ModelYearMapper modelYearMapper;

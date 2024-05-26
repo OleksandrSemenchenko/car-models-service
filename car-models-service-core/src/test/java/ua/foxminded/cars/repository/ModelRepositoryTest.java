@@ -19,7 +19,7 @@ import ua.foxminded.cars.repository.specification.ModelSpecification;
 import ua.foxminded.cars.repository.specification.SearchFilter;
 
 @DataJpaTest
-@Sql(scripts = "/model-test-data.sql")
+@Sql(scripts = "/db/model-test-data.sql")
 class ModelRepositoryTest {
 
   private static final String MODEL = "A7";
