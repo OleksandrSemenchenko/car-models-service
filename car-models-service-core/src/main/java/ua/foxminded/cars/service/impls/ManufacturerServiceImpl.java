@@ -2,7 +2,6 @@ package ua.foxminded.cars.service.impls;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ua.foxminded.cars.exceptionhandler.ExceptionMessages;
 import ua.foxminded.cars.exceptionhandler.exceptions.ManufacturerNotFoundException;
 import ua.foxminded.cars.mapper.ManufacturerMapper;
 import ua.foxminded.cars.repository.ManufacturerRepository;
@@ -22,10 +21,7 @@ public class ManufacturerServiceImpl implements ManufacturerService {
     Manufacturer manufacturer =
         manufacturerRepository
             .findById(name)
-            .orElseThrow(
-                () ->
-                    new ManufacturerNotFoundException(
-                        ExceptionMessages.MANUFACTURER_NOT_FOUND.formatted(name)));
+            .orElseThrow(() -> new ManufacturerNotFoundException(name));
     return manufacturerMapper.toDto(manufacturer);
   }
 
