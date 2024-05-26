@@ -28,7 +28,7 @@ class ManufacturerControllerTest {
   @MockBean private ManufacturerService manufacturerService;
 
   @Test
-  void getManufacturer_shouldReturnStatus404_whenNoManufacturerInDb() throws Exception {
+  void getManufacturer_shouldReturnStatus404AndExceptionBody_whenNoManufacturerInDb() throws Exception {
     Mockito.when(manufacturerService.getManufacturer(any(String.class)))
         .thenThrow(ManufacturerNotFoundException.class);
 

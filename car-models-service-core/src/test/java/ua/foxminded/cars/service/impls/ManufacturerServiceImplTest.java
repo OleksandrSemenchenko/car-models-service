@@ -48,7 +48,7 @@ class ManufacturerServiceImplTest {
   }
 
   @Test
-  void getManufacturer_shouldThrowException_whenNoManufacturer() {
+  void getManufacturer_shouldThrowException_whenNoManufacturerInDb() {
     when(manufacturerRepository.findById(NOT_EXISTING_MANUFACTURER)).thenReturn(Optional.empty());
 
     assertThrows(
