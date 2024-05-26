@@ -25,6 +25,20 @@ public class ManufacturerController {
 
   private final ManufacturerService manufacturerService;
 
+  @Operation(
+      summary = "Gets all manufacturers",
+      operationId = "getAllManufacturers",
+      description = "Gets all manufacturers on a sorted page",
+      responses = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "A page with manufacturers",
+            useReturnTypeSchema = true),
+        @ApiResponse(
+            responseCode = "401",
+            description = "A user not authorized",
+            content = @Content(examples = @ExampleObject("no content")))
+      })
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Page<ManufacturerDto>> getAllManufacturers(Pageable pageable) {
     Page<ManufacturerDto> manufacturersPage = manufacturerService.getAllManufacturers(pageable);
@@ -32,7 +46,7 @@ public class ManufacturerController {
   }
 
   @Operation(
-      summary = "Reads a manufacturer",
+      summary = "Gets a manufacturer",
       operationId = "getManufacturer",
       description = "Gets a manufacturer by the manufacturer name",
       responses = {
