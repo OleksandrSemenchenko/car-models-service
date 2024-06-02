@@ -34,10 +34,14 @@ keycloak:
     http-method-as-scope: true
 server:
   port: 8180
-logging:
-  level:
-    root: "warn"
-    org: "warn"
+
+logging.level.org.springframework.security: "info"
+#logging:
+#  level:
+#    root: "warn"
+#    org: "info"
+#    springframework:
+#      security: INFO
 application:
   model-sort-direction: "ASC"
   model-sort-by: name
