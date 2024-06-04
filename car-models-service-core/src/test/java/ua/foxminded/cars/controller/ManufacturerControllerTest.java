@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.cars.exceptionhandler.exceptions.ManufacturerNotFoundException;
 import ua.foxminded.cars.service.ManufacturerService;
@@ -24,6 +25,8 @@ class ManufacturerControllerTest {
   private static final String MANUFACTURER_NAME = "Audi";
 
   @Autowired private MockMvc mockMvc;
+
+  @MockBean private ClientRegistrationRepository clientRegistrationRepository;
 
   @MockBean private ManufacturerService manufacturerService;
 

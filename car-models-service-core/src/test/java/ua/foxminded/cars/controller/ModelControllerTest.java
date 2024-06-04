@@ -21,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ua.foxminded.cars.TestDataGenerator;
@@ -50,6 +51,8 @@ class ModelControllerTest {
   @Autowired private ObjectMapper objectMapper;
 
   @MockBean private ModelService modelService;
+
+  @MockBean private ClientRegistrationRepository clientRegistrationRepository;
 
   @Test
   void getModel_shouldReturnStatus404AndErrorBody_whenNoModelInDb() throws Exception {

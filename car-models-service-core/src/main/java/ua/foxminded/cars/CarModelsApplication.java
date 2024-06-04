@@ -6,12 +6,12 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import ua.foxminded.cars.config.AppConfig;
+import ua.foxminded.cars.config.SortByConfig;
 
 @SpringBootApplication
 @EnableTransactionManagement
 @EnableCaching
-@EnableConfigurationProperties(AppConfig.class)
+@EnableConfigurationProperties(SortByConfig.class)
 @PropertySource("classpath:/application.yml")
 public class CarModelsApplication {
 
