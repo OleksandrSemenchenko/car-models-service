@@ -6,7 +6,7 @@ import org.springframework.data.domain.Sort.Direction;
 
 @ConfigurationProperties
 @Data
-public class AppConfig {
+public class SortByConfig {
 
   private String modelSortBy;
   private Direction modelSortDirection;

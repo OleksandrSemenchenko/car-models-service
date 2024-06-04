@@ -38,10 +38,7 @@ spring:
 logging:
   level:
     root: "warn"
-    org.springframework.security.web: "debug"
-#    org:
-#      springframework:
-#        web: "info"
+    org.springframework.security.web: "info"
 keycloak:
   policy-enforcer-config:
     realm: "car-services"

@@ -48,13 +48,9 @@ keycloak:
 server:
   port: 8180
 
-logging.level.org.springframework.security: "info"
-#logging:
-#  level:
-#    root: "warn"
-#    org: "info"
-#    springframework:
-#      security: INFO
+logging:
+  level:
+    root: "warn"
 application:
   model-sort-direction: "ASC"
   model-sort-by: name

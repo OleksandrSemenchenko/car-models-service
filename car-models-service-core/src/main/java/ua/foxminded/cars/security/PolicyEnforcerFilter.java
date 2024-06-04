@@ -1,4 +1,4 @@
-package ua.foxminded.cars.config;
+package ua.foxminded.cars.security;
 
 import static java.util.Objects.nonNull;
 

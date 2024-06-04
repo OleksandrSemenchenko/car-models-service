@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ua.foxminded.cars.config.AppConfig;
+import ua.foxminded.cars.config.SortByConfig;
 import ua.foxminded.cars.exceptionhandler.exceptions.ManufacturerNotFoundException;
 import ua.foxminded.cars.mapper.ManufacturerMapper;
 import ua.foxminded.cars.repository.ManufacturerRepository;
@@ -18,13 +18,15 @@ public class ManufacturerServiceImpl extends AbstractService implements Manufact
 
   private final ManufacturerRepository manufacturerRepository;
   private final ManufacturerMapper manufacturerMapper;
-  private final AppConfig appConfig;
+  private final SortByConfig sortByConfig;
 
   @Override
   public Page<ManufacturerDto> getAllManufacturers(Pageable pageable) {
     pageable =
         setDefaultSortIfNecessary(
-            pageable, appConfig.getManufacturerSortDirection(), appConfig.getManufacturerSortBy());
+            pageable,
+            sortByConfig.getManufacturerSortDirection(),
+            sortByConfig.getManufacturerSortBy());
     return manufacturerRepository.findAll(pageable).map(manufacturerMapper::toDto);
   }
 
