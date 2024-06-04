@@ -35,8 +35,6 @@ spring:
           keycloak:
             issuer-uri: http://localhost:8080/auth/realms/car-services
             user-name-attribute: preferred_username
-
-#logging.level.org.springframework.security.web: "warn"
 logging:
   level:
     root: "warn"

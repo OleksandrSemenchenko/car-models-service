@@ -15,7 +15,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,6 +42,8 @@ class ModelControllerIntegrationTest {
   private static final String NEW_MANUFACTURER_NAME = "Audi";
   private static final String MODEL_ID = "52096834-48af-41d1-b422-93600eff629a";
   private static final String CATEGORY_NAME = "Sedan";
+
+  @MockBean private ClientRegistrationRepository clientRegistrationRepository;
 
   @Autowired private MockMvc mockMvc;
 
