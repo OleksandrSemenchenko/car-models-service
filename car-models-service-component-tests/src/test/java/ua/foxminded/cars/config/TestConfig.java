@@ -1,4 +1,4 @@
-package ua.foxminded.config;
+package ua.foxminded.cars.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.keycloak.representations.adapters.config.PolicyEnforcerConfig;

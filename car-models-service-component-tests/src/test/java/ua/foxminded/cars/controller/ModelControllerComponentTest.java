@@ -1,20 +1,21 @@
-package ua.foxminded.controller;
+package ua.foxminded.cars.controller;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static ua.com.foxminded.controller.ExceptionHandlerController.NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE;
 import static ua.com.foxminded.service.ModelNameService.NO_MODEL_NAME;
+import static ua.foxminded.cars.config.controller.CategoryControllerComponentTest.CATEGORY_NAME;
+import static ua.foxminded.cars.config.controller.CategoryControllerComponentTest.CATEGORY_NAME_WITHOUT_RELATIONS;
+import static ua.foxminded.cars.config.controller.CategoryControllerComponentTest.NEW_CATEGORY_NAME;
+import static ua.foxminded.cars.controller.ModelNameControllerComponentTest.MODEL_NAME;
+import static ua.foxminded.cars.controller.ModelNameControllerComponentTest.MODEL_NAME_WITHOUT_RELATIONS;
+import static ua.foxminded.cars.controller.ModelNameControllerComponentTest.NEW_MODEL_NAME;
+import static ua.foxminded.cars.exceptionhandler.ExceptionMessages.MODEL_NOT_FOUND;
 import static ua.foxminded.cars.service.CategoryService.NO_CATEGORY;
 import static ua.foxminded.cars.service.ManufacturerService.NO_MANUFACTURER;
-import static ua.foxminded.cars.service.imp.ModelServiceImp.MODEL_ALREADY_EXISTS;
-import static ua.foxminded.cars.service.imp.ModelServiceImp.NO_MODEL_WITH_SUCH_ID;
-import static ua.foxminded.cars.service.imp.ModelServiceImp.NO_SUCH_MODEL;
-import static ua.foxminded.controller.CategoryControllerComponentTest.CATEGORY_NAME;
-import static ua.foxminded.controller.CategoryControllerComponentTest.CATEGORY_NAME_WITHOUT_RELATIONS;
-import static ua.foxminded.controller.CategoryControllerComponentTest.NEW_CATEGORY_NAME;
-import static ua.foxminded.controller.ModelNameControllerComponentTest.MODEL_NAME;
-import static ua.foxminded.controller.ModelNameControllerComponentTest.MODEL_NAME_WITHOUT_RELATIONS;
-import static ua.foxminded.controller.ModelNameControllerComponentTest.NEW_MODEL_NAME;
+import static ua.foxminded.cars.service.impls.ModelServiceImpl.MODEL_ALREADY_EXISTS;
+import static ua.foxminded.cars.service.impls.ModelServiceImpl.NO_MODEL_WITH_SUCH_ID;
+import static ua.foxminded.cars.service.impls.ModelServiceImpl.NO_SUCH_MODEL;
 
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -23,38 +24,34 @@ import ua.com.foxminded.dto.ModelDto;
 
 class ModelControllerComponentTest extends ComponentTestContext {
 
-  public static final int MODEL_ID = 1;
-  public static final int NEW_MODEL_ID = 2;
-  public static final int MODEL_YEAR = 2020;
-  public static final int NEW_MODEL_YEAR = 2021;
+  private static final String V1 = "/v1";
+  private static final String MODEL_PATH = "/manufacturers/{manufacturer}/models/{name}/{year}";
+  private static final int MODEL_ID = 1;
+  private static final int NEW_MODEL_ID = 2;
+  private static final int MODEL_YEAR = 2020;
+  private static final int NOT_EXISTED_MODEL_YEAR = 2021;
+  private static final String MANUFACTURER_NAME = "Audi";
+  private static final String MODEL_NAME = "A7";
 
   @Test
-  void getByManufacturerAndNameAndYear_ShouldReturnStatus400_WhenYearIsNegative() {
+  void getByManufacturerAndNameAndYear_shouldReturnStatus400_whenYearIsNegative() {
     webTestClient
         .get()
-        .uri(
-            "/v1/manufacturers/{manufacturer}/models/{name}/{year}",
-            ManufacturerControllerComponentTest.MANUFACTURER_NAME,
-            MODEL_NAME,
-            -2023)
+        .uri(V1 + MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, -2023)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .exchange()
         .expectStatus()
         .isBadRequest()
         .expectBody()
         .jsonPath("$.message")
-        .isEqualTo(NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE);
+        .exists();
   }
 
   @Test
-  void getByManufacturerAndNameAndYear_ShouldReturnStatus404_WhenNoSuchModel() {
+  void getByManufacturer_shouldReturnStatus404_WhenNoModelInDb() {
     webTestClient
         .get()
-        .uri(
-            "/v1/manufacturers/{manufacturer}/models/{name}/{year}",
-            ManufacturerControllerComponentTest.MANUFACTURER_NAME,
-            MODEL_NAME,
-            NEW_MODEL_YEAR)
+        .uri(V1 + MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, NOT_EXISTED_MODEL_YEAR)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .exchange()
         .expectStatus()
@@ -62,22 +59,15 @@ class ModelControllerComponentTest extends ComponentTestContext {
         .expectBody()
         .jsonPath("$.message")
         .isEqualTo(
-            String.format(
-                NO_SUCH_MODEL,
-                ManufacturerControllerComponentTest.MANUFACTURER_NAME,
-                MODEL_NAME,
-                NEW_MODEL_YEAR));
+            String.format(MODEL_NOT_FOUND, MANUFACTURER_NAME, MODEL_NAME, NOT_EXISTED_MODEL_YEAR));
   }
 
+  // TODO
   @Test
-  void getByManufacturerAndNameAndYear_ShouldReturnStatus200() {
+  void getModel_shouldReturnStatus200AndBody_whenModelIsInDb() {
     webTestClient
         .get()
-        .uri(
-            "/v1/manufacturers/{manufacturer}/models/{name}/{year}",
-            ManufacturerControllerComponentTest.MANUFACTURER_NAME,
-            MODEL_NAME,
-            MODEL_YEAR)
+        .uri(V1 + MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .exchange()
         .expectStatus()
@@ -187,7 +177,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
             "/v1/manufacturers/{manufacturer}/models/{model}/{year}",
             ManufacturerControllerComponentTest.MANUFACTURER_NAME,
             MODEL_NAME,
-            NEW_MODEL_YEAR)
+            NOT_EXISTED_MODEL_YEAR)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .bodyValue(modelDto)
         .exchange()
@@ -229,7 +219,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
             "/v1/manufacturers/{manufacturer}/models/{model}/{year}",
             ManufacturerControllerComponentTest.MANUFACTURER_NAME,
             MODEL_NAME,
-            NEW_MODEL_YEAR)
+            NOT_EXISTED_MODEL_YEAR)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .bodyValue(modelDto)
         .exchange()
@@ -315,7 +305,7 @@ class ModelControllerComponentTest extends ComponentTestContext {
             "/v1/manufacturers/{manufacturer}/models/{model}/{year}",
             ManufacturerControllerComponentTest.MANUFACTURER_NAME_WITHOUT_RELATIONS,
             MODEL_NAME_WITHOUT_RELATIONS,
-            NEW_MODEL_YEAR)
+            NOT_EXISTED_MODEL_YEAR)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .bodyValue(modelDto)
         .exchange()

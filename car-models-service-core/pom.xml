@@ -5,6 +5,7 @@
     <groupId>ua.foxminded.cars</groupId>
     <artifactId>car-models-service</artifactId>
     <version>1.0.1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>car-models-service-core</artifactId>
   <packaging>jar</packaging>
