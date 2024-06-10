@@ -56,3 +56,5 @@ application:
   model-sort-by: name
   manufacturer-sort-direction: ASC
   manufacturer-sort-by: name
+  category-sort-direction: "ASC"
+  category-sort-by: name
