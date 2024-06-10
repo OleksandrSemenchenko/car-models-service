@@ -3,6 +3,7 @@ services:
     image: foxminded/car-models-service
     build:
       context: ../car-models-service-core
+      target: development
     networks:
       - car-service
     ports:
