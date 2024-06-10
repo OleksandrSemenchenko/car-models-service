@@ -17,6 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import ua.foxminded.cars.service.ManufacturerService;
 import ua.foxminded.cars.service.dto.ManufacturerDto;
 
+/**
+ * A REST controller to manage manufacturers.
+ *
+ * @author Oleksandr Semenchenko
+ */
 @Tag(name = "ManufacturerController", description = "Manages manufacturers")
 @RestController
 @RequestMapping("/v1/manufacturers")
@@ -36,7 +41,7 @@ public class ManufacturerController {
             useReturnTypeSchema = true),
         @ApiResponse(
             responseCode = "401",
-            description = "A user not authorized",
+            description = "The user is not authorized",
             content = @Content(examples = @ExampleObject("no content")))
       })
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -64,7 +69,7 @@ public class ManufacturerController {
           """))),
         @ApiResponse(
             responseCode = "401",
-            description = "A user not authorized",
+            description = "The user is not authorized",
             content = @Content(examples = @ExampleObject("no content"))),
         @ApiResponse(
             responseCode = "404",

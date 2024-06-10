@@ -19,7 +19,7 @@
   </modules>
 
   <properties>
-    <spotless-maven-plugin.version>2.41.1</spotless-maven-plugin.version>
+    <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
     <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
     <java.version>17</java.version>
     <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>

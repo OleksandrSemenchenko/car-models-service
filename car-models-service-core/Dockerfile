@@ -1,9 +1,6 @@
 #syntax=docker/dockerfile:1
 
-FROM eclipse-temurin:17-jdk-alpine as development
-WORKDIR /deployment
-COPY target/*.jar ./car-models-serivce.jar
-ENTRYPOINT [ "sh","-c","java -jar \
-  -Dspring-boot.run.jvmArguments='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8000' \
-  car-models-serivce.jar" ]
-    
+FROM maven:3.9.6-eclipse-temurin-17-alpine AS development
+WORKDIR /opt/app
+COPY target/*.jar ./car-models-service.jar
+ENTRYPOINT [ "sh","-c","java -jar car-models-service.jar --spring.profiles.active=dev" ]

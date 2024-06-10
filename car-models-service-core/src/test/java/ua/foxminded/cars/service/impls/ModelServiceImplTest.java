@@ -2,6 +2,7 @@ package ua.foxminded.cars.service.impls;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -29,7 +31,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.util.ReflectionTestUtils;
 import ua.foxminded.cars.TestDataGenerator;
-import ua.foxminded.cars.config.SortByConfig;
+import ua.foxminded.cars.config.PageSortConfig;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelAlreadyExistsException;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelNotFoundException;
 import ua.foxminded.cars.mapper.CategoryMapper;
@@ -60,10 +62,8 @@ class ModelServiceImplTest {
   private static final String CATEGORY_NAME = "Pickup";
   private static final String NOT_NEEDED_CATEGORY = "Coupe";
   private static final String SORT_BY_NAME = "name";
-  private static final int FIVE_ELEMENTS = 5;
-  private static final int FIRST_PAGE = 1;
-  private static final int MAX_YEAR = 2024;
-  private static final int MIN_YEAR = 2020;
+  private static final int PAGE_SIZE = 5;
+  private static final int PAGE_NUMBER = 1;
 
   @InjectMocks private ModelServiceImpl modelService;
 
@@ -75,7 +75,7 @@ class ModelServiceImplTest {
 
   @Mock private CategoryService categoryService;
 
-  @Mock private SortByConfig sortByConfig;
+  @Mock private PageSortConfig pageSortConfig;
 
   @BeforeEach
   void setUp() {
@@ -210,8 +210,7 @@ class ModelServiceImplTest {
   @Test
   void searchModel_shouldReturnSortedPage_whenRequestHasSorting() {
     SearchFilter filter = SearchFilter.builder().manufacturer(MANUFACTURER_NAME).build();
-    Sort sortByName = Sort.by(SORT_BY_NAME);
-    Pageable pageable = PageRequest.of(FIRST_PAGE, FIVE_ELEMENTS, sortByName);
+    Pageable pageable = PageRequest.of(PAGE_NUMBER, PAGE_SIZE, Sort.Direction.DESC, "name");
     Model model = TestDataGenerator.generateModelEntityWithId();
     Page<Model> modelsPage = new PageImpl<>(List.of(model));
 
@@ -220,24 +219,33 @@ class ModelServiceImplTest {
 
     Page<ModelDto> actualPage = modelService.searchModel(filter, pageable);
 
+    ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
+    verify(modelRepository).findAll(ArgumentMatchers.<Specification<Model>>any(), captor.capture());
+    Sort sort = captor.getValue().getSort();
+    assertTrue(sort.isSorted());
+    assertEquals(sort.iterator().next().getDirection(), Sort.Direction.DESC);
     ModelDto actualModelDto = actualPage.getContent().get(0);
     verifyModelDto(actualModelDto);
   }
 
   @Test
-  void searchModel_shouldSortedPage_whenRequestHasNoSorting() {
+  void searchModel_shouldReturnSortedPage_whenRequestHasNoSorting() {
     SearchFilter filter = SearchFilter.builder().manufacturer(MANUFACTURER_NAME).build();
-    Pageable pageable = Pageable.ofSize(FIVE_ELEMENTS);
+    Pageable pageable = Pageable.ofSize(PAGE_SIZE);
     Model model = TestDataGenerator.generateModelEntityWithId();
     Page<Model> modelsPage = new PageImpl<>(List.of(model));
 
-    when(sortByConfig.getModelSortDirection()).thenReturn(Sort.Direction.DESC);
-    when(sortByConfig.getModelSortBy()).thenReturn(SORT_BY_NAME);
+    when(pageSortConfig.getModelSortDirection()).thenReturn(Sort.Direction.DESC);
+    when(pageSortConfig.getModelSortBy()).thenReturn(SORT_BY_NAME);
     when(modelRepository.findAll(ArgumentMatchers.<Specification<Model>>any(), any(Pageable.class)))
         .thenReturn(modelsPage);
 
     Page<ModelDto> actualPage = modelService.searchModel(filter, pageable);
 
+    ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
+    verify(modelRepository).findAll(ArgumentMatchers.<Specification<Model>>any(), captor.capture());
+    Sort sort = captor.getValue().getSort();
+    assertTrue(sort.isSorted());
     ModelDto actualModelDto = actualPage.getContent().get(0);
     verifyModelDto(actualModelDto);
   }

@@ -1,5 +1,7 @@
 package ua.foxminded.cars.service.impls;
 
+import static ua.foxminded.cars.exceptionhandler.ExceptionMessages.MODEL_ALREADY_EXIST_BY_PARAMETERS;
+
 import java.time.Year;
 import java.util.Collection;
 import java.util.List;
@@ -17,8 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.foxminded.cars.config.SortByConfig;
-import ua.foxminded.cars.exceptionhandler.ExceptionMessages;
+import ua.foxminded.cars.config.PageSortConfig;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelAlreadyExistsException;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelNotFoundException;
 import ua.foxminded.cars.mapper.ModelMapper;
@@ -29,6 +30,7 @@ import ua.foxminded.cars.repository.entity.Model;
 import ua.foxminded.cars.repository.entity.ModelYear;
 import ua.foxminded.cars.repository.specification.ModelSpecification;
 import ua.foxminded.cars.repository.specification.SearchFilter;
+import ua.foxminded.cars.service.AbstractService;
 import ua.foxminded.cars.service.CategoryService;
 import ua.foxminded.cars.service.ManufacturerService;
 import ua.foxminded.cars.service.ModelService;
@@ -49,7 +51,7 @@ public class ModelServiceImpl extends AbstractService implements ModelService {
 
   private final ModelRepository modelRepository;
   private final ModelMapper modelMapper;
-  private final SortByConfig sortByConfig;
+  private final PageSortConfig pageSortConfig;
   private final ManufacturerService manufacturerService;
   private final ModelYearService modelYearService;
   private final CategoryService categoryService;
@@ -202,7 +204,7 @@ public class ModelServiceImpl extends AbstractService implements ModelService {
     Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
     pageable =
         setDefaultSortIfNecessary(
-            pageable, sortByConfig.getModelSortDirection(), sortByConfig.getModelSortBy());
+            pageable, pageSortConfig.getModelSortDirection(), pageSortConfig.getModelSortBy());
     return modelRepository.findAll(specification, pageable).map(modelMapper::toDto);
   }
 
@@ -242,7 +244,7 @@ public class ModelServiceImpl extends AbstractService implements ModelService {
         .ifPresent(
             entity -> {
               log.debug(
-                  ExceptionMessages.MODEL_ALREADY_EXIST_BY_PARAMETERS.formatted(
+                  MODEL_ALREADY_EXIST_BY_PARAMETERS.formatted(
                       manufacturerName, modelName, year, entity.getId()));
               throw new ModelAlreadyExistsException(
                   manufacturerName, modelName, year, entity.getId());

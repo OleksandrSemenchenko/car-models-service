@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import java.net.URI;
@@ -34,6 +35,12 @@ import ua.foxminded.cars.repository.specification.SearchFilter;
 import ua.foxminded.cars.service.ModelService;
 import ua.foxminded.cars.service.dto.ModelDto;
 
+/**
+ * A REST controller to manage models.
+ *
+ * @author Oleksandr Semenchenko
+ */
+@Tag(name = "ModelController", description = "Manages models")
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -114,7 +121,11 @@ public class ModelController {
                   "minYear": "must be greater than 0"
                 }
               }
-            """)))
+            """))),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The user is not authorized",
+            content = @Content(examples = @ExampleObject("no content")))
       })
   @GetMapping(value = V1 + MODELS_PATH)
   public Page<ModelDto> searchModels(
@@ -146,6 +157,10 @@ public class ModelController {
                 ]
               }
               """))),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The user is not authorized",
+            content = @Content(examples = @ExampleObject("no content"))),
         @ApiResponse(
             responseCode = "404",
             description = "The model has not been found",
@@ -203,6 +218,10 @@ public class ModelController {
             }
           }
           """))),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The user is not authorized",
+            content = @Content(examples = @ExampleObject("no content"))),
         @ApiResponse(
             responseCode = "409",
             description = "The model already exists",
@@ -262,6 +281,10 @@ public class ModelController {
             }
             """))),
         @ApiResponse(
+            responseCode = "401",
+            description = "The user is not authorized",
+            content = @Content(examples = @ExampleObject("no content"))),
+        @ApiResponse(
             responseCode = "404",
             description = "A model has not been found",
             content =
@@ -300,6 +323,10 @@ public class ModelController {
       tags = "model",
       responses = {
         @ApiResponse(responseCode = "204", description = "The model has been deleted"),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The user is not authorized",
+            content = @Content(examples = @ExampleObject("no content"))),
         @ApiResponse(
             responseCode = "404",
             description = "The model not found",

@@ -1,4 +1,4 @@
-package ua.foxminded.cars.service.impls;
+package ua.foxminded.cars.service;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -8,14 +8,12 @@ import org.springframework.data.domain.Sort.Direction;
 public abstract class AbstractService {
 
   protected Pageable setDefaultSortIfNecessary(
-      Pageable pageRequest, Direction sortDirection, String sortBy) {
-    if (pageRequest.getSort().isUnsorted()) {
+      Pageable pageable, Direction sortDirection, String sortBy) {
+    if (pageable.getSort().isUnsorted()) {
       Sort defaulSort = Sort.by(sortDirection, sortBy);
       return PageRequest.of(
-          pageRequest.getPageNumber(),
-          pageRequest.getPageSize(),
-          pageRequest.getSortOr(defaulSort));
+          pageable.getPageNumber(), pageable.getPageSize(), pageable.getSortOr(defaulSort));
     }
-    return pageRequest;
+    return pageable;
   }
 }

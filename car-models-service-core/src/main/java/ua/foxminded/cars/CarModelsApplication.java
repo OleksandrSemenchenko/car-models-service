@@ -6,12 +6,12 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import ua.foxminded.cars.config.SortByConfig;
+import ua.foxminded.cars.config.PageSortConfig;
 
 @SpringBootApplication
 @EnableTransactionManagement
 @EnableCaching
-@EnableConfigurationProperties(SortByConfig.class)
+@EnableConfigurationProperties(PageSortConfig.class)
 @PropertySource("classpath:/application.yml")
 public class CarModelsApplication {
 

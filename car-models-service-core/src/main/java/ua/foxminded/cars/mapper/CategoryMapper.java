@@ -1,14 +1,15 @@
 package ua.foxminded.cars.mapper;
 
+import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
+
 import java.util.Collection;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
 import ua.foxminded.cars.repository.entity.Category;
 import ua.foxminded.cars.service.dto.CategoryDto;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = SPRING)
 public interface CategoryMapper {
 
   List<Category> toEntityList(Collection<CategoryDto> categoriesDto);

@@ -1,29 +1,24 @@
-package ua.foxminded.controller;
-
-import static org.hamcrest.Matchers.hasSize;
-import static ua.com.foxminded.controller.ExceptionHandlerController.DATA_INTEGRITY_VIOLATION_EXCEPTION_MESSAGE;
-import static ua.com.foxminded.controller.ExceptionHandlerController.NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE;
-import static ua.com.foxminded.service.ModelNameService.MODEL_NAME_ALREADY_EXISTS;
-import static ua.com.foxminded.service.ModelNameService.NO_MODEL_NAME;
+package ua.foxminded.cars.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import ua.com.foxminded.dto.ModelNameDto;
+import ua.foxminded.cars.service.dto.CategoryDto;
 
-class ModelNameControllerComponentTest extends ComponentTestContext {
+class CategoryControllerComponentTest extends ComponentTestContext {
 
-  public static final String MODEL_NAME = "A7";
-  public static final String MODEL_NAME_WITHOUT_RELATIONS = "A8";
-  public static final String NEW_MODEL_NAME = "Mustang";
+  private static final String CATEGORY_NAME_WITHOUT_RELATIONS = "Coupe";
+  private static final String CATEGORY_NAME = "Sedan";
+  private static final String NEW_CATEGORY_NAME = "Pickup";
 
   @Test
-  void create_ShouldReturn400_WhenModelNameDtoNameIsNull() {
-    ModelNameDto modelNameDto = new ModelNameDto();
+  void create_shouldReturnStatus400_whenCategoryDtoNameIsNull() {
+    CategoryDto categoryDto = new CategoryDto();
+
     webTestClient
         .post()
-        .uri("/v1/model-names")
+        .uri("/v1/categories")
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
-        .bodyValue(modelNameDto)
+        .bodyValue(categoryDto)
         .exchange()
         .expectStatus()
         .isBadRequest()
@@ -33,111 +28,113 @@ class ModelNameControllerComponentTest extends ComponentTestContext {
   }
 
   @Test
-  void create_ShouldReturn409_WhenSuchModelNameAlreadyExists() {
-    ModelNameDto modelNameDto = ModelNameDto.builder().name(MODEL_NAME).build();
+  void create_ShouldReturnStatus409_WhenSuchCategoryAlreadyExists() {
+    CategoryDto categoryDto = CategoryDto.builder().name(CATEGORY_NAME).build();
+
     webTestClient
         .post()
-        .uri("/v1/model-names")
+        .uri("/v1/categories")
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
-        .bodyValue(modelNameDto)
+        .bodyValue(categoryDto)
         .exchange()
         .expectStatus()
         .isEqualTo(HttpStatus.CONFLICT)
         .expectBody()
         .jsonPath("$.message")
-        .isEqualTo(String.format(MODEL_NAME_ALREADY_EXISTS, MODEL_NAME));
+        .isEqualTo(String.format(CATEGORY_ALREADY_EXISTS, CATEGORY_NAME));
   }
 
   @Test
-  void create_ShouldReturn201() {
-    ModelNameDto modelNameDto = ModelNameDto.builder().name(NEW_MODEL_NAME).build();
+  void create_ShouldReturnStatus201() {
+    CategoryDto categoryDto = CategoryDto.builder().name(NEW_CATEGORY_NAME).build();
+
     webTestClient
         .post()
-        .uri("/v1/model-names")
+        .uri("/v1/categories")
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
-        .bodyValue(modelNameDto)
+        .bodyValue(categoryDto)
         .exchange()
         .expectStatus()
         .isCreated()
         .expectHeader()
-        .location(carModelServiceBaseUrl + "/v1/model-names/" + NEW_MODEL_NAME);
+        .location(carModelServiceBaseUrl + "/v1/categories/" + NEW_CATEGORY_NAME);
   }
 
   @Test
-  void getByName_ShouldReturnStatus404_WhenNoSuchModelName() {
+  void getByName_ShoudReturnStatus404_WhenNoSuchCategory() {
     webTestClient
         .get()
-        .uri("/v1/model-names/{name}", NEW_MODEL_NAME)
+        .uri("/v1/categories/{category}", NEW_CATEGORY_NAME)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .exchange()
         .expectStatus()
         .isNotFound()
         .expectBody()
         .jsonPath("$.message")
-        .isEqualTo(String.format(NO_MODEL_NAME, NEW_MODEL_NAME));
+        .isEqualTo(String.format(NO_CATEGORY, NEW_CATEGORY_NAME));
   }
 
   @Test
   void getByName_ShouldReturnStatus200() {
     webTestClient
         .get()
-        .uri("/v1/model-names/{name}", MODEL_NAME)
+        .uri("/v1/categories/{category}", CATEGORY_NAME)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .exchange()
         .expectStatus()
         .isOk()
         .expectBody()
         .jsonPath("$.name")
-        .isEqualTo(MODEL_NAME);
+        .isEqualTo(CATEGORY_NAME);
   }
 
   @Test
   void getAll_ShouldReturnStatus200() {
     webTestClient
         .get()
-        .uri("/v1/model-names")
+        .uri("/v1/categories")
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .exchange()
         .expectStatus()
         .isOk()
         .expectBody()
         .jsonPath("$.content")
-        .value(hasSize(2));
+        .value(Matchers.hasSize(2));
   }
 
   @Test
-  void deleteByName_ShouldReturnStatus405_WhenModelNameHasRelations() {
+  void deleteByName_ShouldReturnStatus405_WhenCategoryHasRelations() {
     webTestClient
         .delete()
-        .uri("/v1/model-names/{name}", MODEL_NAME)
+        .uri("/v1/categories/{category}", CATEGORY_NAME)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .exchange()
         .expectStatus()
         .isEqualTo(HttpStatus.METHOD_NOT_ALLOWED)
         .expectBody()
         .jsonPath("$.message")
-        .isEqualTo(String.format(DATA_INTEGRITY_VIOLATION_EXCEPTION_MESSAGE, MODEL_NAME));
+        .isEqualTo(String.format(DATA_INTEGRITY_VIOLATION_EXCEPTION_MESSAGE, CATEGORY_NAME));
   }
 
   @Test
-  void deleteByName_ShouldReturnStatus404_WhenNoSuchModelName() {
+  void deleleteByName_ShouldReturnStatus404_WhenNoSuchCategory() {
     webTestClient
         .delete()
-        .uri("/v1/model-names/{name}", NEW_MODEL_NAME)
+        .uri("/v1/categories/{category}", NEW_CATEGORY_NAME)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .exchange()
         .expectStatus()
         .isNotFound()
         .expectBody()
         .jsonPath("$.message")
-        .isEqualTo(String.format(NO_MODEL_NAME, NEW_MODEL_NAME));
+        .isEqualTo(String.format(NO_CATEGORY, NEW_CATEGORY_NAME));
   }
 
   @Test
   void deleteByName_ShouldReturnStatus204() {
     webTestClient
         .delete()
-        .uri("/v1/model-names/{name}", MODEL_NAME_WITHOUT_RELATIONS)
+        .uri("/v1/categories/{category}", CATEGORY_NAME_WITHOUT_RELATIONS)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .exchange()
         .expectStatus()
