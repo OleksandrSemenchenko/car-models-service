@@ -6,8 +6,10 @@ import org.springframework.data.domain.Sort.Direction;
 
 @ConfigurationProperties
 @Data
-public class SortByConfig {
+public class SortingConfig {
 
+  private String categorySortBy;
+  private Direction categorySortDirection;
   private String modelSortBy;
   private Direction modelSortDirection;
   private String manufacturerSortBy;

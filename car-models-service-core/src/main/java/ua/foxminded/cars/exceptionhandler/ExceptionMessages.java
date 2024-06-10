@@ -2,6 +2,7 @@ package ua.foxminded.cars.exceptionhandler;
 
 public class ExceptionMessages {
 
+  public static final String CATEGORY_ALREADY_EXISTS = "The category '%s' already exists";
   public static final String YEAR_NOT_FOUND = "Year '%s' not found";
   public static final String MODEL_NOT_FOUND_BY_ID = "The model with id=%s not found";
   public static final String MODEL_NOT_FOUND =
@@ -12,7 +13,6 @@ public class ExceptionMessages {
   public static final String MANUFACTURER_NOT_FOUND = "The %s manufacturer not found";
   public static final String CATEGORY_NOT_FOUND = "The %s category not found";
   public static final String PERIOD_NOT_VALID = "The minYear=%s must be before maxYear=%s";
-  public static final String CATEGORY_ALREADY_EXISTS = "The '%s' category already exists";
 
   private ExceptionMessages() {}
 }

@@ -29,7 +29,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.util.ReflectionTestUtils;
 import ua.foxminded.cars.TestDataGenerator;
-import ua.foxminded.cars.config.SortByConfig;
+import ua.foxminded.cars.config.SortingConfig;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelAlreadyExistsException;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelNotFoundException;
 import ua.foxminded.cars.mapper.CategoryMapper;
@@ -60,10 +60,8 @@ class ModelServiceImplTest {
   private static final String CATEGORY_NAME = "Pickup";
   private static final String NOT_NEEDED_CATEGORY = "Coupe";
   private static final String SORT_BY_NAME = "name";
-  private static final int FIVE_ELEMENTS = 5;
-  private static final int FIRST_PAGE = 1;
-  private static final int MAX_YEAR = 2024;
-  private static final int MIN_YEAR = 2020;
+  private static final int PAGE_SIZE = 5;
+  private static final int PAGE_NUMBER = 1;
 
   @InjectMocks private ModelServiceImpl modelService;
 
@@ -75,7 +73,7 @@ class ModelServiceImplTest {
 
   @Mock private CategoryService categoryService;
 
-  @Mock private SortByConfig sortByConfig;
+  @Mock private SortingConfig sortingConfig;
 
   @BeforeEach
   void setUp() {
@@ -211,7 +209,7 @@ class ModelServiceImplTest {
   void searchModel_shouldReturnSortedPage_whenRequestHasSorting() {
     SearchFilter filter = SearchFilter.builder().manufacturer(MANUFACTURER_NAME).build();
     Sort sortByName = Sort.by(SORT_BY_NAME);
-    Pageable pageable = PageRequest.of(FIRST_PAGE, FIVE_ELEMENTS, sortByName);
+    Pageable pageable = PageRequest.of(PAGE_NUMBER, PAGE_SIZE, sortByName);
     Model model = TestDataGenerator.generateModelEntityWithId();
     Page<Model> modelsPage = new PageImpl<>(List.of(model));
 
@@ -224,15 +222,16 @@ class ModelServiceImplTest {
     verifyModelDto(actualModelDto);
   }
 
+  // TODO
   @Test
-  void searchModel_shouldSortedPage_whenRequestHasNoSorting() {
+  void searchModel_shouldSortPage_whenRequestHasNoSorting() {
     SearchFilter filter = SearchFilter.builder().manufacturer(MANUFACTURER_NAME).build();
-    Pageable pageable = Pageable.ofSize(FIVE_ELEMENTS);
+    Pageable pageable = Pageable.ofSize(PAGE_SIZE);
     Model model = TestDataGenerator.generateModelEntityWithId();
     Page<Model> modelsPage = new PageImpl<>(List.of(model));
 
-    when(sortByConfig.getModelSortDirection()).thenReturn(Sort.Direction.DESC);
-    when(sortByConfig.getModelSortBy()).thenReturn(SORT_BY_NAME);
+    when(sortingConfig.getModelSortDirection()).thenReturn(Sort.Direction.DESC);
+    when(sortingConfig.getModelSortBy()).thenReturn(SORT_BY_NAME);
     when(modelRepository.findAll(ArgumentMatchers.<Specification<Model>>any(), any(Pageable.class)))
         .thenReturn(modelsPage);
 
