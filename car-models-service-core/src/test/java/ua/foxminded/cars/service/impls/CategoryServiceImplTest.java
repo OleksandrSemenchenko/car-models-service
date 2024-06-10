@@ -27,7 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.util.ReflectionTestUtils;
 import ua.foxminded.cars.TestDataGenerator;
-import ua.foxminded.cars.config.SortingConfig;
+import ua.foxminded.cars.config.PageSortConfig;
 import ua.foxminded.cars.exceptionhandler.exceptions.CategoryAlreadyExistsException;
 import ua.foxminded.cars.exceptionhandler.exceptions.CategoryNotFoundException;
 import ua.foxminded.cars.mapper.CategoryMapper;
@@ -46,7 +46,7 @@ class CategoryServiceImplTest {
 
   @Mock private CategoryRepository categoryRepository;
 
-  @Mock private SortingConfig sortingConfig;
+  @Mock private PageSortConfig pageSortConfig;
 
   @BeforeEach
   void setUp() {
@@ -62,8 +62,8 @@ class CategoryServiceImplTest {
     Page<Category> categoriesPage = new PageImpl<>(List.of(category));
     CategoryDto expectedCategoryDto = TestDataGenerator.generateCategoryDto();
 
-    when(sortingConfig.getCategorySortBy()).thenReturn("id");
-    when(sortingConfig.getCategorySortDirection()).thenReturn(Sort.Direction.ASC);
+    when(pageSortConfig.getCategorySortBy()).thenReturn("id");
+    when(pageSortConfig.getCategorySortDirection()).thenReturn(Sort.Direction.ASC);
     when(categoryRepository.findAll(any(Pageable.class))).thenReturn(categoriesPage);
 
     Page<CategoryDto> receivedCategoryDtosPage = categoryService.getAllCategories(pageable);
@@ -83,8 +83,8 @@ class CategoryServiceImplTest {
     Page<Category> categoriesPage = new PageImpl<>(List.of(category));
     CategoryDto expectedCategoryDto = TestDataGenerator.generateCategoryDto();
 
-    when(sortingConfig.getCategorySortBy()).thenReturn("name");
-    when(sortingConfig.getCategorySortDirection()).thenReturn(Sort.Direction.ASC);
+    when(pageSortConfig.getCategorySortBy()).thenReturn("name");
+    when(pageSortConfig.getCategorySortDirection()).thenReturn(Sort.Direction.ASC);
     when(categoryRepository.findAll(any(Pageable.class))).thenReturn(categoriesPage);
 
     Page<CategoryDto> receivedCategoryDtosPage = categoryService.getAllCategories(pageable);
@@ -98,7 +98,7 @@ class CategoryServiceImplTest {
   }
 
   @Test
-  void isCategoryExist_shouldReturnFalse_whenCategoryIsInDb() {
+  void isCategoryExist_shouldReturnFalse_whenNoCategoryInDb() {
     when(categoryRepository.existsById(CATEGORY_NAME)).thenReturn(false);
 
     boolean isCategoryExist = categoryService.isCategoryExist(CATEGORY_NAME);

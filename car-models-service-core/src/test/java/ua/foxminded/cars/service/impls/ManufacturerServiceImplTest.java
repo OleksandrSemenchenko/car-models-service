@@ -21,7 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.util.ReflectionTestUtils;
 import ua.foxminded.cars.TestDataGenerator;
-import ua.foxminded.cars.config.SortingConfig;
+import ua.foxminded.cars.config.PageSortConfig;
 import ua.foxminded.cars.exceptionhandler.exceptions.ManufacturerNotFoundException;
 import ua.foxminded.cars.mapper.ManufacturerMapper;
 import ua.foxminded.cars.repository.ManufacturerRepository;
@@ -40,7 +40,7 @@ class ManufacturerServiceImplTest {
 
   @Mock private ManufacturerRepository manufacturerRepository;
 
-  @Mock private SortingConfig sortingConfig;
+  @Mock private PageSortConfig pageSortConfig;
 
   @BeforeEach
   void setUp() {
@@ -70,8 +70,8 @@ class ManufacturerServiceImplTest {
     Pageable pageable = Pageable.ofSize(5);
     Page<Manufacturer> manufacturersPage = new PageImpl<>(List.of(manufacturer));
 
-    when(sortingConfig.getManufacturerSortDirection()).thenReturn(Sort.Direction.DESC);
-    when(sortingConfig.getManufacturerSortBy()).thenReturn("name");
+    when(pageSortConfig.getManufacturerSortDirection()).thenReturn(Sort.Direction.DESC);
+    when(pageSortConfig.getManufacturerSortBy()).thenReturn("name");
     when(manufacturerRepository.findAll(any(Pageable.class))).thenReturn(manufacturersPage);
 
     Page<ManufacturerDto> actualManufacturersPage =

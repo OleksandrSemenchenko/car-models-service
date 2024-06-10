@@ -31,7 +31,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.util.ReflectionTestUtils;
 import ua.foxminded.cars.TestDataGenerator;
-import ua.foxminded.cars.config.SortingConfig;
+import ua.foxminded.cars.config.PageSortConfig;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelAlreadyExistsException;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelNotFoundException;
 import ua.foxminded.cars.mapper.CategoryMapper;
@@ -75,7 +75,7 @@ class ModelServiceImplTest {
 
   @Mock private CategoryService categoryService;
 
-  @Mock private SortingConfig sortingConfig;
+  @Mock private PageSortConfig pageSortConfig;
 
   @BeforeEach
   void setUp() {
@@ -235,8 +235,8 @@ class ModelServiceImplTest {
     Model model = TestDataGenerator.generateModelEntityWithId();
     Page<Model> modelsPage = new PageImpl<>(List.of(model));
 
-    when(sortingConfig.getModelSortDirection()).thenReturn(Sort.Direction.DESC);
-    when(sortingConfig.getModelSortBy()).thenReturn(SORT_BY_NAME);
+    when(pageSortConfig.getModelSortDirection()).thenReturn(Sort.Direction.DESC);
+    when(pageSortConfig.getModelSortBy()).thenReturn(SORT_BY_NAME);
     when(modelRepository.findAll(ArgumentMatchers.<Specification<Model>>any(), any(Pageable.class)))
         .thenReturn(modelsPage);
 

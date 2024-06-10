@@ -62,7 +62,6 @@ class ModelControllerComponentTest extends ComponentTestContext {
             String.format(MODEL_NOT_FOUND, MANUFACTURER_NAME, MODEL_NAME, NOT_EXISTED_MODEL_YEAR));
   }
 
-  // TODO
   @Test
   void getModel_shouldReturnStatus200AndBody_whenModelIsInDb() {
     webTestClient

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ import ua.foxminded.cars.service.dto.CategoryDto;
  *
  * @author Oleksandr Semenchenko
  */
+@Tag(name = "CategoryController", description = "Manages categories")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/categories")
@@ -30,12 +32,12 @@ public class CategoryController {
   @Operation(
       summary = "Gets all categories",
       operationId = "getAllCategories",
-      description = "Gets all existing categories in the page format",
+      description = "Gets all categories in the page format",
       tags = "category",
       responses = {
         @ApiResponse(
             responseCode = "200",
-            description = "The page with categories",
+            description = "The pages with categories",
             useReturnTypeSchema = true),
         @ApiResponse(
             responseCode = "401",

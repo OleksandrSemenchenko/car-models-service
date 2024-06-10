@@ -6,7 +6,7 @@ import org.springframework.data.domain.Sort.Direction;
 
 @ConfigurationProperties
 @Data
-public class SortingConfig {
+public class PageSortConfig {
 
   private String categorySortBy;
   private Direction categorySortDirection;

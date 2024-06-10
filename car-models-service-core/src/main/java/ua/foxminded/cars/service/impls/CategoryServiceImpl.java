@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ua.foxminded.cars.config.SortingConfig;
+import ua.foxminded.cars.config.PageSortConfig;
 import ua.foxminded.cars.exceptionhandler.exceptions.CategoryAlreadyExistsException;
 import ua.foxminded.cars.exceptionhandler.exceptions.CategoryNotFoundException;
 import ua.foxminded.cars.mapper.CategoryMapper;
@@ -28,13 +28,15 @@ public class CategoryServiceImpl extends AbstractService implements CategoryServ
 
   private final CategoryRepository categoryRepository;
   private final CategoryMapper categoryMapper;
-  private final SortingConfig sortingConfig;
+  private final PageSortConfig pageSortConfig;
 
   @Override
   public Page<CategoryDto> getAllCategories(Pageable pageable) {
     pageable =
         setDefaultSortIfNecessary(
-            pageable, sortingConfig.getCategorySortDirection(), sortingConfig.getCategorySortBy());
+            pageable,
+            pageSortConfig.getCategorySortDirection(),
+            pageSortConfig.getCategorySortBy());
     return categoryRepository.findAll(pageable).map(categoryMapper::toDto);
   }
 

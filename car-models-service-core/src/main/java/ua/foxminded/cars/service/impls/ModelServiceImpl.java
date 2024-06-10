@@ -19,7 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.foxminded.cars.config.SortingConfig;
+import ua.foxminded.cars.config.PageSortConfig;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelAlreadyExistsException;
 import ua.foxminded.cars.exceptionhandler.exceptions.ModelNotFoundException;
 import ua.foxminded.cars.mapper.ModelMapper;
@@ -51,7 +51,7 @@ public class ModelServiceImpl extends AbstractService implements ModelService {
 
   private final ModelRepository modelRepository;
   private final ModelMapper modelMapper;
-  private final SortingConfig sortingConfig;
+  private final PageSortConfig pageSortConfig;
   private final ManufacturerService manufacturerService;
   private final ModelYearService modelYearService;
   private final CategoryService categoryService;
@@ -204,7 +204,7 @@ public class ModelServiceImpl extends AbstractService implements ModelService {
     Specification<Model> specification = ModelSpecification.getSpecification(searchFilter);
     pageable =
         setDefaultSortIfNecessary(
-            pageable, sortingConfig.getModelSortDirection(), sortingConfig.getModelSortBy());
+            pageable, pageSortConfig.getModelSortDirection(), pageSortConfig.getModelSortBy());
     return modelRepository.findAll(specification, pageable).map(modelMapper::toDto);
   }
 

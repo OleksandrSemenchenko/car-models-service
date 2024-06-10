@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import java.net.URI;
@@ -39,6 +40,7 @@ import ua.foxminded.cars.service.dto.ModelDto;
  *
  * @author Oleksandr Semenchenko
  */
+@Tag(name = "ModelController", description = "Manages models")
 @RestController
 @RequiredArgsConstructor
 @Validated
