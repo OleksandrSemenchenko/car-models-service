@@ -2,6 +2,7 @@ package ua.foxminded.cars.service.impls;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -208,8 +210,7 @@ class ModelServiceImplTest {
   @Test
   void searchModel_shouldReturnSortedPage_whenRequestHasSorting() {
     SearchFilter filter = SearchFilter.builder().manufacturer(MANUFACTURER_NAME).build();
-    Sort sortByName = Sort.by(SORT_BY_NAME);
-    Pageable pageable = PageRequest.of(PAGE_NUMBER, PAGE_SIZE, sortByName);
+    Pageable pageable = PageRequest.of(PAGE_NUMBER, PAGE_SIZE, Sort.Direction.DESC, "name");
     Model model = TestDataGenerator.generateModelEntityWithId();
     Page<Model> modelsPage = new PageImpl<>(List.of(model));
 
@@ -218,13 +219,17 @@ class ModelServiceImplTest {
 
     Page<ModelDto> actualPage = modelService.searchModel(filter, pageable);
 
+    ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
+    verify(modelRepository).findAll(ArgumentMatchers.<Specification<Model>>any(), captor.capture());
+    Sort sort = captor.getValue().getSort();
+    assertTrue(sort.isSorted());
+    assertEquals(sort.iterator().next().getDirection(), Sort.Direction.DESC);
     ModelDto actualModelDto = actualPage.getContent().get(0);
     verifyModelDto(actualModelDto);
   }
 
-  // TODO
   @Test
-  void searchModel_shouldSortPage_whenRequestHasNoSorting() {
+  void searchModel_shouldReturnSortedPage_whenRequestHasNoSorting() {
     SearchFilter filter = SearchFilter.builder().manufacturer(MANUFACTURER_NAME).build();
     Pageable pageable = Pageable.ofSize(PAGE_SIZE);
     Model model = TestDataGenerator.generateModelEntityWithId();
@@ -237,6 +242,10 @@ class ModelServiceImplTest {
 
     Page<ModelDto> actualPage = modelService.searchModel(filter, pageable);
 
+    ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
+    verify(modelRepository).findAll(ArgumentMatchers.<Specification<Model>>any(), captor.capture());
+    Sort sort = captor.getValue().getSort();
+    assertTrue(sort.isSorted());
     ModelDto actualModelDto = actualPage.getContent().get(0);
     verifyModelDto(actualModelDto);
   }

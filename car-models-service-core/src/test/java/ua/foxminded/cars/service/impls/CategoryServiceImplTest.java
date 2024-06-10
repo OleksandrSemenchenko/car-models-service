@@ -55,7 +55,7 @@ class CategoryServiceImplTest {
   }
 
   @Test
-  void getAllCategories_shouldReturnSortPage_whenRequestHasSorting() {
+  void getAllCategories_shouldReturnSortedPage_whenRequestHasSorting() {
     Pageable pageable = PageRequest.of(PAGE_NUMBER, PAGE_SIZE, Sort.Direction.DESC, "name");
 
     Category category = TestDataGenerator.generateCategoryEntity();
@@ -77,7 +77,7 @@ class CategoryServiceImplTest {
   }
 
   @Test
-  void getAllCategories_shouldReturnSortPage_whenRequestWithoutSorting() {
+  void getAllCategories_shouldReturnSortedPage_whenRequestWithoutSorting() {
     Pageable pageable = Pageable.ofSize(5);
     Category category = TestDataGenerator.generateCategoryEntity();
     Page<Category> categoriesPage = new PageImpl<>(List.of(category));
