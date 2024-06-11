@@ -21,7 +21,7 @@ public interface ModelRepository
     """,
       nativeQuery = true)
   void removeModelFromCategory(
-      @Param("modelId") UUID modelId, @Param("categoryName") String categoryName);
+      @Param("modelId") String modelId, @Param("categoryName") String categoryName);
 
   @Modifying
   @Query(

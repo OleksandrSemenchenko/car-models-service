@@ -307,7 +307,7 @@ public class ModelController {
       @Parameter(description = "A model name", example = "x7") @PathVariable String name,
       @Parameter(description = "A modelYear of a model", example = "'2023") @PathVariable @Positive
           int year,
-      @RequestBody ModelDto modelDto) {
+      @Validated @RequestBody ModelDto modelDto) {
     modelDto.setYear(year);
     modelDto.setManufacturer(manufacturer);
     modelDto.setName(name);

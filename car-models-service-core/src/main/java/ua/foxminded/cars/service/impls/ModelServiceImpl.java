@@ -113,7 +113,7 @@ public class ModelServiceImpl extends AbstractService implements ModelService {
 
   private void removeModelFromCategories(UUID modelId, Collection<String> categoryNames) {
     for (String categoryName : categoryNames) {
-      modelRepository.removeModelFromCategory(modelId, categoryName);
+      modelRepository.removeModelFromCategory(String.valueOf(modelId), categoryName);
       deleteCategoryIfNecessary(categoryName);
     }
   }

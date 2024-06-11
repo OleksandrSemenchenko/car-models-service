@@ -37,7 +37,7 @@ class ModelRepositoryTest {
 
   @Test
   void removeModelFromCategory_shouldRemoveRelationship_whenRelationshipExists() {
-    modelRepository.removeModelFromCategory(MODEL_ID, CATEGORY);
+    modelRepository.removeModelFromCategory(String.valueOf(MODEL_ID), CATEGORY);
 
     boolean isExistByCategory = modelRepository.existsByCategoriesName(CATEGORY);
 
