@@ -1,7 +1,6 @@
 package ua.foxminded.cars.controller;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.Matchers.hasSize;
 import static ua.foxminded.cars.exceptionhandler.ExceptionMessages.MODEL_ALREADY_EXIST_BY_PARAMETERS;
 import static ua.foxminded.cars.exceptionhandler.ExceptionMessages.MODEL_NOT_FOUND;
 import static ua.foxminded.cars.exceptionhandler.ExceptionMessages.MODEL_NOT_FOUND_BY_ID;
@@ -142,8 +141,8 @@ class ModelControllerComponentTest extends ComponentTestContext {
         .expectStatus()
         .isOk()
         .expectBody()
-        .jsonPath("$.content")
-        .value(hasSize(1));
+        .jsonPath("$.content[*].id")
+        .value(Matchers.hasItem(MODEL_ID));
   }
 
   @Test
