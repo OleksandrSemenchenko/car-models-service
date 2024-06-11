@@ -1,17 +1,18 @@
 package ua.foxminded.cars.controller;
 
-import static org.hamcrest.Matchers.hasSize;
 import static ua.foxminded.cars.exceptionhandler.ExceptionMessages.MANUFACTURER_NOT_FOUND;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 class ManufacturerControllerComponentTest extends ComponentTestContext {
 
   private static final String V1 = "/v1";
   private static final String MANUFACTURER_PATH = "/manufacturers/{manufacturer}";
+  private static final String MANUFACTURERS_PATH = "/manufacturers";
   private static final String MANUFACTURER_NAME = "Audi";
-  private static final String MANUFACTURER_NAME_WITHOUT_RELATIONS = "Ford";
   private static final String NEW_MANUFACTURER_NAME = "BMW";
+  private static final String AUTHORIZATION_HEADER = "Authorization";
 
   @Test
   void getByName_shouldReturnStatus404_whenNoManufacturerInDb() {
@@ -23,8 +24,12 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
         .expectStatus()
         .isNotFound()
         .expectBody()
-        .jsonPath("$.message")
-        .isEqualTo(String.format(MANUFACTURER_NOT_FOUND, NEW_MANUFACTURER_NAME));
+        .jsonPath("$.details")
+        .isEqualTo(MANUFACTURER_NOT_FOUND.formatted(NEW_MANUFACTURER_NAME))
+        .jsonPath("$.timestamp")
+        .hasJsonPath()
+        .jsonPath("$.errorCode")
+        .isEqualTo(404);
   }
 
   @Test
@@ -37,21 +42,23 @@ class ManufacturerControllerComponentTest extends ComponentTestContext {
         .expectStatus()
         .isOk()
         .expectBody()
-        .jsonPath("$['name']")
+        .jsonPath("$.name")
         .isEqualTo(MANUFACTURER_NAME);
   }
 
   @Test
-  void getAll_shouldReturnStatus200AndBody_whenManufacturersAreInDb() throws Exception {
+  void getAll_shouldReturnStatus200AndBody_whenManufacturersAreInDb() {
     webTestClient
         .get()
-        .uri("/v1/manufacturers")
+        .uri(V1 + MANUFACTURERS_PATH)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .exchange()
         .expectStatus()
         .isOk()
         .expectBody()
-        .jsonPath("$.content")
-        .value(hasSize(2));
+        .jsonPath("$.content[*].name")
+        .value(Matchers.hasItem("Audi"))
+        .jsonPath("$.content[*].name")
+        .value(Matchers.hasItem("Ford"));
   }
 }

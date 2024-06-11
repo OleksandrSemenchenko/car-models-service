@@ -1,7 +1,6 @@
 package ua.foxminded.cars.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.adapters.config.PolicyEnforcerConfig;
@@ -21,13 +20,11 @@ import ua.foxminded.cars.testcontainer.KeycloakTestcontainer;
 @SpringBootTest(classes = TestConfig.class)
 public abstract class ComponentTestContext {
 
-  public static final String REALM_CONFIG_FILE_PATH = "/realm-import.json";
-  public static final String ADMIN_USER = "admin";
-  public static final String ADMIN_PASSWORD = "admin";
-  public static final String DATABASE_ALIAS = "postgres";
-  public static final String AUTHORIZATION_SERVER_ALIAS = "keycloak";
-  public static final String AUTHORIZATION_HEADER = "Authorization";
-  public static final String CLIENT_SECRET = "secret";
+  private static final String AUTHORIZATION_SERVER_ALIAS = "keycloak";
+  private static final String DATABASE_ALIAS = "postgres";
+  private static final String CLIENT_SECRET = "secret";
+  private static final String ADMIN_USER = "admin";
+  private static final String ADMIN_PASSWORD = "admin";
 
   private static Network network = Network.newNetwork();
   private static KeycloakTestcontainer keycloak;
@@ -37,7 +34,7 @@ public abstract class ComponentTestContext {
   static {
     keycloak =
         new KeycloakTestcontainer()
-            .withRealmImportFile(REALM_CONFIG_FILE_PATH)
+            .withRealmImportFile("/realm-config.json")
             .withNetworkAliases(AUTHORIZATION_SERVER_ALIAS)
             .withContextPath("/auth")
             .withNetwork(network)
@@ -76,14 +73,8 @@ public abstract class ComponentTestContext {
     carModelServiceBaseUrl =
         "http://" + carsModelsService.getHost() + ":" + carsModelsService.getMappedPort(8180);
     webTestClient = WebTestClient.bindToServer().baseUrl(carModelServiceBaseUrl).build();
-    var databaseDelegate = new JdbcDatabaseDelegate(postgres, "");
-    ScriptUtils.runInitScript(databaseDelegate, "data.sql");
-  }
-
-  @AfterEach
-  void cleanUp() {
-    var databaseDelegate = new JdbcDatabaseDelegate(postgres, "");
-    ScriptUtils.runInitScript(databaseDelegate, "data-clean-up.sql");
+    JdbcDatabaseDelegate databaseDelegate = new JdbcDatabaseDelegate(postgres, "");
+    ScriptUtils.runInitScript(databaseDelegate, "test_data.sql");
   }
 
   public String getAdminRoleBearerToken() {

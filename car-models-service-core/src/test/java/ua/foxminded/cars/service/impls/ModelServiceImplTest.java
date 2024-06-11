@@ -116,7 +116,7 @@ class ModelServiceImplTest {
 
     ModelDto actualModelDto = modelService.updateModel(modelDto);
 
-    verify(modelRepository).removeModelFromCategory(MODEL_ID, NOT_NEEDED_CATEGORY);
+    verify(modelRepository).removeModelFromCategory(String.valueOf(MODEL_ID), NOT_NEEDED_CATEGORY);
     verifyModelDto(actualModelDto);
   }
 

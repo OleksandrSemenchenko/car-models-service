@@ -1,37 +1,35 @@
 package ua.foxminded.cars.controller;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.Matchers.hasSize;
-import static ua.com.foxminded.controller.ExceptionHandlerController.NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE;
-import static ua.com.foxminded.service.ModelNameService.NO_MODEL_NAME;
-import static ua.foxminded.cars.config.controller.CategoryControllerComponentTest.CATEGORY_NAME;
-import static ua.foxminded.cars.config.controller.CategoryControllerComponentTest.CATEGORY_NAME_WITHOUT_RELATIONS;
-import static ua.foxminded.cars.config.controller.CategoryControllerComponentTest.NEW_CATEGORY_NAME;
-import static ua.foxminded.cars.controller.ModelNameControllerComponentTest.MODEL_NAME;
-import static ua.foxminded.cars.controller.ModelNameControllerComponentTest.MODEL_NAME_WITHOUT_RELATIONS;
-import static ua.foxminded.cars.controller.ModelNameControllerComponentTest.NEW_MODEL_NAME;
+import static ua.foxminded.cars.exceptionhandler.ExceptionMessages.MODEL_ALREADY_EXIST_BY_PARAMETERS;
 import static ua.foxminded.cars.exceptionhandler.ExceptionMessages.MODEL_NOT_FOUND;
-import static ua.foxminded.cars.service.CategoryService.NO_CATEGORY;
-import static ua.foxminded.cars.service.ManufacturerService.NO_MANUFACTURER;
-import static ua.foxminded.cars.service.impls.ModelServiceImpl.MODEL_ALREADY_EXISTS;
-import static ua.foxminded.cars.service.impls.ModelServiceImpl.NO_MODEL_WITH_SUCH_ID;
-import static ua.foxminded.cars.service.impls.ModelServiceImpl.NO_SUCH_MODEL;
+import static ua.foxminded.cars.exceptionhandler.ExceptionMessages.MODEL_NOT_FOUND_BY_ID;
 
-import java.util.Set;
+import java.util.List;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import ua.com.foxminded.dto.ModelDto;
+import ua.foxminded.cars.service.dto.ModelDto;
 
 class ModelControllerComponentTest extends ComponentTestContext {
 
   private static final String V1 = "/v1";
   private static final String MODEL_PATH = "/manufacturers/{manufacturer}/models/{name}/{year}";
-  private static final int MODEL_ID = 1;
-  private static final int NEW_MODEL_ID = 2;
+  private static final String MODEL_ID_PATH = "/models/{modelId}";
+  private static final String MODELS_PATH = "/models";
+  private static final String MODEL_ID = "52096834-48af-41d1-b422-93600eff629a";
+  private static final String NOT_EXISTING_MODEL_ID = "6fb2687b-7e2d-4730-acc1-a0607de0a444";
   private static final int MODEL_YEAR = 2020;
+  private static final int MAX_YEAR = 2021;
+  private static final int MIN_YEAR = 2018;
   private static final int NOT_EXISTED_MODEL_YEAR = 2021;
   private static final String MANUFACTURER_NAME = "Audi";
   private static final String MODEL_NAME = "A7";
+  private static final String NEW_CATEGORY = "Coupe";
+  private static final String CATEGORY_NAME = "Sedan";
+  private static final String NOT_EXISTING_MODEL_NAME = "A15";
+  private static final String NEW_MANUFACTURER = "Ford";
+  private static final String AUTHORIZATION_HEADER = "Authorization";
 
   @Test
   void getByManufacturerAndNameAndYear_shouldReturnStatus400_whenYearIsNegative() {
@@ -43,8 +41,12 @@ class ModelControllerComponentTest extends ComponentTestContext {
         .expectStatus()
         .isBadRequest()
         .expectBody()
-        .jsonPath("$.message")
-        .exists();
+        .jsonPath("$.details")
+        .exists()
+        .jsonPath("$.timestamp")
+        .hasJsonPath()
+        .jsonPath("$.errorCode")
+        .isEqualTo(400);
   }
 
   @Test
@@ -57,9 +59,12 @@ class ModelControllerComponentTest extends ComponentTestContext {
         .expectStatus()
         .isNotFound()
         .expectBody()
-        .jsonPath("$.message")
-        .isEqualTo(
-            String.format(MODEL_NOT_FOUND, MANUFACTURER_NAME, MODEL_NAME, NOT_EXISTED_MODEL_YEAR));
+        .jsonPath("$.details")
+        .isEqualTo(MODEL_NOT_FOUND.formatted(MANUFACTURER_NAME, MODEL_NAME, NOT_EXISTED_MODEL_YEAR))
+        .jsonPath("$.timestamp")
+        .hasJsonPath()
+        .jsonPath("$.errorCode")
+        .isEqualTo(404);
   }
 
   @Test
@@ -77,17 +82,16 @@ class ModelControllerComponentTest extends ComponentTestContext {
   }
 
   @Test
-  void search_ShouldReturnStatus400_WhenMaxAndMinYearParametersAreNegative() {
+  void searchModel_shouldReturnStatus400_whenMaxAndMinYearParametersAreNegative() {
     webTestClient
         .get()
         .uri(
             uriBuilder ->
                 uriBuilder
-                    .path("/v1/models")
+                    .path(V1 + MODELS_PATH)
                     .queryParam("model", MODEL_NAME)
                     .queryParam("category", CATEGORY_NAME)
-                    .queryParam(
-                        "manufacturer", ManufacturerControllerComponentTest.MANUFACTURER_NAME)
+                    .queryParam("manufacturer", MANUFACTURER_NAME)
                     .queryParam("maxYear", -2025)
                     .queryParam("minYear", -2023)
                     .build())
@@ -96,67 +100,74 @@ class ModelControllerComponentTest extends ComponentTestContext {
         .expectStatus()
         .isBadRequest()
         .expectBody()
-        .jsonPath("$.message")
-        .isEqualTo(NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE);
+        .jsonPath("$.details")
+        .exists()
+        .jsonPath("$.timestamp")
+        .hasJsonPath()
+        .jsonPath("$.errorCode")
+        .isEqualTo(400);
   }
 
   @Test
-  void search_ShouldReturnStatus200_WhenParametersExist() {
+  void searchModel_shouldReturnStatus200AndBody_whenRequestHasParameters() {
     webTestClient
         .get()
         .uri(
             uriBuilder ->
                 uriBuilder
-                    .path("/v1/models")
-                    .queryParam("model", MODEL_NAME)
+                    .path(V1 + MODELS_PATH)
+                    .queryParam("name", MODEL_NAME)
                     .queryParam("category", CATEGORY_NAME)
-                    .queryParam(
-                        "manufacturer", ManufacturerControllerComponentTest.MANUFACTURER_NAME)
-                    .queryParam("maxYear", MODEL_YEAR)
-                    .queryParam("minYear", MODEL_YEAR)
+                    .queryParam("manufacturer", MANUFACTURER_NAME)
+                    .queryParam("maxYear", MAX_YEAR)
+                    .queryParam("minYear", MIN_YEAR)
                     .build())
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .exchange()
         .expectStatus()
         .isOk()
         .expectBody()
-        .jsonPath("$.content")
-        .value(hasSize(1));
+        .jsonPath("$.content[*].id")
+        .value(Matchers.hasItem(MODEL_ID));
   }
 
   @Test
-  void search_ShouldReturnStatus200_WhenNoParameters() {
+  void searchModel_shouldReturnStatus200AndBody_whenNoRequestParameters() {
     webTestClient
         .get()
-        .uri("/v1/models")
+        .uri(V1 + MODELS_PATH)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .exchange()
         .expectStatus()
         .isOk()
         .expectBody()
-        .jsonPath("$.content")
-        .value(hasSize(1));
+        .jsonPath("$.content[*].id")
+        .value(Matchers.hasItem(MODEL_ID));
   }
 
   @Test
-  void getById_ShouldReturnStatus404_WhenNoSuchModel() {
+  void getModelById_shouldReturnStatus404_whenNoModelInDb() {
     webTestClient
         .get()
-        .uri("/v1/models/{id}", NEW_MODEL_ID)
+        .uri(V1 + MODEL_ID_PATH, NOT_EXISTING_MODEL_ID)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .exchange()
         .expectStatus()
         .isNotFound()
         .expectBody()
-        .jsonPath("$.message")
-        .isEqualTo(String.format(NO_MODEL_WITH_SUCH_ID, NEW_MODEL_ID));
+        .jsonPath("$.details")
+        .isEqualTo(MODEL_NOT_FOUND_BY_ID.formatted(NOT_EXISTING_MODEL_ID))
+        .jsonPath("$.timestamp")
+        .hasJsonPath()
+        .jsonPath("$.errorCode")
+        .isEqualTo(404);
   }
 
   @Test
-  void getById_ShouldReturnStatus200() {
+  void getModelById_shouldReturnStatus200_whenModelIsInDb() {
     webTestClient
         .get()
-        .uri("/v1/models/{id}", MODEL_ID)
+        .uri(V1 + MODEL_ID_PATH, MODEL_ID)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .exchange()
         .expectStatus()
@@ -167,144 +178,77 @@ class ModelControllerComponentTest extends ComponentTestContext {
   }
 
   @Test
-  void create_ShouldReturnStatus400_WhenModelDtoCategoriesIsNull() {
+  void createModel_shouldReturnStatus400_whenNoCategoriesInRequestBody() {
     ModelDto modelDto = new ModelDto();
 
     webTestClient
         .post()
-        .uri(
-            "/v1/manufacturers/{manufacturer}/models/{model}/{year}",
-            ManufacturerControllerComponentTest.MANUFACTURER_NAME,
-            MODEL_NAME,
-            NOT_EXISTED_MODEL_YEAR)
+        .uri(V1 + MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, NOT_EXISTED_MODEL_YEAR)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .bodyValue(modelDto)
         .exchange()
         .expectStatus()
         .isBadRequest()
         .expectBody()
-        .jsonPath("$.message")
-        .isEqualTo(NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE);
+        .jsonPath("$.details")
+        .exists()
+        .jsonPath("$.timestamp")
+        .hasJsonPath()
+        .jsonPath("$.errorCode")
+        .isEqualTo(400);
   }
 
   @Test
-  void create_ShouldReturnStatus400_WhenYearIsNegative() {
-    ModelDto modelDto = ModelDto.builder().categories(Set.of(NEW_CATEGORY_NAME)).build();
+  void createModel_shouldReturnStatus400_whenYearIsNegative() {
+    ModelDto modelDto = ModelDto.builder().categories(List.of(NEW_CATEGORY)).build();
 
     webTestClient
         .post()
-        .uri(
-            "/v1/manufacturers/{manufacturer}/models/{model}/{year}",
-            ManufacturerControllerComponentTest.MANUFACTURER_NAME,
-            MODEL_NAME,
-            -2021)
+        .uri(V1 + MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, -2021)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .bodyValue(modelDto)
         .exchange()
         .expectStatus()
         .isBadRequest()
         .expectBody()
-        .jsonPath("$.message")
-        .isEqualTo(NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE);
+        .jsonPath("$.details")
+        .exists()
+        .jsonPath("$.timestamp")
+        .hasJsonPath()
+        .jsonPath("$.errorCode")
+        .isEqualTo(400);
   }
 
   @Test
-  void create_ShouldReturnStatus404_WhenNoRequiredCategory() {
-    ModelDto modelDto = ModelDto.builder().categories(Set.of(NEW_CATEGORY_NAME)).build();
+  void createModel_shouldReturnStatus409AndErrorBody_whenModelAlreadyExists() {
+    ModelDto modelDto = ModelDto.builder().categories(List.of(CATEGORY_NAME)).build();
 
     webTestClient
         .post()
-        .uri(
-            "/v1/manufacturers/{manufacturer}/models/{model}/{year}",
-            ManufacturerControllerComponentTest.MANUFACTURER_NAME,
-            MODEL_NAME,
-            NOT_EXISTED_MODEL_YEAR)
-        .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
-        .bodyValue(modelDto)
-        .exchange()
-        .expectStatus()
-        .isNotFound()
-        .expectBody()
-        .jsonPath("$.message")
-        .isEqualTo(String.format(NO_CATEGORY, NEW_CATEGORY_NAME));
-  }
-
-  @Test
-  void create_ShouldReturnStatus404_WhenNoRequiredModelName() {
-    ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME)).build();
-
-    webTestClient
-        .post()
-        .uri(
-            "/v1/manufacturers/{manufacturer}/models/{model}/{year}",
-            ManufacturerControllerComponentTest.MANUFACTURER_NAME,
-            NEW_MODEL_NAME,
-            MODEL_YEAR)
-        .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
-        .bodyValue(modelDto)
-        .exchange()
-        .expectStatus()
-        .isNotFound()
-        .expectBody()
-        .jsonPath("$.message")
-        .isEqualTo(String.format(NO_MODEL_NAME, NEW_MODEL_NAME));
-  }
-
-  @Test
-  void create_ShouldReturnStatus404_WhenNoRequiredManufacturer() {
-    ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME)).build();
-
-    webTestClient
-        .post()
-        .uri(
-            "/v1/manufacturers/{manufacturer}/models/{model}/{year}",
-            ManufacturerControllerComponentTest.NEW_MANUFACTURER_NAME,
-            MODEL_NAME,
-            MODEL_YEAR)
-        .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
-        .bodyValue(modelDto)
-        .exchange()
-        .expectStatus()
-        .isNotFound()
-        .expectBody()
-        .jsonPath("$.message")
-        .isEqualTo(
-            String.format(
-                NO_MANUFACTURER, ManufacturerControllerComponentTest.NEW_MANUFACTURER_NAME));
-  }
-
-  @Test
-  void create_ShouldReturnStatus409_WhenSuchModelAlreadyExists() {
-    ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME)).build();
-
-    webTestClient
-        .post()
-        .uri(
-            "/v1/manufacturers/{manufacturer}/models/{model}/{year}",
-            ManufacturerControllerComponentTest.MANUFACTURER_NAME,
-            MODEL_NAME,
-            MODEL_YEAR)
+        .uri(V1 + MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .bodyValue(modelDto)
         .exchange()
         .expectStatus()
         .isEqualTo(HttpStatus.CONFLICT)
         .expectBody()
-        .jsonPath("$.message")
-        .isEqualTo(String.format(MODEL_ALREADY_EXISTS, MODEL_ID));
+        .jsonPath("$.details")
+        .isEqualTo(
+            MODEL_ALREADY_EXIST_BY_PARAMETERS.formatted(
+                MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR, MODEL_ID))
+        .jsonPath("$.timestamp")
+        .hasJsonPath()
+        .jsonPath("$.errorCode")
+        .isEqualTo(409);
   }
 
   @Test
-  void create_ShouldReturnStatus201() {
-    ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME)).build();
+  void createModel_shouldReturnStatus201_whenNoModelInDb() {
+    ModelDto modelDto = ModelDto.builder().categories(List.of(CATEGORY_NAME)).build();
 
     webTestClient
         .post()
-        .uri(
-            "/v1/manufacturers/{manufacturer}/models/{model}/{year}",
-            ManufacturerControllerComponentTest.MANUFACTURER_NAME_WITHOUT_RELATIONS,
-            MODEL_NAME_WITHOUT_RELATIONS,
-            NOT_EXISTED_MODEL_YEAR)
+        .uri(V1 + MODEL_PATH, NEW_MANUFACTURER, MODEL_NAME, NOT_EXISTED_MODEL_YEAR)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .bodyValue(modelDto)
         .exchange()
@@ -315,106 +259,76 @@ class ModelControllerComponentTest extends ComponentTestContext {
   }
 
   @Test
-  void update_ShouldReturnStatus400_WhenYearIsNegative() {
-    ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME)).build();
+  void updateModel_shouldReturnStatus400_whenYearIsNegative() {
+    ModelDto modelDto = ModelDto.builder().categories(List.of(CATEGORY_NAME)).build();
 
     webTestClient
         .put()
-        .uri(
-            "/v1/manufacturers/{manufacturer}/models/{model}/{year}",
-            ManufacturerControllerComponentTest.MANUFACTURER_NAME,
-            MODEL_NAME,
-            -2024)
+        .uri(V1 + MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, -2024)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .bodyValue(modelDto)
         .exchange()
         .expectStatus()
         .isBadRequest()
         .expectBody()
-        .jsonPath("$.message")
-        .isEqualTo(NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE);
+        .jsonPath("$.details")
+        .exists()
+        .jsonPath("$.timestamp")
+        .isNotEmpty()
+        .jsonPath("$.errorCode")
+        .isEqualTo(400);
   }
 
   @Test
-  void update_ShouldReturnStatus400_WhenModelDtoCategoriesIsNull() {
+  void updateModel_shouldReturnStatus400_whenNoCategoriesInRequestBody() {
     ModelDto modelDto = new ModelDto();
 
     webTestClient
         .put()
-        .uri(
-            "/v1/manufacturers/{manufacturer}/models/{model}/{year}",
-            ManufacturerControllerComponentTest.MANUFACTURER_NAME,
-            MODEL_NAME,
-            MODEL_YEAR)
+        .uri(V1 + MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .bodyValue(modelDto)
         .exchange()
         .expectStatus()
         .isBadRequest()
         .expectBody()
-        .jsonPath("$.message")
-        .isEqualTo(NOT_VALID_ARGUMENT_EXCEPTION_MESSAGE);
+        .jsonPath("$.details")
+        .exists()
+        .jsonPath("$.timestamp")
+        .isNotEmpty()
+        .jsonPath("$.errorCode")
+        .isEqualTo(400);
   }
 
   @Test
-  void update_ShouldReturnStatus404_WhenNoRequiredCategory() {
-    ModelDto modelDto = ModelDto.builder().categories(Set.of(NEW_CATEGORY_NAME)).build();
+  void updateModel_shouldReturnStatus404_whenNoModelInDb() {
+    ModelDto modelDto = ModelDto.builder().categories(List.of(CATEGORY_NAME)).build();
 
     webTestClient
         .put()
-        .uri(
-            "/v1/manufacturers/{manufacturer}/models/{model}/{year}",
-            ManufacturerControllerComponentTest.MANUFACTURER_NAME,
-            MODEL_NAME,
-            MODEL_YEAR)
+        .uri(V1 + MODEL_PATH, MANUFACTURER_NAME, NOT_EXISTING_MODEL_NAME, MODEL_YEAR)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .bodyValue(modelDto)
         .exchange()
         .expectStatus()
         .isNotFound()
         .expectBody()
-        .jsonPath("$.message")
-        .isEqualTo(String.format(NO_CATEGORY, NEW_CATEGORY_NAME));
-  }
-
-  @Test
-  void update_ShouldReturnStatus404_WhenNoSuchModel() {
-    ModelDto modelDto = ModelDto.builder().categories(Set.of(CATEGORY_NAME)).build();
-
-    webTestClient
-        .put()
-        .uri(
-            "/v1/manufacturers/{manufacturer}/models/{model}/{year}",
-            ManufacturerControllerComponentTest.MANUFACTURER_NAME,
-            NEW_MODEL_NAME,
-            MODEL_YEAR)
-        .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
-        .bodyValue(modelDto)
-        .exchange()
-        .expectStatus()
-        .isNotFound()
-        .expectBody()
-        .jsonPath("$.message")
+        .jsonPath("$.details")
         .isEqualTo(
-            String.format(
-                NO_SUCH_MODEL,
-                ManufacturerControllerComponentTest.MANUFACTURER_NAME,
-                NEW_MODEL_NAME,
-                MODEL_YEAR));
+            String.format(MODEL_NOT_FOUND, MANUFACTURER_NAME, NOT_EXISTING_MODEL_NAME, MODEL_YEAR))
+        .jsonPath("$.timestamp")
+        .isNotEmpty()
+        .jsonPath("$.errorCode")
+        .isEqualTo(404);
   }
 
   @Test
-  void update_ShouldReturnStatus200() {
-    ModelDto modelDto =
-        ModelDto.builder().categories(Set.of(CATEGORY_NAME_WITHOUT_RELATIONS)).build();
+  void updateModel_shouldReturnStatus200_whenModelIsInDb() {
+    ModelDto modelDto = ModelDto.builder().categories(List.of(NEW_CATEGORY)).build();
 
     webTestClient
         .put()
-        .uri(
-            "/v1/manufacturers/{manufacturer}/models/{model}/{year}",
-            ManufacturerControllerComponentTest.MANUFACTURER_NAME,
-            MODEL_NAME,
-            MODEL_YEAR)
+        .uri(V1 + MODEL_PATH, MANUFACTURER_NAME, MODEL_NAME, MODEL_YEAR)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .bodyValue(modelDto)
         .exchange()
@@ -423,24 +337,28 @@ class ModelControllerComponentTest extends ComponentTestContext {
   }
 
   @Test
-  void deleleteById_ShouldReturnStatus404_WhenNoSuchModel() {
+  void deleteModelById_shouldReturnStatus404_whenNoModelInDb() {
     webTestClient
         .delete()
-        .uri("/v1/models/{id}", NEW_MODEL_ID)
+        .uri(V1 + MODEL_ID_PATH, NOT_EXISTING_MODEL_ID)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .exchange()
         .expectStatus()
         .isNotFound()
         .expectBody()
-        .jsonPath("$.message")
-        .isEqualTo(String.format(NO_MODEL_WITH_SUCH_ID, NEW_MODEL_ID));
+        .jsonPath("$.details")
+        .isEqualTo(String.format(MODEL_NOT_FOUND_BY_ID, NOT_EXISTING_MODEL_ID))
+        .jsonPath("$.timestamp")
+        .isNotEmpty()
+        .jsonPath("$.errorCode")
+        .isEqualTo(404);
   }
 
   @Test
-  void deleteById_ShouldReturnStatus204() {
+  void deleteModelById_shouldReturnStatus204_whenModelIsInDb() {
     webTestClient
         .delete()
-        .uri("/v1/models/{id}", MODEL_ID)
+        .uri(V1 + MODEL_ID_PATH, MODEL_ID)
         .header(AUTHORIZATION_HEADER, getAdminRoleBearerToken())
         .exchange()
         .expectStatus()
