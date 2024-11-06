@@ -7,7 +7,7 @@
     <version>3.1.5</version>
     <relativePath/>
   </parent>
-  <groupId>ua.foxminded.cars</groupId>
+  <groupId>ua.nicegear.cars</groupId>
   <artifactId>car-models-service</artifactId>
   <version>1.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -16,6 +16,7 @@
   <modules>
     <module>./car-models-service-core</module>
     <module>./car-models-service-component-tests</module>
+    <module>./telegram-bot</module>
   </modules>
 
   <properties>
