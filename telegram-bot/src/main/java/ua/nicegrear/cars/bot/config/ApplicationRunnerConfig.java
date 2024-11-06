@@ -17,7 +17,7 @@ public class ApplicationRunnerConfig {
   ApplicationRunner applicationRunner() {
     return args -> {
       try (TelegramBotsLongPollingApplication botsApplication =
-             new TelegramBotsLongPollingApplication();) {
+          new TelegramBotsLongPollingApplication(); ) {
         botsApplication.registerBot(token, new BotController(token));
         Thread.currentThread().join();
       }
