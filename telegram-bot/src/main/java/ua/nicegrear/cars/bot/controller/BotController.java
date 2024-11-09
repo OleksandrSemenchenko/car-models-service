@@ -1,15 +1,13 @@
 package ua.nicegrear.cars.bot.controller;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.Objects;
+
 import lombok.RequiredArgsConstructor;
-import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageCaption;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -20,23 +18,24 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
+import ua.nicegrear.cars.bot.dto.ModelDto;
 
+@Component
+@RequiredArgsConstructor
 public class BotController implements LongPollingSingleThreadUpdateConsumer {
 
   private final TelegramClient telegramClient;
-//  private final ObjectMapper objectMapper;
-
-  public BotController(String token) {
-    this.telegramClient = new OkHttpTelegramClient(token);
-  }
+  private final ObjectMapper objectMapper;
 
   @Override
   public void consume(Update update) {
+    SendMessage sendMessage;
+
     if (update.hasMessage() && update.getMessage().hasText()) {
       String receivedMessage = update.getMessage().getText();
       long chatId = update.getMessage().getChatId();
 
-      SendMessage sendMessage = selectAction(receivedMessage, chatId);
+      sendMessage = selectAction(receivedMessage, chatId);
 
       if (Objects.isNull(sendMessage.getReplyMarkup())) {
         addMenuTo(sendMessage);
@@ -49,7 +48,10 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
           throw new RuntimeException(e);
         }
       }
-      executeSendMessage(sendMessage);
+      sendResponse(sendMessage);
+    } else if (update.hasCallbackQuery()) {
+      EditMessageText editMessageText = updateInlineButton(update);
+      sendResponse(editMessageText);
     }
   }
 
@@ -74,31 +76,35 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
   }
 
   private SendMessage getAllCars(long chatId) {
-    String cars = """
-      {
-          "id": "52096834-48af-41d1-b422-93600eff629a",
-          "name": "A7",
-          "year": 2020,
-          "manufacturer": "Audi",
-          "categories": [
-              "Sedan"
-          ]
-      }
-      """;
+    ModelDto modelDto = ModelDto.builder()
+      .name("A7")
+      .manufacturer("Audi")
+      .year(2013)
+      .build();
+
+    var button = InlineKeyboardButton.builder()
+      .text("Detailed information")
+      .callbackData("Detailed information")
+      .build();
+    var row = new InlineKeyboardRow(button);
+    var markup = InlineKeyboardMarkup.builder()
+      .keyboardRow(row)
+      .build();
+    String message = modelDto.getManufacturer() + ", " +
+      modelDto.getName() + ", " +
+      modelDto.getYear();
     return SendMessage.builder()
-      .text(cars)
       .chatId(chatId)
+      .text(message)
+      .replyMarkup(markup)
       .build();
   }
 
   private SendMessage doUnderAllCars(long chatId) {
-    InlineKeyboardButton button = InlineKeyboardButton.builder()
-      .text("funny moment")
-      .callbackData("callBack")
-      .build();
-    InlineKeyboardMarkup inlineKeyboardMarkup = InlineKeyboardMarkup.builder()
-      .keyboardRow(new InlineKeyboardRow(button))
-      .build();
+    InlineKeyboardButton button =
+      InlineKeyboardButton.builder().text("funny moment").callbackData("callBack").build();
+    InlineKeyboardMarkup inlineKeyboardMarkup =
+      InlineKeyboardMarkup.builder().keyboardRow(new InlineKeyboardRow(button)).build();
 
     return SendMessage.builder()
       .text("it's working")
@@ -108,10 +114,7 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
   }
 
   private SendMessage doNothing(long chatId) {
-    return SendMessage.builder()
-      .chatId(chatId)
-      .text("No actions")
-      .build();
+    return SendMessage.builder().chatId(chatId).text("No actions").build();
   }
 
   private void addMenuTo(SendMessage message) {
@@ -126,14 +129,21 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
     KeyboardRow row2 = new KeyboardRow(button3, button4);
 
     ReplyKeyboardMarkup keyboardMarkup =
-        ReplyKeyboardMarkup.builder()
-          .keyboardRow(row1)
-          .keyboardRow(row2)
-          .build();
+      ReplyKeyboardMarkup.builder().keyboardRow(row1).keyboardRow(row2).build();
     message.setReplyMarkup(keyboardMarkup);
   }
 
-  private void executeSendMessage(SendMessage message) {
+  private void sendResponse(SendMessage message) {
+    if (Objects.nonNull(message)) {
+      try {
+        telegramClient.execute(message);
+      } catch (TelegramApiException e) {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
+  private void sendResponse(EditMessageText message) {
     if (Objects.nonNull(message)) {
       try {
         telegramClient.execute(message);

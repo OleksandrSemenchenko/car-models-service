@@ -10,8 +10,9 @@ import ua.nicegrear.cars.bot.controller.BotController;
 @Component
 public class ApplicationRunner extends TelegramBotsLongPollingApplication {
 
-  public ApplicationRunner(@Value("${bot.token}") String token) throws TelegramApiException {
-    this.registerBot(token, new BotController(token));
+  public ApplicationRunner(@Value("${bot.token}") String token, BotController botController)
+      throws TelegramApiException {
+    this.registerBot(token, botController);
   }
 
   @PreDestroy
