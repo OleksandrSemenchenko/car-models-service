@@ -2,5 +2,5 @@ server:
   port: 8181
 
 bot:
-  username: car_models_service_bot
-  token: 7722417340:AAGN7rPZJ6m3AkxMgSS8hjnTuhgAyY_F8vM
+  username: car_servcie_light_bot
+  token: 8143865220:AAFx1frgpPfAlqV4wdN6wXG9cIXmUEO3ruU

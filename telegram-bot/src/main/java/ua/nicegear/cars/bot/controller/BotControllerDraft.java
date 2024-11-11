@@ -1,12 +1,10 @@
-package ua.nicegrear.cars.bot.controller;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+package ua.nicegear.cars.bot.controller;
 
 import java.util.Objects;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -18,23 +16,20 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
-import ua.nicegrear.cars.bot.dto.ModelDto;
+import ua.nicegear.cars.bot.dto.ModelDto;
 
-@Component
+//@Component
 @RequiredArgsConstructor
-public class BotController implements LongPollingSingleThreadUpdateConsumer {
+public class BotControllerDraft {
 
   private final TelegramClient telegramClient;
-  private final ObjectMapper objectMapper;
 
-  @Override
   public void consume(Update update) {
     SendMessage sendMessage;
 
     if (update.hasMessage() && update.getMessage().hasText()) {
       String receivedMessage = update.getMessage().getText();
       long chatId = update.getMessage().getChatId();
-
       sendMessage = selectAction(receivedMessage, chatId);
 
       if (Objects.isNull(sendMessage.getReplyMarkup())) {
@@ -52,6 +47,17 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
     } else if (update.hasCallbackQuery()) {
       EditMessageText editMessageText = updateInlineButton(update);
       sendResponse(editMessageText);
+
+      long chatId = update.getCallbackQuery().getMessage().getChatId();
+      String queryId = update.getCallbackQuery().getId();
+      SendMessage message = getAllCars(chatId);
+
+      AnswerCallbackQuery close = AnswerCallbackQuery.builder()
+        .callbackQueryId(queryId)
+        .build();
+
+      sendResponse(close);
+      sendResponse(message);
     }
   }
 
@@ -59,66 +65,56 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
     long chatId = update.getCallbackQuery().getMessage().getChatId();
     long messageId = update.getCallbackQuery().getMessage().getMessageId();
     return EditMessageText.builder()
-      .chatId(chatId)
-      .messageId((int) messageId)
-      .text("Updated inline text")
-      .build();
+        .chatId(chatId)
+        .messageId((int) messageId)
+        .text("Updated inline text")
+        .build();
   }
 
-  private SendMessage selectAction(String receivedMessage, long charId) {
+  private SendMessage selectAction(String receivedMessage, long chaId) {
     if (receivedMessage.equals("Row1Button1")) {
-      return getAllCars(charId);
+      return getAllCars(chaId);
     } else if (receivedMessage.equals("all cars")) {
-      return doUnderAllCars(charId);
+      return doUnderAllCars(chaId);
     } else {
-      return doNothing(charId);
+      return doNothing(chaId);
     }
   }
 
   private SendMessage getAllCars(long chatId) {
-    ModelDto modelDto = ModelDto.builder()
-      .name("A7")
-      .manufacturer("Audi")
-      .year(2013)
-      .build();
+    ModelDto modelDto = ModelDto.builder().name("A7").manufacturer("Audi").year(2013).build();
 
-    var button = InlineKeyboardButton.builder()
-      .text("Detailed information")
-      .callbackData("Detailed information")
-      .build();
+    var button =
+        InlineKeyboardButton.builder()
+            .text("Detailed information")
+            .callbackData("Detailed information")
+            .build();
     var row = new InlineKeyboardRow(button);
-    var markup = InlineKeyboardMarkup.builder()
-      .keyboardRow(row)
-      .build();
-    String message = modelDto.getManufacturer() + ", " +
-      modelDto.getName() + ", " +
-      modelDto.getYear();
-    return SendMessage.builder()
-      .chatId(chatId)
-      .text(message)
-      .replyMarkup(markup)
-      .build();
+    var markup = InlineKeyboardMarkup.builder().keyboardRow(row).build();
+    String message =
+        modelDto.getManufacturer() + ", " + modelDto.getName() + ", " + modelDto.getYear();
+    return SendMessage.builder().chatId(chatId).text(message).replyMarkup(markup).build();
   }
 
   private SendMessage doUnderAllCars(long chatId) {
     InlineKeyboardButton button =
-      InlineKeyboardButton.builder().text("funny moment").callbackData("callBack").build();
+        InlineKeyboardButton.builder().text("funny moment").callbackData("callBack").build();
     InlineKeyboardMarkup inlineKeyboardMarkup =
-      InlineKeyboardMarkup.builder().keyboardRow(new InlineKeyboardRow(button)).build();
+        InlineKeyboardMarkup.builder().keyboardRow(new InlineKeyboardRow(button)).build();
 
     return SendMessage.builder()
-      .text("it's working")
-      .replyMarkup(inlineKeyboardMarkup)
-      .chatId(chatId)
-      .build();
+        .text("it's working")
+        .replyMarkup(inlineKeyboardMarkup)
+        .chatId(chatId)
+        .build();
   }
 
   private SendMessage doNothing(long chatId) {
     return SendMessage.builder().chatId(chatId).text("No actions").build();
   }
 
-  private void addMenuTo(SendMessage message) {
-    Objects.requireNonNull(message);
+  private void addMenuTo(SendMessage sendMmessage) {
+    Objects.requireNonNull(sendMmessage);
 
     KeyboardButton button1 = KeyboardButton.builder().text("Row1Button1").build();
     KeyboardButton button2 = KeyboardButton.builder().text("Row1Button2").build();
@@ -129,8 +125,8 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
     KeyboardRow row2 = new KeyboardRow(button3, button4);
 
     ReplyKeyboardMarkup keyboardMarkup =
-      ReplyKeyboardMarkup.builder().keyboardRow(row1).keyboardRow(row2).build();
-    message.setReplyMarkup(keyboardMarkup);
+        ReplyKeyboardMarkup.builder().keyboardRow(row1).keyboardRow(row2).build();
+    sendMmessage.setReplyMarkup(keyboardMarkup);
   }
 
   private void sendResponse(SendMessage message) {
@@ -144,6 +140,16 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
   }
 
   private void sendResponse(EditMessageText message) {
+    if (Objects.nonNull(message)) {
+      try {
+        telegramClient.execute(message);
+      } catch (TelegramApiException e) {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
+  private void sendResponse(AnswerCallbackQuery message) {
     if (Objects.nonNull(message)) {
       try {
         telegramClient.execute(message);

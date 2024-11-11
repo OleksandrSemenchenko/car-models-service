@@ -1,11 +1,12 @@
-package ua.nicegrear.cars.bot.config;
+package ua.nicegear.cars.bot.config;
 
 import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import ua.nicegrear.cars.bot.controller.BotController;
+import ua.nicegear.cars.bot.controller.BotController;
+import ua.nicegear.cars.bot.controller.BotControllerDraft;
 
 @Component
 public class ApplicationRunner extends TelegramBotsLongPollingApplication {

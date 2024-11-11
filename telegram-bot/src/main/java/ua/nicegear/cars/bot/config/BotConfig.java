@@ -1,4 +1,4 @@
-package ua.nicegrear.cars.bot.config;
+package ua.nicegear.cars.bot.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
