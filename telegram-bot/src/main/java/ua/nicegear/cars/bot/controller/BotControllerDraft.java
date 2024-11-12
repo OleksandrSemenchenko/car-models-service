@@ -93,7 +93,10 @@ public class BotControllerDraft {
     var markup = InlineKeyboardMarkup.builder().keyboardRow(row).build();
     String message =
         modelDto.getManufacturer() + ", " + modelDto.getName() + ", " + modelDto.getYear();
-    return SendMessage.builder().chatId(chatId).text(message).replyMarkup(markup).build();
+    return SendMessage.builder()
+      .chatId(chatId)
+      .text(message)
+      .replyMarkup(markup).build();
   }
 
   private SendMessage doUnderAllCars(long chatId) {

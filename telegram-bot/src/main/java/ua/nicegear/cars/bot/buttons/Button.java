@@ -6,11 +6,11 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 
 import java.util.List;
 
-public abstract class InlineKeyboardAbstractButton {
+public abstract class Button {
 
   protected InlineKeyboardMarkup markup;
 
-  public InlineKeyboardAbstractButton() {
+  public Button() {
     markup = InlineKeyboardMarkup.builder().build();
   }
 

@@ -9,22 +9,38 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
-import ua.nicegear.cars.bot.buttons.ResponseContext;
-import ua.nicegear.cars.bot.buttons.impl.DetailsInlineKeyboardButton;
+import ua.nicegear.cars.bot.config.ButtonNamesConfig;
 import ua.nicegear.cars.bot.constants.CallbackMessage;
+import ua.nicegear.cars.bot.service.FilterService;
+import ua.nicegear.cars.bot.view.FilterViewMaker;
+import ua.nicegear.cars.bot.view.ViewMaker;
 
 @Component
 @RequiredArgsConstructor
 public class BotController implements LongPollingSingleThreadUpdateConsumer {
 
   private final TelegramClient telegramClient;
-  private final ResponseContext responseContext = new ResponseContext();
+  private final FilterService filterService;
+  private final ButtonNamesConfig buttonNames;
 
   @Override
   public void consume(Update update) {
     long chatId = update.getMessage().getChatId();
+    SendMessage sendMessage = buildSendMessage(chatId);
+
+    if(update.hasCallbackQuery()) {
+      String callbackData = update.getCallbackQuery().getData();
+      long userId = update.getCallbackQuery().getFrom().getId();
+
+      if (callbackData.equals(CallbackMessage.FILTER)) {
+        ViewMaker filterMaker = new FilterViewMaker(filterService, buttonNames);
+        filterMaker.makeViewForUser(sendMessage, userId);
+        sendResponse(telegramClient::execute, sendMessage);
+      }
+    }
+
 //    String receivedMessage = update.getMessage().getText();
-    SendMessage sendMessage = buildSendMessage(update);
+
 
     /*SetChatMenuButton setChatMenuButton = new SetChatMenuButton();
     BotCommand command = new BotCommand("/start", "start");
@@ -41,18 +57,9 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
     sendMessage.setReplyMarkup(forceReply);
     sendResponse(telegramClient::execute, sendMessage);
 
-    if (update.hasCallbackQuery()) {
-      String callback = update.getCallbackQuery().getData();
-
-      if (callback.equals(CallbackMessage.DETAILS_BUTTON)) {
-        responseContext.setButton(new DetailsInlineKeyboardButton());
-        sendMessage = responseContext.addInlineButtonTo(sendMessage);
-      }
-    }
   }
 
-  private SendMessage buildSendMessage(Update update) {
-    long chatId = update.getMessage().getChatId();
+  private SendMessage buildSendMessage(long chatId) {
     return SendMessage.builder()
       .text("Hello World!")
 //      .replyMarkup(new ReplyKeyboardRemove(true))

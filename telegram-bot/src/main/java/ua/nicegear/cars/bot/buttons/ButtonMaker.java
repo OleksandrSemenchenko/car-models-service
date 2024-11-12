@@ -4,11 +4,11 @@ import lombok.Setter;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 @Setter
-public class ResponseContext {
+public class ButtonMaker {
 
-  private InlineKeyboardAbstractButton button;
+  private Button button;
 
-  public SendMessage addInlineButtonTo(SendMessage sendMessage) {
+  public SendMessage makeButtonFor(SendMessage sendMessage) {
     return button.addButtonTo(sendMessage);
   }
 }
