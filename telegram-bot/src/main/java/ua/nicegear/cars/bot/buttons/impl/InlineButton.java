@@ -1,5 +1,6 @@
 package ua.nicegear.cars.bot.buttons.impl;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,7 +12,7 @@ import ua.nicegear.cars.bot.buttons.Button;
 
 public class InlineButton extends Button {
 
-  private InlineKeyboardMarkup markup = InlineKeyboardMarkup.builder().build();
+  private InlineKeyboardMarkup markup = new InlineKeyboardMarkup(new ArrayList<>());
   private LinkedHashMap<Object, Object> buttonAttributes;
 
   public InlineButton(String name, String callbackMessage) {

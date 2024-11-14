@@ -1,17 +1,17 @@
 package ua.nicegear.cars.bot.buttons.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import ua.nicegear.cars.bot.buttons.Button;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class MainKeyboardButton extends Button {
 
-  private ReplyKeyboardMarkup markup = ReplyKeyboardMarkup.builder().build();
+  private ReplyKeyboardMarkup markup = new ReplyKeyboardMarkup(new ArrayList<>());
   private List<String> buttonNames;
 
   public MainKeyboardButton(List<String> buttonNames) {

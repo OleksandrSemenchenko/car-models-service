@@ -10,12 +10,12 @@ public class FilterServiceImpl implements FilterService {
   @Override
   public FilterDto getFilterByUserId(long userId) {
     return FilterDto.builder()
-      .userId(1L)
-      .minYear(2017)
-      .maxYear(2024)
-      .maxMileage(140000)
-      .numberOfOwners(1)
-      .bodyStyle(BodyStyle.HATCHBACK)
-      .build();
+        .userId(1L)
+        .minYear(2017)
+        .maxYear(2024)
+        .maxMileage(140000)
+        .numberOfOwners(1)
+        .bodyStyle(BodyStyle.HATCHBACK)
+        .build();
   }
 }
