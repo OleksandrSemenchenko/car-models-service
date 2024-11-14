@@ -13,7 +13,7 @@ import ua.nicegear.cars.bot.constants.CallbackMessage;
 import ua.nicegear.cars.bot.dto.FilterDto;
 import ua.nicegear.cars.bot.service.FilterService;
 import ua.nicegear.cars.bot.view.FilterViewMaker;
-import ua.nicegear.cars.bot.view.MainKeyboardViewMaker;
+import ua.nicegear.cars.bot.view.KeyboardViewMaker;
 import ua.nicegear.cars.bot.view.ViewMaker;
 
 @Component
@@ -29,7 +29,7 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
     long chatId = update.getMessage().getChatId();
     SendMessage sendMessage = buildSendMessage(chatId);
 
-    ViewMaker mainKeyboardViewMaker = new MainKeyboardViewMaker(buttonNames);
+    ViewMaker mainKeyboardViewMaker = new KeyboardViewMaker(buttonNames);
     mainKeyboardViewMaker.makeViewForUser(sendMessage);
     sendResponse(telegramClient::execute, sendMessage);
 
