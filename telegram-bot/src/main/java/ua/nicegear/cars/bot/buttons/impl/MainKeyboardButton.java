@@ -9,24 +9,28 @@ import ua.nicegear.cars.bot.buttons.Button;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FilterKeyboardButton extends Button {
+public class MainKeyboardButton extends Button {
 
   private ReplyKeyboardMarkup markup = ReplyKeyboardMarkup.builder().build();
   private List<String> buttonNames;
 
-  public FilterKeyboardButton(List<String> buttonNames) {
+  public MainKeyboardButton(List<String> buttonNames) {
     this.buttonNames = buttonNames;
   }
 
   @Override
   protected SendMessage addButtonTo(SendMessage sendMessage) {
-
-
-    return null;
+    var buttons = buildButtons();
+    var row = new KeyboardRow(buttons);
+    markup = addRowToMarkup(row);
+    sendMessage.setReplyMarkup(markup);
+    return sendMessage;
   }
 
   private List<KeyboardButton> buildButtons() {
-    return buttonNames.stream().map(name -> KeyboardButton.builder().text(name).build()).collect(Collectors.toList());
+    return buttonNames.stream()
+        .map(name -> KeyboardButton.builder().text(name).build())
+        .collect(Collectors.toList());
   }
 
   private ReplyKeyboardMarkup addRowToMarkup(KeyboardRow row) {

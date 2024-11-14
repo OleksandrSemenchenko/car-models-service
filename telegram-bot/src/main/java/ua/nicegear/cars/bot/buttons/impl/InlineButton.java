@@ -1,15 +1,13 @@
 package ua.nicegear.cars.bot.buttons.impl;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import ua.nicegear.cars.bot.buttons.Button;
-
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class InlineButton extends Button {
 
@@ -36,11 +34,13 @@ public class InlineButton extends Button {
 
   private List<InlineKeyboardButton> buildButtons() {
     return buttonAttributes.entrySet().stream()
-      .map(entry -> InlineKeyboardButton.builder()
-        .text(String.valueOf(entry.getKey()))
-        .callbackData(String.valueOf(entry.getValue()))
-        .build())
-      .collect(Collectors.toList());
+        .map(
+            entry ->
+                InlineKeyboardButton.builder()
+                    .text(String.valueOf(entry.getKey()))
+                    .callbackData(String.valueOf(entry.getValue()))
+                    .build())
+        .collect(Collectors.toList());
   }
 
   private InlineKeyboardMarkup addRowToMarkup(InlineKeyboardRow row) {

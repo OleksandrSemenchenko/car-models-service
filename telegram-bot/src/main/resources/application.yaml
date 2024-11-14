@@ -2,8 +2,8 @@ server:
   port: 8181
 
 bot:
-  username: {$BOT_NAME: car_servcie_light_bot}
-  token: {$BOT_TOKEN: 8143865220:AAFx1frgpPfAlqV4wdN6wXG9cIXmUEO3ruU}
+  username: "${BOT_NAME:car_servcie_light_bot}"
+  token: "${BOT_TOKEN:8143865220:AAFx1frgpPfAlqV4wdN6wXG9cIXmUEO3ruU}"
 
 button:
   name:
@@ -14,3 +14,5 @@ button:
     number-of-owners: Number of owners
     max-mileage: Max millage
     clean: Clean
+    show-filters: Show Filters
+    stop: Stop

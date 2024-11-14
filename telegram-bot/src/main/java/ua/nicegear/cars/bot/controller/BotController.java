@@ -14,6 +14,7 @@ import ua.nicegear.cars.bot.constants.CallbackMessage;
 import ua.nicegear.cars.bot.dto.FilterDto;
 import ua.nicegear.cars.bot.service.FilterService;
 import ua.nicegear.cars.bot.view.FilterViewMaker;
+import ua.nicegear.cars.bot.view.MainKeyboardViewMaker;
 import ua.nicegear.cars.bot.view.ViewMaker;
 
 @Component
@@ -29,20 +30,23 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
     long chatId = update.getMessage().getChatId();
     SendMessage sendMessage = buildSendMessage(chatId);
 
-    if(update.hasCallbackQuery()) {
+    ViewMaker mainKeyboardViewMaker = new MainKeyboardViewMaker(buttonNames);
+    mainKeyboardViewMaker.makeViewForUser(sendMessage);
+    sendResponse(telegramClient::execute, sendMessage);
+
+    if (update.hasCallbackQuery()) {
       String callbackData = update.getCallbackQuery().getData();
       long userId = update.getCallbackQuery().getFrom().getId();
 
       if (callbackData.equals(CallbackMessage.FILTER)) {
-        ViewMaker filterViewMaker = new FilterViewMaker(buttonNames);
         FilterDto filterDto = filterService.getFilterByUserId(userId);
-        filterViewMaker.makeViewForUser(sendMessage, filterDto);
+        ViewMaker filterViewMaker = new FilterViewMaker(buttonNames, filterDto);
+        filterViewMaker.makeViewForUser(sendMessage);
         sendResponse(telegramClient::execute, sendMessage);
       }
     }
 
-//    String receivedMessage = update.getMessage().getText();
-
+    //    String receivedMessage = update.getMessage().getText();
 
     /*SetChatMenuButton setChatMenuButton = new SetChatMenuButton();
     BotCommand command = new BotCommand("/start", "start");
@@ -54,23 +58,23 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
     setChatMenuButton.setChatId(chatId);
     sendResponse(telegramClient::execute, setChatMenuButton);*/
 
-    ForceReplyKeyboard forceReply = new ForceReplyKeyboard(true);
+    //TODO filter values
+    /*ForceReplyKeyboard forceReply = new ForceReplyKeyboard(true);
     sendMessage.setText("reply");
     sendMessage.setReplyMarkup(forceReply);
-    sendResponse(telegramClient::execute, sendMessage);
-
+    sendResponse(telegramClient::execute, sendMessage);*/
   }
 
   private SendMessage buildSendMessage(long chatId) {
     return SendMessage.builder()
-      .text("Hello World!")
-//      .replyMarkup(new ReplyKeyboardRemove(true))
-      .chatId(chatId)
-      .build();
+        .text("Hello World!")
+        //      .replyMarkup(new ReplyKeyboardRemove(true))
+        .chatId(chatId)
+        .build();
   }
 
-  private <T, R, E extends TelegramApiException> R sendResponse(CheckedFunction<T, R, E> consumer,
-                                                                T response) {
+  private <T, R, E extends TelegramApiException> R sendResponse(
+      CheckedFunction<T, R, E> consumer, T response) {
     try {
       return consumer.apply(response);
     } catch (Exception e) {

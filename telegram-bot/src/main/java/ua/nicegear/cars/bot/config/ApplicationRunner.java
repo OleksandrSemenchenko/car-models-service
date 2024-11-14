@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ua.nicegear.cars.bot.controller.BotController;
-import ua.nicegear.cars.bot.controller.BotControllerDraft;
 
 @Component
 public class ApplicationRunner extends TelegramBotsLongPollingApplication {

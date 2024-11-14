@@ -5,5 +5,5 @@ import ua.nicegear.cars.bot.dto.FilterDto;
 
 public abstract class ViewMaker {
 
-  public abstract SendMessage makeViewForUser(SendMessage sendMessage, FilterDto filterDto);
+  public abstract SendMessage makeViewForUser(SendMessage sendMessage);
 }

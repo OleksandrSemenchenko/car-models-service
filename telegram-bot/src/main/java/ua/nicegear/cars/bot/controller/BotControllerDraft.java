@@ -2,8 +2,6 @@ package ua.nicegear.cars.bot.controller;
 
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -18,7 +16,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ua.nicegear.cars.bot.dto.ModelDto;
 
-//@Component
+// @Component
 @RequiredArgsConstructor
 public class BotControllerDraft {
 
@@ -52,9 +50,7 @@ public class BotControllerDraft {
       String queryId = update.getCallbackQuery().getId();
       SendMessage message = getAllCars(chatId);
 
-      AnswerCallbackQuery close = AnswerCallbackQuery.builder()
-        .callbackQueryId(queryId)
-        .build();
+      AnswerCallbackQuery close = AnswerCallbackQuery.builder().callbackQueryId(queryId).build();
 
       sendResponse(close);
       sendResponse(message);
@@ -93,10 +89,7 @@ public class BotControllerDraft {
     var markup = InlineKeyboardMarkup.builder().keyboardRow(row).build();
     String message =
         modelDto.getManufacturer() + ", " + modelDto.getName() + ", " + modelDto.getYear();
-    return SendMessage.builder()
-      .chatId(chatId)
-      .text(message)
-      .replyMarkup(markup).build();
+    return SendMessage.builder().chatId(chatId).text(message).replyMarkup(markup).build();
   }
 
   private SendMessage doUnderAllCars(long chatId) {

@@ -8,11 +8,13 @@ import ua.nicegear.cars.bot.enums.BodyStyle;
 @Data
 public class ButtonNamesConfig {
 
-  Integer maxYear;
-  Integer minYear;
-  Integer maxMileage;
-  Integer numberOfOwners;
-  BodyStyle bodyStyle;
+  String maxYear;
+  String minYear;
+  String maxMileage;
+  String numberOfOwners;
+  String bodyStyle;
   String details;
   String delete;
+  String showFilters;
+  String stop;
 }

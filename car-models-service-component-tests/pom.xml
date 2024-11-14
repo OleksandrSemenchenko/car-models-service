@@ -14,8 +14,8 @@
     <dependency>
       <groupId>ua.nicegear.cars</groupId>
       <artifactId>car-models-service-core</artifactId>
-      <scope>test</scope>
       <version>1.0.1-SNAPSHOT</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.postgresql</groupId>

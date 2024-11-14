@@ -195,6 +195,7 @@
             <importOrder>
               <wildcardsLast>false</wildcardsLast>
             </importOrder>
+            <removeUnusedImports>true</removeUnusedImports>
           </java>
           <json>
             <includes>
