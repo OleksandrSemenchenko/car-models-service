@@ -16,12 +16,13 @@ public class InlineButton extends Button {
   private InlineKeyboardMarkup markup = InlineKeyboardMarkup.builder().build();
   private LinkedHashMap<Object, Object> buttonAttributes;
 
-  public InlineButtonButton(String name, String callbackMessage) {
+  public InlineButton(String name, String callbackMessage) {
     this.buttonAttributes = new LinkedHashMap<>();
     this.buttonAttributes.put(name, callbackMessage);
   }
+
   public InlineButton(LinkedHashMap<Object, Object> buttonAttributes) {
-    super(buttonAttributes);
+    this.buttonAttributes = buttonAttributes;
   }
 
   @Override

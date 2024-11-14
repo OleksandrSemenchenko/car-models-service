@@ -14,12 +14,11 @@ import java.util.LinkedHashMap;
 @RequiredArgsConstructor
 public class FilterViewMaker extends ViewMaker {
 
-  private final FilterService filterService;
   private final ButtonNamesConfig buttonName;
 
   @Override
-  public SendMessage makeViewForUser(SendMessage sendMessage, long userId) {
-    makeTextMessageView(userId, sendMessage);
+  public SendMessage makeViewForUser(SendMessage sendMessage, FilterDto filterDto) {
+    makeTextMessageView(filterDto, sendMessage);
     ButtonMaker buttonMaker = new ButtonMaker();
     makeMaxYearFilterView(buttonMaker, sendMessage);
     makeMinYearFilterView(buttonMaker, sendMessage);
@@ -27,8 +26,7 @@ public class FilterViewMaker extends ViewMaker {
     return sendMessage;
   }
 
-  private void makeTextMessageView(long userId, SendMessage sendMessage) {
-    FilterDto filterDto = filterService.getFilterByUserId(userId);
+  private void makeTextMessageView(FilterDto filterDto, SendMessage sendMessage) {
     String textMessage = """
       %s: %s,
       %s: %s,

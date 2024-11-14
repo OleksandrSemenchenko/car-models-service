@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ua.nicegear.cars.bot.config.ButtonNamesConfig;
 import ua.nicegear.cars.bot.constants.CallbackMessage;
+import ua.nicegear.cars.bot.dto.FilterDto;
 import ua.nicegear.cars.bot.service.FilterService;
 import ua.nicegear.cars.bot.view.FilterViewMaker;
 import ua.nicegear.cars.bot.view.ViewMaker;
@@ -33,8 +34,9 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
       long userId = update.getCallbackQuery().getFrom().getId();
 
       if (callbackData.equals(CallbackMessage.FILTER)) {
-        ViewMaker filterViewMaker = new FilterViewMaker(filterService, buttonNames);
-        filterViewMaker.makeViewForUser(sendMessage, userId);
+        ViewMaker filterViewMaker = new FilterViewMaker(buttonNames);
+        FilterDto filterDto = filterService.getFilterByUserId(userId);
+        filterViewMaker.makeViewForUser(sendMessage, filterDto);
         sendResponse(telegramClient::execute, sendMessage);
       }
     }
