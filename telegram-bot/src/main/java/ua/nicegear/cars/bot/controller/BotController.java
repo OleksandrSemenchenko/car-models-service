@@ -33,8 +33,8 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
       long userId = update.getCallbackQuery().getFrom().getId();
 
       if (callbackData.equals(CallbackMessage.FILTER)) {
-        ViewMaker filterMaker = new FilterViewMaker(filterService, buttonNames);
-        filterMaker.makeViewForUser(sendMessage, userId);
+        ViewMaker filterViewMaker = new FilterViewMaker(filterService, buttonNames);
+        filterViewMaker.makeViewForUser(sendMessage, userId);
         sendResponse(telegramClient::execute, sendMessage);
       }
     }

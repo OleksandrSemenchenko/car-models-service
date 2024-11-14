@@ -8,7 +8,7 @@ public class ButtonMaker {
 
   private Button button;
 
-  public SendMessage makeButtonFor(SendMessage sendMessage) {
+  public SendMessage addButtonTo(SendMessage sendMessage) {
     return button.addButtonTo(sendMessage);
   }
 }
