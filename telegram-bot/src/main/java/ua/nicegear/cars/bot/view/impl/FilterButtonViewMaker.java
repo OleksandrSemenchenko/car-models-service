@@ -1,5 +1,6 @@
 package ua.nicegear.cars.bot.view.impl;
 
+import java.util.LinkedHashMap;
 import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ua.nicegear.cars.bot.buttons.ButtonMaker;
@@ -8,8 +9,6 @@ import ua.nicegear.cars.bot.config.ButtonNamesConfig;
 import ua.nicegear.cars.bot.constants.CallbackMessage;
 import ua.nicegear.cars.bot.dto.FilterDto;
 import ua.nicegear.cars.bot.view.ButtonViewMaker;
-
-import java.util.LinkedHashMap;
 
 @RequiredArgsConstructor
 public class FilterButtonViewMaker extends ButtonViewMaker<SendMessage> {
