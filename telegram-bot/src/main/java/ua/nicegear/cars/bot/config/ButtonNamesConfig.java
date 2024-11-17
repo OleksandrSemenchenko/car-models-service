@@ -3,7 +3,7 @@ package ua.nicegear.cars.bot.config;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "button.name")
+@ConfigurationProperties(prefix = "bot.button.names")
 @Data
 public class ButtonNamesConfig {
 

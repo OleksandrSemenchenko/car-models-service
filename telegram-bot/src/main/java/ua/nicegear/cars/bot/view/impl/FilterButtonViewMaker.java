@@ -1,4 +1,4 @@
-package ua.nicegear.cars.bot.view;
+package ua.nicegear.cars.bot.view.impl;
 
 import java.util.LinkedHashMap;
 import lombok.RequiredArgsConstructor;
@@ -8,15 +8,17 @@ import ua.nicegear.cars.bot.buttons.impl.InlineButton;
 import ua.nicegear.cars.bot.config.ButtonNamesConfig;
 import ua.nicegear.cars.bot.constants.CallbackMessage;
 import ua.nicegear.cars.bot.dto.FilterDto;
+import ua.nicegear.cars.bot.view.ButtonViewMaker;
 
 @RequiredArgsConstructor
-public class FilterViewMaker extends ViewMaker {
+public class FilterButtonViewMaker extends ButtonViewMaker<SendMessage> {
 
   private final ButtonNamesConfig buttonName;
   private final FilterDto filterDto;
+  private final long chatId;
 
   @Override
-  public SendMessage makeViewForUser(SendMessage sendMessage) {
+  public SendMessage makeView(SendMessage sendMessage) {
     makeTextMessageView(filterDto, sendMessage);
     ButtonMaker buttonMaker = new ButtonMaker();
     makeMaxYearFilterView(buttonMaker, sendMessage);

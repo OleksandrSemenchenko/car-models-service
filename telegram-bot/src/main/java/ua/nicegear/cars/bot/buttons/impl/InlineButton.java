@@ -15,11 +15,6 @@ public class InlineButton extends Button {
   private InlineKeyboardMarkup markup = new InlineKeyboardMarkup(new ArrayList<>());
   private LinkedHashMap<Object, Object> buttonAttributes;
 
-  public InlineButton(String name, String callbackMessage) {
-    this.buttonAttributes = new LinkedHashMap<>();
-    this.buttonAttributes.put(name, callbackMessage);
-  }
-
   public InlineButton(LinkedHashMap<Object, Object> buttonAttributes) {
     this.buttonAttributes = buttonAttributes;
   }
