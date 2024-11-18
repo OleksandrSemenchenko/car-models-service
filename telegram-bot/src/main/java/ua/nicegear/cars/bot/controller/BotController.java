@@ -32,9 +32,9 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
   @Override
   public void consume(Update update) {
     long chatId = update.getMessage().getChatId();
-    SendMessage sendMessage = new SendMessage(String.valueOf(chatId), "Hello world!");
-    sendMessage = makeKeyboardView(sendMessage);
-    makeMenuButtonView(chatId);
+    SendMessage sendMessage = new SendMessage(String.valueOf(chatId), "");
+    sendMessage = makeDashboardView(sendMessage);
+    addMenuButtonViewAndPorcessResponse(chatId);
 
     String callbackMessage = update.getMessage().getText();
 
@@ -55,22 +55,22 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
         filterDashboardViewMaker.makeView(sendMessage);
       }
     }
-    sendResponse(telegramClient::execute, sendMessage);
+    processResponse(telegramClient::execute, sendMessage);
   }
 
-  private SendMessage makeKeyboardView(SendMessage sendMessage) {
+  private SendMessage makeDashboardView(SendMessage sendMessage) {
     DashboardViewMaker<SendMessage> dashboardViewMaker = new BaseDashboardViewMaker(buttonNames);
     return dashboardViewMaker.makeView(sendMessage);
   }
 
-  private void makeMenuButtonView(long chatId) {
+  private void addMenuButtonViewAndPorcessResponse(long chatId) {
     MenuButtonViewMaker menuButtonViewMaker = new CommandsMenuButtonViewMaker(commandsConfig);
     MenuButtonView menuButtonView = menuButtonViewMaker.makeView(chatId);
-    sendResponse(telegramClient::execute, menuButtonView.getMyCommands());
-    sendResponse(telegramClient::execute, menuButtonView.getChatMenuButton());
+    processResponse(telegramClient::execute, menuButtonView.getMyCommands());
+    processResponse(telegramClient::execute, menuButtonView.getChatMenuButton());
   }
 
-  private <T, R, E extends TelegramApiException> R sendResponse(
+  private <T, R, E extends TelegramApiException> R processResponse(
       CheckedFunction<T, R, E> consumer, T response) {
     try {
       return consumer.apply(response);
