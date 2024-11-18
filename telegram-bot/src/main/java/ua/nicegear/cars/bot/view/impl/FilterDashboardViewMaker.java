@@ -8,10 +8,10 @@ import ua.nicegear.cars.bot.buttons.impl.InlineButton;
 import ua.nicegear.cars.bot.config.ButtonNamesConfig;
 import ua.nicegear.cars.bot.constants.CallbackMessage;
 import ua.nicegear.cars.bot.dto.FilterDto;
-import ua.nicegear.cars.bot.view.ButtonViewMaker;
+import ua.nicegear.cars.bot.view.DashboardViewMaker;
 
 @RequiredArgsConstructor
-public class FilterButtonViewMaker extends ButtonViewMaker<SendMessage> {
+public class FilterDashboardViewMaker extends DashboardViewMaker<SendMessage> {
 
   private final ButtonNamesConfig buttonName;
   private final FilterDto filterDto;

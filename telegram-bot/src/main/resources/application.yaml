@@ -17,4 +17,5 @@ bot:
       show-filters: Show filters
       stop: Stop
   commands:
-    stop: stop
+      stop-name: stop
+      stop-description: stop the search

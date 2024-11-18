@@ -5,7 +5,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "bot.commands")
 @Data
-public class CommandNamesConfig {
+public class CommandsConfig {
 
-  private String stop;
+  private String stopName;
+  private String stopDescription;
 }
