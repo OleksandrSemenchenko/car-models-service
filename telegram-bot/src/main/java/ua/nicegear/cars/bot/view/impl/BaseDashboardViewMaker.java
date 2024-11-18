@@ -6,10 +6,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ua.nicegear.cars.bot.buttons.ButtonMaker;
 import ua.nicegear.cars.bot.buttons.impl.BaseKeyboardButton;
 import ua.nicegear.cars.bot.config.ButtonNamesConfig;
-import ua.nicegear.cars.bot.view.ButtonViewMaker;
+import ua.nicegear.cars.bot.view.DashboardViewMaker;
 
 @RequiredArgsConstructor
-public class KeyboardButtonViewMaker extends ButtonViewMaker<SendMessage> {
+public class BaseDashboardViewMaker extends DashboardViewMaker<SendMessage> {
 
   private final ButtonNamesConfig buttonNames;
 

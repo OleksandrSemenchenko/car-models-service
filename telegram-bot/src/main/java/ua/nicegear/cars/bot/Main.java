@@ -5,10 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import ua.nicegear.cars.bot.config.ButtonNamesConfig;
-import ua.nicegear.cars.bot.config.CommandNamesConfig;
+import ua.nicegear.cars.bot.config.CommandsConfig;
 
 @SpringBootApplication
-@EnableConfigurationProperties({ButtonNamesConfig.class, CommandNamesConfig.class})
+@EnableConfigurationProperties({ButtonNamesConfig.class, CommandsConfig.class})
 @PropertySource("classpath:/application.yaml")
 public class Main {
 
