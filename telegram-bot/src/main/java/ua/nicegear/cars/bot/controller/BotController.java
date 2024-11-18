@@ -34,9 +34,14 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
     long chatId = update.getMessage().getChatId();
     SendMessage sendMessage = new SendMessage(String.valueOf(chatId), "");
     sendMessage = makeDashboardView(sendMessage);
-    addMenuButtonViewAndPorcessResponse(chatId);
+    addMenuButtonViewAndProcessResponse(chatId);
 
     String callbackMessage = update.getMessage().getText();
+
+    if (callbackMessage.equals(CallbackMessage.STOP_COMMAND)) {
+      // TODO
+      sendMessage.setText("TODO");
+    }
 
     if (callbackMessage.equals(CallbackMessage.SHOW_FILTERS)) {
       // TODO
@@ -63,7 +68,7 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
     return dashboardViewMaker.makeView(sendMessage);
   }
 
-  private void addMenuButtonViewAndPorcessResponse(long chatId) {
+  private void addMenuButtonViewAndProcessResponse(long chatId) {
     MenuButtonViewMaker menuButtonViewMaker = new CommandsMenuButtonViewMaker(commandsConfig);
     MenuButtonView menuButtonView = menuButtonViewMaker.makeView(chatId);
     processResponse(telegramClient::execute, menuButtonView.getMyCommands());

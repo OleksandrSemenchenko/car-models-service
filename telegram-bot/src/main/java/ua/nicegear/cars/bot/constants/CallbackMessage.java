@@ -12,6 +12,7 @@ public class CallbackMessage {
   public static final String MIN_MILLAGE_DELETE = "minMillageDelete";
   public static final String NUMBER_OF_OWNERS = "numberOfOwners";
   public static final String NUMBER_OF_OWNERS_DELETE = "numberOfOwnersDelete";
+  public static final String STOP_COMMAND = "/stop";
 
   private CallbackMessage() {}
 }
