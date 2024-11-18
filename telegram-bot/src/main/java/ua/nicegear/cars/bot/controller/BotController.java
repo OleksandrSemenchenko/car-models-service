@@ -11,21 +11,21 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ua.nicegear.cars.bot.config.ButtonNamesConfig;
 import ua.nicegear.cars.bot.config.CommandsConfig;
 import ua.nicegear.cars.bot.constants.CallbackMessage;
-import ua.nicegear.cars.bot.dto.FilterDto;
-import ua.nicegear.cars.bot.service.FilterService;
+import ua.nicegear.cars.bot.dto.SearchFilterDto;
+import ua.nicegear.cars.bot.service.SearchFilterService;
 import ua.nicegear.cars.bot.view.DashboardViewMaker;
 import ua.nicegear.cars.bot.view.MenuButtonView;
 import ua.nicegear.cars.bot.view.MenuButtonViewMaker;
 import ua.nicegear.cars.bot.view.impl.BaseDashboardViewMaker;
 import ua.nicegear.cars.bot.view.impl.CommandsMenuButtonViewMaker;
-import ua.nicegear.cars.bot.view.impl.FilterDashboardViewMaker;
+import ua.nicegear.cars.bot.view.impl.SearchDashboardViewMaker;
 
 @Component
 @RequiredArgsConstructor
 public class BotController implements LongPollingSingleThreadUpdateConsumer {
 
   private final TelegramClient telegramClient;
-  private final FilterService filterService;
+  private final SearchFilterService searchFilterService;
   private final ButtonNamesConfig buttonNames;
   private final CommandsConfig commandsConfig;
 
@@ -33,7 +33,7 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
   public void consume(Update update) {
     long chatId = update.getMessage().getChatId();
     SendMessage sendMessage = new SendMessage(String.valueOf(chatId), "");
-    sendMessage = makeDashboardView(sendMessage);
+    sendMessage = makeBaseDashboardView(sendMessage);
     addMenuButtonViewAndProcessResponse(chatId);
 
     String callbackMessage = update.getMessage().getText();
@@ -43,27 +43,26 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
       sendMessage.setText("TODO");
     }
 
-    if (callbackMessage.equals(CallbackMessage.SHOW_FILTERS)) {
-      // TODO
-      sendMessage.setText("TODO");
+    if (callbackMessage.equals(buttonNames.getSearchDashboard())) {
+      sendMessage = makeSearchDashboardView(sendMessage);
     }
 
     if (update.hasCallbackQuery()) {
       String callbackData = update.getCallbackQuery().getData();
       long userId = update.getCallbackQuery().getFrom().getId();
 
-      if (callbackData.equals(CallbackMessage.SHOW_FILTERS)) {
+      if (callbackData.equals(CallbackMessage.SEARCH_DASHBOARD)) {
         sendMessage.setText("I see you message");
-        FilterDto filterDto = filterService.getFilterByUserId(userId);
+        SearchFilterDto searchFilterDto = searchFilterService.getSearchFilterByChatId(userId);
         DashboardViewMaker<SendMessage> filterDashboardViewMaker =
-            new FilterDashboardViewMaker(buttonNames, filterDto, chatId);
+            new SearchDashboardViewMaker(buttonNames, searchFilterDto, chatId);
         filterDashboardViewMaker.makeView(sendMessage);
       }
     }
     processResponse(telegramClient::execute, sendMessage);
   }
 
-  private SendMessage makeDashboardView(SendMessage sendMessage) {
+  private SendMessage makeBaseDashboardView(SendMessage sendMessage) {
     DashboardViewMaker<SendMessage> dashboardViewMaker = new BaseDashboardViewMaker(buttonNames);
     return dashboardViewMaker.makeView(sendMessage);
   }
@@ -73,6 +72,12 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
     MenuButtonView menuButtonView = menuButtonViewMaker.makeView(chatId);
     processResponse(telegramClient::execute, menuButtonView.getMyCommands());
     processResponse(telegramClient::execute, menuButtonView.getChatMenuButton());
+  }
+
+  private SendMessage makeSearchDashboardView(SendMessage sendMessage, long chatId) {
+    SearchFilterDto searchFiltersDto = searchFilterService.getSearchFilterByChatId(chatId);
+    DashboardViewMaker<SendMessage> searchDashboardViewMaker = new SearchDashboardViewMaker(buttonNames, searchFiltersDto);
+    return searchDashboardViewMaker.makeView(sendMessage);
   }
 
   private <T, R, E extends TelegramApiException> R processResponse(

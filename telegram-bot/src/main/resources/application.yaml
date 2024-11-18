@@ -14,7 +14,7 @@ bot:
       number-of-owners: Number of owners
       max-mileage: Max millage
       clean: Clean
-      show-filters: Show filters
+      search-dashboard: Search dashboard
       stop: Stop
   commands:
       stop-name: stop

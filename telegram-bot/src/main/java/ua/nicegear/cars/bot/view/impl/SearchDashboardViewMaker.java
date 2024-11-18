@@ -7,19 +7,18 @@ import ua.nicegear.cars.bot.buttons.ButtonMaker;
 import ua.nicegear.cars.bot.buttons.impl.InlineButton;
 import ua.nicegear.cars.bot.config.ButtonNamesConfig;
 import ua.nicegear.cars.bot.constants.CallbackMessage;
-import ua.nicegear.cars.bot.dto.FilterDto;
+import ua.nicegear.cars.bot.dto.SearchFilterDto;
 import ua.nicegear.cars.bot.view.DashboardViewMaker;
 
 @RequiredArgsConstructor
-public class FilterDashboardViewMaker extends DashboardViewMaker<SendMessage> {
+public class SearchDashboardViewMaker extends DashboardViewMaker<SendMessage> {
 
-  private final ButtonNamesConfig buttonName;
-  private final FilterDto filterDto;
-  private final long chatId;
+  private final ButtonNamesConfig buttonNames;
+  private final SearchFilterDto searchFilterDto;
 
   @Override
   public SendMessage makeView(SendMessage sendMessage) {
-    makeTextMessageView(filterDto, sendMessage);
+    makeTextMessageView(searchFilterDto, sendMessage);
     ButtonMaker buttonMaker = new ButtonMaker();
     makeMaxYearFilterView(buttonMaker, sendMessage);
     makeMinYearFilterView(buttonMaker, sendMessage);
@@ -27,7 +26,7 @@ public class FilterDashboardViewMaker extends DashboardViewMaker<SendMessage> {
     return sendMessage;
   }
 
-  private void makeTextMessageView(FilterDto filterDto, SendMessage sendMessage) {
+  private void makeTextMessageView(SearchFilterDto searchFilterDto, SendMessage sendMessage) {
     String textMessage =
         """
       %s: %s,
@@ -36,10 +35,10 @@ public class FilterDashboardViewMaker extends DashboardViewMaker<SendMessage> {
       %s: %s
       """
             .formatted(
-                buttonName.getMaxYear(), filterDto.getMaxYear(),
-                buttonName.getMinYear(), filterDto.getMinYear(),
-                buttonName.getMaxMileage(), filterDto.getMaxMileage(),
-                buttonName.getNumberOfOwners(), filterDto.getNumberOfOwners());
+                buttonNames.getMaxYear(), searchFilterDto.getMaxYear(),
+                buttonNames.getMinYear(), searchFilterDto.getMinYear(),
+                buttonNames.getMaxMileage(), searchFilterDto.getMaxMileage(),
+                buttonNames.getNumberOfOwners(), searchFilterDto.getNumberOfOwners());
     sendMessage.setText(textMessage);
   }
 
@@ -47,8 +46,8 @@ public class FilterDashboardViewMaker extends DashboardViewMaker<SendMessage> {
     LinkedHashMap<Object, Object> buttonDetails =
         new LinkedHashMap<>() {
           {
-            put(buttonName.getMaxYear(), CallbackMessage.MAX_YEAR);
-            put(buttonName.getDelete(), CallbackMessage.MAX_YEAR_DELETE);
+            put(buttonNames.getMaxYear(), CallbackMessage.MAX_YEAR);
+            put(buttonNames.getDelete(), CallbackMessage.MAX_YEAR_DELETE);
           }
         };
     buttonMaker.setButton(new InlineButton(buttonDetails));
@@ -59,8 +58,8 @@ public class FilterDashboardViewMaker extends DashboardViewMaker<SendMessage> {
     LinkedHashMap<Object, Object> buttonDetails =
         new LinkedHashMap<>() {
           {
-            put(buttonName.getMinYear(), CallbackMessage.MIN_YEAR);
-            put(buttonName.getDelete(), CallbackMessage.MIN_YEAR_DELETE);
+            put(buttonNames.getMinYear(), CallbackMessage.MIN_YEAR);
+            put(buttonNames.getDelete(), CallbackMessage.MIN_YEAR_DELETE);
           }
         };
     buttonMaker.setButton(new InlineButton(buttonDetails));
@@ -71,8 +70,8 @@ public class FilterDashboardViewMaker extends DashboardViewMaker<SendMessage> {
     LinkedHashMap<Object, Object> buttonDetails =
         new LinkedHashMap<>() {
           {
-            put(buttonName.getMaxMileage(), CallbackMessage.MIN_MILLAGE);
-            put(buttonName.getDelete(), CallbackMessage.MIN_MILLAGE_DELETE);
+            put(buttonNames.getMaxMileage(), CallbackMessage.MIN_MILLAGE);
+            put(buttonNames.getDelete(), CallbackMessage.MIN_MILLAGE_DELETE);
           }
         };
     buttonMaker.setButton(new InlineButton(buttonDetails));
@@ -83,8 +82,8 @@ public class FilterDashboardViewMaker extends DashboardViewMaker<SendMessage> {
     LinkedHashMap<Object, Object> buttonDetails =
         new LinkedHashMap<>() {
           {
-            put(buttonName.getNumberOfOwners(), CallbackMessage.NUMBER_OF_OWNERS);
-            put(buttonName.getDelete(), CallbackMessage.NUMBER_OF_OWNERS_DELETE);
+            put(buttonNames.getNumberOfOwners(), CallbackMessage.NUMBER_OF_OWNERS);
+            put(buttonNames.getDelete(), CallbackMessage.NUMBER_OF_OWNERS_DELETE);
           }
         };
     buttonMaker.setButton(new InlineButton(buttonDetails));

@@ -10,7 +10,7 @@ import ua.nicegear.cars.bot.enums.BodyStyle;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FilterDto {
+public class SearchFilterDto {
 
   Long userId;
   Integer maxYear;

@@ -7,7 +7,6 @@ public class CallbackMessage {
   public static final String MIN_YEAR = "minYear";
   public static final String MIN_YEAR_DELETE = "minYearDelete";
   public static final String DETAILS = "details";
-  public static final String SHOW_FILTERS = "Show filters";
   public static final String MIN_MILLAGE = "minMillage";
   public static final String MIN_MILLAGE_DELETE = "minMillageDelete";
   public static final String NUMBER_OF_OWNERS = "numberOfOwners";

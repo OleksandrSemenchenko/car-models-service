@@ -14,6 +14,6 @@ public class ButtonNamesConfig {
   String bodyStyle;
   String details;
   String delete;
-  String showFilters;
+  String searchDashboard;
   String stop;
 }
