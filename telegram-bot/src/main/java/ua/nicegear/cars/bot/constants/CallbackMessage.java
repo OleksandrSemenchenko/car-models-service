@@ -2,7 +2,6 @@ package ua.nicegear.cars.bot.constants;
 
 public class CallbackMessage {
 
-  public static final String MAX_YEAR = "maxYear";
   public static final String MAX_YEAR_DELETE = "maxYearDelete";
   public static final String MIN_YEAR = "minYear";
   public static final String MIN_YEAR_DELETE = "minYearDelete";

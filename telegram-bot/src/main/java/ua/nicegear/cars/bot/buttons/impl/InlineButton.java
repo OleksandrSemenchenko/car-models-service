@@ -1,35 +1,32 @@
 package ua.nicegear.cars.bot.buttons.impl;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import ua.nicegear.cars.bot.buttons.Button;
 
+@RequiredArgsConstructor
 public class InlineButton extends Button {
 
-  private InlineKeyboardMarkup markup = new InlineKeyboardMarkup(new ArrayList<>());
-  private LinkedHashMap<Object, Object> buttonAttributes;
-
-  public InlineButton(LinkedHashMap<Object, Object> buttonAttributes) {
-    this.buttonAttributes = buttonAttributes;
-  }
+  private final LinkedHashMap<Object, Object> buttonDetails;
+  private final InlineKeyboardMarkup markup;
 
   @Override
   public SendMessage addButtonTo(SendMessage sendMessage) {
     var buttons = buildButtons();
     var row = new InlineKeyboardRow(buttons);
-    markup = addRowToMarkup(row);
+    markup.getKeyboard().add(row);
     sendMessage.setReplyMarkup(markup);
     return sendMessage;
   }
 
   private List<InlineKeyboardButton> buildButtons() {
-    return buttonAttributes.entrySet().stream()
+    return buttonDetails.entrySet().stream()
         .map(
             entry ->
                 InlineKeyboardButton.builder()
@@ -37,12 +34,5 @@ public class InlineButton extends Button {
                     .callbackData(String.valueOf(entry.getValue()))
                     .build())
         .collect(Collectors.toList());
-  }
-
-  private InlineKeyboardMarkup addRowToMarkup(InlineKeyboardRow row) {
-    List<InlineKeyboardRow> rows = markup.getKeyboard();
-    rows.add(row);
-    markup.setKeyboard(rows);
-    return markup;
   }
 }

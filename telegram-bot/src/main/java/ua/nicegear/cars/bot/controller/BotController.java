@@ -44,18 +44,18 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
     }
 
     if (callbackMessage.equals(buttonNames.getSearchDashboard())) {
-      sendMessage = makeSearchDashboardView(sendMessage);
+      sendMessage = makeSearchDashboardView(sendMessage, chatId);
     }
 
     if (update.hasCallbackQuery()) {
       String callbackData = update.getCallbackQuery().getData();
       long userId = update.getCallbackQuery().getFrom().getId();
 
-      if (callbackData.equals(CallbackMessage.SEARCH_DASHBOARD)) {
+      if (callbackData.equals(buttonNames.getMaxYear())) {
         sendMessage.setText("I see you message");
         SearchFilterDto searchFilterDto = searchFilterService.getSearchFilterByChatId(userId);
-        DashboardViewMaker<SendMessage> filterDashboardViewMaker =
-            new SearchDashboardViewMaker(buttonNames, searchFilterDto, chatId);
+        DashboardViewMaker filterDashboardViewMaker =
+            new SearchDashboardViewMaker(buttonNames, searchFilterDto);
         filterDashboardViewMaker.makeView(sendMessage);
       }
     }
@@ -63,7 +63,7 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
   }
 
   private SendMessage makeBaseDashboardView(SendMessage sendMessage) {
-    DashboardViewMaker<SendMessage> dashboardViewMaker = new BaseDashboardViewMaker(buttonNames);
+    DashboardViewMaker dashboardViewMaker = new BaseDashboardViewMaker(buttonNames);
     return dashboardViewMaker.makeView(sendMessage);
   }
 
@@ -76,7 +76,8 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
 
   private SendMessage makeSearchDashboardView(SendMessage sendMessage, long chatId) {
     SearchFilterDto searchFiltersDto = searchFilterService.getSearchFilterByChatId(chatId);
-    DashboardViewMaker<SendMessage> searchDashboardViewMaker = new SearchDashboardViewMaker(buttonNames, searchFiltersDto);
+    DashboardViewMaker searchDashboardViewMaker =
+        new SearchDashboardViewMaker(buttonNames, searchFiltersDto);
     return searchDashboardViewMaker.makeView(sendMessage);
   }
 

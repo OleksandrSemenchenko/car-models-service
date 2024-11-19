@@ -1,6 +1,8 @@
 package ua.nicegear.cars.bot.view;
 
-public abstract class DashboardViewMaker<T> {
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-  public abstract T makeView(T message);
+public abstract class DashboardViewMaker {
+
+  public abstract SendMessage makeView(SendMessage message);
 }

@@ -16,6 +16,7 @@ bot:
       clean: Clean
       search-dashboard: Search dashboard
       stop: Stop
+      delete: Delete
   commands:
       stop-name: stop
       stop-description: stop the search

@@ -1,8 +1,10 @@
 package ua.nicegear.cars.bot.view.impl;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ua.nicegear.cars.bot.buttons.ButtonMaker;
 import ua.nicegear.cars.bot.buttons.impl.InlineButton;
 import ua.nicegear.cars.bot.config.ButtonNamesConfig;
@@ -11,10 +13,12 @@ import ua.nicegear.cars.bot.dto.SearchFilterDto;
 import ua.nicegear.cars.bot.view.DashboardViewMaker;
 
 @RequiredArgsConstructor
-public class SearchDashboardViewMaker extends DashboardViewMaker<SendMessage> {
+public class SearchDashboardViewMaker extends DashboardViewMaker {
 
   private final ButtonNamesConfig buttonNames;
   private final SearchFilterDto searchFilterDto;
+
+  private InlineKeyboardMarkup markup = new InlineKeyboardMarkup(new ArrayList<>());
 
   @Override
   public SendMessage makeView(SendMessage sendMessage) {
@@ -29,9 +33,9 @@ public class SearchDashboardViewMaker extends DashboardViewMaker<SendMessage> {
   private void makeTextMessageView(SearchFilterDto searchFilterDto, SendMessage sendMessage) {
     String textMessage =
         """
-      %s: %s,
-      %s: %s,
-      %s: %s,
+      %s: %s
+      %s: %s
+      %s: %s
       %s: %s
       """
             .formatted(
@@ -46,11 +50,11 @@ public class SearchDashboardViewMaker extends DashboardViewMaker<SendMessage> {
     LinkedHashMap<Object, Object> buttonDetails =
         new LinkedHashMap<>() {
           {
-            put(buttonNames.getMaxYear(), CallbackMessage.MAX_YEAR);
+            put(buttonNames.getMaxYear(), buttonNames.getMaxYear());
             put(buttonNames.getDelete(), CallbackMessage.MAX_YEAR_DELETE);
           }
         };
-    buttonMaker.setButton(new InlineButton(buttonDetails));
+    buttonMaker.setButton(new InlineButton(buttonDetails, markup));
     buttonMaker.addButtonTo(sendMessage);
   }
 
@@ -58,11 +62,11 @@ public class SearchDashboardViewMaker extends DashboardViewMaker<SendMessage> {
     LinkedHashMap<Object, Object> buttonDetails =
         new LinkedHashMap<>() {
           {
-            put(buttonNames.getMinYear(), CallbackMessage.MIN_YEAR);
+            put(buttonNames.getMinYear(), buttonNames.getMinYear());
             put(buttonNames.getDelete(), CallbackMessage.MIN_YEAR_DELETE);
           }
         };
-    buttonMaker.setButton(new InlineButton(buttonDetails));
+    buttonMaker.setButton(new InlineButton(buttonDetails, markup));
     buttonMaker.addButtonTo(sendMessage);
   }
 
@@ -74,7 +78,7 @@ public class SearchDashboardViewMaker extends DashboardViewMaker<SendMessage> {
             put(buttonNames.getDelete(), CallbackMessage.MIN_MILLAGE_DELETE);
           }
         };
-    buttonMaker.setButton(new InlineButton(buttonDetails));
+    buttonMaker.setButton(new InlineButton(buttonDetails, markup));
     buttonMaker.addButtonTo(sendMessage);
   }
 
@@ -86,7 +90,7 @@ public class SearchDashboardViewMaker extends DashboardViewMaker<SendMessage> {
             put(buttonNames.getDelete(), CallbackMessage.NUMBER_OF_OWNERS_DELETE);
           }
         };
-    buttonMaker.setButton(new InlineButton(buttonDetails));
+    buttonMaker.setButton(new InlineButton(buttonDetails, markup));
     buttonMaker.addButtonTo(sendMessage);
   }
 }

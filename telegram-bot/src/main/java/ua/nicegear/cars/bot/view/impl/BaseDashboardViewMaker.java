@@ -9,15 +9,15 @@ import ua.nicegear.cars.bot.config.ButtonNamesConfig;
 import ua.nicegear.cars.bot.view.DashboardViewMaker;
 
 @RequiredArgsConstructor
-public class BaseDashboardViewMaker extends DashboardViewMaker<SendMessage> {
+public class BaseDashboardViewMaker extends DashboardViewMaker {
 
   private final ButtonNamesConfig buttonNames;
 
   @Override
   public SendMessage makeView(SendMessage sendMessage) {
-    List<String> names = List.of(buttonNames.getShowFilters());
+    List<String> buttonNames = List.of(this.buttonNames.getSearchDashboard());
     ButtonMaker buttonMaker = new ButtonMaker();
-    buttonMaker.setButton(new BaseKeyboardButton(names));
+    buttonMaker.setButton(new BaseKeyboardButton(buttonNames));
     buttonMaker.addButtonTo(sendMessage);
     return sendMessage;
   }
