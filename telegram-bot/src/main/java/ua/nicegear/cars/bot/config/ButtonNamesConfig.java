@@ -7,13 +7,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 public class ButtonNamesConfig {
 
-  String maxYear;
-  String minYear;
-  String maxMileage;
-  String numberOfOwners;
-  String bodyStyle;
-  String details;
-  String delete;
-  String searchDashboard;
-  String stop;
+  private String maxYear;
+  private String minYear;
+  private String maxMileage;
+  private String numberOfOwners;
+  private String bodyStyle;
+  private String details;
+  private String delete;
+  private String searchDashboard;
+  private String applyAndSearch;
+  private String close;
 }

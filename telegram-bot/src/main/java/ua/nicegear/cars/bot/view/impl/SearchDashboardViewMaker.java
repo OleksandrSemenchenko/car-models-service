@@ -27,6 +27,10 @@ public class SearchDashboardViewMaker extends DashboardViewMaker {
     makeMaxYearFilterView(buttonMaker, sendMessage);
     makeMinYearFilterView(buttonMaker, sendMessage);
     makeMaxMillageFilterView(buttonMaker, sendMessage);
+    makeNumberOfOwnersFilterView(buttonMaker, sendMessage);
+    makeBodyStyleFilterView(buttonMaker, sendMessage);
+    makeApplyAndSearchButtonView(buttonMaker, sendMessage);
+    makeCloseButtonView(buttonMaker, sendMessage);
     return sendMessage;
   }
 
@@ -37,12 +41,14 @@ public class SearchDashboardViewMaker extends DashboardViewMaker {
       %s: %s
       %s: %s
       %s: %s
+      %s: %s
       """
             .formatted(
                 buttonNames.getMaxYear(), searchFilterDto.getMaxYear(),
                 buttonNames.getMinYear(), searchFilterDto.getMinYear(),
                 buttonNames.getMaxMileage(), searchFilterDto.getMaxMileage(),
-                buttonNames.getNumberOfOwners(), searchFilterDto.getNumberOfOwners());
+                buttonNames.getNumberOfOwners(), searchFilterDto.getNumberOfOwners(),
+                buttonNames.getBodyStyle(), searchFilterDto.getBodyStyle());
     sendMessage.setText(textMessage);
   }
 
@@ -74,8 +80,8 @@ public class SearchDashboardViewMaker extends DashboardViewMaker {
     LinkedHashMap<Object, Object> buttonDetails =
         new LinkedHashMap<>() {
           {
-            put(buttonNames.getMaxMileage(), CallbackMessage.MIN_MILLAGE);
-            put(buttonNames.getDelete(), CallbackMessage.MIN_MILLAGE_DELETE);
+            put(buttonNames.getMaxMileage(), buttonNames.getMaxMileage());
+            put(buttonNames.getDelete(), CallbackMessage.MAX_MILLAGE_DELETE);
           }
         };
     buttonMaker.setButton(new InlineButton(buttonDetails, markup));
@@ -86,10 +92,36 @@ public class SearchDashboardViewMaker extends DashboardViewMaker {
     LinkedHashMap<Object, Object> buttonDetails =
         new LinkedHashMap<>() {
           {
-            put(buttonNames.getNumberOfOwners(), CallbackMessage.NUMBER_OF_OWNERS);
+            put(buttonNames.getNumberOfOwners(), buttonNames.getNumberOfOwners());
             put(buttonNames.getDelete(), CallbackMessage.NUMBER_OF_OWNERS_DELETE);
           }
         };
+    buttonMaker.setButton(new InlineButton(buttonDetails, markup));
+    buttonMaker.addButtonTo(sendMessage);
+  }
+
+  private void makeBodyStyleFilterView(ButtonMaker buttonMaker, SendMessage sendMessage) {
+    LinkedHashMap<Object, Object> buttonDetails =
+        new LinkedHashMap<>() {
+          {
+            put(buttonNames.getBodyStyle(), buttonNames.getBodyStyle());
+            put(buttonNames.getDelete(), CallbackMessage.BODY_STYLE_DELETE);
+          }
+        };
+    buttonMaker.setButton(new InlineButton(buttonDetails, markup));
+    buttonMaker.addButtonTo(sendMessage);
+  }
+
+  private void makeApplyAndSearchButtonView(ButtonMaker buttonMaker, SendMessage sendMessage) {
+    LinkedHashMap<Object, Object> buttonDetails = new LinkedHashMap<>();
+    buttonDetails.put(buttonNames.getApplyAndSearch(), buttonNames.getApplyAndSearch());
+    buttonMaker.setButton(new InlineButton(buttonDetails, markup));
+    buttonMaker.addButtonTo(sendMessage);
+  }
+
+  private void makeCloseButtonView(ButtonMaker buttonMaker, SendMessage sendMessage) {
+    LinkedHashMap<Object, Object> buttonDetails = new LinkedHashMap<>();
+    buttonDetails.put(buttonNames.getClose(), buttonNames.getClose());
     buttonMaker.setButton(new InlineButton(buttonDetails, markup));
     buttonMaker.addButtonTo(sendMessage);
   }

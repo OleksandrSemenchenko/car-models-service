@@ -15,8 +15,9 @@ bot:
       max-mileage: Max millage
       clean: Clean
       search-dashboard: Search dashboard
-      stop: Stop
       delete: Delete
+      apply-and-search: Apply and search
+      close: Close
   commands:
       stop-name: stop
       stop-description: stop the search
