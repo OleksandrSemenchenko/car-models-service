@@ -4,8 +4,10 @@ import io.micrometer.observation.Observation.CheckedFunction;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ua.nicegear.cars.bot.config.ButtonNamesConfig;
@@ -31,32 +33,49 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
 
   @Override
   public void consume(Update update) {
-    long chatId = update.getMessage().getChatId();
-    SendMessage sendMessage = new SendMessage(String.valueOf(chatId), "");
-    sendMessage = makeBaseDashboardView(sendMessage);
-    addMenuButtonViewAndProcessResponse(chatId);
-
-    String callbackMessage = update.getMessage().getText();
-
-    if (callbackMessage.equals(CallbackMessage.STOP_COMMAND)) {
-      // TODO
-      sendMessage.setText("TODO");
-    }
-
-    if (callbackMessage.equals(buttonNames.getSearchDashboard())) {
-      sendMessage = makeSearchDashboardView(sendMessage, chatId);
-    }
+    long chatId;
+    SendMessage sendMessage;
+    String callbackMessage = "";
 
     if (update.hasCallbackQuery()) {
       String callbackData = update.getCallbackQuery().getData();
-      long userId = update.getCallbackQuery().getFrom().getId();
+      chatId = update.getCallbackQuery().getMessage().getChatId();
+      sendMessage = new SendMessage(String.valueOf(chatId), "");
 
       if (callbackData.equals(buttonNames.getMaxYear())) {
-        sendMessage.setText("I see you message");
-        SearchFilterDto searchFilterDto = searchFilterService.getSearchFilterByChatId(userId);
-        DashboardViewMaker filterDashboardViewMaker =
-            new SearchDashboardViewMaker(buttonNames, searchFilterDto);
-        filterDashboardViewMaker.makeView(sendMessage);
+        AnswerCallbackQuery answerCallbackQuery =
+            AnswerCallbackQuery.builder()
+                .callbackQueryId(update.getCallbackQuery().getId())
+                .text("Set some text")
+                .build();
+        processResponse(telegramClient::execute, answerCallbackQuery);
+        ForceReplyKeyboard forceReplyKeyboard = new ForceReplyKeyboard(true);
+        sendMessage.setReplyMarkup(forceReplyKeyboard);
+        sendMessage.setText("Please provide the max year:");
+      } else if (callbackData.equals(buttonNames.getMinYear())) {
+        // TODO
+      }
+    } else if (update.getMessage().isReply()) {
+      String repliedMessage = update.getMessage().getReplyToMessage().getText();
+      chatId = update.getMessage().getChatId();
+      sendMessage = new SendMessage(String.valueOf(chatId), "");
+
+      if (repliedMessage.equals("Please provide the max year:")) {
+        // TODO
+        sendMessage.setText("is reply");
+      }
+    } else {
+      chatId = update.getMessage().getChatId();
+      sendMessage = new SendMessage(String.valueOf(chatId), "");
+      callbackMessage = update.getMessage().getText();
+      sendMessage = makeBaseDashboardView(sendMessage);
+      addMenuButtonViewAndProcessResponse(chatId);
+
+      if (callbackMessage.equals(CallbackMessage.STOP_COMMAND)) {
+        // TODO
+        sendMessage.setText("TODO");
+      } else if (callbackMessage.equals(buttonNames.getSearchDashboard())) {
+        sendMessage = makeSearchDashboardView(sendMessage, chatId);
       }
     }
     processResponse(telegramClient::execute, sendMessage);
