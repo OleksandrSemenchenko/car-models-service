@@ -92,7 +92,9 @@ public class SearchDashboardViewMaker extends DashboardViewMaker {
     LinkedHashMap<Object, Object> buttonDetails =
         new LinkedHashMap<>() {
           {
-            put(buttonsConfig.getNames().getNumberOfOwners(), buttonsConfig.getNames().getNumberOfOwners());
+            put(
+                buttonsConfig.getNames().getNumberOfOwners(),
+                buttonsConfig.getNames().getNumberOfOwners());
             put(buttonsConfig.getNames().getDelete(), CallbackMessage.NUMBER_OF_OWNERS_DELETE);
           }
         };
@@ -114,7 +116,8 @@ public class SearchDashboardViewMaker extends DashboardViewMaker {
 
   private void makeApplyAndSearchButtonView(ButtonMaker buttonMaker, SendMessage sendMessage) {
     LinkedHashMap<Object, Object> buttonDetails = new LinkedHashMap<>();
-    buttonDetails.put(buttonsConfig.getNames().getApplyAndSearch(), buttonsConfig.getNames().getApplyAndSearch());
+    buttonDetails.put(
+        buttonsConfig.getNames().getApplyAndSearch(), buttonsConfig.getNames().getApplyAndSearch());
     buttonMaker.setButton(new InlineButton(buttonDetails, markup));
     buttonMaker.addButtonTo(sendMessage);
   }

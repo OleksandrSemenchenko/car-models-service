@@ -1,4 +1,4 @@
-package ua.nicegear.cars.bot.controller.strategies.impl;
+package ua.nicegear.cars.bot.controller.strategy.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -7,8 +7,8 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ua.nicegear.cars.bot.config.ButtonsConfig;
 import ua.nicegear.cars.bot.config.CommandsConfig;
 import ua.nicegear.cars.bot.constants.CallbackMessage;
-import ua.nicegear.cars.bot.controller.strategies.ResponseProcessor;
-import ua.nicegear.cars.bot.controller.strategies.Strategy;
+import ua.nicegear.cars.bot.controller.strategy.ResponseProcessor;
+import ua.nicegear.cars.bot.controller.strategy.Strategy;
 import ua.nicegear.cars.bot.dto.SearchFilterDto;
 import ua.nicegear.cars.bot.service.SearchFilterService;
 import ua.nicegear.cars.bot.view.DashboardViewMaker;
@@ -27,9 +27,9 @@ public class DefaultStrategy extends ResponseProcessor implements Strategy {
   private final SearchFilterService searchFilterService;
 
   @Override
-  public SendMessage execute(Update update) {
+  public void execute(Update update) {
     long chatId = update.getMessage().getChatId();
-    SendMessage sendMessage = new SendMessage(String.valueOf(chatId), "");
+    SendMessage sendMessage = new SendMessage(String.valueOf(chatId), "Echo");
     sendMessage = makeBaseDashboardView(sendMessage);
     addMenuButtonViewAndProcessResponse(chatId);
 
@@ -43,7 +43,7 @@ public class DefaultStrategy extends ResponseProcessor implements Strategy {
       chatId = update.getMessage().getChatId();
       sendMessage = makeSearchDashboardView(sendMessage, chatId);
     }
-    return sendMessage;
+    processResponse(telegramClient::execute, sendMessage);
   }
 
   private void addMenuButtonViewAndProcessResponse(long chatId) {
@@ -61,7 +61,7 @@ public class DefaultStrategy extends ResponseProcessor implements Strategy {
   private SendMessage makeSearchDashboardView(SendMessage sendMessage, long chatId) {
     SearchFilterDto searchFiltersDto = searchFilterService.getSearchFilterByChatId(chatId);
     DashboardViewMaker searchDashboardViewMaker =
-      new SearchDashboardViewMaker(buttonsConfig, searchFiltersDto);
+        new SearchDashboardViewMaker(buttonsConfig, searchFiltersDto);
     return searchDashboardViewMaker.makeView(sendMessage);
   }
 }
