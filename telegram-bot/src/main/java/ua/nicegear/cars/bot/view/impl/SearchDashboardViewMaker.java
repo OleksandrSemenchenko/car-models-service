@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ua.nicegear.cars.bot.buttons.ButtonMaker;
 import ua.nicegear.cars.bot.buttons.impl.InlineButton;
-import ua.nicegear.cars.bot.config.ButtonNamesConfig;
+import ua.nicegear.cars.bot.config.ButtonsConfig;
 import ua.nicegear.cars.bot.constants.CallbackMessage;
 import ua.nicegear.cars.bot.dto.SearchFilterDto;
 import ua.nicegear.cars.bot.view.DashboardViewMaker;
@@ -15,7 +15,7 @@ import ua.nicegear.cars.bot.view.DashboardViewMaker;
 @RequiredArgsConstructor
 public class SearchDashboardViewMaker extends DashboardViewMaker {
 
-  private final ButtonNamesConfig buttonNames;
+  private final ButtonsConfig buttonsConfig;
   private final SearchFilterDto searchFilterDto;
 
   private InlineKeyboardMarkup markup = new InlineKeyboardMarkup(new ArrayList<>());
@@ -44,11 +44,11 @@ public class SearchDashboardViewMaker extends DashboardViewMaker {
       %s: %s
       """
             .formatted(
-                buttonNames.getMaxYear(), searchFilterDto.getMaxYear(),
-                buttonNames.getMinYear(), searchFilterDto.getMinYear(),
-                buttonNames.getMaxMileage(), searchFilterDto.getMaxMileage(),
-                buttonNames.getNumberOfOwners(), searchFilterDto.getNumberOfOwners(),
-                buttonNames.getBodyStyle(), searchFilterDto.getBodyStyle());
+                buttonsConfig.getNames().getMaxYear(), searchFilterDto.getMaxYear(),
+                buttonsConfig.getNames().getMinYear(), searchFilterDto.getMinYear(),
+                buttonsConfig.getNames().getMaxMileage(), searchFilterDto.getMaxMileage(),
+                buttonsConfig.getNames().getNumberOfOwners(), searchFilterDto.getNumberOfOwners(),
+                buttonsConfig.getNames().getBodyStyle(), searchFilterDto.getBodyStyle());
     sendMessage.setText(textMessage);
   }
 
@@ -56,8 +56,8 @@ public class SearchDashboardViewMaker extends DashboardViewMaker {
     LinkedHashMap<Object, Object> buttonDetails =
         new LinkedHashMap<>() {
           {
-            put(buttonNames.getMaxYear(), buttonNames.getMaxYear());
-            put(buttonNames.getDelete(), CallbackMessage.MAX_YEAR_DELETE);
+            put(buttonsConfig.getNames().getMaxYear(), buttonsConfig.getNames().getMaxYear());
+            put(buttonsConfig.getNames().getDelete(), CallbackMessage.MAX_YEAR_DELETE);
           }
         };
     buttonMaker.setButton(new InlineButton(buttonDetails, markup));
@@ -68,8 +68,8 @@ public class SearchDashboardViewMaker extends DashboardViewMaker {
     LinkedHashMap<Object, Object> buttonDetails =
         new LinkedHashMap<>() {
           {
-            put(buttonNames.getMinYear(), buttonNames.getMinYear());
-            put(buttonNames.getDelete(), CallbackMessage.MIN_YEAR_DELETE);
+            put(buttonsConfig.getNames().getMinYear(), buttonsConfig.getNames().getMinYear());
+            put(buttonsConfig.getNames().getDelete(), CallbackMessage.MIN_YEAR_DELETE);
           }
         };
     buttonMaker.setButton(new InlineButton(buttonDetails, markup));
@@ -80,8 +80,8 @@ public class SearchDashboardViewMaker extends DashboardViewMaker {
     LinkedHashMap<Object, Object> buttonDetails =
         new LinkedHashMap<>() {
           {
-            put(buttonNames.getMaxMileage(), buttonNames.getMaxMileage());
-            put(buttonNames.getDelete(), CallbackMessage.MAX_MILLAGE_DELETE);
+            put(buttonsConfig.getNames().getMaxMileage(), buttonsConfig.getNames().getMaxMileage());
+            put(buttonsConfig.getNames().getDelete(), CallbackMessage.MAX_MILLAGE_DELETE);
           }
         };
     buttonMaker.setButton(new InlineButton(buttonDetails, markup));
@@ -92,8 +92,8 @@ public class SearchDashboardViewMaker extends DashboardViewMaker {
     LinkedHashMap<Object, Object> buttonDetails =
         new LinkedHashMap<>() {
           {
-            put(buttonNames.getNumberOfOwners(), buttonNames.getNumberOfOwners());
-            put(buttonNames.getDelete(), CallbackMessage.NUMBER_OF_OWNERS_DELETE);
+            put(buttonsConfig.getNames().getNumberOfOwners(), buttonsConfig.getNames().getNumberOfOwners());
+            put(buttonsConfig.getNames().getDelete(), CallbackMessage.NUMBER_OF_OWNERS_DELETE);
           }
         };
     buttonMaker.setButton(new InlineButton(buttonDetails, markup));
@@ -104,8 +104,8 @@ public class SearchDashboardViewMaker extends DashboardViewMaker {
     LinkedHashMap<Object, Object> buttonDetails =
         new LinkedHashMap<>() {
           {
-            put(buttonNames.getBodyStyle(), buttonNames.getBodyStyle());
-            put(buttonNames.getDelete(), CallbackMessage.BODY_STYLE_DELETE);
+            put(buttonsConfig.getNames().getBodyStyle(), buttonsConfig.getNames().getBodyStyle());
+            put(buttonsConfig.getNames().getDelete(), CallbackMessage.BODY_STYLE_DELETE);
           }
         };
     buttonMaker.setButton(new InlineButton(buttonDetails, markup));
@@ -114,14 +114,14 @@ public class SearchDashboardViewMaker extends DashboardViewMaker {
 
   private void makeApplyAndSearchButtonView(ButtonMaker buttonMaker, SendMessage sendMessage) {
     LinkedHashMap<Object, Object> buttonDetails = new LinkedHashMap<>();
-    buttonDetails.put(buttonNames.getApplyAndSearch(), buttonNames.getApplyAndSearch());
+    buttonDetails.put(buttonsConfig.getNames().getApplyAndSearch(), buttonsConfig.getNames().getApplyAndSearch());
     buttonMaker.setButton(new InlineButton(buttonDetails, markup));
     buttonMaker.addButtonTo(sendMessage);
   }
 
   private void makeCloseButtonView(ButtonMaker buttonMaker, SendMessage sendMessage) {
     LinkedHashMap<Object, Object> buttonDetails = new LinkedHashMap<>();
-    buttonDetails.put(buttonNames.getClose(), buttonNames.getClose());
+    buttonDetails.put(buttonsConfig.getNames().getClose(), buttonsConfig.getNames().getClose());
     buttonMaker.setButton(new InlineButton(buttonDetails, markup));
     buttonMaker.addButtonTo(sendMessage);
   }
