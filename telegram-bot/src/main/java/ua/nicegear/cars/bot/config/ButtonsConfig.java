@@ -27,5 +27,9 @@ public class ButtonsConfig {
   @Data
   public static class Prompts {
     private String maxYear;
+    private String minYear;
+    private String maxMileage;
+    private String numberOfOwners;
+    private String bodyStyle;
   }
 }

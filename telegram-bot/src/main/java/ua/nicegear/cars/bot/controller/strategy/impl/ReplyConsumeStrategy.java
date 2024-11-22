@@ -1,16 +1,16 @@
 package ua.nicegear.cars.bot.controller.strategy.impl;
 
-import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ua.nicegear.cars.bot.controller.strategy.ConsumeStrategy;
 import ua.nicegear.cars.bot.controller.strategy.UpdateProcessor;
 
-@RequiredArgsConstructor
 public class ReplyConsumeStrategy extends UpdateProcessor implements ConsumeStrategy {
 
-  private final TelegramClient telegramClient;
+  public ReplyConsumeStrategy(TelegramClient telegramClient) {
+    super(telegramClient);
+  }
 
   @Override
   public void execute(Update update) {

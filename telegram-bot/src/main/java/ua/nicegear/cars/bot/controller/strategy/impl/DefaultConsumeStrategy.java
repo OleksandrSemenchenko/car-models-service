@@ -1,6 +1,5 @@
 package ua.nicegear.cars.bot.controller.strategy.impl;
 
-import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
@@ -18,13 +17,24 @@ import ua.nicegear.cars.bot.view.impl.BaseDashboardViewMaker;
 import ua.nicegear.cars.bot.view.impl.CommandsMenuButtonViewMaker;
 import ua.nicegear.cars.bot.view.impl.SearchDashboardViewMaker;
 
-@RequiredArgsConstructor
 public class DefaultConsumeStrategy extends UpdateProcessor implements ConsumeStrategy {
 
   private final TelegramClient telegramClient;
   private final ButtonsConfig buttonsConfig;
   private final CommandsConfig commandsConfig;
   private final SearchFilterService searchFilterService;
+
+  public DefaultConsumeStrategy(
+      TelegramClient telegramClient,
+      ButtonsConfig buttonsConfig,
+      CommandsConfig commandsConfig,
+      SearchFilterService searchFilterService) {
+    super(telegramClient);
+    this.telegramClient = telegramClient;
+    this.buttonsConfig = buttonsConfig;
+    this.commandsConfig = commandsConfig;
+    this.searchFilterService = searchFilterService;
+  }
 
   @Override
   public void execute(Update update) {

@@ -1,28 +1,43 @@
 package ua.nicegear.cars.bot.controller.strategy.impl;
 
-import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ua.nicegear.cars.bot.config.ButtonsConfig;
 import ua.nicegear.cars.bot.controller.strategy.ConsumeStrategy;
-import ua.nicegear.cars.bot.controller.strategy.Context;
+import ua.nicegear.cars.bot.controller.strategy.UpdateProcessor;
 
-@RequiredArgsConstructor
-public class CallbackQueryConsumeStrategy implements ConsumeStrategy {
+public class CallbackQueryConsumeStrategy extends UpdateProcessor implements ConsumeStrategy {
 
-  private final TelegramClient telegramClient;
   private final ButtonsConfig buttonsConfig;
+
+  public CallbackQueryConsumeStrategy(TelegramClient telegramClient, ButtonsConfig buttonsConfig) {
+    super(telegramClient);
+    this.buttonsConfig = buttonsConfig;
+  }
 
   @Override
   public void execute(Update update) {
-    Context context = new Context();
-    String callbackData = update.getCallbackQuery().getData();
+    String callbackMessage = update.getCallbackQuery().getData();
+    String message = "";
 
-    if (callbackData.equals(buttonsConfig.getNames().getMaxYear())) {
-      context.setConsumeStrategy(new MaxYearConsumeStrategy(telegramClient, buttonsConfig));
-    } else if (callbackData.equals(buttonsConfig.getNames().getMinYear())) {
-      // TODO
+    if (callbackMessage.equals(buttonsConfig.getNames().getMaxYear())) {
+      message = buttonsConfig.getPrompts().getMaxYear();
+    } else if (callbackMessage.equals(buttonsConfig.getNames().getMinYear())) {
+      message = buttonsConfig.getPrompts().getMinYear();
+    } else if (callbackMessage.equals(buttonsConfig.getNames().getMaxMileage())) {
+      message = buttonsConfig.getPrompts().getMaxMileage();
+    } else if (callbackMessage.equals(buttonsConfig.getNames().getNumberOfOwners())) {
+      message = buttonsConfig.getPrompts().getNumberOfOwners();
+    } else if (callbackMessage.equals(buttonsConfig.getNames().getBodyStyle())) {
+      message = buttonsConfig.getPrompts().getBodyStyle();
+    } else if (callbackMessage.equals(buttonsConfig.getNames().getApplyAndSearch())) {
+      // TODO ApplyAndSearch actions
+
+    } else if (callbackMessage.equals(buttonsConfig.getNames().getClose())) {
+      // TODO Close actions
+
     }
-    context.executeStrategy(update);
+    super.processAnswerCallbackQuery(update, message);
+    super.processForceReplyKeyboard(update, message);
   }
 }
