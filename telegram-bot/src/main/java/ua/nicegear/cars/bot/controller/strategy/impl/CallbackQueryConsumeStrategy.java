@@ -5,14 +5,13 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ua.nicegear.cars.bot.config.ButtonsConfig;
 import ua.nicegear.cars.bot.controller.strategy.ConsumeStrategy;
 import ua.nicegear.cars.bot.controller.strategy.UpdateProcessor;
+import ua.nicegear.cars.bot.service.FilterService;
 
 public class CallbackQueryConsumeStrategy extends UpdateProcessor implements ConsumeStrategy {
 
-  private final ButtonsConfig buttonsConfig;
-
-  public CallbackQueryConsumeStrategy(TelegramClient telegramClient, ButtonsConfig buttonsConfig) {
-    super(telegramClient);
-    this.buttonsConfig = buttonsConfig;
+  public CallbackQueryConsumeStrategy(
+      TelegramClient telegramClient, FilterService filterService, ButtonsConfig buttonsConfig) {
+    super(telegramClient, filterService, buttonsConfig);
   }
 
   @Override

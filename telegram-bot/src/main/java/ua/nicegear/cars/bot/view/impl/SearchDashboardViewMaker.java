@@ -9,20 +9,20 @@ import ua.nicegear.cars.bot.buttons.ButtonMaker;
 import ua.nicegear.cars.bot.buttons.impl.InlineButton;
 import ua.nicegear.cars.bot.config.ButtonsConfig;
 import ua.nicegear.cars.bot.constants.CallbackMessage;
-import ua.nicegear.cars.bot.dto.SearchFilterDto;
+import ua.nicegear.cars.bot.dto.FilterDto;
 import ua.nicegear.cars.bot.view.DashboardViewMaker;
 
 @RequiredArgsConstructor
 public class SearchDashboardViewMaker extends DashboardViewMaker {
 
   private final ButtonsConfig buttonsConfig;
-  private final SearchFilterDto searchFilterDto;
+  private final FilterDto filterDto;
 
   private InlineKeyboardMarkup markup = new InlineKeyboardMarkup(new ArrayList<>());
 
   @Override
   public SendMessage makeView(SendMessage sendMessage) {
-    makeTextMessageView(searchFilterDto, sendMessage);
+    makeTextMessageView(filterDto, sendMessage);
     ButtonMaker buttonMaker = new ButtonMaker();
     makeMaxYearFilterView(buttonMaker, sendMessage);
     makeMinYearFilterView(buttonMaker, sendMessage);
@@ -34,7 +34,7 @@ public class SearchDashboardViewMaker extends DashboardViewMaker {
     return sendMessage;
   }
 
-  private void makeTextMessageView(SearchFilterDto searchFilterDto, SendMessage sendMessage) {
+  private void makeTextMessageView(FilterDto filterDto, SendMessage sendMessage) {
     String textMessage =
         """
       %s: %s
@@ -44,11 +44,11 @@ public class SearchDashboardViewMaker extends DashboardViewMaker {
       %s: %s
       """
             .formatted(
-                buttonsConfig.getNames().getMaxYear(), searchFilterDto.getMaxYear(),
-                buttonsConfig.getNames().getMinYear(), searchFilterDto.getMinYear(),
-                buttonsConfig.getNames().getMaxMileage(), searchFilterDto.getMaxMileage(),
-                buttonsConfig.getNames().getNumberOfOwners(), searchFilterDto.getNumberOfOwners(),
-                buttonsConfig.getNames().getBodyStyle(), searchFilterDto.getBodyStyle());
+                buttonsConfig.getNames().getMaxYear(), filterDto.getMaxYear(),
+                buttonsConfig.getNames().getMinYear(), filterDto.getMinYear(),
+                buttonsConfig.getNames().getMaxMileage(), filterDto.getMaxMileage(),
+                buttonsConfig.getNames().getNumberOfOwners(), filterDto.getNumberOfOwners(),
+                buttonsConfig.getNames().getBodyStyle(), filterDto.getBodyStyle());
     sendMessage.setText(textMessage);
   }
 

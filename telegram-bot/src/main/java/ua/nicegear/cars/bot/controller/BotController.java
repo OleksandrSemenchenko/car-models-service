@@ -11,14 +11,14 @@ import ua.nicegear.cars.bot.controller.strategy.Context;
 import ua.nicegear.cars.bot.controller.strategy.impl.CallbackQueryConsumeStrategy;
 import ua.nicegear.cars.bot.controller.strategy.impl.DefaultConsumeStrategy;
 import ua.nicegear.cars.bot.controller.strategy.impl.ReplyConsumeStrategy;
-import ua.nicegear.cars.bot.service.SearchFilterService;
+import ua.nicegear.cars.bot.service.FilterService;
 
 @Component
 @RequiredArgsConstructor
 public class BotController implements LongPollingSingleThreadUpdateConsumer {
 
   private final TelegramClient telegramClient;
-  private final SearchFilterService searchFilterService;
+  private final FilterService filterService;
   private final ButtonsConfig buttonsConfig;
   private final CommandsConfig commandsConfig;
 
@@ -27,13 +27,14 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
     Context context = new Context();
 
     if (update.hasCallbackQuery()) {
-      context.setConsumeStrategy(new CallbackQueryConsumeStrategy(telegramClient, buttonsConfig));
+      context.setConsumeStrategy(
+          new CallbackQueryConsumeStrategy(telegramClient, filterService, buttonsConfig));
     } else if (update.getMessage().isReply()) {
-      context.setConsumeStrategy(new ReplyConsumeStrategy(telegramClient));
+      context.setConsumeStrategy(
+          new ReplyConsumeStrategy(telegramClient, filterService, buttonsConfig));
     } else {
       context.setConsumeStrategy(
-          new DefaultConsumeStrategy(
-              telegramClient, buttonsConfig, commandsConfig, searchFilterService));
+          new DefaultConsumeStrategy(telegramClient, filterService, buttonsConfig, commandsConfig));
     }
     context.executeStrategy(update);
   }

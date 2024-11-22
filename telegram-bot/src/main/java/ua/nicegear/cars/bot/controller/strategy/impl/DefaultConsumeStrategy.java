@@ -8,37 +8,30 @@ import ua.nicegear.cars.bot.config.CommandsConfig;
 import ua.nicegear.cars.bot.constants.CallbackMessage;
 import ua.nicegear.cars.bot.controller.strategy.ConsumeStrategy;
 import ua.nicegear.cars.bot.controller.strategy.UpdateProcessor;
-import ua.nicegear.cars.bot.dto.SearchFilterDto;
-import ua.nicegear.cars.bot.service.SearchFilterService;
+import ua.nicegear.cars.bot.service.FilterService;
 import ua.nicegear.cars.bot.view.DashboardViewMaker;
 import ua.nicegear.cars.bot.view.MenuButtonView;
 import ua.nicegear.cars.bot.view.MenuButtonViewMaker;
 import ua.nicegear.cars.bot.view.impl.BaseDashboardViewMaker;
 import ua.nicegear.cars.bot.view.impl.CommandsMenuButtonViewMaker;
-import ua.nicegear.cars.bot.view.impl.SearchDashboardViewMaker;
 
 public class DefaultConsumeStrategy extends UpdateProcessor implements ConsumeStrategy {
 
-  private final TelegramClient telegramClient;
-  private final ButtonsConfig buttonsConfig;
   private final CommandsConfig commandsConfig;
-  private final SearchFilterService searchFilterService;
 
   public DefaultConsumeStrategy(
       TelegramClient telegramClient,
+      FilterService filterService,
       ButtonsConfig buttonsConfig,
-      CommandsConfig commandsConfig,
-      SearchFilterService searchFilterService) {
-    super(telegramClient);
-    this.telegramClient = telegramClient;
-    this.buttonsConfig = buttonsConfig;
+      CommandsConfig commandsConfig) {
+    super(telegramClient, filterService, buttonsConfig);
     this.commandsConfig = commandsConfig;
-    this.searchFilterService = searchFilterService;
   }
 
   @Override
   public void execute(Update update) {
     long chatId = update.getMessage().getChatId();
+    // TODO
     SendMessage sendMessage = new SendMessage(String.valueOf(chatId), "Echo");
     sendMessage = makeBaseDashboardView(sendMessage);
     addMenuButtonViewAndProcessResponse(chatId);
@@ -47,8 +40,7 @@ public class DefaultConsumeStrategy extends UpdateProcessor implements ConsumeSt
     if (callbackMessage.equals(CallbackMessage.STOP_COMMAND)) {
       // TODO
       sendMessage.setText("TODO");
-    } else if (callbackMessage.equals(buttonsConfig.getNames().getSearchDashboard())) {
-
+    } else if (callbackMessage.equals(super.buttonsConfig.getNames().getSearchDashboard())) {
       chatId = update.getMessage().getChatId();
       sendMessage = makeSearchDashboardView(sendMessage, chatId);
     }
@@ -63,14 +55,7 @@ public class DefaultConsumeStrategy extends UpdateProcessor implements ConsumeSt
   }
 
   private SendMessage makeBaseDashboardView(SendMessage sendMessage) {
-    DashboardViewMaker dashboardViewMaker = new BaseDashboardViewMaker(buttonsConfig);
+    DashboardViewMaker dashboardViewMaker = new BaseDashboardViewMaker(super.buttonsConfig);
     return dashboardViewMaker.makeView(sendMessage);
-  }
-
-  private SendMessage makeSearchDashboardView(SendMessage sendMessage, long chatId) {
-    SearchFilterDto searchFiltersDto = searchFilterService.getSearchFilterByChatId(chatId);
-    DashboardViewMaker searchDashboardViewMaker =
-        new SearchDashboardViewMaker(buttonsConfig, searchFiltersDto);
-    return searchDashboardViewMaker.makeView(sendMessage);
   }
 }

@@ -8,11 +8,18 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
+import ua.nicegear.cars.bot.config.ButtonsConfig;
+import ua.nicegear.cars.bot.dto.FilterDto;
+import ua.nicegear.cars.bot.service.FilterService;
+import ua.nicegear.cars.bot.view.DashboardViewMaker;
+import ua.nicegear.cars.bot.view.impl.SearchDashboardViewMaker;
 
 @RequiredArgsConstructor
 public abstract class UpdateProcessor {
 
   protected final TelegramClient telegramClient;
+  protected final FilterService filterService;
+  protected final ButtonsConfig buttonsConfig;
 
   protected void processAnswerCallbackQuery(Update update, String message) {
     AnswerCallbackQuery answerCallbackQuery =
@@ -42,5 +49,12 @@ public abstract class UpdateProcessor {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+  }
+
+  protected SendMessage makeSearchDashboardView(SendMessage sendMessage, long chatId) {
+    FilterDto searchFiltersDto = filterService.getSearchFilterByChatId(chatId);
+    DashboardViewMaker searchDashboardViewMaker =
+        new SearchDashboardViewMaker(buttonsConfig, searchFiltersDto);
+    return searchDashboardViewMaker.makeView(sendMessage);
   }
 }
