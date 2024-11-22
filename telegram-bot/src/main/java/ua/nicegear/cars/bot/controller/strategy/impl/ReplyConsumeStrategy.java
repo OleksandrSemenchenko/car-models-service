@@ -4,11 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
-import ua.nicegear.cars.bot.controller.strategy.ResponseProcessor;
-import ua.nicegear.cars.bot.controller.strategy.Strategy;
+import ua.nicegear.cars.bot.controller.strategy.ConsumeStrategy;
+import ua.nicegear.cars.bot.controller.strategy.UpdateProcessor;
 
 @RequiredArgsConstructor
-public class ReplyStrategy extends ResponseProcessor implements Strategy {
+public class ReplyConsumeStrategy extends UpdateProcessor implements ConsumeStrategy {
 
   private final TelegramClient telegramClient;
 
@@ -25,7 +25,7 @@ public class ReplyStrategy extends ResponseProcessor implements Strategy {
               .chatId(String.valueOf(chatId))
               .text("save the filter value to bd or cash")
               .build();
-      super.processResponse(telegramClient::execute, sendMessage);
+      super.processUpdate(telegramClient::execute, sendMessage);
     }
   }
 }

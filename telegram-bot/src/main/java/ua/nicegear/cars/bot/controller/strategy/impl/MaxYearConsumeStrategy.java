@@ -7,11 +7,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ua.nicegear.cars.bot.config.ButtonsConfig;
-import ua.nicegear.cars.bot.controller.strategy.ResponseProcessor;
-import ua.nicegear.cars.bot.controller.strategy.Strategy;
+import ua.nicegear.cars.bot.controller.strategy.ConsumeStrategy;
+import ua.nicegear.cars.bot.controller.strategy.UpdateProcessor;
 
 @RequiredArgsConstructor
-public class MaxYearQueryStrategy extends ResponseProcessor implements Strategy {
+public class MaxYearConsumeStrategy extends UpdateProcessor implements ConsumeStrategy {
 
   private final TelegramClient telegramClient;
   private final ButtonsConfig buttonsConfig;
@@ -29,7 +29,7 @@ public class MaxYearQueryStrategy extends ResponseProcessor implements Strategy 
             .callbackQueryId(update.getCallbackQuery().getId())
             .text(message)
             .build();
-    super.processResponse(telegramClient::execute, answerCallbackQuery);
+    super.processUpdate(telegramClient::execute, answerCallbackQuery);
   }
 
   private void processForceReplyKeyboard(Update update, String message) {
@@ -41,6 +41,6 @@ public class MaxYearQueryStrategy extends ResponseProcessor implements Strategy 
             .replyMarkup(forceReplyKeyboard)
             .text(message)
             .build();
-    super.processResponse(telegramClient::execute, sendMessage);
+    super.processUpdate(telegramClient::execute, sendMessage);
   }
 }

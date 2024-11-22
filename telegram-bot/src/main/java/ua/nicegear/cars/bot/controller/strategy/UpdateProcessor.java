@@ -3,9 +3,9 @@ package ua.nicegear.cars.bot.controller.strategy;
 import io.micrometer.observation.Observation;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-public abstract class ResponseProcessor {
+public abstract class UpdateProcessor {
 
-  protected <T, R, E extends TelegramApiException> R processResponse(
+  protected <T, R, E extends TelegramApiException> R processUpdate(
       Observation.CheckedFunction<T, R, E> consumer, T response) {
     try {
       return consumer.apply(response);

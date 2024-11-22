@@ -6,9 +6,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Setter
 public class Context {
 
-  private Strategy strategy;
+  private ConsumeStrategy consumeStrategy;
 
   public void executeStrategy(Update update) {
-    strategy.execute(update);
+    consumeStrategy.execute(update);
   }
 }

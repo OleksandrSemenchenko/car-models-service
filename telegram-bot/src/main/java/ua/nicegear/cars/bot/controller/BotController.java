@@ -8,9 +8,9 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ua.nicegear.cars.bot.config.ButtonsConfig;
 import ua.nicegear.cars.bot.config.CommandsConfig;
 import ua.nicegear.cars.bot.controller.strategy.Context;
-import ua.nicegear.cars.bot.controller.strategy.impl.DefaultStrategy;
-import ua.nicegear.cars.bot.controller.strategy.impl.MaxYearQueryStrategy;
-import ua.nicegear.cars.bot.controller.strategy.impl.ReplyStrategy;
+import ua.nicegear.cars.bot.controller.strategy.impl.CallbackQueryConsumeStrategy;
+import ua.nicegear.cars.bot.controller.strategy.impl.DefaultConsumeStrategy;
+import ua.nicegear.cars.bot.controller.strategy.impl.ReplyConsumeStrategy;
 import ua.nicegear.cars.bot.service.SearchFilterService;
 
 @Component
@@ -27,18 +27,13 @@ public class BotController implements LongPollingSingleThreadUpdateConsumer {
     Context context = new Context();
 
     if (update.hasCallbackQuery()) {
-      String callbackData = update.getCallbackQuery().getData();
-
-      if (callbackData.equals(buttonsConfig.getNames().getMaxYear())) {
-        context.setStrategy(new MaxYearQueryStrategy(telegramClient, buttonsConfig));
-      } else if (callbackData.equals(buttonsConfig.getNames().getMinYear())) {
-        // TODO
-      }
+      context.setConsumeStrategy(new CallbackQueryConsumeStrategy(telegramClient, buttonsConfig));
     } else if (update.getMessage().isReply()) {
-      context.setStrategy(new ReplyStrategy(telegramClient));
+      context.setConsumeStrategy(new ReplyConsumeStrategy(telegramClient));
     } else {
-      context.setStrategy(
-          new DefaultStrategy(telegramClient, buttonsConfig, commandsConfig, searchFilterService));
+      context.setConsumeStrategy(
+          new DefaultConsumeStrategy(
+              telegramClient, buttonsConfig, commandsConfig, searchFilterService));
     }
     context.executeStrategy(update);
   }
