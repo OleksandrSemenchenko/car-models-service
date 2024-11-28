@@ -30,7 +30,6 @@ public class SearchDashboardViewMaker extends DashboardViewMaker {
     makeNumberOfOwnersFilterView(buttonMaker, sendMessage);
     makeBodyStyleFilterView(buttonMaker, sendMessage);
     makeApplyAndSearchButtonView(buttonMaker, sendMessage);
-    makeCloseButtonView(buttonMaker, sendMessage);
     return sendMessage;
   }
 
@@ -118,13 +117,6 @@ public class SearchDashboardViewMaker extends DashboardViewMaker {
     LinkedHashMap<Object, Object> buttonDetails = new LinkedHashMap<>();
     buttonDetails.put(
         buttonsConfig.getNames().getApplyAndSearch(), buttonsConfig.getNames().getApplyAndSearch());
-    buttonMaker.setButton(new InlineButton(buttonDetails, markup));
-    buttonMaker.addButtonTo(sendMessage);
-  }
-
-  private void makeCloseButtonView(ButtonMaker buttonMaker, SendMessage sendMessage) {
-    LinkedHashMap<Object, Object> buttonDetails = new LinkedHashMap<>();
-    buttonDetails.put(buttonsConfig.getNames().getClose(), buttonsConfig.getNames().getClose());
     buttonMaker.setButton(new InlineButton(buttonDetails, markup));
     buttonMaker.addButtonTo(sendMessage);
   }
