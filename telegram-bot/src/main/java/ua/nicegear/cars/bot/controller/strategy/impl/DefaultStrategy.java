@@ -42,7 +42,6 @@ public class DefaultStrategy extends AbstractStrategy implements ConsumeStrategy
       AbstractStrategy searchDashboardStrategy =
           new SearchDashboardStrategy(telegramClient, filterService, buttonsConfig, sendMessage);
       this.add(searchDashboardStrategy);
-      //      mainDefaultStrategy.add(searchDashboardStrategy);
     }
     mainDefaultStrategy.execute(update);
   }

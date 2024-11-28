@@ -22,6 +22,7 @@ public class ButtonsConfig {
     private String searchDashboard;
     private String applyAndSearch;
     private String close;
+    private String apply;
   }
 
   @Data

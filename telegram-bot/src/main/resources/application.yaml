@@ -18,12 +18,13 @@ bot:
       delete: Delete
       apply-and-search: Apply and search
       close: Close
+      apply: '[ Apply ]'
     prompts:
       max-year: 'Please provide the max year:'
       min-year: 'Please provide the min year:'
       max-millage: 'Please provide the max millage:'
       number-of-owners: 'Please provide the number of owners:'
-      body-style: 'Please provide the body style:'
+      body-style: 'Select the body styles'
   commands:
       stop-name: stop
       stop-description: stop the search

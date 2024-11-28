@@ -38,7 +38,8 @@ public class ReplyStrategy extends UpdateProcessor implements ConsumeStrategy {
           new SearchDashboardStrategy(telegramClient, filterService, buttonsConfig, sendMessage);
       sendMessageStrategy.add(searchDashboardStrategy);
     } else if (repliedMessage.equals(buttonsConfig.getPrompts().getBodyStyle())) {
-      AbstractStrategy bodyStyleStrategy = new BodyStyleStrategy(telegramClient, sendMessage);
+      // TODO why is there BodyStyleStrategy here?
+      AbstractStrategy bodyStyleStrategy = new BodyStyleStrategy(telegramClient, buttonsConfig);
       sendMessageStrategy.add(bodyStyleStrategy);
     }
     sendMessageStrategy.execute(update);

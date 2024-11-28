@@ -51,7 +51,7 @@ public class InlineButton extends Button {
               .text(String.valueOf(buttonName))
               .callbackData(String.valueOf(buttonName))
               .build();
-      return List.of(button, button);
+      return List.of(button);
     }
   }
 }
