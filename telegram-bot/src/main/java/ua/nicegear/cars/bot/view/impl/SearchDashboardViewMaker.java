@@ -47,7 +47,7 @@ public class SearchDashboardViewMaker extends DashboardViewMaker {
                 buttonsConfig.getNames().getMinYear(), filterDto.getMinYear(),
                 buttonsConfig.getNames().getMaxMileage(), filterDto.getMaxMileage(),
                 buttonsConfig.getNames().getNumberOfOwners(), filterDto.getNumberOfOwners(),
-                buttonsConfig.getNames().getBodyStyle(), filterDto.getBodyStyle());
+                buttonsConfig.getNames().getBodyStyle(), filterDto.getBodyStyles());
     sendMessage.setText(textMessage);
   }
 

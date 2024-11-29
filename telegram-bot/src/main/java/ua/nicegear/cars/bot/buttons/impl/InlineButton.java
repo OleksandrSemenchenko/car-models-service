@@ -15,6 +15,7 @@ public class InlineButton extends Button {
   private final InlineKeyboardMarkup markup;
   private LinkedHashMap<Object, Object> buttonDetails;
   private Object buttonName;
+  private Object callbackData;
 
   public InlineButton(LinkedHashMap<Object, Object> buttonDetails, InlineKeyboardMarkup markup) {
     this.buttonDetails = buttonDetails;
@@ -23,7 +24,14 @@ public class InlineButton extends Button {
 
   public InlineButton(Object buttonName, InlineKeyboardMarkup markup) {
     this.buttonName = buttonName;
+    this.callbackData = buttonName;
     this.markup = markup;
+  }
+
+  public InlineButton(Object buttonName, Object callbackData, InlineKeyboardMarkup markup) {
+    this.buttonName = buttonName;
+    this.markup = markup;
+    this.callbackData = callbackData;
   }
 
   @Override
@@ -49,7 +57,7 @@ public class InlineButton extends Button {
       InlineKeyboardButton button =
           InlineKeyboardButton.builder()
               .text(String.valueOf(buttonName))
-              .callbackData(String.valueOf(buttonName))
+              .callbackData(String.valueOf(callbackData))
               .build();
       return List.of(button);
     }

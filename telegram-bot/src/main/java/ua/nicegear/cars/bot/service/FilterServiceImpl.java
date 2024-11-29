@@ -1,5 +1,7 @@
 package ua.nicegear.cars.bot.service;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +28,7 @@ public class FilterServiceImpl implements FilterService {
             .maxYear(2024)
             .maxMileage(140000)
             .numberOfOwners(1)
-            .bodyStyle(BodyStyle.HATCHBACK)
+            .bodyStyles(new HashSet<>(List.of(BodyStyle.HATCHBACK)))
             .build();
     filterDtoCache = filterDto;
     return filterDto;
@@ -34,6 +36,7 @@ public class FilterServiceImpl implements FilterService {
 
   @Override
   public FilterDto saveToCache(FilterDto filterDto) {
+    // TODO List<BodyStyle> should add values to existing ones
     return filterMapper.updateByNotNullValues(filterDto, filterDtoCache);
   }
 }

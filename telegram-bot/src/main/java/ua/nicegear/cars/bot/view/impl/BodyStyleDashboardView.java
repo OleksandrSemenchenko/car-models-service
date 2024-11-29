@@ -31,7 +31,9 @@ public class BodyStyleDashboardView extends DashboardViewMaker {
     buttonMaker.addButtonTo(sendMessage);
     buttonMaker.setButton(new InlineButton(MINIVAN, markup));
     buttonMaker.addButtonTo(sendMessage);
-    buttonMaker.setButton(new InlineButton(buttonsConfig.getNames().getApply(), markup));
+    String applyButtonName = buttonsConfig.getNames().getApply();
+    String applyCallbackData = buttonsConfig.getCallbackData().getBodyStyleApply();
+    buttonMaker.setButton(new InlineButton(applyButtonName, applyCallbackData, markup));
     buttonMaker.addButtonTo(sendMessage);
     return sendMessage;
   }

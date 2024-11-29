@@ -25,6 +25,8 @@ bot:
       max-millage: 'Please provide the max millage:'
       number-of-owners: 'Please provide the number of owners:'
       body-style: 'Select the body styles'
+    callback-data:
+      body-style-apply: bodyStyleApply
   commands:
       stop-name: stop
       stop-description: stop the search

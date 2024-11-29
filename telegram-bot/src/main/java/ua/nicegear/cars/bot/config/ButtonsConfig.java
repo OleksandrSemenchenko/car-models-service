@@ -9,6 +9,7 @@ public class ButtonsConfig {
 
   private Names names;
   private Prompts prompts;
+  private CallbackData callbackData;
 
   @Data
   public static class Names {
@@ -32,5 +33,10 @@ public class ButtonsConfig {
     private String maxMileage;
     private String numberOfOwners;
     private String bodyStyle;
+  }
+
+  @Data
+  public static class CallbackData {
+    private String bodyStyleApply;
   }
 }
