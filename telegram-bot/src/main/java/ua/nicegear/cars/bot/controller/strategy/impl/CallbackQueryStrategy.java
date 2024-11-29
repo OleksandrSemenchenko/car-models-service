@@ -29,42 +29,81 @@ public class CallbackQueryStrategy extends UpdateProcessor implements ConsumeStr
   public void execute(Update update) {
     String callbackMessage = update.getCallbackQuery().getData();
     Context context = new Context();
-    context = defineContextForSearchFilterCallbackdata(callbackMessage, context);
-
-    // TODO externalize to a method
-    if (callbackMessage.equals(BodyStyle.HATCHBACK.toString())) {
-      FilterDto filterDto = FilterDto.builder().bodyStyles(Set.of(BodyStyle.HATCHBACK)).build();
-      context = defineContextForBodyStyle(update, context, filterDto);
-    } else if (callbackMessage.equals(BodyStyle.CROSSOVER.toString())) {
-      FilterDto filterDto = FilterDto.builder().bodyStyles(Set.of(BodyStyle.CROSSOVER)).build();
-      context = defineContextForBodyStyle(update, context, filterDto);
-    }
+    context = selectContextForSearchFilter(callbackMessage, context);
+    context = selectContextForBodyStyleFilter(update, context, callbackMessage);
     context.executeStrategy(update);
   }
 
-  private Context defineContextForSearchFilterCallbackdata(
-      String callbackMessage, Context context) {
+  private Context selectContextForSearchFilter(String callbackMessage, Context context) {
     String message = "";
 
     if (callbackMessage.equals(buttonsConfig.getNames().getMaxYear())) {
       message = buttonsConfig.getPrompts().getMaxYear();
       context.setConsumeStrategy(new ForceReplyStrategy(telegramClient, message));
-    } else if (callbackMessage.equals(buttonsConfig.getNames().getMinYear())) {
+      return context;
+    }
+    if (callbackMessage.equals(buttonsConfig.getNames().getMinYear())) {
       message = buttonsConfig.getPrompts().getMinYear();
       context.setConsumeStrategy(new ForceReplyStrategy(telegramClient, message));
-    } else if (callbackMessage.equals(buttonsConfig.getNames().getMaxMileage())) {
+      return context;
+    }
+    if (callbackMessage.equals(buttonsConfig.getNames().getMaxMileage())) {
       message = buttonsConfig.getPrompts().getMaxMileage();
       context.setConsumeStrategy(new ForceReplyStrategy(telegramClient, message));
-    } else if (callbackMessage.equals(buttonsConfig.getNames().getNumberOfOwners())) {
+      return context;
+    }
+    if (callbackMessage.equals(buttonsConfig.getNames().getNumberOfOwners())) {
       message = buttonsConfig.getPrompts().getNumberOfOwners();
       context.setConsumeStrategy(new ForceReplyStrategy(telegramClient, message));
-    } else if (callbackMessage.equals(buttonsConfig.getNames().getBodyStyle())) {
-      ConsumeStrategy bodyStyleStrategy = new BodyStyleStrategy(telegramClient, buttonsConfig);
+      return context;
+    }
+    if (callbackMessage.equals(buttonsConfig.getNames().getBodyStyle())) {
+      ConsumeStrategy bodyStyleStrategy =
+          new BodyStyleStrategy(telegramClient, buttonsConfig, filterService);
       context.setConsumeStrategy(bodyStyleStrategy);
+      return context;
     }
     if (callbackMessage.equals(buttonsConfig.getNames().getApplyAndSearch())) {
       // TODO ApplyAndSearch actions
     }
+    return context;
+  }
+
+  private Context selectContextForBodyStyleFilter(
+      Update update, Context context, String callbackMessage) {
+    if (callbackMessage.equals(BodyStyle.HATCHBACK.toString())) {
+      FilterDto filterDto = FilterDto.builder().bodyStyles(Set.of(BodyStyle.HATCHBACK)).build();
+      return getContextWithBodyStyleStrategy(update, context, filterDto);
+    }
+    if (callbackMessage.equals(BodyStyle.CROSSOVER.toString())) {
+      FilterDto filterDto = FilterDto.builder().bodyStyles(Set.of(BodyStyle.CROSSOVER)).build();
+      return getContextWithBodyStyleStrategy(update, context, filterDto);
+    }
+    if (callbackMessage.equals(BodyStyle.MINIVAN.toString())) {
+      FilterDto filterDto = FilterDto.builder().bodyStyles(Set.of(BodyStyle.MINIVAN)).build();
+      return getContextWithBodyStyleStrategy(update, context, filterDto);
+    }
+    if (callbackMessage.equals(BodyStyle.SEDAN.toString())) {
+      FilterDto filterDto = FilterDto.builder().bodyStyles(Set.of(BodyStyle.SEDAN)).build();
+      return getContextWithBodyStyleStrategy(update, context, filterDto);
+    }
+    if (callbackMessage.equals(buttonsConfig.getCallbackData().getBodyStyleApply())) {
+      super.processAnswerCallbackQuery(update, buttonsConfig.getCallbackData().getBodyStyleApply());
+      SendMessage sendMessage = buildSendMessage(update);
+      ConsumeStrategy searchDashboardStrategy =
+          new SearchDashboardStrategy(telegramClient, filterService, buttonsConfig, sendMessage);
+      context.setConsumeStrategy(searchDashboardStrategy);
+    }
+    return context;
+  }
+
+  private Context getContextWithBodyStyleStrategy(
+      Update update, Context context, FilterDto filterDto) {
+    filterDto = filterService.saveToCache(filterDto);
+    SendMessage sendMessage = buildSendMessage(update, filterDto);
+    ConsumeStrategy bodyStyleStrategy =
+        new BodyStyleStrategy(telegramClient, buttonsConfig, filterService, sendMessage);
+    context.setConsumeStrategy(bodyStyleStrategy);
     return context;
   }
 
@@ -75,12 +114,8 @@ public class CallbackQueryStrategy extends UpdateProcessor implements ConsumeStr
     return SendMessage.builder().chatId(chartId).text(message).build();
   }
 
-  private Context defineContextForBodyStyle(Update update, Context context, FilterDto filterDto) {
-    filterDto = filterService.saveToCache(filterDto);
-    SendMessage sendMessage = buildSendMessage(update, filterDto);
-    ConsumeStrategy bodyStyleStrategy =
-        new BodyStyleStrategy(telegramClient, buttonsConfig, sendMessage);
-    context.setConsumeStrategy(bodyStyleStrategy);
-    return context;
+  private SendMessage buildSendMessage(Update update) {
+    long chatId = update.getCallbackQuery().getMessage().getChatId();
+    return new SendMessage(String.valueOf(chatId), "Lets get started");
   }
 }

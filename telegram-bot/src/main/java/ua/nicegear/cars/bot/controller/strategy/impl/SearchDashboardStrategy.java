@@ -1,5 +1,6 @@
 package ua.nicegear.cars.bot.controller.strategy.impl;
 
+import java.util.Objects;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
@@ -29,9 +30,19 @@ public class SearchDashboardStrategy extends AbstractStrategy implements Consume
 
   @Override
   public void execute(Update update) {
-    long chatId = update.getMessage().getChatId();
+    long chatId = selectChatId(update);
     sendMessage = makeSearchDashboardView(sendMessage, chatId);
     checkNext(sendMessage, update);
+  }
+
+  private long selectChatId(Update update) {
+    if (Objects.nonNull(update.getMessage())) {
+      return update.getMessage().getChatId();
+    }
+    if (Objects.nonNull(update.getCallbackQuery())) {
+      return update.getCallbackQuery().getMessage().getChatId();
+    }
+    return 0L;
   }
 
   protected SendMessage makeSearchDashboardView(SendMessage sendMessage, long chatId) {
