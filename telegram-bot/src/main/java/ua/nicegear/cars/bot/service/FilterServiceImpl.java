@@ -36,7 +36,6 @@ public class FilterServiceImpl implements FilterService {
 
   @Override
   public FilterDto saveToCache(FilterDto filterDto) {
-    // TODO List<BodyStyle> should add values to existing ones
     return filterMapper.updateByNotNullValues(filterDto, filterDtoCache);
   }
 }
