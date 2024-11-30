@@ -1,10 +1,5 @@
 package ua.nicegear.cars.bot.view.impl;
 
-import static ua.nicegear.cars.bot.enums.BodyStyle.CROSSOVER;
-import static ua.nicegear.cars.bot.enums.BodyStyle.HATCHBACK;
-import static ua.nicegear.cars.bot.enums.BodyStyle.MINIVAN;
-import static ua.nicegear.cars.bot.enums.BodyStyle.SEDAN;
-
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -12,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import ua.nicegear.cars.bot.buttons.ButtonMaker;
 import ua.nicegear.cars.bot.buttons.impl.InlineButton;
 import ua.nicegear.cars.bot.config.ButtonsConfig;
+import ua.nicegear.cars.bot.constants.CallbackMessage;
 import ua.nicegear.cars.bot.view.DashboardViewMaker;
 
 @RequiredArgsConstructor
@@ -23,17 +19,23 @@ public class BodyStyleDashboardView extends DashboardViewMaker {
   @Override
   public SendMessage makeView(SendMessage sendMessage) {
     ButtonMaker buttonMaker = new ButtonMaker();
-    buttonMaker.setButton(new InlineButton(HATCHBACK, markup));
+    buttonMaker.setButton(
+        new InlineButton(
+            buttonsConfig.getNames().getHatchback(), CallbackMessage.HATCHBACK, markup));
     buttonMaker.addButtonTo(sendMessage);
-    buttonMaker.setButton(new InlineButton(SEDAN, markup));
+    buttonMaker.setButton(
+        new InlineButton(buttonsConfig.getNames().getSedan(), CallbackMessage.SEDAN, markup));
     buttonMaker.addButtonTo(sendMessage);
-    buttonMaker.setButton(new InlineButton(CROSSOVER, markup));
+    buttonMaker.setButton(
+        new InlineButton(
+            buttonsConfig.getNames().getCrossover(), CallbackMessage.CROSSOVER, markup));
     buttonMaker.addButtonTo(sendMessage);
-    buttonMaker.setButton(new InlineButton(MINIVAN, markup));
+    buttonMaker.setButton(
+        new InlineButton(buttonsConfig.getNames().getMinivan(), CallbackMessage.MINIVAN, markup));
     buttonMaker.addButtonTo(sendMessage);
-    String applyButtonName = buttonsConfig.getNames().getApply();
-    String applyCallbackData = buttonsConfig.getCallbackData().getBodyStyleApply();
-    buttonMaker.setButton(new InlineButton(applyButtonName, applyCallbackData, markup));
+    buttonMaker.setButton(
+        new InlineButton(
+            buttonsConfig.getNames().getApply(), CallbackMessage.BODY_STYLE_APPLY, markup));
     buttonMaker.addButtonTo(sendMessage);
     return sendMessage;
   }

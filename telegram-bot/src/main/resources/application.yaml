@@ -18,6 +18,10 @@ bot:
       delete: Delete
       apply-and-search: Apply and search
       close: Close
+      hatchback: Hatchback
+      crossover: Crossover
+      sedan: Sedan
+      minivan: Minivan
       apply: '[ Apply ]'
     prompts:
       max-year: 'Please provide the max year:'
@@ -25,8 +29,6 @@ bot:
       max-millage: 'Please provide the max millage:'
       number-of-owners: 'Please provide the number of owners:'
       body-style: 'Select the body styles'
-    callback-data:
-      body-style-apply: bodyStyleApply
   commands:
       stop-name: stop
       stop-description: stop the search

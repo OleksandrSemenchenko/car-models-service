@@ -1,11 +1,24 @@
 package ua.nicegear.cars.bot.controller.strategy.impl;
 
+import static ua.nicegear.cars.bot.constants.CallbackMessage.APPLY_AND_SEARCH;
+import static ua.nicegear.cars.bot.constants.CallbackMessage.BODY_STYLE;
+import static ua.nicegear.cars.bot.constants.CallbackMessage.BODY_STYLE_APPLY;
+import static ua.nicegear.cars.bot.constants.CallbackMessage.CROSSOVER;
+import static ua.nicegear.cars.bot.constants.CallbackMessage.HATCHBACK;
+import static ua.nicegear.cars.bot.constants.CallbackMessage.MAX_MILLAGE;
+import static ua.nicegear.cars.bot.constants.CallbackMessage.MAX_YEAR;
+import static ua.nicegear.cars.bot.constants.CallbackMessage.MINIVAN;
+import static ua.nicegear.cars.bot.constants.CallbackMessage.MIN_YEAR;
+import static ua.nicegear.cars.bot.constants.CallbackMessage.NUMBER_OF_OWNERS;
+import static ua.nicegear.cars.bot.constants.CallbackMessage.SEDAN;
+
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ua.nicegear.cars.bot.config.ButtonsConfig;
+import ua.nicegear.cars.bot.constants.CallbackMessage;
 import ua.nicegear.cars.bot.controller.strategy.ConsumeStrategy;
 import ua.nicegear.cars.bot.controller.strategy.Context;
 import ua.nicegear.cars.bot.controller.strategy.UpdateProcessor;
@@ -31,68 +44,77 @@ public class CallbackQueryStrategy extends UpdateProcessor implements ConsumeStr
     Context context = new Context();
     context = selectContextForSearchFilter(callbackMessage, context);
     context = selectContextForBodyStyleFilter(update, context, callbackMessage);
+
     context.executeStrategy(update);
   }
 
   private Context selectContextForSearchFilter(String callbackMessage, Context context) {
     String message = "";
 
-    if (callbackMessage.equals(buttonsConfig.getNames().getMaxYear())) {
-      message = buttonsConfig.getPrompts().getMaxYear();
-      context.setConsumeStrategy(new ForceReplyStrategy(telegramClient, message));
-      return context;
+    switch (callbackMessage) {
+      case MAX_YEAR -> {
+        message = buttonsConfig.getPrompts().getMaxYear();
+        context.setConsumeStrategy(new ForceReplyStrategy(telegramClient, message));
+        return context;
+      }
+      case MIN_YEAR -> {
+        message = buttonsConfig.getPrompts().getMinYear();
+        context.setConsumeStrategy(new ForceReplyStrategy(telegramClient, message));
+        return context;
+      }
+      case MAX_MILLAGE -> {
+        message = buttonsConfig.getPrompts().getMaxMileage();
+        context.setConsumeStrategy(new ForceReplyStrategy(telegramClient, message));
+        return context;
+      }
+      case NUMBER_OF_OWNERS -> {
+        message = buttonsConfig.getPrompts().getNumberOfOwners();
+        context.setConsumeStrategy(new ForceReplyStrategy(telegramClient, message));
+        return context;
+      }
+      case BODY_STYLE -> {
+        ConsumeStrategy bodyStyleStrategy =
+            new BodyStyleStrategy(telegramClient, buttonsConfig, filterService);
+        context.setConsumeStrategy(bodyStyleStrategy);
+        return context;
+      }
+      case APPLY_AND_SEARCH -> {
+        // TODO ApplyAndSearch actions
+      }
     }
-    if (callbackMessage.equals(buttonsConfig.getNames().getMinYear())) {
-      message = buttonsConfig.getPrompts().getMinYear();
-      context.setConsumeStrategy(new ForceReplyStrategy(telegramClient, message));
-      return context;
-    }
-    if (callbackMessage.equals(buttonsConfig.getNames().getMaxMileage())) {
-      message = buttonsConfig.getPrompts().getMaxMileage();
-      context.setConsumeStrategy(new ForceReplyStrategy(telegramClient, message));
-      return context;
-    }
-    if (callbackMessage.equals(buttonsConfig.getNames().getNumberOfOwners())) {
-      message = buttonsConfig.getPrompts().getNumberOfOwners();
-      context.setConsumeStrategy(new ForceReplyStrategy(telegramClient, message));
-      return context;
-    }
-    if (callbackMessage.equals(buttonsConfig.getNames().getBodyStyle())) {
-      ConsumeStrategy bodyStyleStrategy =
-          new BodyStyleStrategy(telegramClient, buttonsConfig, filterService);
-      context.setConsumeStrategy(bodyStyleStrategy);
-      return context;
-    }
-    if (callbackMessage.equals(buttonsConfig.getNames().getApplyAndSearch())) {
-      // TODO ApplyAndSearch actions
-    }
+
+    if (callbackMessage.equals(CallbackMessage.MAX_YEAR_DELETE)) {}
+
     return context;
   }
 
   private Context selectContextForBodyStyleFilter(
       Update update, Context context, String callbackMessage) {
-    if (callbackMessage.equals(BodyStyle.HATCHBACK.toString())) {
-      FilterDto filterDto = FilterDto.builder().bodyStyles(Set.of(BodyStyle.HATCHBACK)).build();
-      return getContextWithBodyStyleStrategy(update, context, filterDto);
-    }
-    if (callbackMessage.equals(BodyStyle.CROSSOVER.toString())) {
-      FilterDto filterDto = FilterDto.builder().bodyStyles(Set.of(BodyStyle.CROSSOVER)).build();
-      return getContextWithBodyStyleStrategy(update, context, filterDto);
-    }
-    if (callbackMessage.equals(BodyStyle.MINIVAN.toString())) {
-      FilterDto filterDto = FilterDto.builder().bodyStyles(Set.of(BodyStyle.MINIVAN)).build();
-      return getContextWithBodyStyleStrategy(update, context, filterDto);
-    }
-    if (callbackMessage.equals(BodyStyle.SEDAN.toString())) {
-      FilterDto filterDto = FilterDto.builder().bodyStyles(Set.of(BodyStyle.SEDAN)).build();
-      return getContextWithBodyStyleStrategy(update, context, filterDto);
-    }
-    if (callbackMessage.equals(buttonsConfig.getCallbackData().getBodyStyleApply())) {
-      super.processAnswerCallbackQuery(update, buttonsConfig.getCallbackData().getBodyStyleApply());
-      SendMessage sendMessage = buildSendMessage(update);
-      ConsumeStrategy searchDashboardStrategy =
-          new SearchDashboardStrategy(telegramClient, filterService, buttonsConfig, sendMessage);
-      context.setConsumeStrategy(searchDashboardStrategy);
+
+    switch (callbackMessage) {
+      case HATCHBACK -> {
+        FilterDto filterDto = FilterDto.builder().bodyStyles(Set.of(BodyStyle.HATCHBACK)).build();
+        return getContextWithBodyStyleStrategy(update, context, filterDto);
+      }
+      case CROSSOVER -> {
+        FilterDto filterDto = FilterDto.builder().bodyStyles(Set.of(BodyStyle.CROSSOVER)).build();
+        return getContextWithBodyStyleStrategy(update, context, filterDto);
+      }
+      case MINIVAN -> {
+        FilterDto filterDto = FilterDto.builder().bodyStyles(Set.of(BodyStyle.MINIVAN)).build();
+        return getContextWithBodyStyleStrategy(update, context, filterDto);
+      }
+      case SEDAN -> {
+        FilterDto filterDto = FilterDto.builder().bodyStyles(Set.of(BodyStyle.SEDAN)).build();
+        return getContextWithBodyStyleStrategy(update, context, filterDto);
+      }
+      case BODY_STYLE_APPLY -> {
+        super.processAnswerCallbackQuery(update, CallbackMessage.BODY_STYLE_APPLY);
+        SendMessage sendMessage = buildSendMessage(update);
+        ConsumeStrategy searchDashboardStrategy =
+            new SearchDashboardStrategy(telegramClient, filterService, buttonsConfig, sendMessage);
+        context.setConsumeStrategy(searchDashboardStrategy);
+      }
     }
     return context;
   }
