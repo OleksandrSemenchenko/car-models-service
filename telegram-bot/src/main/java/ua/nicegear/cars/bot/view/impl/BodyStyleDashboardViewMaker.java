@@ -11,7 +11,7 @@ import ua.nicegear.cars.bot.constants.CallbackMessage;
 import ua.nicegear.cars.bot.view.DashboardViewMaker;
 
 @RequiredArgsConstructor
-public class BodyStyleDashboardView extends DashboardViewMaker {
+public class BodyStyleDashboardViewMaker extends DashboardViewMaker {
 
   private final ButtonsConfig buttonsConfig;
   private InlineKeyboardMarkup markup = new InlineKeyboardMarkup(new ArrayList<>());
@@ -35,7 +35,7 @@ public class BodyStyleDashboardView extends DashboardViewMaker {
     buttonMaker.addButtonTo(sendMessage);
     buttonMaker.setButton(
         new InlineButton(
-            buttonsConfig.getNames().getApply(), CallbackMessage.BODY_STYLE_APPLY, markup));
+            buttonsConfig.getNames().getApply(), CallbackMessage.APPLY_BODY_STYLE, markup));
     buttonMaker.addButtonTo(sendMessage);
     return sendMessage;
   }

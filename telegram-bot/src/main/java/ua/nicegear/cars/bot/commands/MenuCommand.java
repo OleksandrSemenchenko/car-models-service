@@ -1,4 +1,4 @@
-package ua.nicegear.cars.bot.commands.menu;
+package ua.nicegear.cars.bot.commands;
 
 public abstract class MenuCommand {
 

@@ -10,27 +10,15 @@ import ua.nicegear.cars.bot.dto.FilterDto;
 import ua.nicegear.cars.bot.enums.BodyStyle;
 import ua.nicegear.cars.bot.service.FilterService;
 import ua.nicegear.cars.bot.view.DashboardViewMaker;
-import ua.nicegear.cars.bot.view.impl.BodyStyleDashboardView;
+import ua.nicegear.cars.bot.view.impl.BodyStyleDashboardViewMaker;
 
 public class BodyStyleStrategy extends AbstractStrategy {
 
   private final ButtonsConfig buttonsConfig;
   private final FilterService filterService;
 
-  private SendMessage sendMessage;
-
   public BodyStyleStrategy(
       TelegramClient telegramClient, ButtonsConfig buttonsConfig, FilterService filterService) {
-    super(telegramClient);
-    this.buttonsConfig = buttonsConfig;
-    this.filterService = filterService;
-  }
-
-  public BodyStyleStrategy(
-      TelegramClient telegramClient,
-      ButtonsConfig buttonsConfig,
-      FilterService filterService,
-      SendMessage sendMessage) {
     super(telegramClient);
     this.buttonsConfig = buttonsConfig;
     this.filterService = filterService;
@@ -40,20 +28,18 @@ public class BodyStyleStrategy extends AbstractStrategy {
   public void execute(Update update) {
     long chatId = update.getCallbackQuery().getMessage().getChatId();
 
-    if (Objects.isNull(sendMessage)) {
-      FilterDto filterDto = filterService.getSearchFilterByChatId(chatId);
-      String text = buttonsConfig.getPrompts().getBodyStyle();
+    FilterDto filterDto = filterService.getSearchFilterByChatId(chatId);
+    String text = buttonsConfig.getPrompts().getBodyStyle();
 
-      if (Objects.nonNull(filterDto.getBodyStyles())) {
-        text =
-            filterDto.getBodyStyles().stream()
-                .map(BodyStyle::toString)
-                .collect(Collectors.joining(", "));
-      }
-      sendMessage = SendMessage.builder().chatId(chatId).text(text).build();
+    if (Objects.nonNull(filterDto.getBodyStyles())) {
+      text =
+          filterDto.getBodyStyles().stream()
+              .map(BodyStyle::toString)
+              .collect(Collectors.joining(", "));
     }
+    SendMessage sendMessage = SendMessage.builder().chatId(chatId).text(text).build();
     super.processAnswerCallbackQuery(update, buttonsConfig.getPrompts().getBodyStyle());
-    DashboardViewMaker bodyStyleViewMaker = new BodyStyleDashboardView(buttonsConfig);
+    DashboardViewMaker bodyStyleViewMaker = new BodyStyleDashboardViewMaker(buttonsConfig);
     sendMessage = bodyStyleViewMaker.makeView(sendMessage);
     checkNext(sendMessage, update);
   }

@@ -1,4 +1,4 @@
-package ua.nicegear.cars.bot.commands.button;
+package ua.nicegear.cars.bot.commands;
 
 import ua.nicegear.cars.bot.controller.strategy.Context;
 

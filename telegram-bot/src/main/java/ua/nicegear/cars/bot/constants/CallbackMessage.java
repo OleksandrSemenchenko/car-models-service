@@ -13,7 +13,7 @@ public class CallbackMessage {
   public static final String STOP_COMMAND = "/stop";
   public static final String BODY_STYLE = "bodyStyle";
   public static final String BODY_STYLE_DELETE = "bodyStyleDelete";
-  public static final String BODY_STYLE_APPLY = "bodyStyleApply";
+  public static final String APPLY_BODY_STYLE = "applyBodyStyle";
   public static final String APPLY_AND_SEARCH = "applyAndSearch";
   public static final String HATCHBACK = "hatchback";
   public static final String SEDAN = "sedan";

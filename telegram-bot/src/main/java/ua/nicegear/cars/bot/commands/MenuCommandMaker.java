@@ -1,4 +1,4 @@
-package ua.nicegear.cars.bot.commands.menu;
+package ua.nicegear.cars.bot.commands;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;

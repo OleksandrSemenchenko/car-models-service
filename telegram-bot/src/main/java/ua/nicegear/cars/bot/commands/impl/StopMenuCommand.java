@@ -1,5 +1,6 @@
-package ua.nicegear.cars.bot.commands.menu;
+package ua.nicegear.cars.bot.commands.impl;
 
+import ua.nicegear.cars.bot.commands.MenuCommand;
 import ua.nicegear.cars.bot.config.CommandsConfig;
 
 public class StopMenuCommand extends MenuCommand {
