@@ -6,5 +6,5 @@ public interface FilterService {
 
   FilterDto getSearchFilterByChatId(long chatId);
 
-  FilterDto saveToCache(FilterDto filterDto);
+  FilterDto updateCache(FilterDto filterDto);
 }

@@ -15,23 +15,18 @@ public class SearchDashboardStrategy extends AbstractStrategy implements Consume
 
   private final FilterService filterService;
   private final ButtonsConfig buttonsConfig;
-  private SendMessage sendMessage;
 
   public SearchDashboardStrategy(
-      TelegramClient telegramClient,
-      FilterService filterService,
-      ButtonsConfig buttonsConfig,
-      SendMessage sendMessage) {
+      TelegramClient telegramClient, FilterService filterService, ButtonsConfig buttonsConfig) {
     super(telegramClient);
     this.filterService = filterService;
     this.buttonsConfig = buttonsConfig;
-    this.sendMessage = sendMessage;
   }
 
   @Override
   public void execute(Update update) {
     long chatId = selectChatId(update);
-    sendMessage = makeSearchDashboardView(sendMessage, chatId);
+    SendMessage sendMessage = makeSearchDashboardView(chatId);
     checkNext(sendMessage, update);
   }
 
@@ -45,10 +40,11 @@ public class SearchDashboardStrategy extends AbstractStrategy implements Consume
     return 0L;
   }
 
-  protected SendMessage makeSearchDashboardView(SendMessage sendMessage, long chatId) {
+  protected SendMessage makeSearchDashboardView(long chatId) {
     FilterDto searchFiltersDto = filterService.getSearchFilterByChatId(chatId);
     DashboardViewMaker searchDashboardViewMaker =
         new SearchDashboardViewMaker(buttonsConfig, searchFiltersDto);
+    SendMessage sendMessage = SendMessage.builder().chatId(chatId).text("").build();
     return searchDashboardViewMaker.makeView(sendMessage);
   }
 }

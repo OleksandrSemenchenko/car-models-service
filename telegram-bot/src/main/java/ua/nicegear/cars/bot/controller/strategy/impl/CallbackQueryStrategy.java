@@ -112,7 +112,7 @@ public class CallbackQueryStrategy extends UpdateProcessor implements ConsumeStr
         super.processAnswerCallbackQuery(update, CallbackMessage.BODY_STYLE_APPLY);
         SendMessage sendMessage = buildSendMessage(update);
         ConsumeStrategy searchDashboardStrategy =
-            new SearchDashboardStrategy(telegramClient, filterService, buttonsConfig, sendMessage);
+            new SearchDashboardStrategy(telegramClient, filterService, buttonsConfig);
         context.setConsumeStrategy(searchDashboardStrategy);
       }
     }
@@ -121,7 +121,7 @@ public class CallbackQueryStrategy extends UpdateProcessor implements ConsumeStr
 
   private Context getContextWithBodyStyleStrategy(
       Update update, Context context, FilterDto filterDto) {
-    filterDto = filterService.saveToCache(filterDto);
+    filterDto = filterService.updateCache(filterDto);
     SendMessage sendMessage = buildSendMessage(update, filterDto);
     ConsumeStrategy bodyStyleStrategy =
         new BodyStyleStrategy(telegramClient, buttonsConfig, filterService, sendMessage);

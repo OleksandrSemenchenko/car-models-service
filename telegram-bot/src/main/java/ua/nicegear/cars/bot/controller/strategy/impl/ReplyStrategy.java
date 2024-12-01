@@ -1,7 +1,6 @@
 package ua.nicegear.cars.bot.controller.strategy.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ua.nicegear.cars.bot.config.ButtonsConfig;
@@ -26,19 +25,13 @@ public class ReplyStrategy extends UpdateProcessor implements ConsumeStrategy {
   @Override
   public void execute(Update update) {
     long chatId = update.getMessage().getChatId();
-    SendMessage sendMessage = SendMessage.builder().chatId(chatId).text("").build();
-    AbstractStrategy sendMessageStrategy = new SendMessageStrategy(telegramClient, sendMessage);
     String repliedMessage = update.getMessage().getReplyToMessage().getText();
     String message = update.getMessage().getText();
-
-    if (update.getMessage().isReply()) {
-      FilterDto filterDto = buildFilterDto(repliedMessage, message);
-      filterService.saveToCache(filterDto);
-      AbstractStrategy searchDashboardStrategy =
-          new SearchDashboardStrategy(telegramClient, filterService, buttonsConfig, sendMessage);
-      sendMessageStrategy.add(searchDashboardStrategy);
-    }
-    sendMessageStrategy.execute(update);
+    FilterDto filterDto = buildFilterDto(repliedMessage, message);
+    filterService.updateCache(filterDto);
+    AbstractStrategy searchDashboardStrategy =
+        new SearchDashboardStrategy(telegramClient, filterService, buttonsConfig);
+    searchDashboardStrategy.execute(update);
   }
 
   private FilterDto buildFilterDto(String repliedMessage, String message) {

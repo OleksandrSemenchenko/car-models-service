@@ -35,7 +35,7 @@ public class FilterServiceImpl implements FilterService {
   }
 
   @Override
-  public FilterDto saveToCache(FilterDto filterDto) {
+  public FilterDto updateCache(FilterDto filterDto) {
     return filterMapper.updateByNotNullValues(filterDto, filterDtoCache);
   }
 }

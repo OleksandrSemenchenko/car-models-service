@@ -40,7 +40,7 @@ public class DefaultStrategy extends AbstractStrategy implements ConsumeStrategy
       sendMessage.setText("TODO");
     } else if (callbackMessage.equals(buttonsConfig.getNames().getSearchDashboard())) {
       AbstractStrategy searchDashboardStrategy =
-          new SearchDashboardStrategy(telegramClient, filterService, buttonsConfig, sendMessage);
+          new SearchDashboardStrategy(telegramClient, filterService, buttonsConfig);
       this.add(searchDashboardStrategy);
     }
     mainDefaultStrategy.execute(update);

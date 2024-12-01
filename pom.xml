@@ -190,7 +190,7 @@
               <include>src/**/*.java</include>
             </includes>
             <googleJavaFormat>
-              <style>GOOGLE</style>
+              <!-- <style>GOOGLE</style>-->
             </googleJavaFormat>
             <importOrder>
               <wildcardsLast>false</wildcardsLast>
