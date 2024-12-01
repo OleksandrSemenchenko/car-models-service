@@ -34,7 +34,6 @@ public class BodyStyleStrategy extends AbstractStrategy {
     super(telegramClient);
     this.buttonsConfig = buttonsConfig;
     this.filterService = filterService;
-    this.sendMessage = sendMessage;
   }
 
   @Override

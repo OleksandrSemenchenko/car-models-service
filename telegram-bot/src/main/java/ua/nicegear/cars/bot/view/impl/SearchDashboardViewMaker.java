@@ -79,7 +79,7 @@ public class SearchDashboardViewMaker extends DashboardViewMaker {
     LinkedHashMap<Object, Object> buttonDetails =
         new LinkedHashMap<>() {
           {
-            put(buttonsConfig.getNames().getMaxMileage(), CallbackMessage.MAX_MILLAGE);
+            put(buttonsConfig.getNames().getMaxMileage(), CallbackMessage.MAX_MILEAGE);
             put(buttonsConfig.getNames().getDelete(), CallbackMessage.MAX_MILLAGE_DELETE);
           }
         };

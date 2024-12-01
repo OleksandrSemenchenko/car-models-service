@@ -1,6 +1,6 @@
-package ua.nicegear.cars.bot.commands;
+package ua.nicegear.cars.bot.commands.menu;
 
-public abstract class Command {
+public abstract class MenuCommand {
 
   public abstract String getName();
 

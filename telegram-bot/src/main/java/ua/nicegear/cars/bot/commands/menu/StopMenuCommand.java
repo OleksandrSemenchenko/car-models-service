@@ -1,13 +1,13 @@
-package ua.nicegear.cars.bot.commands;
+package ua.nicegear.cars.bot.commands.menu;
 
 import ua.nicegear.cars.bot.config.CommandsConfig;
 
-public class StopCommand extends Command {
+public class StopMenuCommand extends MenuCommand {
 
   private String name;
   private String description;
 
-  public StopCommand(CommandsConfig commandConfig) {
+  public StopMenuCommand(CommandsConfig commandConfig) {
     this.name = commandConfig.getStopName();
     this.description = commandConfig.getStopDescription();
   }

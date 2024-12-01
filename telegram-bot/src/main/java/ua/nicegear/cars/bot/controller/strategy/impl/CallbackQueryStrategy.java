@@ -5,7 +5,7 @@ import static ua.nicegear.cars.bot.constants.CallbackMessage.BODY_STYLE;
 import static ua.nicegear.cars.bot.constants.CallbackMessage.BODY_STYLE_APPLY;
 import static ua.nicegear.cars.bot.constants.CallbackMessage.CROSSOVER;
 import static ua.nicegear.cars.bot.constants.CallbackMessage.HATCHBACK;
-import static ua.nicegear.cars.bot.constants.CallbackMessage.MAX_MILLAGE;
+import static ua.nicegear.cars.bot.constants.CallbackMessage.MAX_MILEAGE;
 import static ua.nicegear.cars.bot.constants.CallbackMessage.MAX_YEAR;
 import static ua.nicegear.cars.bot.constants.CallbackMessage.MINIVAN;
 import static ua.nicegear.cars.bot.constants.CallbackMessage.MIN_YEAR;
@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
+import ua.nicegear.cars.bot.commands.button.CommandExecutor;
 import ua.nicegear.cars.bot.config.ButtonsConfig;
 import ua.nicegear.cars.bot.constants.CallbackMessage;
 import ua.nicegear.cars.bot.controller.strategy.ConsumeStrategy;
@@ -40,52 +41,14 @@ public class CallbackQueryStrategy extends UpdateProcessor implements ConsumeStr
 
   @Override
   public void execute(Update update) {
-    String callbackMessage = update.getCallbackQuery().getData();
+    String command = update.getCallbackQuery().getData();
     Context context = new Context();
-    context = selectContextForSearchFilter(callbackMessage, context);
-    context = selectContextForBodyStyleFilter(update, context, callbackMessage);
+    CommandExecutor commandExecutor = new CommandExecutor(telegramClient, buttonsConfig, filterService, context);
+    commandExecutor.execute(command);
+
+    context = selectContextForBodyStyleFilter(update, context, command);
 
     context.executeStrategy(update);
-  }
-
-  private Context selectContextForSearchFilter(String callbackMessage, Context context) {
-    String message = "";
-
-    switch (callbackMessage) {
-      case MAX_YEAR -> {
-        message = buttonsConfig.getPrompts().getMaxYear();
-        context.setConsumeStrategy(new ForceReplyStrategy(telegramClient, message));
-        return context;
-      }
-      case MIN_YEAR -> {
-        message = buttonsConfig.getPrompts().getMinYear();
-        context.setConsumeStrategy(new ForceReplyStrategy(telegramClient, message));
-        return context;
-      }
-      case MAX_MILLAGE -> {
-        message = buttonsConfig.getPrompts().getMaxMileage();
-        context.setConsumeStrategy(new ForceReplyStrategy(telegramClient, message));
-        return context;
-      }
-      case NUMBER_OF_OWNERS -> {
-        message = buttonsConfig.getPrompts().getNumberOfOwners();
-        context.setConsumeStrategy(new ForceReplyStrategy(telegramClient, message));
-        return context;
-      }
-      case BODY_STYLE -> {
-        ConsumeStrategy bodyStyleStrategy =
-            new BodyStyleStrategy(telegramClient, buttonsConfig, filterService);
-        context.setConsumeStrategy(bodyStyleStrategy);
-        return context;
-      }
-      case APPLY_AND_SEARCH -> {
-        // TODO ApplyAndSearch actions
-      }
-    }
-
-    if (callbackMessage.equals(CallbackMessage.MAX_YEAR_DELETE)) {}
-
-    return context;
   }
 
   private Context selectContextForBodyStyleFilter(

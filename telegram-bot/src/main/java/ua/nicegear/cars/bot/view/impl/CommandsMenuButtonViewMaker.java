@@ -5,9 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.menubutton.SetChatMenuButton;
 import org.telegram.telegrambots.meta.api.objects.menubutton.MenuButtonCommands;
-import ua.nicegear.cars.bot.commands.Command;
-import ua.nicegear.cars.bot.commands.CommandMaker;
-import ua.nicegear.cars.bot.commands.StopCommand;
+import ua.nicegear.cars.bot.commands.menu.MenuCommand;
+import ua.nicegear.cars.bot.commands.menu.MenuCommandMaker;
+import ua.nicegear.cars.bot.commands.menu.StopMenuCommand;
 import ua.nicegear.cars.bot.config.CommandsConfig;
 import ua.nicegear.cars.bot.view.MenuButtonView;
 import ua.nicegear.cars.bot.view.MenuButtonViewMaker;
@@ -36,9 +36,9 @@ public class CommandsMenuButtonViewMaker extends MenuButtonViewMaker {
   }
 
   private SetMyCommands createStopCommandAndAddTo(SetMyCommands myCommands) {
-    Command stop = new StopCommand(commandsConfig);
-    CommandMaker stopCommandMaker = new CommandMaker(stop);
-    stopCommandMaker.addCommandTo(myCommands);
+    MenuCommand stop = new StopMenuCommand(commandsConfig);
+    MenuCommandMaker stopMenuCommandMaker = new MenuCommandMaker(stop);
+    stopMenuCommandMaker.addCommandTo(myCommands);
     return myCommands;
   }
 
