@@ -12,7 +12,7 @@ import ua.nicegear.cars.bot.dto.FilterDto;
 import ua.nicegear.cars.bot.service.FilterService;
 
 @RequiredArgsConstructor
-public class MaxYearDeleteCommand implements ButtonCommand {
+public class BodyStyleDeleteCommand implements ButtonCommand {
 
   private final TelegramClient telegramClient;
   private final ButtonsConfig buttonsConfig;
@@ -24,7 +24,7 @@ public class MaxYearDeleteCommand implements ButtonCommand {
     AbstractStrategy answerCallbackQueryStrategy =
         new AnswerCallbackQueryStrategy(telegramClient, "");
     FilterDto filterDto = filterService.getFiltersByChatId(chartId);
-    filterDto.setMaxYear(null);
+    filterDto.setBodyStyles(null);
     filterService.updateCache(filterDto);
     AbstractStrategy searchDashboardStrategy =
         new SearchDashboardStrategy(telegramClient, filterService, buttonsConfig);

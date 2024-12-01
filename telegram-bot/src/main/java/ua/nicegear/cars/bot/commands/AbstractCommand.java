@@ -19,7 +19,7 @@ public abstract class AbstractCommand {
 
   protected ConsumeStrategy getBodyStyleStrategy(Set<BodyStyle> bodyStyles) {
     FilterDto filterDto = FilterDto.builder().bodyStyles(bodyStyles).build();
-    filterService.updateCache(filterDto);
+    filterService.updateCacheByNotNullValues(filterDto);
     return new BodyStyleStrategy(telegramClient, buttonsConfig, filterService);
   }
 }

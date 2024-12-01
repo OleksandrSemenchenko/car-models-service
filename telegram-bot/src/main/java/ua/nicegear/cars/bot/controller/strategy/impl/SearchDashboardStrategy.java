@@ -41,7 +41,7 @@ public class SearchDashboardStrategy extends AbstractStrategy implements Consume
   }
 
   protected SendMessage makeSearchDashboardView(long chatId) {
-    FilterDto searchFiltersDto = filterService.getSearchFilterByChatId(chatId);
+    FilterDto searchFiltersDto = filterService.getFiltersByChatId(chatId);
     DashboardViewMaker searchDashboardViewMaker =
         new SearchDashboardViewMaker(buttonsConfig, searchFiltersDto);
     SendMessage sendMessage = SendMessage.builder().chatId(chatId).text("").build();

@@ -28,7 +28,7 @@ public class BodyStyleStrategy extends AbstractStrategy {
   public void execute(Update update) {
     long chatId = update.getCallbackQuery().getMessage().getChatId();
 
-    FilterDto filterDto = filterService.getSearchFilterByChatId(chatId);
+    FilterDto filterDto = filterService.getFiltersByChatId(chatId);
     String text = buttonsConfig.getPrompts().getBodyStyle();
 
     if (Objects.nonNull(filterDto.getBodyStyles())) {

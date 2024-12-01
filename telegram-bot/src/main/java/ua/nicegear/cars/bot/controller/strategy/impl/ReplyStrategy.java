@@ -24,11 +24,10 @@ public class ReplyStrategy extends UpdateProcessor implements ConsumeStrategy {
 
   @Override
   public void execute(Update update) {
-    long chatId = update.getMessage().getChatId();
     String repliedMessage = update.getMessage().getReplyToMessage().getText();
     String message = update.getMessage().getText();
     FilterDto filterDto = buildFilterDto(repliedMessage, message);
-    filterService.updateCache(filterDto);
+    filterService.updateCacheByNotNullValues(filterDto);
     AbstractStrategy searchDashboardStrategy =
         new SearchDashboardStrategy(telegramClient, filterService, buttonsConfig);
     searchDashboardStrategy.execute(update);

@@ -24,9 +24,10 @@ public class CallbackQueryStrategy extends UpdateProcessor implements ConsumeStr
   @Override
   public void execute(Update update) {
     String command = update.getCallbackQuery().getData();
+    long chatId = update.getCallbackQuery().getMessage().getChatId();
     Context context = new Context();
     CommandExecutor commandExecutor =
-        new CommandExecutor(telegramClient, buttonsConfig, filterService, context);
+        new CommandExecutor(super.telegramClient, buttonsConfig, filterService, context, chatId);
     commandExecutor.execute(command);
     context.executeStrategy(update);
   }

@@ -17,7 +17,7 @@ public class FilterServiceImpl implements FilterService {
   private FilterDto filterDtoCache;
 
   @Override
-  public FilterDto getSearchFilterByChatId(long userId) {
+  public FilterDto getFiltersByChatId(long userId) {
     if (Objects.nonNull(filterDtoCache)) {
       return filterDtoCache;
     }
@@ -35,7 +35,12 @@ public class FilterServiceImpl implements FilterService {
   }
 
   @Override
-  public FilterDto updateCache(FilterDto filterDto) {
+  public FilterDto updateCacheByNotNullValues(FilterDto filterDto) {
     return filterMapper.updateByNotNullValues(filterDto, filterDtoCache);
+  }
+
+  @Override
+  public void updateCache(FilterDto filterDto) {
+    filterDtoCache = filterDto;
   }
 }

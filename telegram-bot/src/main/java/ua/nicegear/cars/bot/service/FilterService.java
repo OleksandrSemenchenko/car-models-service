@@ -4,7 +4,9 @@ import ua.nicegear.cars.bot.dto.FilterDto;
 
 public interface FilterService {
 
-  FilterDto getSearchFilterByChatId(long chatId);
+  FilterDto getFiltersByChatId(long chatId);
 
-  FilterDto updateCache(FilterDto filterDto);
+  FilterDto updateCacheByNotNullValues(FilterDto filterDto);
+
+  void updateCache(FilterDto filterDto);
 }
