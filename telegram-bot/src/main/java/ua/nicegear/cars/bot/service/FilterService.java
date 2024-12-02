@@ -8,5 +8,7 @@ public interface FilterService {
 
   FilterDto updateCacheByNotNullValues(FilterDto filterDto);
 
-  void updateCache(FilterDto filterDto);
+  FilterDto saveToCache(FilterDto filterDto);
+
+  void persistCache(long chatId);
 }

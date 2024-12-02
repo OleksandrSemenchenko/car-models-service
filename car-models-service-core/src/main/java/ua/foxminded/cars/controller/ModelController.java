@@ -99,7 +99,8 @@ public class ModelController {
       summary = "Searchers models",
       operationId = "searchModels",
       description =
-          "Searchers for models by optional parameters when no one is specified, retrieves all models",
+          "Searchers for models by optional parameters when no one is specified, retrieves all"
+              + " models",
       tags = "model",
       responses = {
         @ApiResponse(

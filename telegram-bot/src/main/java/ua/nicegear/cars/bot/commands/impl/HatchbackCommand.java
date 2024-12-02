@@ -1,26 +1,34 @@
 package ua.nicegear.cars.bot.commands.impl;
 
-import java.util.Set;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ua.nicegear.cars.bot.commands.AbstractCommand;
 import ua.nicegear.cars.bot.commands.ButtonCommand;
 import ua.nicegear.cars.bot.config.ButtonsConfig;
-import ua.nicegear.cars.bot.controller.strategy.ConsumeStrategy;
 import ua.nicegear.cars.bot.controller.strategy.Context;
+import ua.nicegear.cars.bot.controller.strategy.impl.BodyStyleStrategy;
 import ua.nicegear.cars.bot.enums.BodyStyle;
 import ua.nicegear.cars.bot.service.FilterService;
 
 public class HatchbackCommand extends AbstractCommand implements ButtonCommand {
 
+  private final TelegramClient telegramClient;
+  private final ButtonsConfig buttonsConfig;
+  private final FilterService filterService;
+
   public HatchbackCommand(
-      TelegramClient telegramClient, ButtonsConfig buttonsConfig, FilterService filterService) {
-    super(telegramClient, buttonsConfig, filterService);
+      TelegramClient telegramClient,
+      ButtonsConfig buttonsConfig,
+      FilterService filterService,
+      long chatId) {
+    super(filterService, chatId);
+    this.telegramClient = telegramClient;
+    this.buttonsConfig = buttonsConfig;
+    this.filterService = filterService;
   }
 
   @Override
   public void setStrategyTo(Context context) {
-    Set<BodyStyle> bodyStyles = Set.of(BodyStyle.HATCHBACK);
-    ConsumeStrategy strategy = super.getBodyStyleStrategy(bodyStyles);
-    context.setConsumeStrategy(strategy);
+    super.updateCache(BodyStyle.HATCHBACK);
+    context.setConsumeStrategy(new BodyStyleStrategy(telegramClient, buttonsConfig, filterService));
   }
 }

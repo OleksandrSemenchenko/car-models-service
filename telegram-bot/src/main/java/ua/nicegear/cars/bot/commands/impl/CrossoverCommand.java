@@ -9,13 +9,13 @@ import ua.nicegear.cars.bot.controller.strategy.impl.BodyStyleStrategy;
 import ua.nicegear.cars.bot.enums.BodyStyle;
 import ua.nicegear.cars.bot.service.FilterService;
 
-public class SedanCommand extends AbstractCommand implements ButtonCommand {
+public class CrossoverCommand extends AbstractCommand implements ButtonCommand {
 
   private final TelegramClient telegramClient;
   private final ButtonsConfig buttonsConfig;
   private final FilterService filterService;
 
-  public SedanCommand(
+  public CrossoverCommand(
       TelegramClient telegramClient,
       ButtonsConfig buttonsConfig,
       FilterService filterService,
@@ -28,7 +28,7 @@ public class SedanCommand extends AbstractCommand implements ButtonCommand {
 
   @Override
   public void setStrategyTo(Context context) {
-    super.updateCache(BodyStyle.SEDAN);
+    super.updateCache(BodyStyle.CROSSOVER);
     context.setConsumeStrategy(new BodyStyleStrategy(telegramClient, buttonsConfig, filterService));
   }
 }

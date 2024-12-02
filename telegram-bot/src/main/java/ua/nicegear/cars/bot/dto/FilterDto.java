@@ -13,7 +13,7 @@ import ua.nicegear.cars.bot.enums.BodyStyle;
 @NoArgsConstructor
 public class FilterDto {
 
-  Long userId;
+  Long chatId;
   Integer maxYear;
   Integer minYear;
   Integer maxMileage;

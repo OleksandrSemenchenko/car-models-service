@@ -6,7 +6,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ua.nicegear.cars.bot.commands.impl.ApplyBodyStyleCommand;
 import ua.nicegear.cars.bot.commands.impl.BodyStyleCommand;
 import ua.nicegear.cars.bot.commands.impl.BodyStyleDeleteCommand;
-import ua.nicegear.cars.bot.commands.impl.Crossover;
+import ua.nicegear.cars.bot.commands.impl.CrossoverCommand;
 import ua.nicegear.cars.bot.commands.impl.HatchbackCommand;
 import ua.nicegear.cars.bot.commands.impl.MaxMileageCommand;
 import ua.nicegear.cars.bot.commands.impl.MaxMileageDeleteCommand;
@@ -15,6 +15,7 @@ import ua.nicegear.cars.bot.commands.impl.MaxYearDeleteCommand;
 import ua.nicegear.cars.bot.commands.impl.MinYearCommand;
 import ua.nicegear.cars.bot.commands.impl.MinYearDeleteCommand;
 import ua.nicegear.cars.bot.commands.impl.MinivanCommand;
+import ua.nicegear.cars.bot.commands.impl.NumberOfOwnersCommand;
 import ua.nicegear.cars.bot.commands.impl.NumberOfOwnersDeleteCommand;
 import ua.nicegear.cars.bot.commands.impl.SedanCommand;
 import ua.nicegear.cars.bot.config.ButtonsConfig;
@@ -43,13 +44,16 @@ public class CommandExecutor {
         new BodyStyleCommand(telegramClient, buttonsConfig, filterService));
     commandMap.put(
         CallbackMessage.HATCHBACK,
-        new HatchbackCommand(telegramClient, buttonsConfig, filterService));
+        new HatchbackCommand(telegramClient, buttonsConfig, filterService, chatId));
     commandMap.put(
-        CallbackMessage.SEDAN, new SedanCommand(telegramClient, buttonsConfig, filterService));
+        CallbackMessage.SEDAN,
+        new SedanCommand(telegramClient, buttonsConfig, filterService, chatId));
     commandMap.put(
-        CallbackMessage.CROSSOVER, new Crossover(telegramClient, buttonsConfig, filterService));
+        CallbackMessage.CROSSOVER,
+        new CrossoverCommand(telegramClient, buttonsConfig, filterService, chatId));
     commandMap.put(
-        CallbackMessage.MINIVAN, new MinivanCommand(telegramClient, buttonsConfig, filterService));
+        CallbackMessage.MINIVAN,
+        new MinivanCommand(telegramClient, buttonsConfig, filterService, chatId));
     commandMap.put(
         CallbackMessage.APPLY_BODY_STYLE,
         new ApplyBodyStyleCommand(telegramClient, buttonsConfig, filterService));
@@ -62,6 +66,8 @@ public class CommandExecutor {
     commandMap.put(
         CallbackMessage.MAX_MILLAGE_DELETE,
         new MaxMileageDeleteCommand(telegramClient, buttonsConfig, filterService, chatId));
+    commandMap.put(
+        CallbackMessage.NUMBER_OF_OWNERS, new NumberOfOwnersCommand(telegramClient, buttonsConfig));
     commandMap.put(
         CallbackMessage.NUMBER_OF_OWNERS_DELETE,
         new NumberOfOwnersDeleteCommand(telegramClient, buttonsConfig, filterService, chatId));
