@@ -36,5 +36,6 @@ public class ButtonsConfig {
     private String maxMileage;
     private String numberOfOwners;
     private String bodyStyle;
+    private String nullValue;
   }
 }

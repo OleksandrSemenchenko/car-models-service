@@ -2,6 +2,7 @@ package ua.nicegear.cars.bot.view.impl;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -43,12 +44,20 @@ public class SearchDashboardViewMaker extends DashboardViewMaker {
       %s: %s
       """
             .formatted(
-                buttonsConfig.getNames().getMaxYear(), filterDto.getMaxYear(),
-                buttonsConfig.getNames().getMinYear(), filterDto.getMinYear(),
-                buttonsConfig.getNames().getMaxMileage(), filterDto.getMaxMileage(),
-                buttonsConfig.getNames().getNumberOfOwners(), filterDto.getNumberOfOwners(),
-                buttonsConfig.getNames().getBodyStyle(), filterDto.getBodyStyles());
+                buttonsConfig.getNames().getMaxYear(), checkForNull(filterDto.getMaxYear()),
+                buttonsConfig.getNames().getMinYear(), checkForNull(filterDto.getMinYear()),
+                buttonsConfig.getNames().getMaxMileage(), checkForNull(filterDto.getMaxMileage()),
+                buttonsConfig.getNames().getNumberOfOwners(),
+                    checkForNull(filterDto.getNumberOfOwners()),
+                buttonsConfig.getNames().getBodyStyle(), checkForNull(filterDto.getBodyStyles()));
     sendMessage.setText(textMessage);
+  }
+
+  private String checkForNull(Object object) {
+    if (Objects.isNull(object)) {
+      return buttonsConfig.getPrompts().getNullValue();
+    }
+    return String.valueOf(object);
   }
 
   private void makeMaxYearFilterView(ButtonMaker buttonMaker, SendMessage sendMessage) {
