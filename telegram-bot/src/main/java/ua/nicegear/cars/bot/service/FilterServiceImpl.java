@@ -1,21 +1,22 @@
 package ua.nicegear.cars.bot.service;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ua.nicegear.cars.bot.dto.FilterDto;
-import ua.nicegear.cars.bot.enums.BodyStyle;
 import ua.nicegear.cars.bot.mapper.FilterMapper;
+import ua.nicegear.cars.bot.repository.FilterRepository;
+import ua.nicegear.cars.bot.repository.entity.Filter;
 
 @Service
 @RequiredArgsConstructor
 public class FilterServiceImpl implements FilterService {
 
+  private final FilterRepository filterRepository;
   private final FilterMapper filterMapper;
+
   private ConcurrentMap<Long, FilterDto> cache = new ConcurrentHashMap<>();
 
   @Override
@@ -25,15 +26,8 @@ public class FilterServiceImpl implements FilterService {
     if (Objects.nonNull(cachedFilterDto)) {
       return cachedFilterDto;
     }
-    FilterDto filterDto =
-        FilterDto.builder()
-            .chatId(chatId)
-            .minYear(2017)
-            .maxYear(2024)
-            .maxMileage(140000)
-            .numberOfOwners(1)
-            .bodyStyles(new HashSet<>(List.of(BodyStyle.HATCHBACK)))
-            .build();
+    Filter filter = filterRepository.findByChatId(chatId);
+    FilterDto filterDto = filterMapper.toDto(filter);
     return saveToCache(filterDto);
   }
 
@@ -58,8 +52,10 @@ public class FilterServiceImpl implements FilterService {
   }
 
   @Override
-  public void persistCache(long chatId) {
-    // TODO save cache to db
-
+  public FilterDto persistCache(long chatId) {
+    FilterDto filterDto = cache.get(chatId);
+    Filter entity = filterMapper.toEntity(filterDto);
+    Filter savedEntity = filterRepository.save(entity);
+    return filterMapper.toDto(savedEntity);
   }
 }

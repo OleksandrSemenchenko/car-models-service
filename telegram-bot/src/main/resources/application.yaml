@@ -1,5 +1,9 @@
 server:
   port: 8181
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/cars-bot
 
 bot:
   username: "${BOT_NAME:car_servcie_light_bot}"
@@ -30,6 +34,7 @@ bot:
       number-of-owners: 'Please provide the number of owners:'
       body-style: 'Select the body styles'
       null-value: 'none'
+      apply-and-search: ""
   commands:
       stop-name: stop
       stop-description: stop the search

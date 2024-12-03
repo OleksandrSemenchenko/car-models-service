@@ -3,6 +3,7 @@ package ua.nicegear.cars.bot.commands;
 import java.util.HashMap;
 import java.util.Map;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
+import ua.nicegear.cars.bot.commands.impl.ApplyAndSearchCommand;
 import ua.nicegear.cars.bot.commands.impl.ApplyBodyStyleCommand;
 import ua.nicegear.cars.bot.commands.impl.BodyStyleCommand;
 import ua.nicegear.cars.bot.commands.impl.BodyStyleDeleteCommand;
@@ -74,6 +75,9 @@ public class CommandExecutor {
     commandMap.put(
         CallbackMessage.BODY_STYLE_DELETE,
         new BodyStyleDeleteCommand(telegramClient, buttonsConfig, filterService, chatId));
+    commandMap.put(
+        CallbackMessage.APPLY_AND_SEARCH,
+        new ApplyAndSearchCommand(telegramClient, buttonsConfig, filterService, chatId));
   }
 
   public void execute(String key) {

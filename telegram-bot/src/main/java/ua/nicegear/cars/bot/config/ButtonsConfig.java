@@ -37,5 +37,6 @@ public class ButtonsConfig {
     private String numberOfOwners;
     private String bodyStyle;
     private String nullValue;
+    private String applyAndSearch;
   }
 }

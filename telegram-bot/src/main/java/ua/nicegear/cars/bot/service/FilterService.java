@@ -10,5 +10,5 @@ public interface FilterService {
 
   FilterDto saveToCache(FilterDto filterDto);
 
-  void persistCache(long chatId);
+  FilterDto persistCache(long chatId);
 }
