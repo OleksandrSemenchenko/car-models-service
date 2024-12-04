@@ -4,5 +4,11 @@ import ua.nicegear.cars.bot.dto.FilterDto;
 
 public interface FilterService {
 
-  FilterDto getFilterByUserId(long userId);
+  FilterDto getFiltersByChatId(long chatId);
+
+  FilterDto updateCacheByNotNullValues(FilterDto filterDto);
+
+  FilterDto saveToCache(FilterDto filterDto);
+
+  FilterDto persistCache(long chatId);
 }

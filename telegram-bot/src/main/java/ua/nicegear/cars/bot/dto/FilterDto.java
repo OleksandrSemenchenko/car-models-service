@@ -1,5 +1,6 @@
 package ua.nicegear.cars.bot.dto;
 
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,10 +13,10 @@ import ua.nicegear.cars.bot.enums.BodyStyle;
 @NoArgsConstructor
 public class FilterDto {
 
-  Long userId;
+  Long chatId;
   Integer maxYear;
   Integer minYear;
   Integer maxMileage;
   Integer numberOfOwners;
-  BodyStyle bodyStyle;
+  Set<BodyStyle> bodyStyles;
 }

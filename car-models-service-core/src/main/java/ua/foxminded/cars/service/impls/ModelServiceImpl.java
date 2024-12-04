@@ -71,7 +71,8 @@ public class ModelServiceImpl extends AbstractService implements ModelService {
         @CachePut(
             value = GET_MODEL_CACHE,
             key =
-                "{ 'getModel', #targetModelDto.manufacturer, #targetModelDto.name, #targetModelDto.year }"),
+                "{ 'getModel', #targetModelDto.manufacturer, #targetModelDto.name,"
+                    + " #targetModelDto.year }"),
         @CachePut(value = GET_MODEL_BY_ID_CACHE, key = "{ 'getModelById', #targetModelDto.id }")
       })
   public ModelDto updateModel(ModelDto targetModelDto) {

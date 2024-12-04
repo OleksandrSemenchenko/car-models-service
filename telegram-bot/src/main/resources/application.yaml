@@ -1,11 +1,15 @@
 server:
   port: 8181
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/cars-bot
 
 bot:
   username: "${BOT_NAME:car_servcie_light_bot}"
   token: "${BOT_TOKEN:8143865220:AAFx1frgpPfAlqV4wdN6wXG9cIXmUEO3ruU}"
 
-  button:
+  buttons:
     names:
       details: Details
       max-year: Max year
@@ -14,8 +18,29 @@ bot:
       number-of-owners: Number of owners
       max-mileage: Max millage
       clean: Clean
-      show-filters: Show filters
-      stop: Stop
+      search-dashboard: Search dashboard
+      delete: Delete
+      apply-and-search: Apply and search
+      close: Close
+      hatchback: Hatchback
+      crossover: Crossover
+      sedan: Sedan
+      minivan: Minivan
+      apply: '[ Apply ]'
+    prompts:
+      max-year: 'Please provide the max year:'
+      min-year: 'Please provide the min year:'
+      max-mileage: 'Please provide the max millage:'
+      number-of-owners: 'Please provide the number of owners:'
+      body-style: 'Select the body styles'
+      null-value: 'none'
+      apply-and-search: ""
+      apply-body-style: ""
+      body-style-delete: ""
+      max-mileage-delete: ""
+      max-year-delete: ""
+      min-year-delete: ""
+      number-of-owners-delete: ""
   commands:
       stop-name: stop
       stop-description: stop the search

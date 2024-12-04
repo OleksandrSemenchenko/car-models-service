@@ -6,9 +6,9 @@ import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
 @RequiredArgsConstructor
-public class CommandMaker {
+public class MenuCommandMaker {
 
-  private final Command command;
+  private final MenuCommand menuCommand;
 
   public SetMyCommands addCommandTo(SetMyCommands myCommands) {
     BotCommand botCommand = buildCommand();
@@ -19,8 +19,8 @@ public class CommandMaker {
 
   private BotCommand buildCommand() {
     return BotCommand.builder()
-        .command(command.getName())
-        .description(command.getDescription())
+        .command(menuCommand.getName())
+        .description(menuCommand.getDescription())
         .build();
   }
 }
