@@ -22,7 +22,8 @@ public class MaxYearDeleteCommand implements ButtonCommand {
   @Override
   public void setStrategyTo(Context context) {
     AbstractStrategy answerCallbackQueryStrategy =
-        new AnswerCallbackQueryStrategy(telegramClient, "");
+        new AnswerCallbackQueryStrategy(
+            telegramClient, buttonsConfig.getPrompts().getMaxYearDelete());
     FilterDto filterDto = filterService.getFiltersByChatId(chartId);
     filterDto.setMaxYear(null);
     filterService.saveToCache(filterDto);

@@ -38,5 +38,11 @@ public class ButtonsConfig {
     private String bodyStyle;
     private String nullValue;
     private String applyAndSearch;
+    private String applyBodyStyle;
+    private String bodyStyleDelete;
+    private String maxMileageDelete;
+    private String maxYearDelete;
+    private String minYearDelete;
+    private String numberOfOwnersDelete;
   }
 }

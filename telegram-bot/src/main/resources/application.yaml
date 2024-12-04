@@ -35,6 +35,12 @@ bot:
       body-style: 'Select the body styles'
       null-value: 'none'
       apply-and-search: ""
+      apply-body-style: ""
+      body-style-delete: ""
+      max-mileage-delete: ""
+      max-year-delete: ""
+      min-year-delete: ""
+      number-of-owners-delete: ""
   commands:
       stop-name: stop
       stop-description: stop the search

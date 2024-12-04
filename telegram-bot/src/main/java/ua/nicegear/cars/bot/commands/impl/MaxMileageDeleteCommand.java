@@ -22,7 +22,8 @@ public class MaxMileageDeleteCommand implements ButtonCommand {
   @Override
   public void setStrategyTo(Context context) {
     AbstractStrategy answerCallbackQueryStrategy =
-        new AnswerCallbackQueryStrategy(telegramClient, "");
+        new AnswerCallbackQueryStrategy(
+            telegramClient, buttonsConfig.getPrompts().getMaxMileageDelete());
     FilterDto filterDto = filterService.getFiltersByChatId(chartId);
     filterDto.setMaxMileage(null);
     filterService.saveToCache(filterDto);

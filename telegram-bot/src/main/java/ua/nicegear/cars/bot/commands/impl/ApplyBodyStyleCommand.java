@@ -20,7 +20,8 @@ public class ApplyBodyStyleCommand implements ButtonCommand {
   @Override
   public void setStrategyTo(Context context) {
     AnswerCallbackQueryStrategy answerCallbackQueryStrategy =
-        new AnswerCallbackQueryStrategy(telegramClient, "");
+        new AnswerCallbackQueryStrategy(
+            telegramClient, buttonsConfig.getPrompts().getApplyBodyStyle());
     AbstractStrategy searchDashboardStrategy =
         new SearchDashboardStrategy(telegramClient, filterService, buttonsConfig);
     answerCallbackQueryStrategy.add(searchDashboardStrategy);

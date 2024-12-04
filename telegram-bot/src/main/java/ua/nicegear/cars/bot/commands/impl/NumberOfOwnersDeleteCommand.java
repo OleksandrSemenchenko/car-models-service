@@ -22,7 +22,8 @@ public class NumberOfOwnersDeleteCommand implements ButtonCommand {
   @Override
   public void setStrategyTo(Context context) {
     AbstractStrategy answerCallbackQueryStrategy =
-        new AnswerCallbackQueryStrategy(telegramClient, "");
+        new AnswerCallbackQueryStrategy(
+            telegramClient, buttonsConfig.getPrompts().getNumberOfOwnersDelete());
     FilterDto filterDto = filterService.getFiltersByChatId(chartId);
     filterDto.setNumberOfOwners(null);
     filterService.saveToCache(filterDto);
